@@ -1,0 +1,297 @@
+.searchPage {
+  padding-top: 5.6rem;
+
+}
+
+.searchBarContainer {
+  width: 35%;
+  margin: 0 auto;
+  color: var(--main-bg-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  border: 4px double rgba(1, 122, 254, 255);
+  margin-top: 4rem;
+  margin-bottom: 0.5rem;
+  box-shadow: var(--box-shadow);
+  background: black;
+}
+
+.search_icon {
+  font-size: 3rem;
+  padding: 0.8rem 0rem 0.8rem 0rem;
+  cursor: pointer;
+  color: white;
+
+}
+
+.searchBarContainer input {
+  width: 90%;
+  border: 0;
+  outline: 0;
+  padding: 0rem;
+  background-color: black;
+
+}
+
+.searchBarContainer input::placeholder {
+  color: var(--icons-color);
+  font-size: 1rem;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 0rem;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.buttonsContainer button {
+  padding: .35rem .75rem;
+  border-radius: 0.4rem;
+  font-size: .7rem;
+  border: 4px double rgba(1, 122, 254, 255);
+  cursor: pointer;
+  background-color: rgb(14, 14, 26);
+  color: rgb(253, 253, 253);
+  font-family: "Good Times";
+  cursor: pointer;
+  transition: 0.6s;
+  box-shadow: 0px 0px 20px #1f4c65;
+  -webkit-box-reflect: below 10px linear-gradient(to bottom, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.4));
+}
+
+.searchPage_box {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-image: url(../img/card-background-2.png);
+}
+
+.searchPage_box h1 {
+  font-size: 3rem;
+  font-weight: 500;
+  line-height: 1;
+  text-shadow: var(--box-shadow);
+  padding-left: 6rem;
+  padding-top: 4rem;
+}
+
+.FollowerTabCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+}
+
+.FollowerTabCard_box {
+  display: grid;
+  padding-top: 4rem;
+  grid-template-columns: repeat(4, 1fr);
+  /* 4-grid layout */
+  gap: 10px;
+  /* Gap between cards */
+  width: 80%;
+  justify-content: center;
+  justify-items: center;
+}
+
+.FollowerTabCard_collections {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+}
+
+.FollowerTabCard_box_collections {
+  display: grid;
+  padding-top: 4rem;
+  grid-template-columns: repeat(3, 1fr);
+  /* 4-grid layout */
+  gap: 10px;
+  /* Gap between cards */
+  width: 88%;
+  justify-content: center;
+  justify-items: center;
+}
+
+.daycomponents {
+  display: grid;
+  justify-content: center;
+
+}
+
+.daycomponents_box {
+  display: grid;
+  padding-top: 4rem;
+  grid-template-columns: repeat(3, 1fr);
+  width: 80%;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 6rem;
+  gap: .5rem;
+
+}
+
+.pagination_input {
+  display: flex;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.pagination_input input[type="number"] {
+  width: 50px;
+  padding: 5px;
+}
+
+.pagination_input button {
+  margin-left: 5px;
+}
+
+.page_numbers {
+  display: flex;
+  align-items: center;
+}
+
+.page_numbers button {
+  margin: 0 2px;
+}
+
+.pagination button:hover {
+  box-shadow: 0px 0px 60px #1f4c65;
+}
+
+
+.paginationButton {
+  background-color: #333;
+  color: #fff;
+  border-color: #333;
+  font-size: .9rem;
+}
+
+.paginationButton:hover {
+  border: 2px solid gray;
+  background-color: lightgray;
+  color: rgb(2, 2, 2);
+  font-size: .9rem;
+}
+
+.disabledButton {
+  border: 2px solid gray;
+  background-color: lightgray;
+  color: rgb(2, 2, 2);
+  font-size: .9rem;
+
+}
+
+.disabledButton:hover {
+  background-color: #333;
+  color: #fff;
+  border-color: #333;
+  font-size: .9rem;
+
+}
+
+.currentPage {
+  border: .05rem solid white;
+  padding-top: 0rem;
+  padding-left: .5rem;
+  padding-right: .5rem;
+  padding-bottom: .2rem;
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+}
+
+.totalPages {
+  font-weight: bold;
+  color: rgba(1, 122, 254, 255);
+}
+
+@media (max-width: 1024px) {
+  .searchBarContainer {
+    width: 60%;
+  }
+}
+
+/* Media query for mobile screens */
+@media (max-width: 768px) {
+  .searchPage {
+    padding-top: 4rem;
+  }
+
+  .searchBarContainer {
+    width: 80%;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .search_icon {
+    font-size: 2rem;
+    padding: 0.6rem 0rem 0.6rem 0rem;
+  }
+
+  .buttonsContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .buttonsContainer button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .searchPage_box h1 {
+    font-size: 2.5rem;
+    padding-left: 2rem;
+    padding-top: 2rem;
+  }
+
+  .FollowerTabCard_box {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .daycomponents_box {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pagination {
+    margin-top: 0.5rem;
+    margin-bottom: 3rem;
+    gap: 0.2rem;
+  }
+
+  .pagination_input input[type="number"] {
+    width: 40px;
+    padding: 4px;
+  }
+
+  .page_numbers button {
+    margin: 0 1px;
+  }
+
+  .currentPage {
+    padding-top: 0.2rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    padding-bottom: 0.1rem;
+    font-size: 0.9rem;
+  }
+
+  .totalPages {
+    font-size: 0.9rem;
+  }
+}

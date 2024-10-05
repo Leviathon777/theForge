@@ -1,0 +1,321 @@
+.NFTDescription{
+    width: 100%;
+}
+
+.NFTDescription_box{
+    width: 100%;
+    margin:  0 auto;
+    margin-bottom: 4rem;
+}
+
+.NFTDescription_box_share{
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.NFTDescription_box_share_box_icon{
+    cursor: pointer;
+    font-size: 2rem;
+}
+
+
+.NFTDescription_box_share_box_icon:hover{
+    cursor: pointer;
+    font-size: 2rem;
+    color: rgba(1,122,254,255);
+}
+
+
+
+
+  
+
+.icon{
+    cursor: pointer;
+    font-size: 1.5rem;  
+}
+
+.icon:hover{
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: rgba(1,122,254,255);
+}
+
+.NFTDescription_box_share_box_social{
+    position: absolute;
+    top: 5rem;
+    left: 65%;
+    width: 14rem;
+    border-radius: 0 0 1rem 1rem;
+    background-color: #000000a9;   
+    border-radius: .5rem;    
+    padding: 1rem;
+    box-shadow: 0 5px 5px rgba(255, 255, 255, 0.7);
+    text-shadow: 1px 1px 3px black;
+    transition: background-color 0.2s ease;
+    z-index: 9999;
+}
+
+
+.NFTDescription_box_share span{
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.NFTDescription_box_profile_biding_box_timer_socials{
+    display: flex;
+    margin-top: 2rem;
+    align-items: center;
+    gap: 1rem;
+    transition: all .3s ease-in;
+    font-size: 1rem;
+    padding: .5rem 0;
+}
+
+
+
+.NFTDescription_box_share_box_social a:hover{
+    text-shadow: 
+    0 0 2px rgb(1, 122, 254, 255),
+    0 0 2px rgb(1, 122, 254, 255),
+    0 0 2px rgb(1, 122, 254, 255), 
+    0 0 2px rgb(1, 122, 254, 255),
+    0 0 3px rgb(1, 122, 254, 255),
+    0 0 3px rgb(1, 122, 254, 255),
+    0 0 3px rgb(1, 122, 254, 255), 
+    0 0 5px rgb(1, 122, 254, 255), 
+    0 0 5px rgb(1, 122, 254, 255), 
+    0 0 8px rgb(1, 122, 254, 255), 
+    0 0 10px rgb(1, 122, 254, 255);
+}
+
+.NFTDescription_box_share p{    
+    border: 4px double rgba(1,122,254,255);
+    color: white;
+    padding: .3rem .9rem;
+    border-radius: .25rem;
+    font-size: 1.25rem;
+}
+
+
+
+.NFTDescription_box_share a{     
+    color: white;       
+    font-size: 1.2rem;
+   
+}
+
+.NFTDescription_box_share_box{
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    font-size: 1.3rem;
+}
+
+.NFTDescription_box_profile h1{
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1;
+    text-align: center;
+}
+
+.NFTDescription_box_profile_box{
+    display: flex;
+    margin-top: 4rem;
+    align-items: center;
+    gap: 2rem;
+    padding-bottom: 0rem;
+    justify-content: center;
+}
+
+
+.NFTDetailsImg_box_details_box_profile_img {
+    width: 50px; 
+    height: 50px; 
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 10px; 
+  }
+
+
+.NFTDescription_box_profile_box_left{
+    display: flex;
+    align-items: center;
+    align-self: center;
+    gap: 1rem;
+    line-height: 1;
+}
+
+.NFTDescription_box_profile_box_right_info small,
+.NFTDescription_box_profile_box_left_info small{
+    font-weight: 500;
+}
+
+.NFTDescription_box_profile_box_right_info span,
+.NFTDescription_box_profile_box_left_info span{
+    font-weight: 800;
+}
+
+.NFTDescription_box_profile_box_left_img{
+    border-radius: 50%;
+}
+
+.NFTDescription_box_profile_box_right{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    line-height: 1;
+    border-left: 4px double rgba(1,122,254,255);
+    padding-left: 2rem;
+}
+
+.NFTDescription_box_profile_biding{
+    margin-block: 1rem;
+}
+
+.NFTDescription_box_profile_biding p{
+    display: flex;
+    align-items: center;
+
+    gap: 1rem;
+}
+
+.NFTDescription_box_profile_biding_box_timer{
+    display: flex;   
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+}
+
+.NFTDescription_box_profile_biding_box_timer_item {
+    display: grid;
+    justify-items: center;
+    
+}
+
+
+.NFTDescription_box_profile_biding_box_timer_socials{
+    display: flex;
+    gap: 3rem;
+    font-size: 1.5rem;
+    align-items: center;
+}
+
+.NFTDescription_box_profile_biding_box_timer_item p{
+    font-size: 2.5rem;
+    line-height: 1;
+    font-weight: 900;
+    margin-top: 4rem; 
+       text-decoration: underline;
+    text-decoration-color: rgba(1,122,254,255);
+    text-decoration-thickness: 3px;
+}
+
+.NFTDescription_box_profile_biding_box_timer_item span{
+    font-weight: 600;
+   
+}
+
+.NFTDescription_box_profile_biding_box_price{
+    line-height: 0;
+    margin-top: 4rem;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-items: center;
+}
+
+
+.NFTDescription_box_profile_biding_box_price_bid{
+    border: 4px double rgba(1,122,254,255);
+    border-radius: .5rem;
+    width: 60%;
+}
+
+.NFTDescription_box_profile_biding_box_price_bid small{
+    font-size: 1.2rem;
+    background-color: black;
+    color: white;
+    padding: .25rem 1rem;
+    border: 4px double rgba(1,122,254,255);
+    border-radius: .5rem;
+    margin-left: 2rem;
+}
+
+.NFTDescription_box_profile_biding_box_price_bid p{
+    padding: 1.5rem 0rem 0rem 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+
+.NFTDescription_box_profile_biding_box_button{
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 0rem;
+    
+}
+
+.NFTDescription_box_profile_biding_box_tabs{
+    margin-top: 0rem;
+    margin-bottom: 4rem;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.NFTDescription_box_profile_biding_box_tabs Button{
+margin-top: 1rem;
+}
+
+
+
+.NFTDescription_box_profile_biding_box_card{
+    margin-top: 0rem;
+    padding: 0rem;
+}
+
+
+
+@media screen and (max-width: 35em) {
+    .NFTDescription_box_share_box_social{
+        left: 35%;
+    }
+    .NFTDescription_box_profile_box{
+        display: grid;
+    }
+
+    .NFTDescription_box_profile_box_right{
+        border-left: 0;
+        padding-left: 0;
+    }
+
+    .NFTDescription_box_profile_biding_box_price{
+        gap: 1rem;
+        grid-template-columns: 2fr 1fr;
+    }
+
+    .NFTDescription_box_profile_biding_box_price_bid p{
+        font-size: 1rem;
+    }
+
+    .NFTDescription_box_profile_biding_box_button{
+        gap: 2rem;
+    }
+
+    .NFTDescription_box_profile_biding_box_tabs button{
+        font-size: 1rem;
+        padding: .5rem 1rem;
+        font-weight: 500;
+    }
+
+    .button{
+        font-size: 1rem;
+        padding: 1rem 1.2rem;
+    }
+}

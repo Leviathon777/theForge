@@ -1,0 +1,283 @@
+.xbutton {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.xbutton.original {
+  width: 345px;
+  height: 124px;
+}
+.xbutton.size1 {
+  width: 134px;
+  height: 52px;
+}
+.xbutton.size2 {
+  width: 174px;
+  height: 52px;
+}
+.xbutton.size3 {
+  width: 229px;
+  height: 52px;
+}
+.xbutton.size4 {
+  width: 300px;
+  height: 52px;
+}
+
+.xbutton-shadow {
+  position: absolute;
+  z-index: 1; /* 1st of 3 layers */
+  top: 8px;
+  left: 8px;
+  height: calc(100% - 16px);
+  width: calc(100% - 16px);
+  border-radius: 30px;
+  box-shadow: 0px 0px 30px rgba(241, 236, 236, 0.5);
+  transition: box-shadow 0.4s;
+}
+
+.xbutton:hover .xbutton-shadow,
+.xbutton.active .xbutton-shadow {
+  box-shadow: 0px 0px 30px #017afe;
+}
+
+.xbutton-gradient {
+  position: absolute;
+  z-index: 2; /* 2nd of 3 layers */
+  background: linear-gradient(
+    #020202 0%,
+    #131313 49%,
+    #080808 51%,
+    #000000 83%,
+    #131313 100%
+  );
+  overflow: hidden; /* To contain the pseudo-element */
+  /*border:1px solid orange;*/ /* for debugging placement of gradient */
+}
+.xbutton.original .xbutton-gradient {
+  width: calc(100% - 16px);
+  height: calc(100% - 23px);
+  top: 11px;
+  left: 8px;
+  border-radius: 25px;
+  /*border:1px solid orange;*/ /* for debugging placement of gradient */
+}
+.xbutton.size1 .xbutton-gradient,
+.xbutton.size2 .xbutton-gradient,
+.xbutton.size3 .xbutton-gradient,
+.xbutton.size4 .xbutton-gradient {
+  width: calc(100% - 6px);
+  height: calc(100% - 7px);
+  top: 3px;
+  left: 3px;
+  border-radius: 10px;
+  /*border:1px solid orange;*/ /* for debugging placement of gradient */
+}
+
+.xbutton-gradient::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.2) 40%,
+    rgba(0, 0, 0, 0.5) 50%,
+    #0d0d0d 80%,
+    #0d0d0d 100%
+  );
+  opacity: 0;
+  transition: opacity 80ms ease-in-out;
+}
+
+.xbutton:active .xbutton-gradient::after,
+.xbutton.active .xbutton-gradient::after {
+  opacity: 1;
+}
+
+.xbutton-btn {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 3; /* 3rd of 3 layers */
+  padding: 0;
+  background-color: transparent;
+  outline: none;
+  cursor: pointer;
+  align-content: center;
+  align-items: center;
+  display: flex;
+  justify-content: flex-start; /*center;*/
+  white-space: nowrap;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+  supported by Chrome, Edge, Opera and Firefox */
+  /*opacity: 0.05;*/ /* for debugging placement of gradient */
+}
+
+.xbutton.original .xbutton-btn {
+  background-image: url(/buttons/xbutton_original_345x124_sprite.png);
+}
+.xbutton.size1 .xbutton-btn {
+  background-image: url(/buttons/xbutton_size1_134x52_sprite.png);
+  justify-content: center;
+}
+.xbutton.size2 .xbutton-btn {
+  background-image: url(/buttons/xbutton_size2_174x52_sprite.png);
+}
+.xbutton.size3 .xbutton-btn {
+  background-image: url(/buttons/xbutton_size3_229x52_sprite.png);
+}
+.xbutton.size4 .xbutton-btn {
+  background-image: url(/buttons/xbutton_size4_300x52_sprite.png);
+}
+
+.xbutton-btn span.xbutton-text {
+  /*display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;*/
+  text-transform: uppercase;
+  color: rgb(234, 234, 234);
+  /*font-weight: 400;*/
+  font-weight: normal;
+  font-family: "Good Timing", sans-serif;
+  text-shadow: 0px 0px 2px black;
+  transform-origin: center center;
+  transition: text-shadow 0.6s ease-in-out, transform 80ms ease-in-out;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.xbutton.size1 .xbutton-btn span.xbutton-text,
+.xbutton.size2 .xbutton-btn span.xbutton-text,
+.xbutton.size3 .xbutton-btn span.xbutton-text,
+.xbutton.size4 .xbutton-btn span.xbutton-text {
+  padding-left: 60px;
+  padding-right: 17px;
+  font-size: 20px;
+  padding-bottom: 5px;
+}
+.xbutton.original .xbutton-btn span.xbutton-text {
+  padding-left: 113px;
+  padding-right: 50px;
+  font-size: 56px;
+}
+.xbutton.size1 .xbutton-btn span.xbutton-text {
+  padding-left: 17px;
+  padding-right: 17px;
+  font-size: 17px;
+}
+
+.xbutton-btn:hover span.xbutton-text,
+.xbutton.active span.xbutton-text,
+.xbutton.active .xbutton-btn:hover span.xbutton-text {
+  text-shadow: 0 0 2px rgb(234, 234, 234), 0 0 2px rgb(234, 234, 234),
+    0 0 3px rgb(234, 234, 234),
+    /*0 0 3px rgb(234, 234, 234),*/ 0 0 5px rgb(1, 122, 254, 255),
+    0 0 5px rgb(1, 122, 254, 255), 0 0 5px rgb(1, 122, 254, 255),
+    0 0 9px rgb(1, 122, 254, 255), 0 0 9px rgb(1, 122, 254, 255);
+  transform-origin: center center;
+  transition: color 0.5s ease, text-shadow 0.5s ease, transform 80ms ease-in-out;
+}
+
+@media (max-width: 800px) {
+  .xbutton-btn:hover span.xbutton-text {
+    text-shadow: none;
+  }
+}
+@media (hover: none) {
+  .xbutton-btn:hover span.xbutton-text {
+    text-shadow: none;
+  }
+} /* does not support hover */
+@media (pointer: coarse) {
+  .xbutton-btn:hover span.xbutton-text {
+    text-shadow: none;
+  }
+} /* is coarse pointer (touch screen) */
+
+.xbutton-btn span.xbutton-text.clicked {
+  transform-origin: center center;
+  transition: transform 80ms ease-in-out;
+}
+
+.xbutton.size1 .xbutton-btn span.xbutton-text.clicked,
+.xbutton.size2 .xbutton-btn span.xbutton-text.clicked,
+.xbutton.size3 .xbutton-btn span.xbutton-text.clicked,
+.xbutton.size4 .xbutton-btn span.xbutton-text.clicked,
+.xbutton.active .xbutton-btn span.xbutton-text {
+  transform: scale(0.97) translateZ(0);
+}
+
+.xbutton.original .xbutton-btn span.xbutton-text.clicked,
+.xbutton.original.active .xbutton-btn span.xbutton-text {
+  transform: scale(0.94) translateZ(0);
+}
+
+.xbutton.active .xbutton-btn {
+  cursor: default;
+  background-position: left bottom !important;
+}
+
+.xbutton.responsive {
+  width: 100%;
+  height: fit-content;
+}
+.xbutton.original.responsive {
+  aspect-ratio: 345/124;
+  max-width: 345px;
+}
+.xbutton.size1.responsive {
+  aspect-ratio: 134/52;
+  max-width: 134px;
+}
+.xbutton.size2.responsive {
+  aspect-ratio: 174/52;
+  max-width: 174px;
+}
+.xbutton.size3.responsive {
+  aspect-ratio: 229/52;
+  max-width: 229px;
+}
+.xbutton.size4.responsive {
+  aspect-ratio: 300/52;
+  max-width: 300px;
+}
+.xbutton-btn.responsive {
+  background-size: 100% auto;
+}
+.xbutton.responsive .xbutton-btn span.xbutton-text {
+  padding-right: 0;
+  padding-bottom: 5px;
+}
+@media (max-width: 400px) {
+  .xbutton.responsive .xbutton-btn span.xbutton-text {
+    padding-bottom: 1vw; /*0.224vw*/
+  }
+}
+.xbutton.original.responsive .xbutton-btn span.xbutton-text {
+  padding-left: calc(113 / 345 * 100%);
+}
+.xbutton.size1.responsive .xbutton-btn span.xbutton-text {
+  padding-left: 0;
+}
+.xbutton.size2.responsive .xbutton-btn span.xbutton-text {
+  padding-left: calc(60 / 174 * 100%);
+}
+.xbutton.size3.responsive .xbutton-btn span.xbutton-text {
+  padding-left: calc(60 / 229 * 100%);
+}
+.xbutton.size4.responsive .xbutton-btn span.xbutton-text {
+  padding-left: calc(60 / 300 * 100%);
+}

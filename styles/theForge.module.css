@@ -1,0 +1,173 @@
+.the {
+  display: flex;
+}
+
+.theForge {
+  margin-top: 0rem;
+  position: relative;
+  padding-bottom: 6rem;
+  position: relative;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.theForge_content {
+  position: relative;
+  background-image: url(../img/xdrip_background_2.jpg);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding-top: 4rem;
+}
+
+.video {
+  opacity: 0.7;
+}
+
+.theForge_cont {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  margin-top: 8rem;
+  background: black;
+}
+
+.theForge_container h1 {
+  font-size: 4rem;
+  margin-bottom: 6rem;
+  display: inline-block;
+  border-bottom: 0.5rem double white;
+}
+
+.theForge_content {
+  /*margin-top: 6rem;*/
+  justify-content: center;
+  padding-bottom: 16rem;
+}
+
+.medalsTitle {
+  font-size: 4rem;
+  margin: 3rem 7rem 2rem 7rem;
+  display: inline-block;
+  border-bottom: 0.5rem double white;
+  line-height: 1em;
+  padding-bottom: 0.5rem;
+}
+
+.medalsText {
+  font-size: 1.3rem;
+  line-height: 1.4;
+  margin: 0 7rem;
+  margin-top: 2rem;
+  margin-bottom: 4rem;
+  padding: 3rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--white-glow);
+  background-image: url(../img/card-background-5.png);
+}
+
+.videoContainer {
+  position: relative;
+}
+
+.video_background {
+  width: 100%;
+}
+
+.buttonContainer {
+  display: flex;
+  position: absolute;
+  bottom: 10px;
+}
+
+.mute_button,
+.pause_button {
+  color: rgba(255, 255, 255, 0.575);
+  font-size: 1.4rem;
+  cursor: pointer;
+  margin: 0 5px;
+  z-index: 2;
+}
+
+.bottomLeft {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 2;
+}
+
+.bottomRight {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 2;
+}
+
+@media (max-width: 1024px) {
+  .medalsTitle {
+    font-size: 3rem;
+    margin-left: 4rem;
+  }
+
+  .medalsText {
+    font-size: 1.2rem;
+    margin-left: 4rem;
+    margin-right: 4rem;
+    padding: 2rem;
+  }
+
+  .mute_button,
+  .pause_button {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 855px) {
+  .theForge_cont {
+    margin-top: 6rem;
+  }
+
+  .theForge_container h1 {
+    font-size: 3rem;
+  }
+
+  .medalsTitle {
+    font-size: 2.5rem;
+    margin-left: 2rem;
+    margin-top: 2rem;
+  }
+
+  .medalsText {
+    font-size: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 4rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+
+  .mute_button,
+  .pause_button {
+    font-size: 1rem;
+  }
+
+  .bottomLeft,
+  .bottomRight {
+    font-size: 1rem;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+  }
+}
+
+@media (max-width: 350px) {
+  .medalsTitle {
+    margin: 1rem;
+  }
+
+  .medalsText {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+}

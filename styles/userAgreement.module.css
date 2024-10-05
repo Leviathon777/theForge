@@ -1,0 +1,133 @@
+.agreement {
+    display: grid;
+    grid-template-columns: 18% 82%;
+    margin-top: 6rem;
+    margin-bottom: 12rem;
+    justify-content: center;
+  }
+
+  .active{
+    color: rgba(1,122,254,255);
+  }
+  
+  .agreement_box{
+    display: flex;
+    width: 100%;
+    margin-top: 8rem;
+    justify-content: center;
+  }
+
+
+  .agreement_box_box{
+    width: 70%;
+       
+  }
+
+
+  .agreement_box_body_title{
+    margin-bottom: 2rem;
+    
+  }
+
+
+  .agreement_box_body_title h1{
+        font-size: 3rem;
+        border-bottom: 4px double rgba(1,122,254,255);
+        font-weight: 600;
+  }
+
+
+  .agreement_box_body_title a{
+    font-size: 1.1rem;    
+    font-family: 'Aldrich', sans-serif;
+   
+}
+
+
+.agreement_box_body h2 {
+    margin-top: 2rem;
+    margin-bottom: .2rem;
+    font-size: 1.5rem;
+    display: inline-block;
+    border-bottom: 2px solid white;
+  }
+
+  .agreement_box_body_fill{
+    margin-bottom: 2.5rem;
+  }
+  
+
+  .agreement_box_body_fill_box{
+    margin-top: 4rem;
+  }
+  
+.agreement_box_body p{
+    font-size: 1rem;    
+    font-family: 'Aldrich', sans-serif;
+    
+}
+
+.agreement_box_body_update p{
+    margin-top: 8rem;
+    font-size: 1rem;    
+    font-family: 'Aldrich', sans-serif;
+    
+}
+
+.agreement_box_body_update{
+  margin-top: 6rem;
+}
+
+.sidebar{
+margin-top: 8rem;
+padding-left: 2.5rem;
+
+}
+
+.sidebar_header{
+  
+  margin-left: 1rem;
+  
+}
+
+.sidebar h2{
+  
+  margin-left: 1rem;
+  border-bottom: 4px double rgba(1,122,254,255);
+}
+
+.sidebar_header h2{
+ margin-bottom:  0rem;
+}
+
+.sidebar li{
+  margin-bottom: 1rem;
+  
+  }
+
+  .button {
+    font-size: 1.1rem;
+    padding: 1rem 2.5rem;
+    border-left: 4px double rgba(1,122,254,255);
+    outline: none;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    background-color: rgb(14, 14, 26);
+    color: rgb(234, 234, 234);
+    font-weight: 200;
+    font-family: 'Aldrich', sans-serif;
+    transition: 0.6s;
+    box-shadow: 0px 0px 60px #1f4c65;
+    -webkit-box-reflect: below 10px linear-gradient(to bottom, rgba(0,0,0,0.0), rgba(0,0,0,0.4));
+  }
+  
+  .button:active {
+    scale: 0.92;
+  }
+  
+  .button:hover {
+    background: rgb(2,29,78);
+    background: linear-gradient(270deg, rgba(2, 29, 78, 0.681) 0%, rgba(31, 215, 232, 0.873) 60%);
+    color: rgb(4, 4, 38);
+  }

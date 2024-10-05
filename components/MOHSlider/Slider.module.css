@@ -1,0 +1,56 @@
+
+
+.slider{
+    width: 100%;
+    margin-top: 4rem;
+    
+}
+
+.slider_box{
+    width: 80%;
+    margin: 0 auto;
+    padding: 0 -1rem 8rem 0;
+}
+
+.slider_box h2{
+    font-size: 3rem;
+    line-height: 0;
+}
+
+.slider_box_button p{
+    margin-top: 0rem;
+    font-size: 1.2rem;
+}
+
+.slider_box_items{
+    width: 80%;
+    overflow: hidden;
+    padding-left: 4rem;
+   
+}
+
+
+
+
+.slider_box_item::-webkit-scrollbar{
+    display: none;
+}
+
+@media screen and (max-width: 35em) {
+    .slider_box h2{
+        font-size: 2rem;
+    }
+    .slider_box_item{
+        overflow: auto;
+        grid-template-columns: repeat(6, 95%);
+        padding: 4rem 0;
+    }
+
+    .slider_box{
+        width: 90%;
+    }
+
+    .slider_box_button_btn_icon{
+        padding: .5rem;
+    }
+}
