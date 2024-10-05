@@ -1,0 +1,233 @@
+.MedalDetailsModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 9999;
+}
+
+.MedalDetailsModal_content {
+  position: relative;
+  width: 80%;
+  height: 80%;
+  display: flex;
+  background: black;
+  padding: 1.5rem 2rem 2rem 2rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--white-glow);
+}
+
+.MedalDetailsModal_foundingMembers {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.MedalDetailsModal_foundingMember {
+  width: 100px;
+  height: 100px;
+}
+
+.MedalDetailsModal_content p {
+  color: #017afe;
+  margin-bottom: 0.1rem;
+}
+
+.MedalDetailsModal_content small {
+  color: #fff;
+}
+
+.MedalDetailsModal_contractAddress_address {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  margin-right: -20px;
+}
+
+.MedalDetailsModal_contractAddress_address svg {
+  fill: #fff;
+  transition: linear 200ms fill;
+}
+
+.MedalDetailsModal_contractAddress_address svg:hover {
+  fill: #017afe;
+}
+
+.MedalDetailsModal_notes {
+  border-top: 1px solid #017afe;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  margin-right: 0rem;
+}
+
+.MedalDetailsModal_contractAddress_link:hover {
+  color: cyan;
+}
+
+.MedalDetailsModal_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #017afe;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  line-height: 1.9em;
+}
+
+.MedalDetailsModal_header h1 {
+  margin: 0;
+}
+
+.MedalDetailsModal_closeButton {
+  background-color: transparent;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: linear 200ms color;
+}
+
+.MedalDetailsModal_closeButton:hover {
+  color: #017afe;
+}
+
+.MedalDetailsModal_body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.MedalDetailsModal_scroll_container {
+  overflow: auto;
+  padding-right: 1rem;
+  height: 0;
+  flex-grow: 1;
+}
+
+.MedalDetailsModal_body,
+.MedalDetailsModal_profile {
+  min-height: 0;
+}
+
+.MedalDetailsModal_profile {
+  display: flex;
+  flex: 1;
+}
+
+.MedalDetailsModal_video {
+  flex: 0.4;
+  display: flex;
+  align-items: center;
+}
+
+.MedalDetailsModal_video_clone {
+  display: none;
+}
+
+.MedalDetailsModal_video video {
+  width: 600px;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.MedalDetailsModal_details {
+  flex: 0.6;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-left: 2rem;
+  color: white;
+}
+
+.MedalDetailsModal_profile_right_info {
+  margin-top: 1rem;
+}
+
+.MedalDetailsModal_price {
+  margin-top: 0.5rem;
+}
+
+.MedalDetailsModal_biding {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #017afe;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.MedalDetailsModal_biding_timer_item p {
+  margin-top: 0;
+}
+
+.MedalDetailsModal_biding_timer_item {
+  font-size: 18px;
+}
+
+.MedalDetailsModal_biding_price_bid small {
+  background-color: black;
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.2rem;
+  color: white;
+  font-size: 0.75rem;
+  border: 4px double rgba(1, 122, 254, 255);
+}
+
+.MedalDetailsModal_biding_price_bid p {
+  font-size: 0.85rem;
+  margin-top: 2rem;
+  line-height: 0;
+}
+
+@media (max-width: 1364px) {
+  .MedalDetailsModal_foundingMember {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (max-width: 1020px) {
+  .MedalDetailsModal_profile {
+    flex-direction: column;
+  }
+
+  .MedalDetailsModal_details {
+    order: -1;
+  }
+
+  .MedalDetailsModal_video_clone {
+    display: inline;
+  }
+
+  .MedalDetailsModal_video_clone video {
+    width: 100%;
+    height: auto;
+    padding-bottom: 0.75rem;
+  }
+
+  .MedalDetailsModal_video {
+    display: none;
+  }
+
+  .MedalDetailsModal_details {
+    padding-left: 0;
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 800px) {
+  .MedalDetailsModal_content {
+    padding: 0.5rem 1rem 1rem 1rem;
+  }
+
+  .MedalDetailsModal_biding_timer_item {
+    font-size: 14px;
+  }
+}

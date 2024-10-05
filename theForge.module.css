@@ -1,0 +1,157 @@
+.theForge_container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    margin-top: 3rem;
+  }
+  
+  .theForge {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    width: 100%;
+    max-width: calc(100% - 14rem);
+    padding: 0;
+    gap: 1.5rem;
+  }
+  
+  .card {
+    background: black;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: var(--white-glow);
+  }
+  
+  .card_left {
+    display: flex;
+  
+    justify-content: center;
+    text-align: center;
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+  }
+  
+  .card_left h2 {
+    font-size: 2rem;
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+    text-shadow: 0 0 2px rgb(1, 122, 254, 255), 0 0 2px rgb(1, 122, 254, 255),
+      0 0 2px rgb(1, 122, 254, 255), 0 0 2px rgb(1, 122, 254, 255),
+      0 0 3px rgb(1, 122, 254, 255), 0 0 3px rgb(1, 122, 254, 255),
+      0 0 3px rgb(1, 122, 254, 255), 0 0 5px rgb(1, 122, 254, 255),
+      0 0 5px rgb(1, 122, 254, 255);
+  }
+  
+  .card_right_top {
+    display: flex;
+    width: 100%;
+    margin-top: 0rem;
+  }
+  
+  .card_right_bottom_bidding_box_timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 2rem;
+    margin-top: 0rem;
+  }
+  
+  .car_right_box_price {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 0;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .card_right_box_price_box {
+    border: 4px double rgba(1, 122, 254, 255);
+    padding: 0rem 0.45rem;
+    border-radius: 0.25rem;
+  }
+  
+  .card_right_box_price_box small {
+    background-color: black;
+    padding: 0.2rem 0.45rem;
+    border-radius: 0.2rem;
+    color: white;
+    font-size: 0.75rem;
+    border: 4px double rgba(1, 122, 254, 255);
+  }
+  
+  .card_right_box_price_box p {
+    font-size: 0.85rem;
+    margin-top: 2rem;
+    line-height: 0;
+  }
+  
+  .card_right_bottom_bidding_box_timer_item span {
+    margin-bottom: 0rem;
+  }
+  
+  .card_right_bottom_bidding_box_timer_item p {
+    margin-top: 0rem;
+  }
+  
+  .button_wrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 0 0.5rem 0;
+    gap: 0.5rem;
+  }
+  
+  .card_right_bottom_button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-block: 0.5rem;
+  }
+  
+  @media (max-width: 1500px) {
+    .theForge {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  
+    .theForge:only-child:nth-last-child(5) .card:nth-child(4),
+    .theForge:only-child:nth-last-child(5) .card:nth-child(5) {
+      grid-column: 2 / 4;
+    }
+  
+    .card_left h2 {
+      font-size: 1.8rem;
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    .theForge {
+      max-width: calc(100% - 8rem);
+    }
+  }
+  
+  @media (max-width: 855px) {
+    .theForge {
+      grid-template-columns: repeat(2, 1fr);
+      max-width: calc(100% - 4rem);
+    }
+  
+    .theForge:only-child:nth-last-child(5) .card:last-child {
+      grid-column: 1 / -1;
+      justify-self: center;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .theForge {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 350px) {
+    .theForge {
+      max-width: calc(100% - 2rem);
+    }
+  }
+  
