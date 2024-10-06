@@ -12,7 +12,8 @@ import {
 
 import Head from "next/head";
 import Cookies from "js-cookie";
-import { NFTMarketplaceProvider } from "../Context/NFTMarketplaceContext";
+import { MOHProvider } from "../Context/MOHProviderContext";
+import "../styles/globals.css"; // Ensure global styles are included
 
 const MyApp = ({ Component, pageProps }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -52,32 +53,45 @@ const MyApp = ({ Component, pageProps }) => {
       ]}
     >
       <Head>
-        <title>The Forge Medals of Honor</title>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0"
-        />
+        <title>Medals of Honor by XdRiP</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta
           name="description"
           content="The Medals of Honor Collection by XdRiP Digital Management LLC "
         />
       </Head>
+
       {isModalVisible && (
         <div className="welcomeMessageOverlay">
           <div className="welcomeMessageContent">
             <p>
-              XdRiP, XMarket, XECHO, TheForge, XdRiPia Content, affiliates, and others may use cookies to enhance your user experience...
+              XdRiP, XMarket, XECHO, TheForge, XdRiPia Content, affiliates, and others may use cookies to enhance your user experience and ensure the security of your personal information...
+            </p>
+            <p>
+              By accessing this website, you consent to our data collection practices as described and agree to our{" "}
+              <a href="/termsOfService" target="_blank" rel="noopener noreferrer" style={{ color: "#007bff" }}>
+                Terms of Service
+              </a>{" "}
+              and{" "}
+              <a href="/userAgreement" target="_blank" rel="noopener noreferrer" style={{ color: "#007bff" }}>
+                User Agreement
+              </a>.
             </p>
             <div>
-              <button onClick={handleAccept}>Accept All</button>
-              <button onClick={handleDecline}>Decline</button>
+              <button onClick={handleAccept} className="cookie-button">
+                Accept All
+              </button>
+              <button onClick={handleDecline} className="cookie-button decline">
+                Decline
+              </button>
             </div>
           </div>
         </div>
       )}
-      <NFTMarketplaceProvider>
+
+      <MOHProvider>
         <Component {...pageProps} />
-      </NFTMarketplaceProvider>
+      </MOHProvider>
     </ThirdwebProvider>
   );
 };

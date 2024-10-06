@@ -1,25 +1,472 @@
+/*--------------------------------------------------------------
+>>> FONT IMPORTS
+--------------------------------------------------------------*/
+@import url('https://fonts.googleapis.com/css2?family=Saira:wght@200;400;600;700;800&family=Lora:wght@400;400i;700;700i&family=Source+Code+Pro:wght@400;700&display=swap');
+
+/*--------------------------------------------------------------
+>>> ROOT VARIABLES - BASE THEME (Default)
+--------------------------------------------------------------*/
+:root {
+  /* Font Families */
+  --font-primary: 'Saira', sans-serif;
+  --font-secondary: 'Lora', serif;
+  --font-monospace: 'Source Code Pro', monospace;
+
+  /* Font Weights */
+  --weight-light: 200;
+  --weight-regular: 400;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extrabold: 800;
+
+  /* Colors */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #8d8d8d;
+  --color-background: #000000;
+  --background-gradient-dark: linear-gradient(145deg, #0d0d0d, #1a1a1a);
+  --background-gradient-light: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5));
+  --color-accent: #017afe;
+  --color-accent-light: #7cb4dc;
+  --color-border: rgb(133, 133, 133);
+  --color-border-secondary: #333333;
+  --color-success: #27f727;
+  --color-error: #ff0000;
+  --color-muted: #888888;
+
+  /* Shadows and Glows */
+  --shadow-default: 0 2px 5px rgba(0, 0, 0, 0.5);
+  --glow-default: 0 0 10px rgba(255, 255, 255, 0.5);
+  --text-shadow: 1px 1px 0px var(--color-background),
+    1px 2px 0px var(--color-background),
+    1px 3px 0px var(--color-background),
+    1px 4px 0px var(--color-background),
+    1px 5px 0px var(--color-background),
+    1px 6px 0px var(--color-background),
+    1px 10px 5px rgba(16, 16, 16, 0.5),
+    1px 15px 10px rgba(16, 16, 16, 0.4),
+    1px 20px 30px rgba(16, 16, 16, 0.3),
+    1px 25px 50px rgba(16, 16, 16, 0.2);
+
+  /* Progress Bar Variables */
+  --progress-bar-color: rgba(37, 95, 244, 0.2);
+  --progress-bar-fill-start: rgba(37, 95, 244, 0.5);
+  --progress-bar-fill-end: rgba(85, 131, 246, 0.5);
+  --progress-bar-glow: rgba(37, 95, 244, 0.5);
+  --progress-bar-inner-glow: rgba(37, 95, 244, 0.7);
+
+
+  /* Sizing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Transitions */
+  --transition-default: 0.3s ease-in-out;
+
+  /* Table Styles */
+  --table-th-bg: #131313;
+  --table-header-color: lightgrey;
+  --table-row-odd-bg: linear-gradient(145deg, #2a2a2ab7, #1c1c1c);
+  --table-row-even-bg: rgba(0, 0, 0, 0.699);
+  --table-row-text-shadow: 4px 4px 8px #2c2b2b, -4px -4px 8px #333;
+  --table-row-hover-color: var(--highlight-color, #017afe);
+  --table-cell-padding: 1rem;
+  --table-font-size: 1rem;
+  --table-result-font-size: 0.9rem;
+
+}
+
+/*--------------------------------------------------------------
+>>> GUN METAL THEME (Cool Industrial Feel)
+--------------------------------------------------------------*/
+.theme-gun-metal {
+  --color-background: linear-gradient(145deg, #2b2b2b, #1f1f1f);
+  --color-text-primary: #d1d1d1;
+  --color-text-secondary: #9e9e9e;
+  --color-accent: #5c6b73;
+  --color-accent-light: #7c8d96;
+  --color-border: #444444;
+  --color-success: #40c057;
+  --color-error: #f03e3e;
+  --color-muted: #737373;
+
+  --glow-default: 0 0 15px rgba(92, 107, 115, 0.8);
+  --shadow-default: 0 3px 10px rgba(44, 44, 44, 0.7);
+
+  --gradient-button: linear-gradient(135deg, #5c6b73 0%, #7c8d96 100%);
+  --gradient-background: linear-gradient(145deg, #2b2b2b, #1f1f1f);
+
+  --progress-bar-color: rgba(92, 107, 115, 0.2);
+  /* Transparent Industrial Gray */
+  --progress-bar-fill-start: rgba(92, 107, 115, 0.5);
+  --progress-bar-fill-end: rgba(124, 141, 150, 0.5);
+  --progress-bar-glow: rgba(92, 107, 115, 0.5);
+  --progress-bar-inner-glow: rgba(92, 107, 115, 0.7);
+}
+
+/*--------------------------------------------------------------
+>>> FUTURISTIC TECH THEME (Neon, Sci-fi)
+--------------------------------------------------------------*/
+.theme-futuristic-tech {
+  --color-background: radial-gradient(circle, #1a1b1e, #0d0d0f);
+  --color-text-primary: #b8b8d1;
+  --color-text-secondary: #8585a8;
+  --color-accent: #4ee4c8;
+  --color-accent-light: #7cffe6;
+  --color-border: #2c2e33;
+  --color-success: #3ad4af;
+  --color-error: #ff4d4d;
+  --color-muted: #6b6d74;
+
+  --glow-default: 0 0 20px rgba(78, 228, 200, 0.8);
+  --shadow-default: 0 4px 15px rgba(26, 27, 30, 0.8);
+
+  --gradient-button: linear-gradient(135deg, #4ee4c8 0%, #7cffe6 100%);
+  --gradient-background: radial-gradient(circle, #1a1b1e, #0d0d0f);
+
+
+  --progress-bar-color: rgba(78, 228, 200, 0.2);
+  --progress-bar-fill-start: rgba(78, 228, 200, 0.5);
+  --progress-bar-fill-end: rgba(124, 255, 230, 0.5);
+  --progress-bar-glow: rgba(78, 228, 200, 0.5);
+  --progress-bar-inner-glow: rgba(78, 228, 200, 0.7);
+}
+
+
+/*--------------------------------------------------------------
+>>> INDUSTRIAL STEEL THEME (Metallic, Heavy)
+--------------------------------------------------------------*/
+.theme-industrial-steel {
+  --color-background: linear-gradient(135deg, #3b3b3b, #2b2b2b);
+  --color-text-primary: #d6d6d6;
+  --color-text-secondary: #aaaaaa;
+  --color-accent: #899499;
+  --color-accent-light: #c0cbd1;
+  --color-border: #545454;
+  --color-success: #82c91e;
+  --color-error: #ff6b6b;
+  --color-muted: #9e9e9e;
+
+  --glow-default: 0 0 12px rgba(137, 148, 153, 0.7);
+  --shadow-default: 0 5px 20px rgba(90, 90, 90, 0.6);
+
+  --gradient-button: linear-gradient(145deg, #899499, #c0cbd1);
+  --gradient-background: linear-gradient(135deg, #3b3b3b, #2b2b2b);
+
+  --progress-bar-color: rgba(137, 148, 153, 0.2);
+  --progress-bar-fill-start: rgba(137, 148, 153, 0.5);
+  --progress-bar-fill-end: rgba(192, 203, 209, 0.5);
+  --progress-bar-glow: rgba(137, 148, 153, 0.5);
+  --progress-bar-inner-glow: rgba(137, 148, 153, 0.7);
+}
+
+/*--------------------------------------------------------------
+>>> RASTA THEME (Vibrant, Jamaican-Inspired)
+--------------------------------------------------------------*/
+.theme-rasta {
+  --color-background: linear-gradient(145deg, #5a3939, #a3a12d);
+  --color-text-primary: #e60e0e;
+  --color-text-secondary: #c0c0c0;
+  --color-accent: #ffb400;
+  /* Yellow */
+  --color-accent-light: #ffecb3;
+  /* Light Yellow */
+  --color-border: #444444;
+  --color-success: #28a745;
+  /* Green */
+  --color-error: #d62828;
+  /* Red */
+  --color-muted: #6b6b6b;
+  --color-accent-2: #28a745;
+  /* Green for elements */
+  --color-accent-3: #d62828;
+  /* Red for elements */
+
+  --glow-default: 0 0 15px rgba(255, 180, 0, 0.8), 0 0 15px rgba(40, 167, 69, 0.6), 0 0 15px rgba(214, 40, 40, 0.6);
+  --shadow-default: 0 6px 20px rgba(18, 18, 18, 0.7);
+
+  --gradient-button: linear-gradient(135deg, #ffb400 0%, #28a745 40%, #d62828 80%);
+  --gradient-background: linear-gradient(145deg, #121212, #1c1c1c);
+
+  --progress-bar-color: rgba(255, 180, 0, 0.2);
+  /* Transparent Yellow */
+  --progress-bar-fill-start: rgba(255, 180, 0, 0.5);
+  --progress-bar-fill-end: rgba(40, 167, 69, 0.5);
+  /* Green */
+  --progress-bar-glow: rgba(255, 180, 0, 0.5);
+  --progress-bar-inner-glow: rgba(40, 167, 69, 0.7);
+  /* Green Inner glow */
+}
+
+/*--------------------------------------------------------------
+>>> GLOBAL STYLES (Shared Across Themes)
+--------------------------------------------------------------*/
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-secondary);
+  font-weight: var(--weight-regular);
+  color: var(--color-text-primary);
+  background: var(--color-background);
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color var(--transition-default);
+}
+
+a:hover {
+  color: var(--color-accent-light);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button {
+  font-family: var(--font-primary);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: background-color var(--transition-default), color var(--transition-default);
+}
+
+input,
+textarea {
+  font-family: var(--font-secondary);
+  font-weight: var(--weight-regular);
+  color: var(--color-text-primary);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  padding: var(--spacing-sm);
+  border-radius: var(--spacing-xs);
+  transition: border-color var(--transition-default);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-muted);
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+/*--------------------------------------------------------------
+>>> TYPOGRAPHY STYLES
+--------------------------------------------------------------*/
+/* Headings */
+h1,
+.h1 {
+  font-family: var(--font-primary);
+  font-weight: var(--weight-extrabold);
+  font-size: 2.5rem;
+  color: var(--color-text-primary);
+  text-shadow: 1px 1px 0px #000000,
+    1px 2px 0px #000000,
+    1px 3px 0px #000000,
+    1px 4px 0px #000000,
+    1px 5px 0px #000000,
+    1px 6px 0px #000000,
+    1px 10px 5px rgba(16, 16, 16, 0.5),
+    1px 15px 10px rgba(16, 16, 16, 0.4),
+    1px 20px 30px rgba(16, 16, 16, 0.3),
+    1px 25px 50px rgba(16, 16, 16, 0.2);
+}
+
+h2,
+.h2 {
+  font-family: var(--font-primary);
+  font-weight: var(--weight-bold);
+  font-size: 2rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-primary);
+  text-shadow: 1px 1px 0px #000000,
+    1px 2px 0px #000000,
+    1px 3px 0px #000000,
+    1px 4px 0px #000000,
+    1px 5px 0px #000000,
+    1px 6px 0px #000000,
+    1px 10px 5px rgba(16, 16, 16, 0.5),
+    1px 15px 10px rgba(16, 16, 16, 0.4),
+    1px 20px 30px rgba(16, 16, 16, 0.3),
+    1px 25px 50px rgba(16, 16, 16, 0.2);
+}
+
+h3,
+.h3 {
+  font-family: var(--font-primary);
+  font-weight: var(--weight-semibold);
+  font-size: 1.75rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+h4,
+.h4 {
+  font-family: var(--font-primary);
+  font-weight: var(--weight-regular);
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+h5,
+.h5 {
+  font-family: var(--font-primary);
+  font-weight: var(--weight-regular);
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-xs);
+}
+
+h6,
+.h6 {
+  font-family: var(--font-primary);
+  font-weight: var(--weight-light);
+  font-size: 1rem;
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Paragraphs */
+p {
+  font-family: var(--font-secondary);
+  font-weight: var(--weight-regular);
+  font-size: 1rem;
+  margin-bottom: var(--spacing-md);
+}
+
+small {
+  font-family: var(--font-secondary);
+  font-weight: var(--weight-regular);
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+span {
+  font-family: var(--font-secondary);
+  font-weight: var(--weight-regular);
+  font-size: .8rem;
+}
+
+blockquote {
+  font-family: var(--font-secondary);
+  font-weight: var(--weight-italic);
+  font-size: 1.25rem;
+  margin: var(--spacing-md) 0;
+  padding-left: var(--spacing-md);
+  border-left: 4px solid var(--color-accent);
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+pre,
+code {
+  font-family: var(--font-monospace);
+  font-size: 0.95rem;
+  background-color: #1e1e1e;
+  color: #dcdcdc;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--spacing-xs);
+  overflow-x: auto;
+}
+
+pre {
+  margin-bottom: var(--spacing-md);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: var(--spacing-lg) 0;
+}
+
+/*--------------------------------------------------------------
+>>> GLOBAL TOAST CONTAINER STYLES
+--------------------------------------------------------------*/
+.Toastify__toast-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  width: auto;
+  max-width: 400px;
+  padding: 4px;
+  box-sizing: border-box;
+  color: var(--color-text-primary);
+}
+
+.Toastify__toast {
+  background-color: var(--color-background);
+  border-radius: var(--spacing-xs);
+  box-shadow: var(--shadow-default);
+  color: var(--color-text-primary);
+}
+
+
+.Toastify__close-button {
+  color: var(--color-text-primary);
+}
+
+.Toastify__toast-body {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-md);
+  display: flex;
+  align-items: center;
+}
+
+.Toastify__progress-bar {
+  background-color: var(--color-success);
+}
+
+
+/*--------------------------------------------------------------
+>>> COMPONENT STYLES
+--------------------------------------------------------------*/
+
+/*=== Metronome Component ===*/
 .metronome-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: 20px;
+  padding: var(--spacing-lg);
+  background-color: #121212;
+  border-radius: var(--spacing-sm);
+  box-shadow: var(--shadow-default);
 }
 
 .metronome-display {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 2px solid #333; /* Add border styles as desired */
-  border-radius: 10px;
-  padding: 10px;
-  margin-top: 10px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--spacing-sm);
+  padding: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  background-color: #1c1c1c;
 }
 
 .metronome-led-container {
   position: relative;
-  width: 40px; /* Adjust the size of the container as desired */
-  height: 40px;
+  width: 50px;
+  height: 50px;
+  margin-bottom: var(--spacing-md);
 }
 
 .metronome-led {
@@ -30,155 +477,323 @@
   height: 100%;
   background-color: transparent;
   border-radius: 50%;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color var(--transition-default);
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8),
-    /* Inner shadow for depth */ 0 0 20px rgba(255, 255, 255, 0.5); /* Outer glow for 3D effect */
-  border: 2px solid rgba(255, 255, 255, 0.3); /* Subtle light edge */
+    0 0 20px rgba(255, 255, 255, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .metronome-led.glowing {
   animation: pulse var(--beat-duration) infinite alternate;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8),
     0 0 20px rgba(255, 255, 255, 0.9),
-    /* Brighter outer glow when active */ 0 0 30px var(--led-color); /* Colorful glow that matches LED color */
-  border: 2px solid var(--led-color);
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1.07); /* Start from a slightly smaller scale */
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8), 0 0 15px var(--led-color),
-      /* Dim glow for contraction */ 0 0 5px rgba(255, 255, 255, 0.7);
-  }
-  100% {
-    transform: scale(1); /* End at a slightly larger scale for a pulse effect */
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8), 0 0 30px var(--led-color),
-      /* Brighter glow for expansion */ 0 0 15px rgba(255, 255, 255, 1);
-  }
-}
-
-@keyframes metronomepulse {
-  0% {
-  }
-  100% {
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8),
-      0 0 30px var(--xdrip-light-blue) /* Brighter glow for expansion */ 0 0
-        15px rgba(255, 255, 255, 1);
-  }
+    0 0 30px var(--color-accent);
+  border: 2px solid var(--color-accent);
 }
 
 .bpm-display {
-  font-size: 28px;
-  margin-top: 5px;
+  font-family: var(--font-primary);
+  font-weight: var(--weight-bold);
+  font-size: 2rem;
+  margin-top: var(--spacing-sm);
+  color: var(--color-accent);
 }
 
-/*
-@keyframes pulse {
-  0% {
-    transform: scale(1.07);
-  }
-  100% {
-    transform: scale(1.0);
-  }
-}
-*/
-
-.metronome-indicator {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
+.metronome-indicator,
 .metronome-bpm {
-  font-size: 16px;
-  margin-bottom: 20px;
+  font-family: var(--font-secondary);
+  font-size: 1rem;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text-secondary);
 }
 
 .metronome-tick {
-  cursor: pointer;
-  font-size: 16px;
-  padding: 5px 10px;
-  background-color: #007bff; /* Change this color for the tick button */
-  color: #fff;
-  border-radius: 5px;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-accent);
+  color: var(--color-text-primary);
+  border-radius: var(--spacing-xs);
+  transition: background-color var(--transition-default), color var(--transition-default);
+}
+
+.metronome-tick:hover {
+  background-color: var(--color-accent-light);
 }
 
 .metronome-tick.active {
-  background-color: #ff0000; /* Change this color for the active tick button */
+  background-color: var(--color-error);
 }
 
-/*
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-*/
-
-/* global header 1 font 
-h1 {
-  color: #00ff00;
-
-}
-*/
-
-/* 
-global div border color set
-* {
-    border: 1px solid  #00ff00;
-}
-*/
-
+/*=== Equalizer Component ===*/
 .equalizer-visualizer {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  width: 200px;
+  width: 100%;
+  max-width: 300px;
   height: 200px;
-  background-color: #f0f0f0;
-  padding: 5px;
+  background-color: #1c1c1c;
+  padding: var(--spacing-sm);
+  border-radius: var(--spacing-sm);
+  margin: var(--spacing-lg) 0;
+  box-shadow: var(--shadow-default);
 }
 
 .equalizer-bar {
   width: 20px;
-  background-color: #27f727;
-  margin: 0 5px;
+  background-color: var(--color-success);
+  margin: 0 var(--spacing-xs);
+  border-radius: var(--spacing-xs);
+  animation: equalizerAnimation 1s infinite ease-in-out;
 }
 
-.effect-control {
-  margin-bottom: 10px;
+@keyframes equalizerAnimation {
+  0% {
+    height: 20%;
+  }
+
+  50% {
+    height: 100%;
+  }
+
+  100% {
+    height: 20%;
+  }
+}
+
+/*=== Button Styles ===*/
+/* Global Button Styles */
+.btn {
+  background: linear-gradient(145deg, #0d0d0d, #1a1a1a);
+  color: white;
+  border: 2px solid #1c1c1c;
+  border-radius: 12px;
+  box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-align: center;
+  text-transform: uppercase;
+  font-family: var(--font-primary);
+  color: white;
+  display: flex;
+  z-index: 1;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  padding: 10px 20px;
+  margin: 0.25rem;
+  text-shadow: 0px 0px 2px black;
+  box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7);
+  background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5));
+}
+
+.btn:hover {
+  color: lightgray;
+  transform: translateY(-3px);
+  text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.8);
+}
+
+.active {
+  box-shadow: inset 0px 0px 15px rgba(255, 255, 255, 0.2),
+    0px 8px 20px rgba(0, 0, 0, 0.9);
+}
+
+
+/*=== Cookie Notification ===*/
+.cookie-notification {
+  position: fixed;
+  bottom: var(--spacing-md);
+  right: var(--spacing-md);
+  background-color: #1c1c1c;
+  padding: var (--spacing-md);
+  border-radius: var(--spacing-sm);
+  box-shadow: var(--shadow-default);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  max-width: 400px;
+}
+
+.cookie-notification p {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
 }
 
 .cookie-button {
-  padding: 5px 10px;
-  background: solid black;
-  font-size: 14px;
-  border-radius: 8px;
-  border: 4px double rgba(1, 122, 254, 255);
-  cursor: pointer;
-  background-color: rgb(14, 14, 26);
-  color: rgb(234, 234, 234);
-  font-family: "Good Times";
-  cursor: pointer;
-  transition: 0.6s;
-  box-shadow: 0px 0px 20px #1f4c65;
+  padding: var(--spacing-xs) var(--spacing-md);
+  background-color: var(--color-accent);
+  color: var(--color-text-primary);
+  border-radius: var(--spacing-xs);
+  box-shadow: var(--shadow-default);
+  transition: background-color var(--transition-default);
+}
+
+.cookie-button:hover {
+  background-color: var(--color-accent-light);
 }
 
 .cookie-button.decline {
-  background: solid black;
-  border-color: black;
-  color: #ff0000;
-  border-radius: 8px;
+  background-color: var(--color-error);
 }
 
-.buttonContainer {
+.cookie-button.decline:hover {
+  background-color: #e60000;
+}
+
+/*=== Welcome Message Overlay ===*/
+.welcome-message-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
-  box-shadow: none;
+  align-items: center;
+  z-index: 1000;
+  padding: var(--spacing-lg);
 }
+
+.welcome-message-content {
+  background-color: #1c1c1c;
+  padding: var(--spacing-lg);
+  border-radius: var(--spacing-sm);
+  text-align: center;
+  box-shadow: var(--shadow-default);
+}
+
+.welcome-message-content h1 {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-accent);
+}
+
+.welcome-message-content p {
+  margin-bottom: var(--spacing-lg);
+}
+
+/*--------------------------------------------------------------
+>>> UTILITY STYLES
+--------------------------------------------------------------*/
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1c1c1e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #434343, #2f2f2f);
+  border-radius: var(--spacing-xs);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #5e5e5e, #3a3a3a);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, #767676, #525252);
+}
+
+/*--------------------------------------------------------------
+>>> PROGRESS BAR STYLES
+--------------------------------------------------------------*/
+
+/*--------------------------------------------------------------
+>>> ANIMATIONS
+--------------------------------------------------------------*/
+@keyframes pulse {
+  0% {
+    transform: scale(1.07);
+    box-shadow:
+      inset 0 0 10px rgba(0, 0, 0, 0.8),
+      0 0 15px var(--color-accent),
+      0 0 5px rgba(255, 255, 255, 0.7);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow:
+      inset 0 0 10px rgba(0, 0, 0, 0.8),
+      0 0 30px var(--color-accent),
+      0 0 15px rgba(255, 255, 255, 1);
+  }
+}
+
+@keyframes metronomePulse {
+  0% {
+    box-shadow: none;
+  }
+
+  100% {
+    box-shadow:
+      inset 0 0 10px rgba(0, 0, 0, 0.8),
+      0 0 30px var(--color-accent-light),
+      0 0 15px rgba(255, 255, 255, 1);
+  }
+}
+/* cookie modal wrap */
+.welcomeMessageOverlay {
+  position: fixed;
+  
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  
+}
+
+/* cookie modal content */
+.welcomeMessageContent {
+  background-color: #1c1c1c; /* Dark background to match second set */
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+  text-align: center;
+  color: #eaeaea; /* Light text color */
+  border: 1px solid var(--color-border); /* Border color like in second set */
+}
+
+/* cookie button styling */
+.cookie-button {
+  margin: 15px;
+  padding: 12px 25px;
+  border: none;
+  background-color: var(--highlight-color, #017afe); /* Use consistent highlight color */
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cookie-button:hover {
+  background-color: #0056b3; /* Slightly darker hover effect */
+}
+
+/* decline button variation */
+.cookie-button.decline {
+  background-color: #d50000; /* Red button color matching decline */
+}
+
+.cookie-button.decline:hover {
+  background-color: #b30000; /* Darker red on hover */
+}
+
+/* Disable page interactions */
+.page-content-disabled {
+  pointer-events: none;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
 
 .welcomeMessageOverlay {
   position: fixed;
@@ -186,190 +801,55 @@ global div border color set
   left: 0;
   width: 100%;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
-  align-items: flex-end;
-  padding-bottom: 10px;
-  padding-top: 10px;
+  z-index: 10000;
 }
 
 .welcomeMessageContent {
-  background-color: black;
-  opacity: 0.9;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 16px;
+  background-color: #1c1c1c; /* Dark background */
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.5);
   text-align: center;
-  margin-top: 10px;
-  color: white; /* Set text color */
-  box-shadow: 0 10px 10px rgba(255, 255, 255, 0.7);
-  width: max-content;
-  min-width: 200px;
+  color: #eaeaea; /* Light text color */
+  border: 1px solid #444444; /* Border similar to your themes */
 }
 
-@font-face {
-  font-family: "Good Times";
-  src: url("../font/good_times_rg.woff2") format("woff2"),
-    url("../font/good_times_rg.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Aldrich";
-  src: url("../font/aldrich_regular.woff2") format("woff2"),
-    url("../font/aldrich_regular.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Good Timing";
-  src: url("../font/good-timing/good-timing-rg.woff2") format("woff2"),
-    url("../font/good-timing/good-timing-rg.woff") format("woff"),
-    url("../font/good-timing/good-timing-rg.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Good Timing";
-  src: url("../font/good-timing/good-timing-bd.woff2") format("woff2"),
-    url("../font/good-timing/good-timing-bd.woff") format("woff"),
-    url("../font/good-timing/good-timing-bd.ttf") format("truetype");
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Good Timing";
-  src: url("../font/good-timing/good-timing-el.woff2") format("woff2"),
-    url("../font/good-timing/good-timing-el.woff") format("woff"),
-    url("../font/good-timing/good-timing-el.ttf") format("truetype");
-  font-weight: 200;
-  font-style: normal;
-}
-
-/* //THEME 1 */
-:root {
-  --icons-color: #3d465c;
-  --icons-light-color: rgba(109, 101, 89, 0.25);
-  --icons-bg-color: #e2e6e9;
-  --shadow-dark-color: #232627;
-  --bg-shadow-dark-color: rgba(43, 47, 49, 0.27);
-  --shadow-light-color: hwb(200 7% 91%);
-  --main-bg-color: #212325;
-
-  --xdrip-light-blue: rgb(124, 180, 220);
-  --xdrip-blue: #017afe;
-  --xdrip-light-gray: rgb(219, 216, 211);
-  --xdrip-dark-gray: #1b1c1e;
-  --xdrip-gold: #736b5e;
-
-  --white-glow: 0 0 5px rgba(255, 255, 255, 0.7),
-    0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px #000;
-
-  --box-shadow: 0rem 0rem 0rem var(--shadow-dark-color),
-    -1rem -1rem 1rem var(--shadow-light-color);
-  --box-shadow-2: 0rem 0rem 0rem var(--shadow-dark-color),
-    -0.3rem -0.3rem 1rem var(--shadow-dark-color);
-}
-
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: "Good Timing", sans-serif;
-  font-weight: 200;
+.cookie-button {
+  margin: 15px;
+  padding: 12px 25px;
+  border: none;
+  background-color: #007bff; /* Accept button color */
   color: white;
-  background: black;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  body {
-    color: white;
-    background: black;
-  }
+.cookie-button:hover {
+  background-color: #0056b3;
 }
 
-h1 {
-  font-family: "Good Timing", sans-serif;
-  font-weight: 200;
+.cookie-button.decline {
+  background-color: #d50000; /* Red button color for decline */
 }
 
-p {
-  font-family: "Aldrich", sans-serif;
+.cookie-button.decline:hover {
+  background-color: #b30000;
 }
 
-input {
-  color: var(--xdrip-light-gray);
-  font-family: "Aldrich", sans-serif;
-}
-
-input::placeholder {
-  color: var(--xdrip-light-gray) !important;
-  font-family: "Aldrich", sans-serif;
-}
-
-textarea {
-  color: var(--icons-color);
-}
-
-textarea::placeholder {
-  color: var(--icons-color);
-}
-
-a {
-  color: inherit;
+.welcomeMessageContent a {
+  color: #007bff;
   text-decoration: none;
 }
 
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: none;
+.welcomeMessageContent a:hover {
+  text-decoration: underline;
 }
-
-::selection {
-  color: var(--shadow-dark-color);
-  background: var(--icons-color);
-}
-
-::-webkit-scrollbar {
-  width: 1rem;
-  border: 1px solid var(--main-bg-color);
-}
-
-::-webkit-scrollbar-track {
-  border-radius: 0;
-  background-color: var(--main-bg-color);
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 2rem;
-  background: var(--icons-color);
-  width: 0.5rem;
-}
-
-nav svg {
-  transform: rotate(0deg);
-  transition: transform 0.3s ease-in-out;
-}
-
-.rotatedIcon svg {
-  transform: rotate(180deg);
-}
-
-/* To always align prev/next arrows if slide sizes differ */
-.audioSlider .slick-track {
-  display: flex;
-  align-items: center;
-  /*background: lime;*/
-}
-/*.slick-slide {
-  background: red !important;
-}*/

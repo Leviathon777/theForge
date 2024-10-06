@@ -5,10 +5,12 @@ import MedalDetailsModal from "../../MOHDetailsPage/medaldetails.js";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import dynamic from "next/dynamic";
-import { useAddress } from "@thirdweb-dev/react";
+import { ConnectWallet, darkTheme, useAddress } from "@thirdweb-dev/react"; 
 
 // INTERNAL IMPORT
 import Style from "./TheForge.module.css";
+import moreStyles from "../Button/Button.module.css";
+import moreStylesToo from "../NFTWallet/NFTWallet.module.css"
 import user1 from "../../img";
 import videos from "../../public/videos";
 //import Button from "../Button/Button";
@@ -44,7 +46,7 @@ const TheForge = () => {
       id: 1,
       name: "XDRIP OFFICIAL",
       collection: "MEDALS OF HONOR",
-      price: "0.01 BNB",
+      price: "0.25 BNB",
       like: 1,
       image: user1,
       nftVideo: videos.common,
@@ -61,7 +63,7 @@ const TheForge = () => {
       id: 2,
       name: "XDRIP OFFICIAL",
       collection: "MEDALS OF HONOR",
-      price: "0.02 BNB",
+      price: "0.5 BNB",
       like: 369,
       image: user1,
       nftVideo: videos.uncommon,
@@ -78,7 +80,7 @@ const TheForge = () => {
       id: 3,
       name: "XDRIP OFFICIAL",
       collection: "MEDALS OF HONOR",
-      price: "0.03 BNB",
+      price: "0.75 BNB",
       like: 1,
       image: user1,
       nftVideo: videos.rare,
@@ -95,7 +97,7 @@ const TheForge = () => {
       id: 4,
       name: "XDRIP OFFICIAL",
       collection: "MEDALS OF HONOR",
-      price: "0.04 BNB",
+      price: "1 BNB",
       like: 1,
       image: user1,
       nftVideo: videos.epic,
@@ -112,7 +114,7 @@ const TheForge = () => {
       id: 5,
       name: "XDRIP OFFICIAL",
       collection: "MEDALS OF HONOR",
-      price: "0.05 BNB",
+      price: "1.5 BNB",
       like: 1,
       image: user1,
       nftVideo: videos.legendary,
@@ -286,7 +288,45 @@ const TheForge = () => {
   };
 
   return (
+<div align="center">
+    <ConnectWallet
+          btnTitle="FORGE CONNECT"
+          style={{
+            backgroundColor: "black",
+            color: "white",
+            border: "0.2rem solid black",
+          }}
+          className={`${Style.loginSignupBtn} ${Style.box_box_right_btn}`}
+          modalTitle="Sign In"
+          theme={darkTheme({
+            colors: {
+              modalBg: "#000000",
+              walletSelectorButtonHoverBg: "#1a1a1a",
+              dropdownBg: "#000000",
+              borderColor: "black",
+              separatorLine: "white",
+            },
+          })}
+          switchToActiveChain={true}
+          termsOfServiceUrl="../../pages/termsOfService.js"
+          privacyPolicyUrl="../../privacyPolicy.js"
+          welcomeScreen={{
+            title: "THE FORGE by XdRiP",
+            subtitle: "MOH Tagline here",
+            img: {
+              src: "medal_1.png",
+              width: 300,
+              height: 300,
+            },
+          }}
+        />
+
+
+
     <div className={Style.theForge_container}>
+
+
+
       <div className={Style.theForge}>
         {mohData.map((item, index) => (
           <div key={index} className={Style.card}>
@@ -326,12 +366,50 @@ const TheForge = () => {
                       <p>{item.inventory.available}</p>
                     </div>
                   </div>
-                  <div className={Style.car_right_box_price}>
-                    <div className={Style.card_right_box_price_box}>
-                      <small>FORGE PRICE</small>
-                      <p>{item.price}</p>
-                    </div>
-                  </div>
+                  <div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "1rem",
+    marginBottom: "1rem",
+    textAlign: "center",
+  }}
+>
+  <div
+    style={{
+      backgroundColor: "#1f1f1f", 
+      border: "4px solid gray", 
+      padding: "0.5rem", 
+      borderRadius: "0.5rem", 
+      textAlign: "center",
+      color: "white", 
+    }}
+  >
+    <small
+      style={{
+        fontSize: "1rem",
+        fontWeight: "bold",
+        textTransform: "uppercase", 
+        color: "white", 
+      }}
+    >
+      MEDALS WORTH
+    </small>
+    <p
+      style={{
+        fontSize: "1.25rem", 
+        fontWeight: "bold",
+        color: "white", 
+        marginTop: "0.5rem",
+        textShadow: "0 0 5px rgba(255, 255, 255, 0.8)", 
+      }}
+    >
+      {item.price}
+    </p>
+  </div>
+</div>
+
                   <div className={Style.button_wrapper}>
                     <ButtonSprite
                       btnURL=""
@@ -388,7 +466,7 @@ const TheForge = () => {
         position={toast.POSITION.TOP_CENTER}
         className={Style.toast_container_center}
       />
-    </div>
+    </div></div>
   );
 };
 

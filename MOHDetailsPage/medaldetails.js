@@ -120,7 +120,7 @@ const MedalDetailsModal = ({ medal, onClose }) => {
                     {medal.collection} <MdVerified />
                   </span>
                   <div className={Style.MedalDetailsModal_price}>
-                    <p>FORGE PRICE</p>
+                    <p>PRICE</p>
                     <span>{medal.price}</span>
                   </div>
 
