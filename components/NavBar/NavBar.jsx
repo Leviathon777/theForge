@@ -24,7 +24,7 @@ import {
 import { Error } from "../componentsindex";
 import logo from "../../img/logo.png";
 import xmarket_100h from "../../img/xmarket_100h.png";
-import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
+import { MOHProvider } from "../../Context/MOHProviderContext";
 import { FaAngleDown, FaPlus } from "react-icons/fa";
 import { animated, useTransition, config } from "react-spring";
 //import { fetchUserNotifications } from "../../firebase/services";
@@ -108,7 +108,7 @@ const NavBar = () => {
     openError,
     searchNavQuery,
     setSearchNavQuery,
-  } = useContext(NFTMarketplaceContext);
+  } = useContext(MOHProviderContext);
   const isWalletConnected = Boolean(currentAccount);
   const [showSmallWindow, setShowSmallWindow] = useState(true);
 
