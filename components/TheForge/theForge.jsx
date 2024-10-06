@@ -48,7 +48,7 @@ const TheForge = () => {
       id: 1,
       name: "XDRIP OFFICIAL",
       collection: "MEDALS OF HONOR",
-      price: "0.25 BNB",
+      price: "0.5 BNB",
       like: 1,
       image: user1,
       nftVideo: videos.common,
@@ -57,7 +57,7 @@ const TheForge = () => {
       ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url,
       inventory: {
         forged: 0,
-        available: 100,
+        available: 10000,
       },
     },
     {
@@ -65,7 +65,7 @@ const TheForge = () => {
       id: 2,
       name: "XDRIP OFFICIAL",
       collection: "MEDALS OF HONOR",
-      price: "0.5 BNB",
+      price: "1 BNB",
       like: 369,
       image: user1,
       nftVideo: videos.uncommon,
@@ -74,7 +74,7 @@ const TheForge = () => {
       ipfsHash: ipfsHashes.find((hash) => hash.title === "UNCOMMON").url,
       inventory: {
         forged: 0,
-        available: 80,
+        available: 5000,
       },
     },
     {
@@ -82,7 +82,7 @@ const TheForge = () => {
       id: 3,
       name: "XDRIP OFFICIAL",
       collection: "MEDALS OF HONOR",
-      price: "0.75 BNB",
+      price: "1.5 BNB",
       like: 1,
       image: user1,
       nftVideo: videos.rare,
@@ -91,7 +91,7 @@ const TheForge = () => {
       ipfsHash: ipfsHashes.find((hash) => hash.title === "RARE").url,
       inventory: {
         forged: 0,
-        available: 60,
+        available: 2500,
       },
     },
     {
@@ -99,7 +99,7 @@ const TheForge = () => {
       id: 4,
       name: "XDRIP OFFICIAL",
       collection: "MEDALS OF HONOR",
-      price: "1 BNB",
+      price: "2 BNB",
       like: 1,
       image: user1,
       nftVideo: videos.epic,
@@ -108,7 +108,7 @@ const TheForge = () => {
       ipfsHash: ipfsHashes.find((hash) => hash.title === "EPIC").url,
       inventory: {
         forged: 0,
-        available: 40,
+        available: 1000,
       },
     },
     {
@@ -116,7 +116,7 @@ const TheForge = () => {
       id: 5,
       name: "XDRIP OFFICIAL",
       collection: "MEDALS OF HONOR",
-      price: "1.5 BNB",
+      price: "2.5 BNB",
       like: 1,
       image: user1,
       nftVideo: videos.legendary,
@@ -125,7 +125,7 @@ const TheForge = () => {
       ipfsHash: ipfsHashes.find((hash) => hash.title === "LEGENDARY").url,
       inventory: {
         forged: 0,
-        available: 20,
+        available: 500,
       },
     },
   ];
@@ -351,7 +351,7 @@ const TheForge = () => {
                   onMouseLeave={() => handleMouseLeave(index)}
                 ></video>
                 */}
-                
+
 
                 <VideoPlayer
                   videoSrc={item.nftVideo}
