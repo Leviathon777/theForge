@@ -5,7 +5,7 @@ import MedalDetailsModal from "../../MOHDetailsPage/medaldetails.js";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import dynamic from "next/dynamic";
-import { ConnectWallet, darkTheme, useAddress } from "@thirdweb-dev/react"; 
+import { ConnectWallet, darkTheme, useAddress } from "@thirdweb-dev/react";
 
 import VideoPlayer from "../VideoPlayer.jsx";
 
@@ -290,55 +290,55 @@ const TheForge = () => {
   };
 
   return (
-<div align="center">
-    <ConnectWallet
-          btnTitle="FORGE CONNECT"
-          style={{
-            backgroundColor: "black",
-            color: "white",
-            border: "0.2rem solid black",
-          }}
-          className={`${Style.loginSignupBtn} ${Style.box_box_right_btn}`}
-          modalTitle="Sign In"
-          theme={darkTheme({
-            colors: {
-              modalBg: "#000000",
-              walletSelectorButtonHoverBg: "#1a1a1a",
-              dropdownBg: "#000000",
-              borderColor: "black",
-              separatorLine: "white",
-            },
-          })}
-          switchToActiveChain={true}
-          termsOfServiceUrl="../../pages/termsOfService.js"
-          privacyPolicyUrl="../../privacyPolicy.js"
-          welcomeScreen={{
-            title: "THE FORGE by XdRiP",
-            subtitle: "MOH Tagline here",
-            img: {
-              src: "medal_1.png",
-              width: 300,
-              height: 300,
-            },
-          }}
-        />
+    <div align="center">
+      <ConnectWallet
+        btnTitle="FORGE CONNECT"
+        style={{
+          backgroundColor: "black",
+          color: "white",
+          border: "0.2rem solid black",
+        }}
+        className={`${Style.loginSignupBtn} ${Style.box_box_right_btn}`}
+        modalTitle="Sign In"
+        theme={darkTheme({
+          colors: {
+            modalBg: "#000000",
+            walletSelectorButtonHoverBg: "#1a1a1a",
+            dropdownBg: "#000000",
+            borderColor: "black",
+            separatorLine: "white",
+          },
+        })}
+        switchToActiveChain={true}
+        termsOfServiceUrl="../../pages/termsOfService.js"
+        privacyPolicyUrl="../../privacyPolicy.js"
+        welcomeScreen={{
+          title: "THE FORGE by XdRiP",
+          subtitle: "MOH Tagline here",
+          img: {
+            src: "medal_1.png",
+            width: 300,
+            height: 300,
+          },
+        }}
+      />
 
 
 
-    <div className={Style.theForge_container}>
+      <div className={Style.theForge_container}>
 
 
 
-      <div className={Style.theForge}>
-        {mohData.map((item, index) => (
-          <div key={index} className={Style.card}>
-            <div className={Style.card_left}>
-              <h2>{item.title}</h2>
-            </div>
-            <div className={Style.card_right}>
-              <div className={Style.card_right_top}>
+        <div className={Style.theForge}>
+          {mohData.map((item, index) => (
+            <div key={index} className={Style.card}>
+              <div className={Style.card_left}>
+                <h2>{item.title}</h2>
+              </div>
+              <div className={Style.card_right}>
+                <div className={Style.card_right_top}>
 
-                {/*
+                  {/*
                 <video
                   ref={(videoRef) => (videoRefs[index] = videoRef)} // Save the ref
                   controls
@@ -353,108 +353,108 @@ const TheForge = () => {
                 */}
 
 
-                <VideoPlayer
-                  videoSrc={item.nftVideo}
-                  videoStyles={{ width: "100%", borderRadius: "10px" }}
-                  isMuted={false}
-                  hoverPlay={true}
-                  autoPlay={false}
-                  loop={true}
-                  hoverGrow={true}
+                  <VideoPlayer
+                    videoSrc={item.nftVideo}
+                    videoStyles={{ width: "100%", borderRadius: "10px" }}
+                    isMuted={true}
+                    hoverPlay={true}
+                    autoPlay={false}
+                    loop={true}
+                    hoverGrow={true}
 
-                />
+                  />
 
 
-                <source src={item.nftVideo} type="video/mp4" />
-                  
-                
-              </div>
-              <div className={Style.card_right_bottom}>
-                <div className={Style.card_right_bottom_bidding}>
-                  <div className={Style.card_right_bottom_bidding_box_timer}>
-                    <div
-                      className={Style.card_right_bottom_bidding_box_timer_item}
-                    >
-                      <span>FORGED</span>
-                      <p>{item.inventory.forged}</p>
+                  <source src={item.nftVideo} type="video/mp4" />
+
+
+                </div>
+                <div className={Style.card_right_bottom}>
+                  <div className={Style.card_right_bottom_bidding}>
+                    <div className={Style.card_right_bottom_bidding_box_timer}>
+                      <div
+                        className={Style.card_right_bottom_bidding_box_timer_item}
+                      >
+                        <span>FORGED</span>
+                        <p>{item.inventory.forged}</p>
+                      </div>
+                      <div
+                        className={Style.card_right_bottom_bidding_box_timer_item}
+                      >
+                        <span>AVAILABLE</span>
+                        <p>{item.inventory.available}</p>
+                      </div>
                     </div>
                     <div
-                      className={Style.card_right_bottom_bidding_box_timer_item}
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: "1rem",
+                        marginBottom: "1rem",
+                        textAlign: "center",
+                      }}
                     >
-                      <span>AVAILABLE</span>
-                      <p>{item.inventory.available}</p>
+                      <div
+                        style={{
+                          backgroundColor: "#1f1f1f",
+                          border: "4px solid gray",
+                          padding: "0.5rem",
+                          borderRadius: "0.5rem",
+                          textAlign: "center",
+                          color: "white",
+                        }}
+                      >
+                        <small
+                          style={{
+                            fontSize: "1rem",
+                            fontWeight: "bold",
+                            textTransform: "uppercase",
+                            color: "white",
+                          }}
+                        >
+                          MEDALS WORTH
+                        </small>
+                        <p
+                          style={{
+                            fontSize: "1.25rem",
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "0.5rem",
+                            textShadow: "0 0 5px rgba(255, 255, 255, 0.8)",
+                          }}
+                        >
+                          {item.price}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: "1rem",
-    marginBottom: "1rem",
-    textAlign: "center",
-  }}
->
-  <div
-    style={{
-      backgroundColor: "#1f1f1f", 
-      border: "4px solid gray", 
-      padding: "0.5rem", 
-      borderRadius: "0.5rem", 
-      textAlign: "center",
-      color: "white", 
-    }}
-  >
-    <small
-      style={{
-        fontSize: "1rem",
-        fontWeight: "bold",
-        textTransform: "uppercase", 
-        color: "white", 
-      }}
-    >
-      MEDALS WORTH
-    </small>
-    <p
-      style={{
-        fontSize: "1.25rem", 
-        fontWeight: "bold",
-        color: "white", 
-        marginTop: "0.5rem",
-        textShadow: "0 0 5px rgba(255, 255, 255, 0.8)", 
-      }}
-    >
-      {item.price}
-    </p>
-  </div>
-</div>
 
-                  <div className={Style.button_wrapper}>
-                    <ButtonSprite
-                      btnURL=""
-                      btnSize="size1"
-                      btnText="FORGE"
-                      fontSize="default"
-                      paddingLeft="default"
-                      paddingRight="default"
-                      playSound="yes"
-                      isResponsive={true}
-                      maxWidth="120px"
-                      onClick={() => mint(item.title, item.ipfsHash)}
-                    />
-                    <ButtonSprite
-                      btnURL=""
-                      btnSize="size1"
-                      btnText="DETAILS"
-                      fontSize="default"
-                      paddingLeft="default"
-                      paddingRight="default"
-                      playSound="yes"
-                      isResponsive={true}
-                      maxWidth="120px"
-                      onClick={() => handleMedalDetails(item)}
-                    />
-                    {/*<Button
+                    <div className={Style.button_wrapper}>
+                      <ButtonSprite
+                        btnURL=""
+                        btnSize="size1"
+                        btnText="FORGE"
+                        fontSize="default"
+                        paddingLeft="default"
+                        paddingRight="default"
+                        playSound="yes"
+                        isResponsive={true}
+                        maxWidth="120px"
+                        onClick={() => mint(item.title, item.ipfsHash)}
+                      />
+                      <ButtonSprite
+                        btnURL=""
+                        btnSize="size1"
+                        btnText="DETAILS"
+                        fontSize="default"
+                        paddingLeft="default"
+                        paddingRight="default"
+                        playSound="yes"
+                        isResponsive={true}
+                        maxWidth="120px"
+                        onClick={() => handleMedalDetails(item)}
+                      />
+                      {/*<Button
                       btnName="FORGE"
                       icon="/buttons/black_button_sm1.png"
                       imageWidth={125}
@@ -471,21 +471,21 @@ const TheForge = () => {
                       imageHeight={44}
                       fontSize="17px"
                     />*/}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-      {selectedMedal && (
-        <MedalDetailsModal medal={selectedMedal} onClose={handleCloseModal} />
-      )}
-      <ToastContainer
-        position={toast.POSITION.TOP_CENTER}
-        className={Style.toast_container_center}
-      />
-    </div></div>
+          ))}
+        </div>
+        {selectedMedal && (
+          <MedalDetailsModal medal={selectedMedal} onClose={handleCloseModal} />
+        )}
+        <ToastContainer
+          position={toast.POSITION.TOP_CENTER}
+          className={Style.toast_container_center}
+        />
+      </div></div>
   );
 };
 
