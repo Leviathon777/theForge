@@ -1,6 +1,6 @@
 // pages/index.js
 import React from 'react';
-import TheForge from './theForge';
+import TheForge from './theForgePage';
 
 const HomePage = () => {
   return (
