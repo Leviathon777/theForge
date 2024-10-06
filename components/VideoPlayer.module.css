@@ -24,6 +24,7 @@
     display: flex;
     gap: 10px;
     opacity: 0.8;
+    transition: opacity 0.3s;
   }
   
   .controlButton {
@@ -35,180 +36,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.3s;
   }
   
-  .playIcon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-    color: white;
-    opacity: 0.7;
-  }
-  
-  .modal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    right: auto;
-    bottom: auto;
-    transform: translate(-50%, -50%);
-    background: #000;
-    padding: 20px;
-    border-radius: 10px;
-    outline: none;
-    max-width: 80%;
-    max-height: 80%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.75);
-  }
-  
-  .modalVideo {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-  }
-  
-  .modalCloseButton {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #1f1f1f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .modalCloseButton:hover {
-    background-color: #333;
-  }
-  
-
-  /* components/VideoPlayer.module.css */
-
-.videoContainer {
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-  }
-  
-  .hoverGrow:hover {
-    transform: scale(1.05); /* Grow on hover */
-  }
-  
-  .videoPlayer {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-  }
-  
-  .controls {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    display: flex;
-    gap: 10px;
-    opacity: 0.8;
-  }
-  
-  .controlButton {
-    cursor: pointer;
-    color: white;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 10px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .playIcon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-    color: white;
-    opacity: 0.7;
-  }
-  
-  .modal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    right: auto;
-    bottom: auto;
-    transform: translate(-50%, -50%);
-    background: #000;
-    padding: 20px;
-    border-radius: 10px;
-    outline: none;
-    max-width: 80%;
-    max-height: 80%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.75);
-  }
-  
-  .modalVideo {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-  }
-  
-  .modalCloseButton {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #1f1f1f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .modalCloseButton:hover {
-    background-color: #333;
-  }
-  
-
-  /* components/VideoPlayer.module.css */
-
-.videoContainer {
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-  }
-  
-  .hoverGrow:hover {
-    transform: scale(1.05); /* Grow on hover */
-  }
-  
-  .videoPlayer {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
+  .controlButton:hover {
+    background-color: rgba(0, 0, 0, 0.8);
   }
   
   .playIcon {
@@ -226,30 +58,6 @@
     opacity: 1;
   }
   
-  .controls {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    display: flex;
-    gap: 10px;
-    opacity: 0.8;
-    transition: opacity 0.3s;
-  }
-  
-  .controlButton {
-    font-size: 24px;
-    color: white;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 10px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .controlButton:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-  }
-  
   .modal {
     position: absolute;
     top: 50%;
@@ -263,6 +71,9 @@
     outline: none;
     max-width: 80%;
     max-height: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
   .modalOverlay {
@@ -290,7 +101,12 @@
     cursor: pointer;
   }
   
+  .modalCloseButton:hover {
+    background-color: #333;
+  }
+  
+  /* Hide the fallback text */
   .hiddenFallback {
-    display: none; /* Hide fallback text */
+    display: none;
   }
   

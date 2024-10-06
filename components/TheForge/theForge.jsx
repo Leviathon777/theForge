@@ -350,25 +350,8 @@ const TheForge = () => {
                   onMouseEnter={() => handleMouseEnter(index)}
                   onMouseLeave={() => handleMouseLeave(index)}
                 ></video>
+                */}
                 
-
-
-<VideoPlayer
-                    videoSrc={item.nftVideo}
-                    isMuted={isMuted} // Control mute state globally
-                    hoverPlay={true} // Enable play on hover
-                    autoPlay={false} // Do not auto-play initially
-                    loop={true}
-                    hoverGrow={true} // Enable grow effect on hover
-                    videoStyles={{
-                      width: "100%",
-                      height: "300px", // Adjust as needed
-                      borderRadius: "10px",
-                      position: "relative",
-                    }}
-                  />
-                  */}
-
 
                 <VideoPlayer
                   videoSrc={item.nftVideo}
