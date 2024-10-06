@@ -7,6 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 import dynamic from "next/dynamic";
 import { ConnectWallet, darkTheme, useAddress } from "@thirdweb-dev/react"; 
 
+import VideoPlayer from "../VideoPlayer.jsx";
+
 // INTERNAL IMPORT
 import Style from "./TheForge.module.css";
 import moreStyles from "../Button/Button.module.css";
@@ -335,6 +337,8 @@ const TheForge = () => {
             </div>
             <div className={Style.card_right}>
               <div className={Style.card_right_top}>
+
+                {/*
                 <video
                   ref={(videoRef) => (videoRefs[index] = videoRef)} // Save the ref
                   controls
@@ -345,10 +349,42 @@ const TheForge = () => {
                   loop={true} // Enable looping
                   onMouseEnter={() => handleMouseEnter(index)}
                   onMouseLeave={() => handleMouseLeave(index)}
-                >
-                  <source src={item.nftVideo} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
+                ></video>
+                
+
+
+<VideoPlayer
+                    videoSrc={item.nftVideo}
+                    isMuted={isMuted} // Control mute state globally
+                    hoverPlay={true} // Enable play on hover
+                    autoPlay={false} // Do not auto-play initially
+                    loop={true}
+                    hoverGrow={true} // Enable grow effect on hover
+                    videoStyles={{
+                      width: "100%",
+                      height: "300px", // Adjust as needed
+                      borderRadius: "10px",
+                      position: "relative",
+                    }}
+                  />
+                  */}
+
+
+                <VideoPlayer
+                  videoSrc={item.nftVideo}
+                  videoStyles={{ width: "100%", borderRadius: "10px" }}
+                  isMuted={false}
+                  hoverPlay={true}
+                  autoPlay={false}
+                  loop={true}
+                  hoverGrow={true}
+
+                />
+
+
+                <source src={item.nftVideo} type="video/mp4" />
+                  
+                
               </div>
               <div className={Style.card_right_bottom}>
                 <div className={Style.card_right_bottom_bidding}>

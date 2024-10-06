@@ -21,7 +21,7 @@ const NFTWallet = () => {
       return (
         <video autoPlay={true} controls={true} loop={true} muted={true} width={300} height={300} controlsList="nodownload" style={{ objectFit: "cover" }} className={Style.NFTWalletCard_box_img_vid}>
           <source src={metadata.animation_url} type="video/mp4" />
-          Your browser does not support the video tag.
+          
         </video>
 
       );
