@@ -1,11 +1,11 @@
-// components/VideoPlayer.jsx
+
 import React, { useState, useRef, useEffect } from "react";
 import { FaPlay, FaPause, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 import Modal from "react-modal";
 import PropTypes from "prop-types";
 import Style from "./VideoPlayer.module.css";
 
-// Ensure Modal is attached to the root of your app
+
 Modal.setAppElement("#__next");
 
 const VideoPlayer = ({
@@ -24,12 +24,12 @@ const VideoPlayer = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const videoRef = useRef(null);
 
-  // IntersectionObserver setup to detect when the video enters the viewport
+  
   useEffect(() => {
     const options = {
-      root: null, // Use the viewport as the root
+      root: null, 
       rootMargin: "0px",
-      threshold: 0.25, // Video should be at least 25% visible to start playing
+      threshold: 0.25, 
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -53,7 +53,7 @@ const VideoPlayer = ({
     };
   }, []);
 
-  // Handle play/pause based on hover and view status
+
   useEffect(() => {
     if (hoverPlay && isInView) {
       if (isHovered) {
@@ -69,10 +69,10 @@ const VideoPlayer = ({
     }
   }, [isHovered, isInView, hoverPlay]);
 
-  // Modal toggling
+
   const openModal = () => {
     setIsModalOpen(true);
-    // Pause the main video when opening the modal
+
     if (videoRef.current) {
       videoRef.current.pause();
       setIsPlaying(false);
@@ -81,7 +81,7 @@ const VideoPlayer = ({
 
   const closeModal = () => {
     setIsModalOpen(false);
-    // Resume playing the main video if it was playing before opening the modal
+
     if (hoverPlay && isInView) {
       if (isHovered) {
         videoRef.current.play();
@@ -114,32 +114,31 @@ const VideoPlayer = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Video element */}
+
       <video
         ref={videoRef}
-        width="100%" // Fill the width of the container
-        height="auto" // Keep aspect ratio
+        width="100%" 
+        height="auto"
         muted={isMutedState}
         loop={loop}
         autoPlay={autoPlay && isInView}
         className={Style.videoPlayer}
         style={videoStyles}
         onClick={openModal}
-        controls={false} // No default controls
+        controls={false} 
       >
         <source src={videoSrc} type="video/mp4" />
-        {/* Optional: Remove fallback text or style it to be hidden */}
         
       </video>
 
-      {/* Play Icon if not playing and not hovered */}
+      
       {!isPlaying && !isHovered && (
         <div className={Style.playIcon} onClick={openModal}>
-          <FaPlay size={60} />
+          <FaPlay size={50} />
         </div>
       )}
 
-      {/* Controls: Play/Pause and Mute */}
+      
       {isHovered && (
         <div className={Style.controls}>
           <div onClick={handlePlayPauseClick} className={Style.controlButton}>
@@ -151,7 +150,7 @@ const VideoPlayer = ({
         </div>
       )}
 
-      {/* Modal to display the video in larger size */}
+
       <Modal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
@@ -169,8 +168,6 @@ const VideoPlayer = ({
             controls
           >
             <source src={videoSrc} type="video/mp4" />
-            {/* Optional: Remove fallback text or style it to be hidden */}
-            <span className={Style.hiddenFallback}>Your browser does not support the video tag.</span>
           </video>
           <button className={Style.modalCloseButton} onClick={closeModal}>
             Close
@@ -181,7 +178,7 @@ const VideoPlayer = ({
   );
 };
 
-// PropTypes for validation
+
 VideoPlayer.propTypes = {
   videoSrc: PropTypes.string.isRequired,
   isMuted: PropTypes.bool,
