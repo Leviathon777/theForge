@@ -436,129 +436,6 @@ hr {
 }
 
 
-/*--------------------------------------------------------------
->>> COMPONENT STYLES
---------------------------------------------------------------*/
-
-/*=== Metronome Component ===*/
-.metronome-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--spacing-lg);
-  background-color: #121212;
-  border-radius: var(--spacing-sm);
-  box-shadow: var(--shadow-default);
-}
-
-.metronome-display {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: 2px solid var(--color-border);
-  border-radius: var(--spacing-sm);
-  padding: var(--spacing-md);
-  margin-top: var(--spacing-md);
-  background-color: #1c1c1c;
-}
-
-.metronome-led-container {
-  position: relative;
-  width: 50px;
-  height: 50px;
-  margin-bottom: var(--spacing-md);
-}
-
-.metronome-led {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-  border-radius: 50%;
-  transition: background-color var(--transition-default);
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8),
-    0 0 20px rgba(255, 255, 255, 0.5);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.metronome-led.glowing {
-  animation: pulse var(--beat-duration) infinite alternate;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8),
-    0 0 20px rgba(255, 255, 255, 0.9),
-    0 0 30px var(--color-accent);
-  border: 2px solid var(--color-accent);
-}
-
-.bpm-display {
-  font-family: var(--font-primary);
-  font-weight: var(--weight-bold);
-  font-size: 2rem;
-  margin-top: var(--spacing-sm);
-  color: var(--color-accent);
-}
-
-.metronome-indicator,
-.metronome-bpm {
-  font-family: var(--font-secondary);
-  font-size: 1rem;
-  margin-bottom: var(--spacing-sm);
-  color: var(--color-text-secondary);
-}
-
-.metronome-tick {
-  padding: var(--spacing-sm) var(--spacing-md);
-  background-color: var(--color-accent);
-  color: var(--color-text-primary);
-  border-radius: var(--spacing-xs);
-  transition: background-color var(--transition-default), color var(--transition-default);
-}
-
-.metronome-tick:hover {
-  background-color: var(--color-accent-light);
-}
-
-.metronome-tick.active {
-  background-color: var(--color-error);
-}
-
-/*=== Equalizer Component ===*/
-.equalizer-visualizer {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  width: 100%;
-  max-width: 300px;
-  height: 200px;
-  background-color: #1c1c1c;
-  padding: var(--spacing-sm);
-  border-radius: var(--spacing-sm);
-  margin: var(--spacing-lg) 0;
-  box-shadow: var(--shadow-default);
-}
-
-.equalizer-bar {
-  width: 20px;
-  background-color: var(--color-success);
-  margin: 0 var(--spacing-xs);
-  border-radius: var(--spacing-xs);
-  animation: equalizerAnimation 1s infinite ease-in-out;
-}
-
-@keyframes equalizerAnimation {
-  0% {
-    height: 20%;
-  }
-
-  50% {
-    height: 100%;
-  }
-
-  100% {
-    height: 20%;
-  }
-}
 
 /*=== Button Styles ===*/
 /* Global Button Styles */
@@ -599,35 +476,7 @@ hr {
 }
 
 
-/*=== Cookie Notification ===*/
-.cookie-notification {
-  position: fixed;
-  bottom: var(--spacing-md);
-  right: var(--spacing-md);
-  background-color: #1c1c1c;
-  padding: var (--spacing-md);
-  border-radius: var(--spacing-sm);
-  box-shadow: var(--shadow-default);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  max-width: 400px;
-}
 
-.cookie-notification p {
-  flex: 1;
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
-}
-
-.cookie-button {
-  padding: var(--spacing-xs) var(--spacing-md);
-  background-color: var(--color-accent);
-  color: var(--color-text-primary);
-  border-radius: var(--spacing-xs);
-  box-shadow: var(--shadow-default);
-  transition: background-color var(--transition-default);
-}
 
 .cookie-button:hover {
   background-color: var(--color-accent-light);
@@ -641,100 +490,8 @@ hr {
   background-color: #e60000;
 }
 
-/*=== Welcome Message Overlay ===*/
-.welcome-message-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: var(--spacing-lg);
-}
 
-.welcome-message-content {
-  background-color: #1c1c1c;
-  padding: var(--spacing-lg);
-  border-radius: var(--spacing-sm);
-  text-align: center;
-  box-shadow: var(--shadow-default);
-}
 
-.welcome-message-content h1 {
-  margin-bottom: var(--spacing-md);
-  color: var(--color-accent);
-}
-
-.welcome-message-content p {
-  margin-bottom: var(--spacing-lg);
-}
-
-/*--------------------------------------------------------------
->>> UTILITY STYLES
---------------------------------------------------------------*/
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #1c1c1e;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #434343, #2f2f2f);
-  border-radius: var(--spacing-xs);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #5e5e5e, #3a3a3a);
-}
-
-::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(180deg, #767676, #525252);
-}
-
-/*--------------------------------------------------------------
->>> PROGRESS BAR STYLES
---------------------------------------------------------------*/
-
-/*--------------------------------------------------------------
->>> ANIMATIONS
---------------------------------------------------------------*/
-@keyframes pulse {
-  0% {
-    transform: scale(1.07);
-    box-shadow:
-      inset 0 0 10px rgba(0, 0, 0, 0.8),
-      0 0 15px var(--color-accent),
-      0 0 5px rgba(255, 255, 255, 0.7);
-  }
-
-  100% {
-    transform: scale(1);
-    box-shadow:
-      inset 0 0 10px rgba(0, 0, 0, 0.8),
-      0 0 30px var(--color-accent),
-      0 0 15px rgba(255, 255, 255, 1);
-  }
-}
-
-@keyframes metronomePulse {
-  0% {
-    box-shadow: none;
-  }
-
-  100% {
-    box-shadow:
-      inset 0 0 10px rgba(0, 0, 0, 0.8),
-      0 0 30px var(--color-accent-light),
-      0 0 15px rgba(255, 255, 255, 1);
-  }
-}
 /* cookie modal wrap */
 .welcomeMessageOverlay {
   position: fixed;
@@ -751,13 +508,13 @@ hr {
 .welcomeMessageContent {
   background-color: #1c1c1c; /* Dark background to match second set */
   padding: 30px;
-  border-radius: 12px;
+  border-radius: 8px;
   max-width: 500px;
   width: 90%;
   box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
   text-align: center;
   color: #eaeaea; /* Light text color */
-  border: 1px solid var(--color-border); /* Border color like in second set */
+  border: 2px solid var(--color-border); /* Border color like in second set */
 }
 
 /* cookie button styling */
@@ -809,15 +566,15 @@ hr {
 }
 
 .welcomeMessageContent {
-  background-color: #1c1c1c; /* Dark background */
+  background-color: #1c1c1c; 
   padding: 30px;
   border-radius: 12px;
   max-width: 500px;
   width: 90%;
   box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.5);
   text-align: center;
-  color: #eaeaea; /* Light text color */
-  border: 1px solid #444444; /* Border similar to your themes */
+  color: #eaeaea; 
+  border: 1px solid #444444; 
 }
 
 .cookie-button {
@@ -852,4 +609,33 @@ hr {
 
 .welcomeMessageContent a:hover {
   text-decoration: underline;
+}
+
+
+
+.welcomeMessageContent {
+  position: relative; 
+}
+
+.cookie-logo {
+  position: absolute; 
+  padding: 2px;
+  bottom: 4px; 
+  right: 4px; 
+  width: 80px; 
+  border-radius: 6px;
+  height: auto; 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cookie-logo:hover {
+  position: absolute; 
+  bottom: 5px; 
+  right: 5px; 
+  width: 80px; 
+  
+  height: auto; 
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+  
 }

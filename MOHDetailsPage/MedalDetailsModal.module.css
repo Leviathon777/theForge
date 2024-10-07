@@ -1,37 +1,37 @@
 /* components/MedalDetailsModal.module.css */
 
-/* Modal Overlay */
+
 .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent dark overlay */
-  z-index: 1001; /* Just below the modal content */
+  background-color: rgba(0, 0, 0, 0.85); 
+  z-index: 1001; 
 }
 
-/* Modal Container */
+
 .MedalDetailsModal {
-  position: fixed; /* Fixed positioning to cover the viewport */
+  position: fixed; 
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: transparent; /* Transparent to allow video to fill the modal */
+  background: transparent; 
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1002; /* High z-index to appear above all other elements */
+  z-index: 1002; 
 }
 
-/* Modal Content */
+
 .MedalDetailsModal_content {
   position: relative;
-  width: 80%; /* Adjust as needed */
-  height: 80%; /* Adjust as needed */
-  background: transparent; /* Transparent to let the video show */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  width: 80%; 
+  height: 80%;
+  background: transparent; 
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -45,142 +45,146 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 1003; /* Above the video and overlay */
+  z-index: 1003;
   color: white;
 }
 
 /* Close Button */
 .MedalDetailsModal_closeButton {
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-  color: white; /* Text color */
-  border: none; /* Remove default border */
-  padding: 10px 20px; /* Padding for better click area */
-  border-radius: 5px; /* Rounded corners */
-  font-size: 1rem; /* Font size */
-  cursor: pointer; /* Pointer cursor on hover */
-  transition: background 0.3s ease; /* Smooth transition on hover */
+  background: rgba(0, 0, 0, 0.3); 
+  color: white; 
+  border: none; 
+  padding: 10px 20px; 
+  border-radius: 5px; 
+  font-size: 1rem; 
+  cursor: pointer; 
+  transition: background 0.3s ease; 
 }
 
 .MedalDetailsModal_closeButton:hover {
-  background: rgba(0, 0, 0, 0.7); /* Darker background on hover */
+  background: rgba(0, 0, 0, 0.3);
 }
 
-/* Modal Body */
+
 .MedalDetailsModal_body {
   width: 100%;
   height: 100%;
   position: relative;
 }
 
-/* Video Container */
+
 .videoContainer {
   width: 100%;
   height: 100%;
   position: relative;
 }
 
-/* Details Overlay */
+
 .detailsOverlay {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 40%; /* Bottom third */
-  background: rgba(0, 0, 0, 0.7); /* Slightly darker for better contrast */
-  backdrop-filter: blur(10px); /* Blurry effect */
+  height: 44%;
+  background: rgba(0, 0, 0, 0.5); 
+  backdrop-filter: blur(10px); 
   color: white;
   padding: 20px;
   box-sizing: border-box;
-  overflow-y: auto; /* Allow scrolling if content exceeds the height */
+  overflow-y: auto; 
   display: flex;
-  flex-direction: column; /* Stack items vertically */
+  flex-direction: column;
   z-index: 2;
 }
 
-/* Details Content */
+
 .detailsContent {
   width: 100%;
   display: flex;
-  flex-direction: column; /* Stack items vertically */
+  flex-direction: column;
 }
 
 /* Description */
 .MedalDetailsModal_description {
-  font-size: 2.5rem; /* Larger font size */
-  font-weight: bold; /* Bold text */
-  text-align: center; /* Left aligned */
-  margin-bottom: 10px; /* Margin for spacing */
+  font-size: 2.5rem; 
+  font-weight: bold; 
+  text-align: center; 
+  margin-bottom: 10px;
 }
 
 /* Sections */
 .MedalDetailsModal_creators,
 .MedalDetailsModal_price {
-  font-size: 1rem; /* Consistent font size */
-  margin-bottom: 6px; /* Spacing between sections */
-  text-align: left; /* Left aligned */
+  font-size: 1rem; 
+  margin-bottom: 6px;
+  text-align: left; 
 }
 
-.MedalDetailsModal_info,
+.MedalDetailsModal_info {
+  font-size: 1rem; 
+  margin-bottom: 10px; 
+  text-align: right; 
+  transform: translateY(-80px);
+}
+
 .MedalDetailsModal_notes {
-  font-size: 1rem; /* Consistent font size */
-  margin-bottom: 10px; /* Spacing between sections */
-  text-align: right; /* Left aligned */
+  font-size: 1rem; 
+  margin-bottom: 10px; 
+  text-align: center; 
   transform: translateY(-80px);
 }
 
 
 
-/* Contract Address */
 .MedalDetailsModal_contractAddress {
-  font-size: 1rem; /* Consistent font size */
-  
-  text-align: center; 
-  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 1rem;
+  cursor: pointer;
 }
 
-/* Notes Section */
+
 .MedalDetailsModal_notes small {
-  font-size: 0.9rem; /* Keep notes subtle */
+  font-size: 1rem; 
   color: #ccc;
+  
 }
 
-/* Companies List */
+
 .MedalDetailsModal_companies {
   width: 100%;
-  font-size: 0.9rem; /* Fine print */
-  text-align: left; /* Left aligned */
-  border-top: 1px solid #fff; /* Separator line */
+  font-size: 0.9rem; 
+  text-align: left; 
+  border-top: 1px solid #fff;
   padding-top: 10px;
 }
 
 .MedalDetailsModal_companies h3 {
-  font-size: 1.2rem; /* Smaller heading */
+  font-size: 1.2rem; 
   margin-bottom: 10px;
 }
 
 .MedalDetailsModal_companies ul {
-  list-style-type: none; /* Remove default bullets */
+  list-style-type: none; 
   padding: 0;
   margin: 0;
   display: flex;
-  justify-content: space-between; /* Space items evenly */
+  justify-content: space-between;
 }
 
 .MedalDetailsModal_companies ul li {
-  margin: 0 10px; /* Spacing between links */
+  margin: 0 10px; 
 }
 
 .MedalDetailsModal_companies ul li a {
-  color: #1a73e8; /* Link color */
+  color: #017afe; /* Link color */
   text-decoration: none;
   transition: text-decoration 0.2s ease;
 }
 
 .MedalDetailsModal_companies ul li a:hover {
-  text-decoration: underline; /* Underline on hover */
+  text-decoration: underline; 
 }
 
-/* Responsive Adjustments */
+
 @media (max-width: 768px) {
   .MedalDetailsModal_content {
     width: 95%;
@@ -188,7 +192,7 @@
   }
 
   .detailsOverlay {
-    height: 44%; /* Increase height for mobile */
+    height: 44%; 
     padding: 15px;
   }
 

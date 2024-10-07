@@ -64,10 +64,12 @@ const MyApp = ({ Component, pageProps }) => {
       {isModalVisible && (
         <div className="welcomeMessageOverlay">
           <div className="welcomeMessageContent">
-            <p>
+            <p><h2>MEDALS OF HONOR Collection </h2>
+            <h4>by XdRiP</h4></p>
+            <p align="left">
               XdRiP, XMarket, XECHO, TheForge, XdRiPia Content, affiliates, and others may use cookies to enhance your user experience and ensure the security of your personal information...
             </p>
-            <p>
+            <p align="left">
               By accessing this website, you consent to our data collection practices as described and agree to our{" "}
               <a href="/termsOfService" target="_blank" rel="noopener noreferrer" style={{ color: "#007bff" }}>
                 Terms of Service
@@ -85,6 +87,14 @@ const MyApp = ({ Component, pageProps }) => {
                 Decline
               </button>
             </div>
+            <a href="https://xdrip.io" target="_blank" rel="noopener noreferrer">
+            <img 
+              src="/xdrip1.jpg" 
+              alt="XdRiP Logo" 
+              className="cookie-logo" 
+            />
+            </a>
+            
           </div>
         </div>
       )}

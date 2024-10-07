@@ -26,6 +26,8 @@ import ipfsHashes from "../../Context/ipfsHashes";
 const MohAddress = mohCA_ABI.address;
 const MohABI = mohCA_ABI.abi;
 
+
+
 const fetchMohContract = (signerOrProvider) =>
   new ethers.Contract(MohAddress, MohABI, signerOrProvider);
 
@@ -33,6 +35,8 @@ const TheForge = () => {
   const [idNumber, setIdNumber] = useState(0);
   const address = useAddress();
   const [selectedMedal, setSelectedMedal] = useState(null);
+
+  const [currentAccount, setCurrentAccount] = useState(address);
 
   const DynamicReactPlayer = dynamic(() => import("react-player"), {
     ssr: false,
@@ -42,6 +46,14 @@ const TheForge = () => {
     new Array(videos.length).fill(false)
   );
 
+
+
+  useEffect(() => {
+    setCurrentAccount(address);
+  }, [address]);
+
+
+  
   const mohData = [
     {
       title: "COMMON",
@@ -53,7 +65,7 @@ const TheForge = () => {
       image: user1,
       nftVideo: videos.common,
       description:
-        "COMMON Medal, forged in the fires of battle, this medal represents the courage and determination of the XdRiP warrior.",
+        "Forged in the fires of battle, this medal represents the courage and determination of the XdRiP warrior.",
       ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url,
       inventory: {
         forged: 0,
@@ -70,7 +82,7 @@ const TheForge = () => {
       image: user1,
       nftVideo: videos.uncommon,
       description:
-        "UNCOMMON Medal, crafted by the most skilled, this medal is a symbol of the exceptional strength and valor possessed by those who rise above the rest.",
+        "Crafted by the most skilled, this medal is a symbol of the exceptional strength and valor possessed by those who rise above the rest.",
       ipfsHash: ipfsHashes.find((hash) => hash.title === "UNCOMMON").url,
       inventory: {
         forged: 0,
@@ -87,7 +99,7 @@ const TheForge = () => {
       image: user1,
       nftVideo: videos.rare,
       description:
-        "RARE Medal, forged from rare and precious metals, this medal is a testament to the elite few who have demonstrated unparalleled bravery and honor.",
+        "Forged from rare and precious metals, this medal is a testament to the elite few who have demonstrated unparalleled bravery and honor.",
       ipfsHash: ipfsHashes.find((hash) => hash.title === "RARE").url,
       inventory: {
         forged: 0,
@@ -104,7 +116,7 @@ const TheForge = () => {
       image: user1,
       nftVideo: videos.epic,
       description:
-        "EPIC Medal, wrought with mystical powers, this medal is a sign of the legendary feats accomplished by only the most heroic and mighty of warriors.",
+        "Wrought with mystical powers, this medal is a sign of the legendary feats accomplished by only the most heroic and mighty of warriors.",
       ipfsHash: ipfsHashes.find((hash) => hash.title === "EPIC").url,
       inventory: {
         forged: 0,
@@ -121,7 +133,7 @@ const TheForge = () => {
       image: user1,
       nftVideo: videos.legendary,
       description:
-        "LEGENDARY Medal, forged by the XdRiP Gods, this medal is a symbol of the ultimate achievement in battle, an honor bestowed only upon the greatest of heroes. ",
+        "Forged by the XdRiP Gods, this medal is a symbol of the ultimate achievement in battle, an honor bestowed only upon the greatest of heroes. ",
       ipfsHash: ipfsHashes.find((hash) => hash.title === "LEGENDARY").url,
       inventory: {
         forged: 0,
@@ -289,36 +301,139 @@ const TheForge = () => {
     }
   };
 
+
+
+
+  const WalletSelectorButton = `
+  background: linear-gradient(145deg, #0d0d0d, #1a1a1a);
+  color: white;
+  border: 2px solid #1c1c1c;
+  border-radius: 12px;
+  box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-align: center;
+  text-transform: uppercase;
+  
+  font-size: 20px;
+  text-shadow: 0px 0px 2px black;
+  background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto; 
+  height: auto;
+  margin: 0.25rem;
+  padding: 10px 20px;
+  z-index: 1;
+  
+  &:hover {
+    color: lightgray;
+    transform: translateY(-3px);
+    transition: transform 0.3s ease-in-out;
+    text-shadow: 4px 4px 6px rgba(0, 0, 0, 8);
+  }
+  
+  &.active {
+    box-shadow: inset 0px 0px 15px rgba(255, 255, 255, 0.2), 0px 8px 20px rgba(0, 0, 0, 0.9);
+  }`;
+
+
+
+
   return (
     <div align="center">
       <ConnectWallet
-        btnTitle="FORGE CONNECT"
+        btnTitle="OPEN THE VAULT"
+        
         style={{
-          backgroundColor: "black",
-          color: "white",
-          border: "0.2rem solid black",
+          background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
+          color: 'white',
+          border: '2px solid #1c1c1c',
+          borderRadius: '12px',
+          boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
+          transition: 'all 0.3s ease',
+          padding: '0',
+          width: '300px',
+          height: '52px',
+          cursor: 'pointer',
+          textAlign: 'center',
+          textTransform: 'uppercase',
+          fontFamily: '"Good Timing", sans-serif',
+          fontSize: '20px',
+          textShadow: '0px 0px 2px black',
+          backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
-        className={`${Style.loginSignupBtn} ${Style.box_box_right_btn}`}
-        modalTitle="Sign In"
+        
+
+        className={`${moreStyles.btn}`}
+        detailsBtn={() => {
+          return (
+            <button
+              className={moreStyles.btn}
+              style={{ display: 'flex', alignItems: 'center' }}
+            >
+              <div style={{ padding: "0px 0px", display: "flex", alignItems: "center" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyItems: "center", alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <p>Forge Engaged</p>
+                  </div>
+                  <p
+                    style={{
+                      backgroundColor: "linear-gradient(145deg, rgba(42, 42, 42, 0.8), rgba(28, 28, 28, 0.8))",
+                      color: "lightgray",
+                      fontSize: "12px",
+                      margin: "0",
+                    }}
+                  >
+                    {/* Check if currentAccount is defined before calling slice */}
+                    {currentAccount ? (
+                      currentAccount.slice(0, 4) + " . . . " + currentAccount.slice(-4)
+                    ) : (
+                      "Connect your wallet"
+                    )}
+                  </p>
+                </div>
+                <div style={{ marginLeft: "10px", display: "flex", alignItems: "center", paddingLeft: "5px" }}>
+                </div>
+              </div>
+            </button>
+          );
+        }}
+        
+
+        modalTitle="The Medals of Honor Collection"
         theme={darkTheme({
           colors: {
-            modalBg: "#000000",
-            walletSelectorButtonHoverBg: "#1a1a1a",
-            dropdownBg: "#000000",
-            borderColor: "black",
-            separatorLine: "white",
+            modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
+            walletSelectorButtonHoverBg: WalletSelectorButton,
+            dropdownbg: WalletSelectorButton,
+            hoverColor: WalletSelectorButton,
+            borderColor: "gray",
+            
+            separatorLine: "black",
+            secondaryButtonHoverBg: "green",
           },
         })}
+        modalSize={"wide"}
+        showThirdwebBranding="false"
+        onConnect={async (account) => {
+          console.log("Wallet connected:", account);
+          setWalletAddress(account);
+        }}
         switchToActiveChain={true}
-        termsOfServiceUrl="../../pages/termsOfService.js"
-        privacyPolicyUrl="../../privacyPolicy.js"
+        //termsOfServiceUrl="../../pages/termsOfService.js"
+        //privacyPolicyUrl="../../privacyPolicy.js"
         welcomeScreen={{
-          title: "THE FORGE by XdRiP",
-          subtitle: "MOH Tagline here",
+          title: "By the sacred Forge of Destiny, I vow to uphold the honor of XdRiPia. With unyielding courage, I bind my strength to the trials ahead, forging my path among the legendary. My Medal of Honor awaits. Valor, loyalty, and power guide me.",
+          subtitle: "Forge Your Path, Claim Your Medal",
           img: {
-            src: "medal_1.png",
-            width: 300,
-            height: 300,
+            src: "nft-image-5.png",
+            width: 360,
+            height: 360,
           },
         }}
       />
