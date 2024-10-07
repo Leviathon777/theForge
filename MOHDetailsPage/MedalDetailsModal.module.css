@@ -1,233 +1,213 @@
-.MedalDetailsModal {
+/* components/MedalDetailsModal.module.css */
+
+/* Modal Overlay */
+.modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent dark overlay */
+  z-index: 1001; /* Just below the modal content */
+}
+
+/* Modal Container */
+.MedalDetailsModal {
+  position: fixed; /* Fixed positioning to cover the viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent; /* Transparent to allow video to fill the modal */
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.8);
-  z-index: 9999;
+  z-index: 1002; /* High z-index to appear above all other elements */
 }
 
+/* Modal Content */
 .MedalDetailsModal_content {
   position: relative;
-  width: 80%;
-  height: 80%;
-  display: flex;
-  background: black;
-  padding: 1.5rem 2rem 2rem 2rem;
-  border-radius: 0.5rem;
-  box-shadow: var(--white-glow);
+  width: 80%; /* Adjust as needed */
+  height: 80%; /* Adjust as needed */
+  background: transparent; /* Transparent to let the video show */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-.MedalDetailsModal_foundingMembers {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-}
-
-.MedalDetailsModal_foundingMember {
-  width: 100px;
-  height: 100px;
-}
-
-.MedalDetailsModal_content p {
-  color: #017afe;
-  margin-bottom: 0.1rem;
-}
-
-.MedalDetailsModal_content small {
-  color: #fff;
-}
-
-.MedalDetailsModal_contractAddress_address {
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  margin-right: -20px;
-}
-
-.MedalDetailsModal_contractAddress_address svg {
-  fill: #fff;
-  transition: linear 200ms fill;
-}
-
-.MedalDetailsModal_contractAddress_address svg:hover {
-  fill: #017afe;
-}
-
-.MedalDetailsModal_notes {
-  border-top: 1px solid #017afe;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  margin-right: 0rem;
-}
-
-.MedalDetailsModal_contractAddress_link:hover {
-  color: cyan;
-}
-
+/* Modal Header */
 .MedalDetailsModal_header {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 1px solid #017afe;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  line-height: 1.9em;
-}
-
-.MedalDetailsModal_header h1 {
-  margin: 0;
-}
-
-.MedalDetailsModal_closeButton {
-  background-color: transparent;
+  align-items: center;
+  z-index: 1003; /* Above the video and overlay */
   color: white;
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: linear 200ms color;
+}
+
+/* Close Button */
+.MedalDetailsModal_closeButton {
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  color: white; /* Text color */
+  border: none; /* Remove default border */
+  padding: 10px 20px; /* Padding for better click area */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 1rem; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background 0.3s ease; /* Smooth transition on hover */
 }
 
 .MedalDetailsModal_closeButton:hover {
-  color: #017afe;
+  background: rgba(0, 0, 0, 0.7); /* Darker background on hover */
 }
 
+/* Modal Body */
 .MedalDetailsModal_body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  width: 100%;
   height: 100%;
+  position: relative;
 }
 
-.MedalDetailsModal_scroll_container {
-  overflow: auto;
-  padding-right: 1rem;
-  height: 0;
-  flex-grow: 1;
+/* Video Container */
+.videoContainer {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
-.MedalDetailsModal_body,
-.MedalDetailsModal_profile {
-  min-height: 0;
-}
-
-.MedalDetailsModal_profile {
-  display: flex;
-  flex: 1;
-}
-
-.MedalDetailsModal_video {
-  flex: 0.4;
-  display: flex;
-  align-items: center;
-}
-
-.MedalDetailsModal_video_clone {
-  display: none;
-}
-
-.MedalDetailsModal_video video {
-  width: 600px;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.MedalDetailsModal_details {
-  flex: 0.6;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding-left: 2rem;
+/* Details Overlay */
+.detailsOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40%; /* Bottom third */
+  background: rgba(0, 0, 0, 0.7); /* Slightly darker for better contrast */
+  backdrop-filter: blur(10px); /* Blurry effect */
   color: white;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto; /* Allow scrolling if content exceeds the height */
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  z-index: 2;
 }
 
-.MedalDetailsModal_profile_right_info {
-  margin-top: 1rem;
+/* Details Content */
+.detailsContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
 }
 
+/* Description */
+.MedalDetailsModal_description {
+  font-size: 2.5rem; /* Larger font size */
+  font-weight: bold; /* Bold text */
+  text-align: center; /* Left aligned */
+  margin-bottom: 10px; /* Margin for spacing */
+}
+
+/* Sections */
+.MedalDetailsModal_creators,
 .MedalDetailsModal_price {
-  margin-top: 0.5rem;
+  font-size: 1rem; /* Consistent font size */
+  margin-bottom: 6px; /* Spacing between sections */
+  text-align: left; /* Left aligned */
 }
 
-.MedalDetailsModal_biding {
+.MedalDetailsModal_info,
+.MedalDetailsModal_notes {
+  font-size: 1rem; /* Consistent font size */
+  margin-bottom: 10px; /* Spacing between sections */
+  text-align: right; /* Left aligned */
+  transform: translateY(-80px);
+}
+
+
+
+/* Contract Address */
+.MedalDetailsModal_contractAddress {
+  font-size: 1rem; /* Consistent font size */
+  
+  text-align: center; 
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+/* Notes Section */
+.MedalDetailsModal_notes small {
+  font-size: 0.9rem; /* Keep notes subtle */
+  color: #ccc;
+}
+
+/* Companies List */
+.MedalDetailsModal_companies {
+  width: 100%;
+  font-size: 0.9rem; /* Fine print */
+  text-align: left; /* Left aligned */
+  border-top: 1px solid #fff; /* Separator line */
+  padding-top: 10px;
+}
+
+.MedalDetailsModal_companies h3 {
+  font-size: 1.2rem; /* Smaller heading */
+  margin-bottom: 10px;
+}
+
+.MedalDetailsModal_companies ul {
+  list-style-type: none; /* Remove default bullets */
+  padding: 0;
+  margin: 0;
   display: flex;
-  flex-direction: column;
-  border-top: 1px solid #017afe;
-  margin-top: 1rem;
-  padding-top: 1rem;
+  justify-content: space-between; /* Space items evenly */
 }
 
-.MedalDetailsModal_biding_timer_item p {
-  margin-top: 0;
+.MedalDetailsModal_companies ul li {
+  margin: 0 10px; /* Spacing between links */
 }
 
-.MedalDetailsModal_biding_timer_item {
-  font-size: 18px;
+.MedalDetailsModal_companies ul li a {
+  color: #1a73e8; /* Link color */
+  text-decoration: none;
+  transition: text-decoration 0.2s ease;
 }
 
-.MedalDetailsModal_biding_price_bid small {
-  background-color: black;
-  padding: 0.2rem 0.45rem;
-  border-radius: 0.2rem;
-  color: white;
-  font-size: 0.75rem;
-  border: 4px double rgba(1, 122, 254, 255);
+.MedalDetailsModal_companies ul li a:hover {
+  text-decoration: underline; /* Underline on hover */
 }
 
-.MedalDetailsModal_biding_price_bid p {
-  font-size: 0.85rem;
-  margin-top: 2rem;
-  line-height: 0;
-}
-
-@media (max-width: 1364px) {
-  .MedalDetailsModal_foundingMember {
-    width: 50px;
-    height: 50px;
-  }
-}
-
-@media (max-width: 1020px) {
-  .MedalDetailsModal_profile {
-    flex-direction: column;
-  }
-
-  .MedalDetailsModal_details {
-    order: -1;
-  }
-
-  .MedalDetailsModal_video_clone {
-    display: inline;
-  }
-
-  .MedalDetailsModal_video_clone video {
-    width: 100%;
-    height: auto;
-    padding-bottom: 0.75rem;
-  }
-
-  .MedalDetailsModal_video {
-    display: none;
-  }
-
-  .MedalDetailsModal_details {
-    padding-left: 0;
-    flex: 1 1 auto;
-  }
-}
-
-@media (max-width: 800px) {
+/* Responsive Adjustments */
+@media (max-width: 768px) {
   .MedalDetailsModal_content {
-    padding: 0.5rem 1rem 1rem 1rem;
+    width: 95%;
+    height: 90%;
   }
 
-  .MedalDetailsModal_biding_timer_item {
-    font-size: 14px;
+  .detailsOverlay {
+    height: 44%; /* Increase height for mobile */
+    padding: 15px;
+  }
+
+  .MedalDetailsModal_description {
+    font-size: 1.5rem;
+  }
+
+  .MedalDetailsModal_creators,
+  .MedalDetailsModal_price,
+  .MedalDetailsModal_info,
+  .MedalDetailsModal_notes {
+    font-size: 0.9rem;
+  }
+
+  .MedalDetailsModal_companies h3 {
+    font-size: 1rem;
+  }
+
+  .MedalDetailsModal_companies ul li a {
+    font-size: 0.9rem;
   }
 }
