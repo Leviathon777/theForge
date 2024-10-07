@@ -361,11 +361,12 @@ const TheForge = () => {
                     autoPlay={false}
                     loop={true}
                     hoverGrow={true}
+                    disableInternalModal={false} 
 
                   />
 
 
-                  <source src={item.nftVideo} type="video/mp4" />
+                  
 
 
                 </div>
