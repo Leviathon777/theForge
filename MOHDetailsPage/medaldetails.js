@@ -55,7 +55,7 @@ const MedalDetailsModal = ({ medal, onClose }) => {
         {/* Header */}
         <div className={Style.MedalDetailsModal_header}>
           <h1>
-            {medal.title} MEDAL LEVEL {medal.id}
+            TIER {medal.id}
           </h1>
           <button
             className={Style.MedalDetailsModal_closeButton}
@@ -73,8 +73,8 @@ const MedalDetailsModal = ({ medal, onClose }) => {
             <VideoPlayer
               videoSrc={medal.nftVideo.startsWith('/') ? medal.nftVideo : `/${medal.nftVideo}`}
               isMuted={true}
-              hoverPlay={false} // Disable hover play inside modal
-              autoPlay={true} // Enable autoplay
+              hoverPlay={false} 
+              autoPlay={true} 
               loop={true}
               videoStyles={{
                 width: "100%",
@@ -82,25 +82,30 @@ const MedalDetailsModal = ({ medal, onClose }) => {
                 objectFit: "cover",
               }}
               hoverGrow={false}
-              disableInternalModal={true} // Disable internal modal
+              disableInternalModal={true}
             />
-            {/* Details Overlay */}
+            
             <div className={Style.detailsOverlay}>
               <div className={Style.detailsContent}>
-                {/* Each detail section */}
+            
+              <div className={Style.MedalDetailsModal_description}>
+                  <h1>The {medal.title || "NO DATA AVAILABLE"} Medal</h1>
+                </div>
+
                 <div className={Style.MedalDetailsModal_description}>
                   {medal.description || "NO DATA AVAILABLE"}
                 </div>
-                <div className={Style.MedalDetailsModal_creators}>
-                  <strong>Creators:</strong> XdRiP Dev Team: Brad, Jim, Flo, and Jordi
-                </div>
                 <div className={Style.MedalDetailsModal_price}>
-                  <p><strong>Medals Worth:</strong> {medal.price}</p>
+                  <p><h5>Medals Worth: {medal.price}</h5></p>
                 </div>
+                <div className={Style.MedalDetailsModal_creators}>
+                  <strong>Created by:</strong> XdRiP Dev Team: Brad, Jim, Flo, and Jordi
+                </div>
+                
                 <div className={Style.MedalDetailsModal_info}>
-                  <p><strong>COLLECTION:</strong> {medal.collection || "MEDALS of HONOR"}</p>
-                  <p><strong>MEDAL:</strong> {medal.name || "NO DATA AVAILABLE"}</p>
-                  <p><strong>CONTRACT ADDRESS:</strong>
+                  <p><h5>Collection: {medal.collection || "MEDALS of HONOR"}</h5></p>
+                  
+                  <p><strong>Contract: </strong>
                     <span className={Style.MedalDetailsModal_contractAddress} onClick={() => copyToClipboard(mohContractAddress)}>
                       {mohContractAddress && formatAddress(mohContractAddress)}
                       
@@ -108,14 +113,14 @@ const MedalDetailsModal = ({ medal, onClose }) => {
                   </p>
                 </div>
                 <div className={Style.MedalDetailsModal_notes}>
-                  <small>Minting Medals requires a 24-hour hold between tiers.</small>
+                  <small align="center">Forging Medals require a 24-hour hold between tiers</small>
                   <br />
-                  <small>Excluding the COMMON, you must own each previous tier to be eligible to forge the next.</small>
+                  <small>Excluding the COMMON, you must own each previous tier to be eligible to forge the next</small>
                 </div>
 
                 {/* Companies List */}
                 <div className={Style.MedalDetailsModal_companies}>
-                  <h3>Our Companies</h3>
+                  <h3>Global Businesses & Partnerships</h3>
                   <ul>
                     {companies.map((company, idx) => (
                       <li key={idx}>
