@@ -539,8 +539,10 @@ const TheForge = () => {
                             marginTop: "0.5rem",
                             textShadow: "0 0 5px rgba(255, 255, 255, 0.8)",
                           }}
+                          title={`or  $${Math.ceil(parseFloat(item.price) * 1000)} USD`}
                         >
                           {item.price}
+                          
                         </p>
                       </div>
                     </div>
