@@ -6,8 +6,8 @@ import Style from "./MOHDetailsPage.module.css";
 
 const MOHDetailsPage = ({ nft }) => {
   return (
-    <div className={Style.NFTDetailsPage}>
-      <div className={Style.NFTDetailsPage_box}>
+    <div >
+      <div >
         <MOHDetailsImg nft={nft} />
         <MOHDescription nft={nft} />
       </div>
