@@ -1,165 +1,128 @@
 .NFTWalletCard {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   width: 100%;
-  max-width: calc(100% - 14rem);
-  margin: 0 auto;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 14rem;
-  grid-auto-rows: minmax(450px, auto);
-}
-
-@-moz-document url-prefix() {
-  .NFTWalletCard * {
-    backface-visibility: hidden;
-  }
+  justify-content: center;
+  gap: 20px;
+  perspective: 1000px;
+  padding: 2.25rem;
+  border-radius: .5rem;
+  background-color: rgba(0, 0, 0, 0.733);
+  border: .75rem solid rgb(0, 0, 0);
 }
 
 .NFTWalletCard_box {
   position: relative;
-  justify-content: space-between;
+  width: 300px;
+  height: 450px;
+  border-radius: 15px;
+  transform-style: preserve-3d;
+  border: 5px solid #3333333f;
+  transition: transform 0.8s ease;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7),
+    inset 0 0 15px rgba(255, 255, 255, 0.1),
+    0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+.NFTWalletCard_box:hover {
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8),
+    inset 0 0 20px rgba(255, 255, 255, 0.15),
+    0 6px 8px rgba(0, 0, 0, 0.6);
+}
+
+.NFTWalletCard_box_front,
+.NFTWalletCard_box_back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.NFTWalletCard_box_front {
+  background: #1a1a1ac2;
+}
+
+.NFTWalletCard_box_back {
+  display: flex;
+  padding: 1rem;
+  flex-direction: column;
+  background: #0e0e0e;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  align-content: center;
+  transform: rotateY(180deg);
+}
+
+.NFTWalletCard_box_img_content {
+  width: 100%;
+  height: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.NFTWalletCard_box_info {
+  padding: 15px;
+  background: #1a1a1a;
+  color: #fff;
+  text-align: center;
+}
+
+.NFTWalletCard_text {
+  text-align: center;
+}
+
+.NFTWalletCard_box_info_details_button {
   display: flex;
   flex-direction: column;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-  border-radius: 1rem;
-  box-shadow: 0px 0px 7px 5px rgba(0, 0, 0, 0.7);
-  box-sizing: border-box;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  align-content: center;
+  width: 100%;
+  
+}
+
+.NFTWalletCard_box_info_details h3 {
+  font-size: 1rem;
+  text-align: center;
+  color: #fff;
+}
+
+.NFTWalletCard_box_info small {
+  display: block;
+  color: #777;
 }
 
 .NFTWalletCard_box.flipped {
   transform: rotateY(180deg);
 }
 
-.NFTWalletCard_box_front,
-.NFTWalletCard_box_back {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 1rem;
-}
-
-.NFTWalletCard_box_front {
-  display: flex;
-  flex-direction: column;
-  animation: rotation_481 5000ms infinite linear;
-}
-
-.NFTWalletCard_box_back {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-image: url(../../../img/card-background-5.png);
-  border-radius: 0.5rem;
-  transform: rotateY(180deg);
-  text-align: center;
-  margin: 0;
-  padding: 1rem;
-  box-shadow: inset 0 -1px rgba(255, 255, 255, 0.3),
-    0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-@-moz-document url-prefix() {
-  .NFTWalletCard_box_back {
-    box-shadow: 0px 0px 7px 5px rgba(0, 0, 0, 0.7);
-  }
-}
-
-.NFTWalletCard_box_img {
-  position: relative;
-  width: 100%;
-  grid-column: 1 / -1;
-  grid-row: 1 / -1;
-  overflow: hidden;
-  border-top-right-radius: 1rem;
-  border-top-left-radius: 1rem;
-  padding-top: 100%;
-}
-
-.NFTWalletCard_box_img_content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.NFTWalletCard_box_info .button_wrapper {
+  margin-top: 15px;
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
-.NFTWalletCard_box_img_img,
-.NFTWalletCard_box_img_vid {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  cursor: pointer;
-}
-
-.NFTWalletCard_box_info {
-  position: relative;
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-  bottom: 0;
-  width: 100%;
-  padding: 0rem;
-}
-
-.NFTWalletCard_box_info h3 {
-  font-size: 1rem;
-  margin: 0 auto;
-  padding-bottom: 0.5rem;
-}
-
-.NFTWalletCard_box_info small {
-  font-size: 1rem;
-  padding-bottom: 1rem;
-}
-
-.NFTWalletCard_box_info p {
-  font-size: 0.7rem;
-  margin-bottom: 0rem;
-}
-
-.NFTWalletCard_box_info_details {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-weight: normal;
-  font-family: "Good Timing", sans-serif;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 0 0 1rem 1rem;
-  background-image: url(../../../img/card-background-5.png);
-  box-shadow: inset 0 -1px rgba(255, 255, 255, 0.3),
-    0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1);
-  color: #fff;
+.NFTWalletCard_box_back h3 {
+  color: #ffffff;
   font-weight: bold;
-  line-height: 1;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  text-decoration: none;
-  text-shadow: 0 -1px rgba(0, 0, 0, 0.3);
-  padding: 1rem;
-  min-height: 130px;
-  backface-visibility: hidden;
+}
+
+.NFTWalletCard_box_back p {
+  color: #999999;
+  margin-top: 5px;
 }
 
 .NFTWalletCard_box_contract {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  margin-right: -20px;
 }
+
 
 .NFTWalletCard_box_back svg {
   fill: #fff;
@@ -186,6 +149,21 @@
   font-size: 0.9rem;
   margin-top: -0.5rem;
 }
+
+.NFTWalletCard_box_img_content .placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  width: 100%;
+  background: rgba(139, 139, 139, 0.205);
+  border-radius: 10px;
+  color: #808080;
+  font-size: 1.2rem;
+  font-style: italic;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
 
 @media (min-width: 1920px) {
   .NFTWalletCard {

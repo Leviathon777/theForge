@@ -1,20 +1,20 @@
 import React, { useContext, useState } from "react";
 import Image from "next/image";
-
 import Style from "./NFTWalletCard.module.css";
 import { MyNFTDataContext } from "../../../Context/MyNFTDataContext";
 import mohCA_ABI from "../../../Context/mohCA_ABI.json";
-import { ButtonSprite } from "../../../components/componentsindex.js";
+import { ButtonSprite, VideoPlayer } from "../../../components/componentsindex.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import VideoPlayer from "../../../components/VideoPlayer.jsx"; // Ensure correct path
 
 const NFTWalletCard = () => {
   const { nfts } = useContext(MyNFTDataContext);
   const mohContractAddress = mohCA_ABI.address;
   const [flippedCards, setFlippedCards] = useState(
-    Array(nfts.length).fill(false)
+    Array(5).fill(false) // Ensure there are 5 placeholders initially
   );
+
+  const medalPlaceholders = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY"];
 
   const handleClick = (i) => {
     const newFlippedCards = [...flippedCards];
@@ -61,104 +61,107 @@ const NFTWalletCard = () => {
 
   return (
     <div className={Style.NFTWalletCard}>
-      {nfts.map(({ tokenId, metadata }, i) => (
-        <div
-          className={`${Style.NFTWalletCard_box} ${flippedCards[i] ? Style.flipped : ""
-            }`}
-          key={i + 1}
-        >
-          <div className={Style.NFTWalletCard_box_front}>
-            <div className={Style.NFTWalletCard_box_img}>
-              <div className={Style.NFTWalletCard_box_img_content}>
-                {isImage(metadata.animation_url) ? (
-                  <Image
-                    src={metadata.image_url}
-                    alt={metadata.name}
-                    width={300}
-                    height={300}
-                    style={{ objectFit: "cover" }}
-                    className={Style.NFTWalletCard_box_img_img}
-                  />
-                ) : (
-                  <VideoPlayer
-                    videoSrc={metadata.animation_url} type="video/mp4"
-                    isMuted={true}
-                    hoverPlay={true}
-                    autoPlay={false}
-                    loop={true}
-                    videoStyles={{
-                      width: "100%",
-                      height: "300px",
-                      objectFit: "cover",
-                      borderRadius: "10px",
-                    }}
-                    hoverGrow={true}
-                  />
-                )}
+      {medalPlaceholders.map((placeholder, i) => {
+        const item = nfts[i];
+        return (
+          <div
+            className={`${Style.NFTWalletCard_box} ${flippedCards[i] ? Style.flipped : ""}`}
+            key={i}
+          >
+            <div className={Style.NFTWalletCard_box_front}>
+              <div className={Style.NFTWalletCard_box_img}>
+                <div className={Style.NFTWalletCard_box_img_content}>
+                  {item && item.metadata ? (
+                    isImage(item.metadata.animation_url) ? (
+                      <Image
+                        src={item.metadata.image_url}
+                        alt={item.metadata.name}
+                        width={300}
+                        height={300}
+                        className={Style.NFTWalletCard_box_img_img}
+                      />
+                    ) : (
+                      <VideoPlayer
+                        videoSrc={item.metadata.animation_url}
+                        isMuted={true}
+                        hoverPlay={true}
+                        autoPlay={false}
+                        loop={true}
+                        videoStyles={{
+                          width: "100%",
+                          height: "300px",
+                          objectFit: "cover",
+                          borderRadius: "10px",
+                        }}
+                        hoverGrow={true}
+                      />
+                    )
+                  ) : (
+                    <div className={Style.placeholder}>
+                      <p>{placeholder}</p>
+                    </div>
+                  )}
+                </div>
               </div>
+              {item && item.metadata && (
+                <div className={Style.NFTWalletCard_box_info}>
+                  <div className={Style.NFTWalletCard_box_info_details}>
+                    <h3>{item.metadata.name}</h3>
+                    <small>ID: {item.tokenId}</small>
+                    <div className={Style.NFTWalletCard_box_info_details_button}>
+                    <ButtonSprite
+                      btnURL=""
+                      btnSize="size1"
+                      btnText="DETAILS"
+                      paddingLeft="default"
+                      paddingRight="default"
+                      playSound="yes"
+                      isResponsive={true}
+                      maxWidth="120px"
+                      onClick={() => handleClick(i)}
+                    />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className={Style.NFTWalletCard_box_info}>
-              <div className={Style.NFTWalletCard_box_info_details}>
-                <h3>{metadata.name ? metadata.name : "NO DATA AVAILABLE"}</h3>
-                <small>ID: {tokenId ? tokenId : "NO DATA AVAILABLE"}</small>
-                <ButtonSprite
-                  btnURL=""
-                  btnSize="size1"
-                  btnText="details"
-                  fontSize="default"
-                  paddingLeft="default"
-                  paddingRight="default"
-                  playSound="yes"
-                  isResponsive={true}
-                  maxWidth="120px"
-                  onClick={() => handleClick(i)}
-                />
-              </div>
+            <div className={Style.NFTWalletCard_box_back}>
+              <h3 className={Style.NFTWalletCard_text}>COLLECTION</h3>
+              <p>{item && item.metadata ? item.metadata.name : "MEDALS OF HONOR"}</p>
+              <h3 className={Style.NFTWalletCard_text}>MEDAL</h3>
+              <p>{item && item.metadata ? item.metadata.name : placeholder}</p>
+              <h3 className={Style.NFTWalletCard_text}>CONTRACT</h3>
+              <p>
+                <span
+                  className={Style.NFTWalletCard_box_contract}
+                  title="Copy to Clipboard"
+                >
+                  {mohContractAddress && formatAddress(mohContractAddress)}
+                  <CopyIcon />
+                </span>
+              </p>
+              <h3 className={Style.NFTWalletCard_text}>DESCRIPTION</h3>
+              <p>
+                {item && item.metadata ? item.metadata.description : "Available soon!"}
+              </p>
+              <ButtonSprite
+                btnURL=""
+                btnSize="size1"
+                btnText="back"
+                fontSize="default"
+                paddingLeft="default"
+                paddingRight="default"
+                playSound="yes"
+                hoverGrow="yes"
+                isResponsive={true}
+                maxWidth="120px"
+                onClick={() => handleClick(i)}
+              />
             </div>
           </div>
-
-          <div className={Style.NFTWalletCard_box_back}>
-            <h3>COLLECTION</h3>
-            <p>
-              {metadata.collection ? metadata.collection : "MEDALS of HONOR"}
-            </p>
-
-            <h3>MEDAL</h3>
-            <p>{metadata.name ? metadata.name : "NO DATA AVAILABLE"}</p>
-
-            <h3>CONTRACT</h3>
-            <p>
-              <span
-                className={Style.NFTWalletCard_box_contract}
-                title="Copy to Clipboard"
-              >
-                {mohContractAddress && formatAddress(mohContractAddress)}
-                <CopyIcon />
-              </span>
-            </p>
-
-            <h3>DESCRIPTION</h3>
-            <p>
-              {metadata.description
-                ? metadata.description
-                : "NO DATA AVAILABLE"}
-            </p>
-            <ButtonSprite
-              btnURL=""
-              btnSize="size1"
-              btnText="back"
-              fontSize="default"
-              paddingLeft="default"
-              paddingRight="default"
-              playSound="yes"
-              isResponsive={true}
-              maxWidth="120px"
-              onClick={() => handleClick(i)}
-            />
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

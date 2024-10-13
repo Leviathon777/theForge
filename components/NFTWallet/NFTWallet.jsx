@@ -1,32 +1,20 @@
 import React, { useContext } from "react";
 import Style from "./NFTWallet.module.css";
-import videos from "../../public/videos";
 import NFTWalletCard from "./NFTWalletCard/NFTWalletCard";
-
 import MyNFTData, { MyNFTDataContext } from '../../Context/MyNFTDataContext';
-
-import VideoPlayer from "../VideoPlayer.jsx";
-
-
 
 const NFTWallet = () => {
   const { nfts } = useContext(MyNFTDataContext);
-
   const renderMedia = (url, metadata) => {
     if (!url) {
       return <p>No media found</p>;
     }
-
     const fileExtension = url.split('.').pop().toLowerCase();
-
     if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
       return (
         <video autoPlay={true} controls={true} loop={true} muted={true} width={300} height={300} controlsList="nodownload" style={{ objectFit: "cover" }} className={Style.NFTWalletCard_box_img_vid}>
-        
-          <source src={metadata.animation_url} type="video/mp4" />
-          
+           <source src={metadata.animation_url} type="video/mp4" />      
         </video>
-
       );
     } else if (['mp3', 'wav', 'ogg'].includes(fileExtension)) {
       return <audio src={url} controls />;
@@ -34,17 +22,10 @@ const NFTWallet = () => {
       return <img src={url} alt="NFT" width="150" />;
     }
   };
-
-
   return (
     <div className={Style.nft_wallet}>
-
-      <h1 className={Style.page_title}>MY MEDALS OF HONOR</h1>
-
       <NFTWalletCard nfts={nfts} renderMedia={renderMedia} />
-
     </div>
   );
 };
-
 export default NFTWallet;

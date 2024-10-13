@@ -1,5 +1,11 @@
 .nft_wallet {
-  margin-top: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  margin-top: 3rem;
+  width: 100%;
 }
 
 .nft_wallet_box {
@@ -8,13 +14,7 @@
   flex-direction: column;
   gap: 0rem;
 }
-.page_title {
-  font-size: 4rem;
-  margin-bottom: 5rem;
-  margin-left: 7rem;
-  display: inline-block;
-  border-bottom: 0.5rem double white;
-}
+
 
 @media (max-width: 1024px) {
   .page_title {

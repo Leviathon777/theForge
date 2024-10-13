@@ -1,190 +1,241 @@
+.carousel_container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-style: preserve-3d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.carousel_wrapper {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 2500px;
+  margin-top: 2.5rem;
+  
+}
+
+.card {
+  position: absolute;
+  width: 300px;
+  height: 555px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  backface-visibility: hidden;
+ 
+}
+
+.card_inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  border-radius: 10px;
+}
+
+.card_front, .card_back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+}
+
+.card_front {
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+  z-index: 369;
+  padding: .5rem;
+}
+
+.card_back {
+  transform: rotateY(180deg); 
+  background-color: black;
+}
+
+.card_image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+
+.card_left {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+}
+
 .theForge_container {
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    margin-top: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0rem;
+}
+
+.theForge {
+  display: none;
+}
+
+.card_left {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin: 0;
+}
+
+.card_left h2 {
+  font-size: 2rem;
+  margin: 0;
+  text-shadow: 0 0 2px rgb(1, 122, 254), 0 0 3px rgb(1, 122, 254);
+}
+
+.card_right_top {
+  display: flex;
+  width: 100%;
+  margin-top: 0;
+}
+
+.card_right_bottom_bidding_box_timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 3rem;
+  margin: 0rem;
+  padding: 0rem;
+}
+
+.card_right_bottom_bidding_box_timer_item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0rem;
+  padding: 0rem;
+  text-align: center;
+}
+
+.card_right_bottom_bidding_box_timer_item p{
+  padding: 0rem;
+  margin: 0rem;
+}
+
+.card_right_bottom_bidding_box_timer_item span{
+  padding: 0rem;
+  margin: 0rem;
+}
+
+.card_right_bottom_bidding_box_timer_item_new {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0rem;
+  text-align: center;
+}
+
+.card_right_bottom_bidding_box_timer_item_box {
+  background-color: #1f1f1f;
+  border: 4px solid gray;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  color: white;
+  margin: .5rem;
+}
+
+.card_right_bottom_bidding_box_timer_item_small {
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: white;
+}
+
+.card_right_bottom_bidding_box_timer_item_price {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+  margin-top: 0rem;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+.card_right_bottom_bidding_box_timer_item_price {
+ margin-bottom: 0rem;
+ padding-bottom: 0rem;
+}
+
+.button_wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  padding-bottom: 0.5rem;
+  
+}
+
+.card_right_bottom_button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-block: 0.5rem;
+}
+
+@media (max-width: 1500px) {
+  .carousel_container {
+    width: 70vw;
+    height: 40vh;
   }
-  
-  .theForge {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    width: 100%;
-    max-width: calc(100% - 14rem);
-    padding: 0;
-    gap: 1.5rem;
-    color: #000;
-  }
-  
-  .card {
-    background: black;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    box-shadow: var(--white-glow);
-    color: white;
-  }
-  
-  .card_left {
-    display: flex;
-  
-    justify-content: center;
-    text-align: center;
-    margin-top: 0rem;
-    margin-bottom: 0rem;
-  }
-  
+
   .card_left h2 {
-    font-size: 2rem;
-    margin-top: 0rem;
-    margin-bottom: 0rem;
-    text-shadow: 0 0 2px rgb(1, 122, 254, 255), 0 0 2px rgb(1, 122, 254, 255),
-      0 0 2px rgb(1, 122, 254, 255), 0 0 2px rgb(1, 122, 254, 255),
-      0 0 3px rgb(1, 122, 254, 255), 0 0 3px rgb(1, 122, 254, 255),
-      0 0 3px rgb(1, 122, 254, 255), 0 0 5px rgb(1, 122, 254, 255),
-      0 0 5px rgb(1, 122, 254, 255);
+    font-size: 1.8rem;
   }
-  
-  .card_right_top {
-    display: flex;
-    width: 100%;
-    margin-top: 0rem;
-  }
-  
-  .card_right_bottom_bidding_box_timer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 2rem;
-    margin-top: 0rem;
-  }
-  
-  .car_right_box_price {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    line-height: 0;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  
-  .card_right_box_price_box {
-    border: 4px double rgba(1, 122, 254, 255);
-    padding: 0rem 0.45rem;
-    border-radius: 0.25rem;
-  }
-  
-  .card_right_box_price_box small {
-    background-color: black;
-    padding: 0.2rem 0.45rem;
-    border-radius: 0.2rem;
-    color: white;
-    font-size: 0.75rem;
-    border: 4px double rgba(1, 122, 254, 255);
-  }
-  
-  .card_right_box_price_box p {
-    font-size: 0.85rem;
-    margin-top: 2rem;
-    line-height: 0;
-  }
-  
-  .card_right_bottom_bidding_box_timer_item span {
-    margin-bottom: 0rem;
-  }
-  
-  .card_right_bottom_bidding_box_timer_item p {
-    margin-top: 0rem;
-  }
-  
-  .button_wrapper {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0 0 0.5rem 0;
-    gap: 0.5rem;
-  }
-  
-  .card_right_bottom_button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-block: 0.5rem;
-  }
+}
 
-  .page_title {
-    font-size: 4rem;
-    margin-bottom: 5rem;
-    margin-left: 7rem;
-    display: inline-block;
-    border-bottom: 0.5rem double white;
+@media (max-width: 1024px) {
+  .carousel_container {
+    width: 90vw;
   }
-  
-  
-  @media (max-width: 1500px) {
-    .theForge {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  
-    .theForge:only-child:nth-last-child(5) .card:nth-child(4),
-    .theForge:only-child:nth-last-child(5) .card:nth-child(5) {
-      grid-column: 2 / 4;
-    }
-  
-    .card_left h2 {
-      font-size: 1.8rem;
-    }
-  }
-  
-  @media (max-width: 1024px) {
-    .theForge {
-      max-width: calc(100% - 8rem);
-    }
-  }
-  
-  @media (max-width: 855px) {
-    .theForge {
-      grid-template-columns: repeat(2, 1fr);
-      max-width: calc(100% - 4rem);
-    }
-  
-    .theForge:only-child:nth-last-child(5) .card:last-child {
-      grid-column: 1 / -1;
-      justify-self: center;
-    }
-  }
-  
-  @media (max-width: 600px) {
-    .theForge {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  @media (max-width: 350px) {
-    .theForge {
-      max-width: calc(100% - 2rem);
-    }
-  }
-  
+}
 
-  .card_right_box_price_box {
-    background-color: #1f1f1f; /* Dark gunmetal background */
-    border: 4px solid white; /* Bright white border */
-    padding: 0.5rem; /* Adjust padding for better spacing */
-    border-radius: 0.5rem;
-    text-align: center; /* Center the text */
+@media (max-width: 600px) {
+  .carousel_container {
+    width: 95vw;
   }
-  
-  .card_right_box_price_box small {
-    font-size: 1rem;
-    color: white; /* Bright white text */
-    font-weight: bold; /* Make it bold */
-    text-transform: uppercase; /* Make it uppercase for emphasis */
-  }
-  
-  .card_right_box_price_box p {
-    font-size: 1.25rem; /* Larger price font */
-    color: white; /* Bright white text */
-    font-weight: bold; /* Make it bold */
-    margin: 0.5rem 0 0; /* Adjust margin for better spacing */
-  }
+}
+
+.card_right_box_price_box {
+  background-color: #1f1f1f;
+  border: 4px solid white;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.card_right_box_price_box small {
+  font-size: 1rem;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.card_right_box_price_box p {
+  font-size: 1.25rem;
+  color: white;
+  font-weight: bold;
+  margin: 0.5rem 0 0;
+}
