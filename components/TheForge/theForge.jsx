@@ -126,14 +126,18 @@ const TheForge = () => {
 
   const fetchXDRIPBalance = async () => {
     try {
-      const balance = await XdRiPContract.methods.balanceOf(address).call();
-      const formattedBalance = web3.utils.fromWei(balance, "ether");
-      setXdripBalance(formattedBalance);
+      const balance = await XdRiPContract.methods.balanceOf(address).call(); 
+      console.log("Raw balance (in Wei):", balance);         
+      const formattedBalance = balance / (10 ** 9); 
+      const finalDisplayBalance = parseFloat(formattedBalance).toFixed(0); 
+      console.log("Displayed XDRIP balance:", finalDisplayBalance);       
+      setXdripBalance(finalDisplayBalance); 
     } catch (error) {
       console.error("Error retrieving XDRIP balance:", error);
       setXdripBalance("Error fetching balance");
     }
   };
+  
 
   useEffect(() => {
     if (address) {

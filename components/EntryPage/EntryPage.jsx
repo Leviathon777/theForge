@@ -12,16 +12,34 @@ const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => {
   const [showEnterButton, setShowEnterButton] = useState(false);
   const containerRef = useRef(null);
+  const videoPlayerRef = useRef(null); 
+
 
   useEffect(() => {
     gsap.registerPlugin(PixiPlugin);
+
+    // Set the timer for showing the enter button after 16.5 seconds
     const timer = setTimeout(() => {
       setShowEnterButton(true);
-    }, 16500); 
+    }, 16500);
 
-    // Cleanup the timer when the component is unmounted
-    return () => clearTimeout(timer);
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setShowEnterButton(true); 
+        clearTimeout(timer); 
+        if (videoPlayerRef.current) {
+          videoPlayerRef.current.pause(); 
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
+
 
   const handleEnterClick = () => {
     if (!isModalVisible) {
@@ -39,14 +57,16 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
   return (
     <div className={styles.entryPageContainer} ref={containerRef}>
       <VideoPlayer
+        ref={videoPlayerRef}
         videoSrc={videos.Forge1}
         videoStyles={{ width: "100%" }}
-        isMuted={true}
+        isMuted={false}
         hoverPlay={false}
         autoPlay={true}
         loop={false}
         hoverGrow={false}
-        disableInternalModal={false}
+        disableInternalModal={true}
+        alwaysShowControls={false}
         onEnded={() => {}}
       />
       {showEnterButton && (
