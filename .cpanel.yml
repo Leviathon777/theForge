@@ -1,6 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/yourusername/public_html/theForge/
+    - export DEPLOYPATH=/home/leviathon777/public_html/theForge/
     - /bin/cp -R * $DEPLOYPATH
-    
