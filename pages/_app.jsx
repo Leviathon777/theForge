@@ -36,14 +36,6 @@ const MyApp = ({ Component, pageProps }) => {
 
 
 
-
- 
-
-  
-  
-
-
-
   const handleEnter = () => {
     setHasEntered(true);
   };
@@ -84,15 +76,15 @@ const MyApp = ({ Component, pageProps }) => {
 
   const guestWallet = smartWallet({
     chain: ChainId.BinanceSmartChainTestnet,
-    factoryAddress: "0xD4719eec1F39715BDD8a569D82171019E499d14f",
+    factoryAddress: process.env.NEXT_PUBLIC_THIRDWEB_FACTORY_ADDRESS,
     sponsorGas: true,
-    relayerUrl: "https://defender-api.openzeppelin.com/api/relayers/c0680b96-1255-4f57-beec-cd2653f35a1d",
+    relayerUrl: process.env.NEXT_PUBLIC_RELAYER_URL,
     headers: {
       "Authorization": "Bz313B8fzWGVEGb4jhYjBpWiY9h1FKzJ",
     },
     personalWallet: adminWallet,
   });
-
+  
   const wallets = [
     inAppWallet({ persist: true }),
     metamaskWallet({ recommended: true }),
@@ -122,7 +114,7 @@ const MyApp = ({ Component, pageProps }) => {
       ) : (
         <ThirdwebProvider
           activeChain={ChainId.BinanceSmartChainTestnet} 
-          clientId="409f3ba340001c9c25edd8567e0321c2"
+          clientId={process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
           supportedWallets={useGuestWallet && guestWallet ? [guestWallet] : wallets}
         >
           <Head>
