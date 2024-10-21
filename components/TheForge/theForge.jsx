@@ -1,9 +1,20 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ConnectWallet, darkTheme, useAddress } from "@thirdweb-dev/react";
+import { 
+  ConnectWallet, 
+  darkTheme, 
+  useAddress, 
+  useConnect, 
+  useWallet, 
+  localWallet, 
+  useSigner, 
+  ConnectButton, 
+  ConnectEmbed, PayEmbed } from "@thirdweb-dev/react";
+
 import Style from "./TheForge.module.css";
 import moreStyles from "../Button/Button.module.css";
 import videos from "../../public/videos/index.js";
@@ -29,10 +40,24 @@ const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddre
 
 const TheForge = () => {
   const [selectedMedal, setSelectedMedal] = useState(null);
-  const address = useAddress();
+  const [bnbBalance, setBnbBalance]= useState(null);
   const [bnbToUsd, setBnbToUsd] = useState(null);
   const [rewardStatus, setRewardStatus] = useState(null);
   const [xdripBalance, setXdripBalance] = useState(null);
+  const [isConfirmationModalVisible, setIsConfirmationModalVisible] = useState(false);
+
+
+  const [currentMedal, setCurrentMedal] = useState(null);
+
+  const wallet = useWallet();
+  const isGuestWallet = wallet?.walletId === "SmartWallet"; 
+
+  const address = useAddress();
+  const signer = useSigner(); 
+  
+  const connectLocalWallet = useConnect(localWallet); 
+
+
   const carouselRef = useRef();
   const cardRefs = useRef([]);
   const maxRotation = 360;
@@ -139,6 +164,21 @@ const TheForge = () => {
   };
   
 
+
+  const handleConnectLocalWallet = async () => {
+    try {
+      await connectLocalWallet();
+      toast.success("Local Wallet connected!");
+    } catch (error) {
+      console.error("Error connecting local wallet:", error);
+      toast.error("Error connecting local wallet.");
+    }
+  };
+
+
+
+
+
   useEffect(() => {
     if (address) {
       fetchXDRIPBalance();
@@ -211,89 +251,499 @@ const TheForge = () => {
   const handleMedalDetails = (medal) => {
     setSelectedMedal(medal);
   };
-  const mint = async (medalType, ipfsHash) => {
-    try {
-      console.log("Minting medal of type:", medalType);
-      if (!address) {
-        console.log("No address found, enabling Ethereum.");
-        window.ethereum.enable();
+
+  
+  /*  // Full mint function for ALL medal types using IPFS hashes from JSON
+    const mint = async (medalType) => {
+      try {
+        console.log("Minting medal of type:", medalType);
+  
+        // Ensure signer and address are available
+        if (!signer) {
+          toast.error("Signer not available. Please connect your wallet.");
+          return;
+        }
+  
+        if (!address) {
+          toast.error("No address found. Please connect your wallet.");
+          return;
+        }
+  
+        const contract = fetchMohContract(signer); // Fetch contract using the signer
+        console.log("Connected to contract at:", MohAddress);
+  
+        // Find the correct medal data from the JSON by medalType
+        const medalData = mohData.find((item) => item.title === medalType);
+  
+        // Extract the IPFS hash for the medal
+        const ipfsHash = medalData.ipfsHash;
+        console.log("IPFS Hash for minting:", ipfsHash);
+  
+        // Validate ownership for each medal type
+        switch (medalType) {
+          case "COMMON":
+            // No previous medal required to mint COMMON
+            break;
+          case "UNCOMMON":
+            const ownsCommon = await contract.balanceOf(address);
+            if (ownsCommon.toNumber() < 1) {
+              toast.error("You must own a COMMON medal to mint an UNCOMMON medal.");
+              return;
+            }
+            break;
+          case "RARE":
+            const ownsUncommon = await contract.balanceOf(address);
+            if (ownsUncommon.toNumber() < 2) {
+              toast.error("You must own an UNCOMMON medal to mint a RARE medal.");
+              return;
+            }
+            break;
+          case "EPIC":
+            const ownsRare = await contract.balanceOf(address);
+            if (ownsRare.toNumber() < 3) {
+              toast.error("You must own a RARE medal to mint an EPIC medal.");
+              return;
+            }
+            break;
+          case "LEGENDARY":
+            const ownsEpic = await contract.balanceOf(address);
+            if (ownsEpic.toNumber() < 4) {
+              toast.error("You must own an EPIC medal to mint a LEGENDARY medal.");
+              return;
+            }
+            break;
+          case "ETERNAL":
+            // No previous medals required for ETERNAL
+            break;
+          default:
+            throw new Error("Invalid medal type");
+        }
+  
+        // Get the price for the selected medal type from the JSON
+        const itemPrice = medalData.price.split(" ")[0];
+        const price = ethers.utils.parseUnits(itemPrice, "ether");
+        console.log("Converted price:", price.toString());
+  
+        // Define the correct mint function based on the medal type
+        let mintFunction;
+        switch (medalType) {
+          case "COMMON":
+            mintFunction = contract.mintCommon;
+            break;
+          case "UNCOMMON":
+            mintFunction = contract.mintUncommon;
+            break;
+          case "RARE":
+            mintFunction = contract.mintRare;
+            break;
+          case "EPIC":
+            mintFunction = contract.mintEpic;
+            break;
+          case "LEGENDARY":
+            mintFunction = contract.mintLegendary;
+            break;
+          case "ETERNAL":
+            mintFunction = contract.mintEternal;
+            break;
+          default:
+            throw new Error("Invalid medal type");
+        }
+  
+        // Send the transaction for minting the medal
+        const transaction = await mintFunction(ipfsHash, {
+          value: price,
+        });
+  
+        console.log("Transaction sent:", transaction);
+  
+        // Wait for the transaction to be confirmed
+        const receipt = await transaction.wait();
+        console.log("Transaction confirmed:", receipt);
+  
+        // Check for success and display a success message
+        if (receipt.status === 1) {
+          toast.success("Your Medal Of Honor was forged successfully!");
+        } else {
+          toast.error("Transaction failed. Please try again.");
+        }
+  
+      } catch (error) {
+        console.error("Minting failed:", error);
+  
+        // Handle different error cases
+        if (error.code === 4001) {
+          toast.error("You rejected the transaction.");
+        } else if (error.data && error.data.message) {
+          const errorMessage = error.data.message.includes("revert")
+            ? error.data.message.split("revert ")[1]
+            : error.data.message;
+          toast.error(`Error: ${errorMessage}`);
+        } else {
+          toast.error("Error while forging Medal.");
+        }
+      }
+    };
+*/
+
+
+
+useEffect(() => {
+  const fetchBalance = async () => {
+    if (signer && address) {
+      const provider = signer.provider;
+      if (!provider) {
+        console.error("Provider is missing!");
         return;
       }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = fetchMohContract(signer);
-      console.log("Connected to contract at:", MohAddress);
-      let mintFunction;
-      switch (medalType) {
-        case "COMMON":
-          mintFunction = contract.mintCommon;
-          break;
-        case "UNCOMMON":
-          mintFunction = contract.mintUncommon;
-          break;
-        case "RARE":
-          mintFunction = contract.mintRare;
-          break;
-        case "EPIC":
-          mintFunction = contract.mintEpic;
-          break;
-        case "LEGENDARY":
-          mintFunction = contract.mintLegendary;
-          break;
-        default:
-          throw new Error("Invalid medal type");
-      }
-      console.log("Selected mint function:", mintFunction);
-      const itemPrice = mohData
-        .find((item) => item.title === medalType)
-        .price.split(" ")[0];
-      console.log("Item price:", itemPrice);
-      const price = ethers.utils.parseUnits(itemPrice, "ether");
-      console.log("Converted price:", price.toString());
-      const transaction = await mintFunction(ipfsHash, {
-        value: price,
-        gasLimit: 650000,
-      });
-      console.log("Transaction sent:", transaction);
-      const receipt = await transaction.wait();
-      console.log("Transaction confirmed:", receipt);
-      toast.success("Your Medal Of Honor was forged successfully!", {
-        toastId: "successToast",
-        className: "MedalDetailsModal_success",
-        style: {
-          background: "black",
-          color: "white",
-          padding: "0.5rem",
-          borderRadius: "0.5rem",
-          boxShadow: "var(--white-glow)",
-          width: "300px",
-          height: "100px",
-          textAlign: "center",
-          fontWeight: "bold",
-          fontSize: "1rem",
-          fontFamily: "Aldrich, sans-serif",
-          textShadow:
-            "0 0 2px rgb(1, 122, 254, 255), 0 0 2px rgb(1, 122, 254, 255), 0 0 2px rgb(1, 122, 254, 255), 0 0 2px rgb(1, 122, 254, 255), 0 0 3px rgb(1, 122, 254, 255), 0 0 3px rgb(1, 122, 254, 255), 0 0 3px rgb(1, 122, 254, 255), 0 0 5px rgb(1, 122, 254, 255), 0 0 5px rgb(1, 122, 254, 255)",
-          opacity: 0.9,
-        },
-      });
-    } catch (error) {
-      console.error("Forge failed", error);
-      console.log("Error object:", error);
-
-      if (error.code === 4001) {
-        // denied transaction signature
-        toast.error("You rejected the transaction, signature denied.");
-      } else {
-        toast.error("Error while forging Medal");
+      try {
+        const balance = await provider.getBalance(address);
+        const formattedBalance = ethers.utils.formatEther(balance);
+        console.log("BNB Balance:", formattedBalance);
+        setBnbBalance(formattedBalance);
+      } catch (error) {
+        console.error("Error fetching BNB balance:", error);
       }
     }
   };
 
+  fetchBalance();
+}, [signer, address]);
+
+
+/*
+const mint = async (medalType, ipfsHash) => {
+  try {
+    console.log("Minting medal of type:", medalType);
+
+    // Ensure signer and address are available
+    if (!signer) {
+      toast.error("Signer not available. Please connect your wallet.");
+      return;
+    }
+
+    if (!address) {
+      toast.error("No address found. Please connect your wallet.");
+      return;
+    }
+
+    const provider = signer.provider;
+    if (!provider) {
+      toast.error("Provider is missing. Please reconnect your wallet.");
+      return;
+    }
+
+    // Initialize the contract with the signer
+    const contract = fetchMohContract(signer);
+    console.log("Connected to contract at:", MohAddress);
+
+    // Validate ownership for each medal type
+    switch (medalType) {
+      case "COMMON":
+        break;
+      case "UNCOMMON":
+        const ownsCommon = await contract.balanceOf(address);
+        if (ownsCommon.toNumber() < 1) {
+          toast.error("You must own a COMMON medal to mint an UNCOMMON medal.");
+          return;
+        }
+        break;
+      case "RARE":
+        const ownsUncommon = await contract.balanceOf(address);
+        if (ownsUncommon.toNumber() < 2) {
+          toast.error("You must own an UNCOMMON medal to mint a RARE medal.");
+          return;
+        }
+        break;
+      case "EPIC":
+        const ownsRare = await contract.balanceOf(address);
+        if (ownsRare.toNumber() < 3) {
+          toast.error("You must own a RARE medal to mint an EPIC medal.");
+          return;
+        }
+        break;
+      case "LEGENDARY":
+        const ownsEpic = await contract.balanceOf(address);
+        if (ownsEpic.toNumber() < 4) {
+          toast.error("You must own an EPIC medal to mint a LEGENDARY medal.");
+          return;
+        }
+        break;
+      case "ETERNAL":
+        break;
+      default:
+        throw new Error("Invalid medal type");
+    }
+
+    // Get the price for the selected medal type from the JSON
+    const itemPrice = mohData.find((item) => item.title === medalType).price.split(" ")[0];
+    const price = ethers.utils.parseUnits(itemPrice, "ether");
+
+    // Define the correct mint function based on the medal type
+    let mintFunction;
+    switch (medalType) {
+      case "COMMON":
+        mintFunction = contract.mintCommon;
+        break;
+      case "UNCOMMON":
+        mintFunction = contract.mintUncommon;
+        break;
+      case "RARE":
+        mintFunction = contract.mintRare;
+        break;
+      case "EPIC":
+        mintFunction = contract.mintEpic;
+        break;
+      case "LEGENDARY":
+        mintFunction = contract.mintLegendary;
+        break;
+      case "ETERNAL":
+        mintFunction = contract.mintEternal;
+        break;
+      default:
+        throw new Error("Invalid medal type");
+    }
+
+    // Estimate gas limit or use a manual fallback of 650,000
+    let gasLimit;
+    try {
+      const estimatedGas = await contract.estimateGas[mintFunction.name](ipfsHash, { value: price });
+      gasLimit = estimatedGas.add(ethers.BigNumber.from(10000)); // Adding buffer
+      console.log("Estimated gas:", gasLimit.toString());
+    } catch (error) {
+      console.error("Gas estimation failed. Falling back to 650,000.");
+      gasLimit = ethers.BigNumber.from(650000);
+    }
+
+    // Send the transaction with the estimated gas or manual gas limit
+    const transaction = await mintFunction(ipfsHash, {
+      value: price,
+      gasLimit, // Use the calculated or fallback gas limit
+    });
+
+    console.log("Transaction sent:", transaction);
+
+    // Wait for the transaction to be confirmed
+    const receipt = await transaction.wait();
+    console.log("Transaction confirmed:", receipt);
+
+    if (receipt.status === 1) {
+      toast.success("Your Medal Of Honor was forged successfully!");
+    } else {
+      toast.error("Transaction failed. Please try again.");
+    }
+  } catch (error) {
+    console.error("Minting failed:", error);
+
+    if (error.code === 4001) {
+      toast.error("You rejected the transaction.");
+    } else if (error.data && error.data.message) {
+      const errorMessage = error.data.message.includes("revert")
+        ? error.data.message.split("revert ")[1]
+        : error.data.message;
+      toast.error(`Error: ${errorMessage}`);
+    } else {
+      toast.error("Error while forging Medal.");
+    }
+  }
+};
+*/
+
+
+const handleMint = (medal) => {
+  setCurrentMedal(medal);
+  if (isGuestWallet) {
+    setIsConfirmationModalVisible(true);
+  } else {
+    confirmMint(medal);
+  }
+};
+
+
+const confirmMint = async () => {
+  if (!currentMedal) return;
+  try {
+    if (!signer) {
+      toast.error("Signer not available. Please connect your wallet.");
+      return;
+    }
+
+    const contract = fetchMohContract(signer);
+    const ipfsHash = currentMedal.ipfsHash;
+    const itemPrice = currentMedal.price.split(" ")[0];
+    const price = ethers.utils.parseUnits(itemPrice, "ether");
+
+    const mintFunction = contract[`mint${currentMedal.title}`];
+
+    const transaction = await mintFunction(ipfsHash, {
+      value: price,
+    });
+
+    const receipt = await transaction.wait();
+    if (receipt.status === 1) {
+      toast.success("Your Medal Of Honor was forged successfully!");
+    } else {
+      toast.error("Transaction failed. Please try again.");
+    }
+  } catch (error) {
+    console.error("Minting failed:", error);
+    toast.error("Error while forging Medal.");
+  } finally {
+    setIsConfirmationModalVisible(false);
+    setCurrentMedal(null);
+  }
+};
+
+
+const mint = async (medalType, ipfsHash) => {
+  try {
+    console.log("Minting medal of type:", medalType);
+
+    // Ensure signer and address are available
+    if (!signer) {
+      toast.error("Signer not available. Please connect your wallet.");
+      return;
+    }
+
+    if (!address) {
+      toast.error("No address found. Please connect your wallet.");
+      return;
+    }
+
+    const provider = signer.provider; // Ensure provider is available
+    if (!provider) {
+      toast.error("Provider is missing. Please reconnect your wallet.");
+      console.log("Provider is missing!"); // Debugging log
+      return;
+    }
+
+    // Initialize the contract with the signer
+    const contract = fetchMohContract(signer); // Fetch contract using the signer
+    console.log("Connected to contract at:", MohAddress);
+
+    // Validate ownership for each medal type
+    switch (medalType) {
+      case "COMMON":
+        break;
+      case "UNCOMMON":
+        const ownsCommon = await contract.balanceOf(address);
+        if (ownsCommon.toNumber() < 1) {
+          toast.error("You must own a COMMON medal to mint an UNCOMMON medal.");
+          return;
+        }
+        break;
+      case "RARE":
+        const ownsUncommon = await contract.balanceOf(address);
+        if (ownsUncommon.toNumber() < 2) {
+          toast.error("You must own an UNCOMMON medal to mint a RARE medal.");
+          return;
+        }
+        break;
+      case "EPIC":
+        const ownsRare = await contract.balanceOf(address);
+        if (ownsRare.toNumber() < 3) {
+          toast.error("You must own a RARE medal to mint an EPIC medal.");
+          return;
+        }
+        break;
+      case "LEGENDARY":
+        const ownsEpic = await contract.balanceOf(address);
+        if (ownsEpic.toNumber() < 4) {
+          toast.error("You must own an EPIC medal to mint a LEGENDARY medal.");
+          return;
+        }
+        break;
+      case "ETERNAL":
+        break;
+      default:
+        throw new Error("Invalid medal type");
+    }
+
+    // Get the price for the selected medal type from the JSON
+    const itemPrice = mohData.find((item) => item.title === medalType).price.split(" ")[0];
+    const price = ethers.utils.parseUnits(itemPrice, "ether");
+
+    // Define the correct mint function based on the medal type
+    let mintFunction;
+    switch (medalType) {
+      case "COMMON":
+        mintFunction = contract.mintCommon;
+        break;
+      case "UNCOMMON":
+        mintFunction = contract.mintUncommon;
+        break;
+      case "RARE":
+        mintFunction = contract.mintRare;
+        break;
+      case "EPIC":
+        mintFunction = contract.mintEpic;
+        break;
+      case "LEGENDARY":
+        mintFunction = contract.mintLegendary;
+        break;
+      case "ETERNAL":
+        mintFunction = contract.mintEternal;
+        break;
+      default:
+        throw new Error("Invalid medal type");
+    }
+
+    
+    let gasLimit;
+    try {
+      const estimatedGas = await contract.estimateGas[mintFunction.name](ipfsHash, { value: price });
+      gasLimit = estimatedGas.add(ethers.BigNumber.from(10000)); // Adding buffer
+      console.log("Estimated gas:", gasLimit.toString());
+    } catch (error) {
+      console.error("Gas estimation failed. Falling back ");
+      gasLimit = ethers.BigNumber.from(990000);
+    }
+    
+
+    // Send the transaction with the estimated gas or manual gas limit
+    const transaction = await mintFunction(ipfsHash, {
+      value: price,
+      gasLimit, 
+    });
+
+    console.log("Transaction sent:", transaction);
+
+    // Wait for the transaction to be confirmed
+    const receipt = await transaction.wait();
+    console.log("Transaction Confirmed:", receipt);
+
+    if (receipt.status === 1) {
+      toast.success("Your Medal Of Honor was forged successfully!");
+    } else {
+      toast.error("Transaction failed. Please try again.");
+    }
+  } catch (error) {
+    console.error("Minting failed:", error);
+
+    if (error.code === 4001) {
+      toast.error("You rejected the transaction.");
+    } else if (error.data && error.data.message) {
+      const errorMessage = error.data.message.includes("revert")
+        ? error.data.message.split("revert ")[1]
+        : error.data.message;
+      toast.error(`Error: ${errorMessage}`);
+    } else {
+      toast.error("Error while forging Medal.");
+    }
+  }
+};
+
+
+
+
   return (
     <div align="center">
+
+
+
+      
       <ConnectWallet
         btnTitle="OPEN THE VAULT"
+        
         style={{
           background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
           color: 'white',
@@ -322,7 +772,10 @@ const TheForge = () => {
             modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
           },
         })}
+
+        
       />
+      
        {address && (
         <div>
           <p>XDRIP Balance: {xdripBalance !== null ? `${xdripBalance} XDRIP` : "Loading..."}</p>
@@ -423,6 +876,18 @@ const TheForge = () => {
       </div>
       {selectedMedal && (
         <MedalDetailsModal medal={selectedMedal} onClose={() => setSelectedMedal(null)} />
+      )}
+      {isConfirmationModalVisible && (
+        <div className={Style.confirmation_modal}>
+          <div className={Style.confirmation_modal_content}>
+            <h2>Confirm Minting</h2>
+            <p>Are you sure you want to mint the {currentMedal.title} medal for {currentMedal.price}?</p>
+            <div className={Style.modal_buttons}>
+              <button onClick={confirmMint} className={Style.confirm_button}>Confirm</button>
+              <button onClick={() => setIsConfirmationModalVisible(false)} className={Style.cancel_button}>Cancel</button>
+            </div>
+          </div>
+        </div>
       )}
       <ToastContainer
         position={toast.POSITION.TOP_CENTER}
