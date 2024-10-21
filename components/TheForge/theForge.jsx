@@ -147,6 +147,23 @@ const TheForge = () => {
         available: 500,
       },
     },
+    {
+      title: "ETERNAL",
+      id: 6,
+      name: "XDRIP OFFICIAL",
+      collection: "MEDALS OF HONOR",
+      price: "200 BNB",
+      like: 1,
+      image: "../public/img/user1",
+      nftVideo: videos.legendary,
+      description:
+        "Forged in the heart of the universe itself, the Eternal medal is a symbol of timeless strength and immortality. Wielded by only the most enduring of warriors, this medal transcends the mortal realm, representing an unbreakable bond between heroism and the cosmos. To wear this medal is to be forever remembered as a champion of infinite valor.",
+      ipfsHash: ipfsHashes.find((hash) => hash.title === "ETERNAL").url,
+      inventory: {
+        forged: 0,
+        available: 20,
+      },
+    },
   ];  
 
   const fetchXDRIPBalance = async () => {

@@ -94,7 +94,7 @@ const MedalDetailsModal = ({ medal, onClose }) => {
                   </p>
                 </div>
                 <div className={Style.MedalDetailsModal_notes}>
-                  <small align="center">Forging Medals require a 24-hour hold between tiers</small>
+                  <small align="center">For The Honor of Forging Medals</small>
                   <br />
                   <small>Excluding the COMMON, you must own each previous tier to be eligible to forge the next</small>
                 </div>

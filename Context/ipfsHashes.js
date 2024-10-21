@@ -19,6 +19,10 @@ const ipfsHashes = [
     title: "LEGENDARY",
     url: "https://gateway.pinata.cloud/ipfs/QmSRNHm6hBqfi3rv5zhEuVZDmNhpB29X3UUV4kfip4nbXB?filename=LEGENDARY.json",
   },
+  {
+    title: "ETERNAL",
+    url: "https://gateway.pinata.cloud/ipfs/QmSRNHm6hBqfi3rv5zhEuVZDmNhpB29X3UUV4kfip4nbXB?filename=LEGENDARY.json",
+  },
 ];
 
 export default ipfsHashes;
