@@ -5,41 +5,59 @@ import styles from "./EntryPage.module.css";
 import videos from "../../public/videos";
 import { gsap } from "gsap";
 import Image from "next/image";
-import { VideoPlayer } from "../componentsindex";
+import { VideoPlayer, TermsOfService, UserAgreement } from "../componentsindex";
 const PixiPlugin = dynamic(() => import("gsap/PixiPlugin"), { ssr: false });
-const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
 const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => {
   const [showEnterButton, setShowEnterButton] = useState(false);
+  const [showSkipButton, setShowSkipButton] = useState(false); // New state for Skip button
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [isUserAgreementModalOpen, setIsUserAgreementModalOpen] = useState(false);
   const containerRef = useRef(null);
-  const videoPlayerRef = useRef(null); 
+  const videoPlayerRef = useRef(null);
 
-
+  // Timer to show the "Enter" button after 16.5 seconds
   useEffect(() => {
     gsap.registerPlugin(PixiPlugin);
-
-    // Set the timer for showing the enter button after 16.5 seconds
     const timer = setTimeout(() => {
       setShowEnterButton(true);
     }, 16500);
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
-        setShowEnterButton(true); 
-        clearTimeout(timer); 
+        setShowEnterButton(true);
+        clearTimeout(timer);
         if (videoPlayerRef.current) {
-          videoPlayerRef.current.pause(); 
+          videoPlayerRef.current.pause();
         }
       }
     };
-
-    window.addEventListener("keydown", handleKeyDown);    
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       clearTimeout(timer);
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
+  // Show the "Skip" button when the user accepts or declines cookies
+  const handleAcceptCookies = () => {
+    handleAccept(); // Existing accept logic
+    setShowSkipButton(true); // Show Skip button after accepting cookies
+  };
+
+  const handleDeclineCookies = () => {
+    handleDecline(); // Existing decline logic
+    setShowSkipButton(true); // Show Skip button after declining cookies
+  };
+
+  // Handle the Skip button click
+  const handleSkipClick = () => {
+    if (videoPlayerRef.current) {
+      videoPlayerRef.current.pause(); // Pause the video
+    }
+    setShowEnterButton(true); // Show the Enter button
+    setShowSkipButton(false); // Hide the Skip button
+  };
 
   const handleEnterClick = () => {
     if (!isModalVisible) {
@@ -49,7 +67,7 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         scale: 0.8,
         filter: "blur(20px)",
         onComplete: onEnter,
-        ease: "power3.inOut"
+        ease: "power3.inOut",
       });
     }
   };
@@ -60,13 +78,14 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         ref={videoPlayerRef}
         videoSrc={videos.Forge1}
         videoStyles={{ width: "100%" }}
-        isMuted={false}
+        isMuted={true}
         hoverPlay={false}
         autoPlay={true}
         loop={false}
         hoverGrow={false}
-        disableInternalModal={true}
-        alwaysShowControls={false}
+        disableInternalModal={false}
+        disableClickModal={true}
+        hideControls={true}
         onEnded={() => {}}
       />
       {showEnterButton && (
@@ -90,6 +109,7 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
           </div>
         </motion.div>
       )}
+
       {isModalVisible && (
         <div className={styles.cookieOverlay}>
           <div className={styles.cookieContent}>
@@ -101,16 +121,40 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
               <a href="/userAgreement" target="_blank" rel="noopener noreferrer"> User Agreement</a>.
             </p>
             <div className={styles.button_container_lower}>
-              <button onClick={handleAccept} className="cookie-button">
+              <button onClick={handleAcceptCookies} className="cookie-button">
                 Accept All
               </button>
-              <button onClick={handleDecline} className="cookie-button decline">
+              <button onClick={handleDeclineCookies} className="cookie-button decline">
                 Decline
               </button>
             </div>
           </div>
         </div>
       )}
+
+     
+      {showSkipButton && (
+        <motion.button
+          className={styles.skipButton}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          onClick={handleSkipClick}
+        >
+          Skip
+        </motion.button>
+      )}
+
+      <TermsOfService
+        isOpen={isTermsModalOpen}
+        onRequestClose={() => setIsTermsModalOpen(false)}
+      />
+      <UserAgreement
+        isOpen={isUserAgreementModalOpen}
+        onRequestClose={() => setIsUserAgreementModalOpen(false)}
+      />
     </div>
   );
 };

@@ -124,6 +124,9 @@
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.13.2"
   },
+  "resolutions": {
+    "@emotion/react": "11.11.4"
+  },
   "experiments": {
     "topLevelAwait": true
   }

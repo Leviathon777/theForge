@@ -1,14 +1,14 @@
 .NFTWalletCard {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 cards per row */
+  grid-gap: 20px;
   width: 100%;
   justify-content: center;
+  justify-items: center;
+  align-items: center;
+  align-content: center;
   gap: 20px;
   perspective: 1000px;
-  padding: 2.25rem;
-  border-radius: .5rem;
-  background-color: rgba(0, 0, 0, 0.733);
-  border: .75rem solid rgb(0, 0, 0);
 }
 
 .NFTWalletCard_box {
