@@ -1,5 +1,5 @@
 {
-    "address": "0x3ea410f065C6c10A8F86AD58252927C1D858688E",
+    "address": "0x2F83B5E7Df514B8C7a84C473a529F6aF61c42d76",
     "abi": [
         {
             "inputs": [
@@ -402,6 +402,19 @@
             "inputs": [
                 {
                     "internalType": "uint256",
+                    "name": "cooldown",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setCommonCooldown",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
                     "name": "price",
                     "type": "uint256"
                 }
@@ -428,6 +441,19 @@
             "inputs": [
                 {
                     "internalType": "uint256",
+                    "name": "cooldown",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setEpicCooldown",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
                     "name": "price",
                     "type": "uint256"
                 }
@@ -446,6 +472,19 @@
                 }
             ],
             "name": "setEternalPrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "cooldown",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setLegendaryCooldown",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
@@ -500,11 +539,37 @@
             "inputs": [
                 {
                     "internalType": "uint256",
+                    "name": "cooldown",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setRareCooldown",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
                     "name": "price",
                     "type": "uint256"
                 }
             ],
             "name": "setRarePrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "cooldown",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setUncommonCooldown",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
@@ -791,6 +856,30 @@
                     "internalType": "address",
                     "name": "",
                     "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "account",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "mintTier",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getCooldownDaysLeft",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
                 }
             ],
             "stateMutability": "view",

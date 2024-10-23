@@ -96,7 +96,7 @@ const MedalDetailsModal = ({ medal, onClose }) => {
                 <div className={Style.MedalDetailsModal_notes}>
                   <small align="center">For The Honor of Forging Medals</small>
                   <br />
-                  <small>Excluding the COMMON, you must own each previous tier to be eligible to forge the next</small>
+                  <small>Excluding the COMMON, you must own each previous tier to be eligible to forge the next, while the Eternal stands alone</small>
                 </div>
                 <div className={Style.MedalDetailsModal_companies}>
                   <h3>Global Businesses & Partnerships</h3>
