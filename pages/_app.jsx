@@ -16,11 +16,6 @@ import {
 } from "@thirdweb-dev/react";
  
 
-
-
-
-
-
  import Head from "next/head";
 import Cookies from "js-cookie";
 import { MOHProvider } from "../Context/MOHProviderContext";
@@ -33,7 +28,7 @@ const MyApp = ({ Component, pageProps }) => {
   const [hasEntered, setHasEntered] = useState(false);
   const [useGuestWallet, setUseGuestWallet] = useState(false);
   const [adminConnected, setAdminConnected] = useState(false);
-
+  const [adminWallet, setAdminWallet] = useState(null);
 
 
   const handleEnter = () => {
@@ -56,15 +51,13 @@ const MyApp = ({ Component, pageProps }) => {
     setIsModalVisible(false);
   };
 
-  const adminWallet = inAppWallet({
-    persist: true,
-  });
 
   const connectAdminWallet = async () => {
     try {
-      await adminWallet.connect();
-      setAdminConnected(true);
-      console.log("Admin wallet connected:", adminWallet.getAddress());
+      const adminWalletInstance = metamaskWallet();
+      await adminWalletInstance.connect();
+      setAdminWallet(adminWalletInstance);
+      console.log("Admin wallet connected:", adminWalletInstance.getAddress());
     } catch (error) {
       console.error("Error connecting admin wallet:", error);
     }
@@ -93,17 +86,10 @@ const MyApp = ({ Component, pageProps }) => {
     walletConnect(),
     coinbaseWallet(),
     localWallet(),
-  ];
-
-
-  
-  return (
-
-
-    
+  ];  
+  return (    
     <>
-
-    
+   
       {!hasEntered ? (
         <EntryPage 
           onEnter={handleEnter} 

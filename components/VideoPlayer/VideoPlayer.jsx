@@ -1,6 +1,4 @@
-// components/VideoPlayer.jsx
-
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, forwardRef } from "react";
 import { FaPlay, FaPause, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 import Modal from "react-modal";
 import PropTypes from "prop-types";
@@ -8,7 +6,7 @@ import Style from "./VideoPlayer.module.css";
 
 Modal.setAppElement("#__next");
 
-const VideoPlayer = ({
+const VideoPlayer = forwardRef(({
   videoSrc,
   isMuted = true,
   hoverPlay = false,
@@ -18,13 +16,15 @@ const VideoPlayer = ({
   hoverGrow = false,
   disableInternalModal = false,
   alwaysShowControls = false,
+  disableClickModal = false,
+  hideControls = false,
   onEnded,
-}) => {
+}, ref) => {
   const [isPlaying, setIsPlaying] = useState(autoPlay);
   const [isMutedState, setIsMutedState] = useState(isMuted);
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const videoRef = useRef(null);
+  const videoRef = ref || useRef(null); // Use passed ref or internal ref
 
   useEffect(() => {
     if (disableInternalModal) {
@@ -43,13 +43,13 @@ const VideoPlayer = ({
     const options = {
       root: null,
       rootMargin: "0px",
-      threshold: 0.1, // Adjusted threshold
+      threshold: 0.1,
     };
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          if (autoPlay) {
+          if (autoPlay && videoRef.current) {
             const playPromise = videoRef.current.play();
             if (playPromise !== undefined) {
               playPromise.catch((error) => {
@@ -59,7 +59,9 @@ const VideoPlayer = ({
             setIsPlaying(true);
           }
         } else {
-          videoRef.current.pause();
+          if (videoRef.current) {
+            videoRef.current.pause();
+          }
           setIsPlaying(false);
         }
       });
@@ -78,10 +80,10 @@ const VideoPlayer = ({
 
   useEffect(() => {
     if (hoverPlay && !disableInternalModal) {
-      if (isHovered) {
+      if (isHovered && videoRef.current) {
         videoRef.current.play();
         setIsPlaying(true);
-      } else {
+      } else if (videoRef.current) {
         videoRef.current.pause();
         setIsPlaying(false);
       }
@@ -103,7 +105,7 @@ const VideoPlayer = ({
     setIsModalOpen(false);
 
     if (hoverPlay && !disableInternalModal) {
-      if (isHovered) {
+      if (isHovered && videoRef.current) {
         videoRef.current.play();
         setIsPlaying(true);
       }
@@ -145,7 +147,7 @@ const VideoPlayer = ({
         autoPlay={autoPlay}
         className={Style.videoPlayer}
         style={videoStyles}
-        onClick={openModal}
+        onClick={!disableClickModal ? openModal : undefined}
         controls={false}
         onEnded={onEnded}
       >
@@ -153,15 +155,13 @@ const VideoPlayer = ({
         Your browser does not support the video tag.
       </video>
 
-      {/* Play Icon Overlay */}
-      {!isPlaying && !isHovered && !alwaysShowControls && (
-        <div className={Style.playIcon} onClick={openModal}>
+      {!isPlaying && !isHovered && !alwaysShowControls && !hideControls && (
+        <div className={Style.playIcon} onClick={!disableClickModal ? openModal : undefined}>
           <FaPlay size={50} />
         </div>
       )}
 
-      {/* Controls Overlay */}
-      {(isHovered || alwaysShowControls) && (
+      {(!hideControls && (isHovered || alwaysShowControls)) && (
         <div className={Style.controls}>
           <div onClick={handlePlayPauseClick} className={Style.controlButton}>
             {isPlaying ? <FaPause size={30} /> : <FaPlay size={30} />}
@@ -171,7 +171,6 @@ const VideoPlayer = ({
           </div>
         </div>
       )}
-
 
       {!disableInternalModal && (
         <Modal
@@ -190,13 +189,11 @@ const VideoPlayer = ({
               className={Style.modalVideo}
               controls={false}
             >
-
-
               <source src={videoSrc} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
 
-            {(isHovered || alwaysShowControls && isPlaying) && (
+            {!hideControls && (isHovered || alwaysShowControls && isPlaying) && (
               <div className={Style.controls}>
                 <div onClick={handlePlayPauseClick} className={Style.controlButton}>
                   {isPlaying ? <FaPause size={30} /> : <FaPlay size={30} />}
@@ -215,7 +212,7 @@ const VideoPlayer = ({
       )}
     </div>
   );
-};
+});
 
 VideoPlayer.propTypes = {
   videoSrc: PropTypes.string.isRequired,
@@ -227,7 +224,9 @@ VideoPlayer.propTypes = {
   hoverGrow: PropTypes.bool,
   disableInternalModal: PropTypes.bool,
   alwaysShowControls: PropTypes.bool,
-   onEnded: PropTypes.func,
+  disableClickModal: PropTypes.bool,
+  hideControls: PropTypes.bool,
+  onEnded: PropTypes.func,
 };
 
 export default VideoPlayer;

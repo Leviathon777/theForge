@@ -3,18 +3,18 @@ import Image from "next/image";
 import Style from "./NFTWalletCard.module.css";
 import { MyNFTDataContext } from "../../../Context/MyNFTDataContext";
 import mohCA_ABI from "../../../Context/mohCA_ABI.json";
-import { ButtonSprite, VideoPlayer } from "../../../components/componentsindex.js";
+import { Button, VideoPlayer } from "../../../components/componentsindex.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const NFTWalletCard = () => {
-  const { nfts } = useContext(MyNFTDataContext);
+  const { nfts, fetchNFTs } = useContext(MyNFTDataContext);
   const mohContractAddress = mohCA_ABI.address;
   const [flippedCards, setFlippedCards] = useState(
-    Array(5).fill(false) // Ensure there are 5 placeholders initially
+    Array(6).fill(false) // Ensure there are 5 placeholders initially
   );
 
-  const medalPlaceholders = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY"];
+  const medalPlaceholders = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY", "ETERNAL"];
 
   const handleClick = (i) => {
     const newFlippedCards = [...flippedCards];
@@ -109,17 +109,20 @@ const NFTWalletCard = () => {
                     <h3>{item.metadata.name}</h3>
                     <small>ID: {item.tokenId}</small>
                     <div className={Style.NFTWalletCard_box_info_details_button}>
-                    <ButtonSprite
-                      btnURL=""
-                      btnSize="size1"
-                      btnText="DETAILS"
-                      paddingLeft="default"
-                      paddingRight="default"
-                      playSound="yes"
-                      isResponsive={true}
-                      maxWidth="120px"
-                      onClick={() => handleClick(i)}
-                    />
+                    <Button
+                        btnName="DETAILS"
+                        onClick={() => handleClick(i)}
+                        classStyle="size1"
+                        paddingLeft="default"
+                        paddingRight="default"
+                        isActive={false}
+                        setIsActive={() => { }}
+                        fontSize="16px"
+                        title="Details"
+                        imageWidth={50}
+                        imageHeight={50}
+                        icon=""
+                      />
                     </div>
                   </div>
                 </div>
@@ -145,18 +148,20 @@ const NFTWalletCard = () => {
               <p>
                 {item && item.metadata ? item.metadata.description : "Available soon!"}
               </p>
-              <ButtonSprite
-                btnURL=""
-                btnSize="size1"
-                btnText="back"
+              <Button
+                btnName="back"
+                onClick={() => handleClick(i)}
+                classStyle="size1"
                 fontSize="default"
                 paddingLeft="default"
                 paddingRight="default"
-                playSound="yes"
-                hoverGrow="yes"
-                isResponsive={true}
-                maxWidth="120px"
-                onClick={() => handleClick(i)}
+                isActive={false}
+                setIsActive={() => { }}
+                title="Back"
+                hoverGrow={true}
+                imageWidth={50}
+                imageHeight={50}
+                icon=""
               />
             </div>
           </div>

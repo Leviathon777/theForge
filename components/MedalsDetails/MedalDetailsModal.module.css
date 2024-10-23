@@ -1,6 +1,3 @@
-/* components/MedalDetailsModal.module.css */
-
-
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -10,8 +7,6 @@
   background-color: rgba(0, 0, 0, 0.85);
   z-index: 2000;
 }
-
-
 .MedalDetailsModal {
   position: fixed;
   top: 0;
@@ -23,10 +18,7 @@
   align-items: center;
   justify-content: center;
   z-index: 3000;
-
 }
-
-
 .MedalDetailsModal_content {
   position: relative;
   width: 60%;
@@ -35,10 +27,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
   border-radius: 10px;
   overflow: hidden;
-
 }
-
-/* Modal Header */
 .MedalDetailsModal_header {
   position: absolute;
   top: 20px;
@@ -50,8 +39,6 @@
   z-index: 3003;
   color: white;
 }
-
-/* Close Button */
 .MedalDetailsModal_closeButton {
   background: rgba(0, 0, 0, 0.3);
   color: white;
@@ -62,26 +49,19 @@
   cursor: pointer;
   transition: background 0.3s ease;
 }
-
 .MedalDetailsModal_closeButton:hover {
   background: rgba(0, 0, 0, 0.3);
 }
-
-
 .MedalDetailsModal_body {
   width: 100%;
   height: 100%;
   position: relative;
 }
-
-
 .videoContainer {
   width: 100%;
   height: 100%;
   position: relative;
 }
-
-
 .detailsOverlay {
   position: absolute;
   bottom: 0;
@@ -98,70 +78,51 @@
   flex-direction: column;
   z-index: 2;
 }
-
-
 .detailsContent {
   width: 100%;
   padding: 0rem 1rem 0rem 1rem;
   display: flex;
   flex-direction: column;
 }
-
-/* Description */
 .MedalDetailsModal_description {
   font-weight: bold;
   text-align: center;
 }
-
 .MedalDetailsModal_description h1 {
   text-transform: uppercase;
   margin-bottom: 1.5rem;
 }
-
 .MedalDetailsModal_description h2 {
   text-transform: capitalize;
   font-size: 1.75rem;
   margin-bottom: 4rem;
-
 }
-
-/* Sections */
 .MedalDetailsModal_creators,
 .MedalDetailsModal_price {
   font-size: 1rem;
   margin-bottom: 6px;
   text-align: left;
 }
-
 .MedalDetailsModal_info {
   font-size: 1rem;
   margin-bottom: 10px;
   text-align: right;
   transform: translateY(-80px);
 }
-
 .MedalDetailsModal_notes {
   font-size: 1rem;
   margin-bottom: 10px;
   text-align: center;
   transform: translateY(-80px);
 }
-
-
-
 .MedalDetailsModal_contractAddress {
   font-size: 1rem;
   cursor: pointer;
 }
-
-
 .MedalDetailsModal_notes small {
   font-size: 1rem;
   color: #ccc;
-
 }
-
-
 .MedalDetailsModal_companies {
   width: 100%;
   font-size: 0.9rem;
@@ -169,12 +130,10 @@
   border-top: 1px solid #fff;
   padding-top: 10px;
 }
-
 .MedalDetailsModal_companies h3 {
   font-size: 1.2rem;
   margin-bottom: 10px;
 }
-
 .MedalDetailsModal_companies ul {
   list-style-type: none;
   padding: 0;
@@ -182,49 +141,39 @@
   display: flex;
   justify-content: space-between;
 }
-
 .MedalDetailsModal_companies ul li {
   margin: 0 10px;
 }
-
 .MedalDetailsModal_companies ul li a {
   color: #017afe;
   /* Link color */
   text-decoration: none;
   transition: text-decoration 0.2s ease;
 }
-
 .MedalDetailsModal_companies ul li a:hover {
   text-decoration: underline;
 }
-
-
 @media (max-width: 768px) {
   .MedalDetailsModal_content {
     width: 95%;
     height: 90%;
   }
-
   .detailsOverlay {
     height: 44%;
     padding: 15px;
   }
-
   .MedalDetailsModal_description {
     font-size: 1.5rem;
   }
-
   .MedalDetailsModal_creators,
   .MedalDetailsModal_price,
   .MedalDetailsModal_info,
   .MedalDetailsModal_notes {
     font-size: 0.9rem;
   }
-
   .MedalDetailsModal_companies h3 {
     font-size: 1rem;
   }
-
   .MedalDetailsModal_companies ul li a {
     font-size: 0.9rem;
   }
