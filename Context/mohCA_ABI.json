@@ -1,5 +1,5 @@
 {
-    "address": "0x3ea410f065C6c10A8F86AD58252927C1D858688E",
+    "address": "0x4Cd64A1def4D54Ed2EE4DAD2e46fD0945a21De68",
     "abi": [
         {
             "inputs": [
@@ -123,6 +123,25 @@
                 }
             ],
             "name": "CommonMinted",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "cycleNumber",
+                    "type": "uint256"
+                }
+            ],
+            "name": "CycleCompleted",
             "type": "event"
         },
         {
@@ -791,6 +810,74 @@
                     "internalType": "address",
                     "name": "",
                     "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getMintedCounts",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "commonMinted",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "commonRemaining",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "uncommonMinted",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "uncommonRemaining",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "rareMinted",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "rareRemaining",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "epicMinted",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "epicRemaining",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "legendaryMinted",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "legendaryRemaining",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "eternalMinted",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "eternalRemaining",
+                    "type": "uint256"
                 }
             ],
             "stateMutability": "view",
