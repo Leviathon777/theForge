@@ -16,11 +16,11 @@
   background-attachment: fixed;
 }
 
-.button_botton_box{
+.button_botton_box {
   display: flex;
   gap: 2rem;
+  justify-content: center;
 }
-
 .theForge_content_wrapper {
   display: flex;
   flex-direction: column;
@@ -576,7 +576,17 @@
   .theForge_content {
     padding: 1rem;
   }
+  .button_botton_box {
+    flex-direction: column; /* Stacks the buttons vertically */
+    gap: 1rem;
+    padding: 1rem;
+  }
 
+  .button_botton_box button {
+    width: 100%; /* Makes buttons full-width on mobile */
+    font-size: 0.9rem; /* Adjusts font size for smaller screens */
+    padding: 8px 0; /* Adjusts padding for smaller screens */
+  }
   .second_component,
   .third_component,
   .fourth_component,
@@ -724,7 +734,17 @@
       flex-direction: row;
       align-items: center;
     }
-
+    .button_botton_box {
+      flex-direction: column; /* Stacks the buttons vertically */
+      gap: 1rem;
+      padding: 1rem;
+    }
+  
+    .button_botton_box button {
+      width: 100%; /* Makes buttons full-width on mobile */
+      font-size: 0.9rem; /* Adjusts font size for smaller screens */
+      padding: 8px 0; /* Adjusts padding for smaller screens */
+    }
     .theForge_content {
       background-size: fill; 
           }

@@ -96,9 +96,6 @@
 }
 
 .skipButton {
-  position: absolute;
-  bottom: 20px; 
-  right: 20px; 
   background-color: #333;
   color: white;
   border: none;
@@ -107,7 +104,6 @@
   font-size: 16px;
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.3s ease;
-  z-index: 1000;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -119,6 +115,7 @@
 .skipButton:active {
   transform: scale(0.95);
 }
+
 
 
 
@@ -145,8 +142,8 @@
   }
 
   .imageWrapper {
-    width: 300px;
-    height: 300px;
+    width: 425px;
+    height: 425px;
   }
 
   .cookieOverlay {
@@ -175,14 +172,14 @@
   }
   
   .enterContainer {
-    top: 30%;
-    left: 12.5%;
+    top: 25%;
+    left: -1rem;
     transform: translate(-50%, -50%);
   }
 
   .imageWrapper {
-    width: 300px;
-    height: 300px;
+    width: 425px;
+    height: 425px;
   }
 
   .cookieOverlay {

@@ -75,12 +75,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_NFTWallet_NFTWallet__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8916);
 /* harmony import */ var _components_componentsindex__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9065);
 /* harmony import */ var _Context_MyNFTDataContext__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1953);
-/* harmony import */ var _styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(4888);
-/* harmony import */ var _styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1853);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_6__);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_components_NFTWallet_NFTWallet__WEBPACK_IMPORTED_MODULE_3__, _components_componentsindex__WEBPACK_IMPORTED_MODULE_4__]);
-([_components_NFTWallet_NFTWallet__WEBPACK_IMPORTED_MODULE_3__, _components_componentsindex__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(4888);
+/* harmony import */ var _styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _thirdweb_dev_react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(2352);
+/* harmony import */ var _thirdweb_dev_react__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_thirdweb_dev_react__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1982);
+/* harmony import */ var ethers__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(ethers__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var react_toastify__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3590);
+/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1853);
+/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1664);
+/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(next_link__WEBPACK_IMPORTED_MODULE_10__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_components_NFTWallet_NFTWallet__WEBPACK_IMPORTED_MODULE_3__, _components_componentsindex__WEBPACK_IMPORTED_MODULE_4__, react_toastify__WEBPACK_IMPORTED_MODULE_8__]);
+([_components_NFTWallet_NFTWallet__WEBPACK_IMPORTED_MODULE_3__, _components_componentsindex__WEBPACK_IMPORTED_MODULE_4__, react_toastify__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+
+
 
 
 
@@ -94,7 +105,10 @@ const TheForgePage = ()=>{
     const { 0: isTermsModalOpen , 1: setIsTermsModalOpen  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
     const { 0: isUserAgreementModalOpen , 1: setIsUserAgreementModalOpen  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
     const { 0: isModalOpen , 1: setIsModalOpen  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
-    const router = (0,next_router__WEBPACK_IMPORTED_MODULE_6__.useRouter)();
+    const { 0: isOwner , 1: setIsOwner  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
+    const signer = (0,_thirdweb_dev_react__WEBPACK_IMPORTED_MODULE_6__.useSigner)();
+    const address = (0,_thirdweb_dev_react__WEBPACK_IMPORTED_MODULE_6__.useAddress)();
+    const router = (0,next_router__WEBPACK_IMPORTED_MODULE_9__.useRouter)();
     (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{
         const fetchBNBPrice = async ()=>{
             try {
@@ -107,27 +121,54 @@ const TheForgePage = ()=>{
         };
         fetchBNBPrice();
     }, []);
+    (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{
+        const checkOwner = async ()=>{
+            if (!signer || !address) return;
+            try {
+                const contract = new ethers__WEBPACK_IMPORTED_MODULE_7__.ethers.Contract("0x2F83B5E7Df514B8C7a84C473a529F6aF61c42d76", (__webpack_require__(1996)/* .abi */ .Mt), signer);
+                const contractOwner = await contract.owner();
+                const authorizedAddresses = "0x30bd0fBa7E3A54D766c5f0071B32a996595C50b0,0x419Ef7D5C14bBe376A3945bC4AA9b226f1315a42,0xe8CF8Ee8C6b0E44064bd4A9D0D2A8A3f38377E20"?.split(",").map((addr)=>addr.trim().toLowerCase()) || [];
+                if (address.toLowerCase() === contractOwner.toLowerCase() || authorizedAddresses.includes(address.toLowerCase())) {
+                    setIsOwner(true);
+                } else {
+                    setIsOwner(false);
+                }
+            } catch (error) {
+                console.error("Error checking owner:", error);
+            }
+        };
+        if (signer && address) {
+            checkOwner();
+        }
+    }, [
+        signer,
+        address
+    ]);
+    const handleNavigation = ()=>{
+        console.log("Navigating to /OwnerOpsPage...");
+        router.push("/OwnerOpsPage").catch((err)=>console.error("Navigation error:", err));
+    };
     return /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().theForge),
+        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().theForge),
         children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().theForge_content),
+            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().theForge_content),
             children: [
                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().theForge_content_wrapper),
+                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().theForge_content_wrapper),
                     children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
-                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title_text),
+                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title_text),
                         children: "THE FORGE OF DESTINY"
                     })
                 }),
                 /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().theForgeContent),
+                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().theForgeContent),
                     children: [
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
-                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().lore_text),
+                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().lore_text),
                             children: "A LEGENDS LORE"
                         }),
                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("p", {
-                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().medalsText),
+                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().medalsText),
                             children: [
                                 "In the mythical land of Xdripia, a beacon of courage and relentless perseverance stands above all else:",
                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("strong", {
@@ -155,15 +196,15 @@ const TheForgePage = ()=>{
                     ]
                 }),
                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().glowingDivider)
+                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().glowingDivider)
                 }),
                 /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_Context_MyNFTDataContext__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z, {
                     children: [
                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().second_component),
+                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().second_component),
                             children: [
                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
-                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().lore_text),
+                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().lore_text),
                                     children: "MEDALS OF HONOR VAULT"
                                 }),
                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_componentsindex__WEBPACK_IMPORTED_MODULE_4__/* .TheForge */ .Pc, {
@@ -172,26 +213,26 @@ const TheForgePage = ()=>{
                             ]
                         }),
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().glowingDivider)
+                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().glowingDivider)
                         }),
                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().third_component),
+                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().third_component),
                             children: [
                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
-                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().lore_text),
+                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().lore_text),
                                     children: "YOUR MEDALS DISPLAY CASE"
                                 }),
                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_NFTWallet_NFTWallet__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z, {})
                             ]
                         }),
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().glowingDivider)
+                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().glowingDivider)
                         }),
                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().fourth_component),
+                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().fourth_component),
                             children: [
                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
-                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().lore_text),
+                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().lore_text),
                                     children: "A WARRIOR'S SPOILS"
                                 }),
                                 /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)((react_pageflip__WEBPACK_IMPORTED_MODULE_2___default()), {
@@ -203,7 +244,7 @@ const TheForgePage = ()=>{
                                     minHeight: 700,
                                     maxHeight: 1533,
                                     maxShadowOpacity: 0.5,
-                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().flipBook),
+                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().flipBook),
                                     drawShadow: false,
                                     flippingTime: 1000,
                                     usePortrait: true,
@@ -212,36 +253,36 @@ const TheForgePage = ()=>{
                                     mobileScrollSupport: false,
                                     children: [
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page),
                                             children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_image_top),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_image_top),
                                                 children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("img", {
                                                     src: "/img/metal.webp",
                                                     alt: "Image 2",
-                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().image_front)
+                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().image_front)
                                                 })
                                             })
                                         }),
                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().content_page),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().content_page),
                                             children: [
                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h2", {
                                                     children: "Table of Contents"
                                                 }),
                                                 /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("ul", {
-                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().contentsList),
+                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().contentsList),
                                                     children: [
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Common Tier Image"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 1"
                                                                 })
                                                             ]
@@ -249,14 +290,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Common Tier Details"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 2"
                                                                 })
                                                             ]
@@ -264,14 +305,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Uncommon Tier Image"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 3"
                                                                 })
                                                             ]
@@ -279,14 +320,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Uncommon Tier Details"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 4"
                                                                 })
                                                             ]
@@ -294,14 +335,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Rare Tier Image"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 5"
                                                                 })
                                                             ]
@@ -309,14 +350,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Rare Tier Details"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 6"
                                                                 })
                                                             ]
@@ -324,14 +365,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Epic Tier Image"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 7"
                                                                 })
                                                             ]
@@ -339,14 +380,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Epic Tier Details"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 8"
                                                                 })
                                                             ]
@@ -354,14 +395,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Legendary Tier Image"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 9"
                                                                 })
                                                             ]
@@ -369,14 +410,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Legendary Tier Details"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 10"
                                                                 })
                                                             ]
@@ -384,14 +425,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Eternal Tier Image"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 11"
                                                                 })
                                                             ]
@@ -399,14 +440,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Eternal Tier Details"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 12"
                                                                 })
                                                             ]
@@ -414,14 +455,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "XDRIP Holder Benefits"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 13"
                                                                 })
                                                             ]
@@ -429,14 +470,14 @@ const TheForgePage = ()=>{
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().title),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().title),
                                                                     children: "Additional XDRIP Benefits"
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().leader)
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().leader)
                                                                 }),
                                                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().pageNumber),
+                                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().pageNumber),
                                                                     children: "Page 14"
                                                                 })
                                                             ]
@@ -446,30 +487,30 @@ const TheForgePage = ()=>{
                                             ]
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left),
                                             children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper),
                                                 children: [
                                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_top),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_top),
                                                         children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("img", {
                                                             src: "/img/nft-image-1.webp",
                                                             alt: "Image 1",
-                                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().imagePage)
+                                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().imagePage)
                                                         })
                                                     }),
                                                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_bottom),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_bottom),
                                                         children: [
                                                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
                                                                 children: "I. COMMON TIER"
                                                             }),
                                                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("p", {
-                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().supply),
+                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().supply),
                                                                 children: "Supply: 10,000 Medals"
                                                             }),
                                                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("p", {
-                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().price),
+                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().price),
                                                                 children: [
                                                                     "Price: 0.5 BNB",
                                                                     bnbPrice && /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("span", {
@@ -487,11 +528,11 @@ const TheForgePage = ()=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page),
                                             children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper),
                                                 children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("ul", {
-                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().benefits),
+                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().benefits),
                                                     children: [
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
@@ -564,30 +605,30 @@ const TheForgePage = ()=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left),
                                             children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper),
                                                 children: [
                                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_top),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_top),
                                                         children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("img", {
                                                             src: "/img/nft-image-2.webp",
                                                             alt: "Image 2",
-                                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().imagePage)
+                                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().imagePage)
                                                         })
                                                     }),
                                                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_bottom),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_bottom),
                                                         children: [
                                                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
                                                                 children: "II. UNCOMMON TIER"
                                                             }),
                                                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("p", {
-                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().supply),
+                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().supply),
                                                                 children: "Supply: 5,000 Medals"
                                                             }),
                                                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("p", {
-                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().price),
+                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().price),
                                                                 children: [
                                                                     "Price: 1.0 BNB",
                                                                     bnbPrice && /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("span", {
@@ -605,11 +646,11 @@ const TheForgePage = ()=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page),
                                             children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper),
                                                 children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("ul", {
-                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().benefits),
+                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().benefits),
                                                     children: [
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
@@ -690,31 +731,31 @@ const TheForgePage = ()=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left),
                                             children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper),
                                                 children: [
                                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_top),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_top),
                                                         children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("img", {
                                                             src: "/img/nft-image-3.webp",
                                                             alt: "Image 3",
                                                             layout: "fill",
-                                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().imagePage)
+                                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().imagePage)
                                                         })
                                                     }),
                                                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_bottom),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_bottom),
                                                         children: [
                                                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
                                                                 children: "III. RARE TIER"
                                                             }),
                                                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("p", {
-                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().supply),
+                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().supply),
                                                                 children: "Supply: 2,500 Medals"
                                                             }),
                                                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("p", {
-                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().price),
+                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().price),
                                                                 children: [
                                                                     "Price: 1.5 BNB",
                                                                     bnbPrice && /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("span", {
@@ -732,11 +773,11 @@ const TheForgePage = ()=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page),
                                             children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper),
                                                 children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("ul", {
-                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().benefits),
+                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().benefits),
                                                     children: [
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
@@ -844,31 +885,31 @@ const TheForgePage = ()=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left),
                                             children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper),
                                                 children: [
                                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_top),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_top),
                                                         children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("img", {
                                                             src: "/img/nft-image-4.webp",
                                                             alt: "Image 4",
                                                             layout: "fill",
-                                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().imagePage)
+                                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().imagePage)
                                                         })
                                                     }),
                                                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_bottom),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_bottom),
                                                         children: [
                                                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
                                                                 children: "IV. EPIC TIER"
                                                             }),
                                                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("p", {
-                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().supply),
+                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().supply),
                                                                 children: "Supply: 1,000 Medals"
                                                             }),
                                                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("p", {
-                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().price),
+                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().price),
                                                                 children: [
                                                                     "Price: 2.0 BNB",
                                                                     bnbPrice && /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("span", {
@@ -886,11 +927,11 @@ const TheForgePage = ()=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page),
                                             children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper),
                                                 children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("ul", {
-                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().benefits),
+                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().benefits),
                                                     children: [
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
@@ -998,31 +1039,31 @@ const TheForgePage = ()=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left),
                                             children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper),
                                                 children: [
                                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_top),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_top),
                                                         children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("img", {
                                                             src: "/img/nft-image-5.webp",
                                                             alt: "Image 5",
                                                             layout: "fill",
-                                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().imagePage)
+                                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().imagePage)
                                                         })
                                                     }),
                                                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_bottom),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_bottom),
                                                         children: [
                                                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
                                                                 children: "V. LEGENDARY TIER"
                                                             }),
                                                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("p", {
-                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().supply),
+                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().supply),
                                                                 children: "Supply: 500 Medals"
                                                             }),
                                                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("p", {
-                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().price),
+                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().price),
                                                                 children: [
                                                                     "Price: 2.5 BNB",
                                                                     bnbPrice && /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("span", {
@@ -1040,11 +1081,11 @@ const TheForgePage = ()=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page),
                                             children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper),
                                                 children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("ul", {
-                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().benefits),
+                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().benefits),
                                                     children: [
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
@@ -1157,31 +1198,31 @@ const TheForgePage = ()=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left),
                                             children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper),
                                                 children: [
                                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_top),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_top),
                                                         children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("img", {
                                                             src: "/img/nft-image-6.webp",
                                                             alt: "Image 5",
                                                             layout: "fill",
-                                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().imagePage)
+                                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().imagePage)
                                                         })
                                                     }),
                                                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_bottom),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_bottom),
                                                         children: [
                                                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h1", {
                                                                 children: "VI. ETERNAL TIER"
                                                             }),
                                                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("p", {
-                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().supply),
+                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().supply),
                                                                 children: "Supply: 20 Medals"
                                                             }),
                                                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("p", {
-                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().price),
+                                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().price),
                                                                 children: [
                                                                     "Price: 200 BNB",
                                                                     bnbPrice && /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("span", {
@@ -1199,11 +1240,11 @@ const TheForgePage = ()=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page),
                                             children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper),
                                                 children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("ul", {
-                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().benefits),
+                                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().benefits),
                                                     children: [
                                                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                             children: [
@@ -1316,23 +1357,23 @@ const TheForgePage = ()=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page)
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page)
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page),
+                                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page),
                                             children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper_bottom),
+                                                className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper_bottom),
                                                 children: [
                                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h2", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_left_wrapper_text),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_left_wrapper_text),
                                                         children: "XDRIP Holder Benefits AND Incentives"
                                                     }),
                                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("p", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().page_p),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().page_p),
                                                         children: "To encourage holders to invest in both NFTs and XDRIP, we offer unique bonuses for those who reach specific XDRIP thresholds, starting at 1% supply. These bonuses compound with each tier, adding up to 15% additional returns for holders of 5% of the total supply:"
                                                     }),
                                                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("ul", {
-                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().benefits),
+                                                        className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().benefits),
                                                         children: [
                                                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("li", {
                                                                 children: [
@@ -1424,14 +1465,14 @@ const TheForgePage = ()=>{
                             ]
                         }),
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().glowingDivider)
+                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().glowingDivider)
                         }),
                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().fifth_component),
+                            className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().fifth_component),
                             children: [
                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_componentsindex__WEBPACK_IMPORTED_MODULE_4__/* .SocialButtons */ .LO, {}),
                                 /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_7___default().button_botton_box),
+                                    className: (_styles_theForge_module_css__WEBPACK_IMPORTED_MODULE_11___default().button_botton_box),
                                     children: [
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_componentsindex__WEBPACK_IMPORTED_MODULE_4__/* .Button */ .zx, {
                                             btnName: "Terms of Service",
@@ -1453,9 +1494,9 @@ const TheForgePage = ()=>{
                                             setIsActive: ()=>{},
                                             title: "User Agreement"
                                         }),
-                                        /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_componentsindex__WEBPACK_IMPORTED_MODULE_4__/* .Button */ .zx, {
+                                        isOwner && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_componentsindex__WEBPACK_IMPORTED_MODULE_4__/* .Button */ .zx, {
                                             btnName: "Owner Operations",
-                                            onClick: ()=>router.push("/OwnerOpsPage"),
+                                            onClick: handleNavigation,
                                             fontSize: "inherit",
                                             paddingLeft: "0",
                                             paddingRight: "0",

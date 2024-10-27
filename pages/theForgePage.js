@@ -4,20 +4,29 @@ import NFTWallet from "../components/NFTWallet/NFTWallet";
 import { Button, SocialButtons, TheForge, TermsOfService, UserAgreement, WalkthroughModal } from "../components/componentsindex";
 import MyNFTData from "../Context/MyNFTDataContext";
 import Style from "../styles/theForge.module.css";
+import { useSigner, useAddress } from '@thirdweb-dev/react';
+import { ethers } from 'ethers';
+import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
+
+
 const TheForgePage = () => {
   const [bnbPrice, setBnbPrice] = useState(null);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isUserAgreementModalOpen, setIsUserAgreementModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
 
+  const signer = useSigner();
+  const address = useAddress();
   const router = useRouter();
+
+
   useEffect(() => {
     const fetchBNBPrice = async () => {
       try {
-        const response = await fetch(
-          "https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd"
-        );
+        const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd");
         const data = await response.json();
         setBnbPrice(data.binancecoin.usd);
       } catch (error) {
@@ -26,6 +35,43 @@ const TheForgePage = () => {
     };
     fetchBNBPrice();
   }, []);
+
+  useEffect(() => {
+    const checkOwner = async () => {
+      if (!signer || !address) return;
+
+      try {
+        const contract = new ethers.Contract(
+          process.env.NEXT_PUBLIC_MEDAL_CONTRACT_ADDRESS,
+          require('../Context/mohCA_ABI.json').abi,
+          signer
+        );
+
+        const contractOwner = await contract.owner();
+        const authorizedAddresses = process.env.NEXT_PUBLIC_OWNER_ADDRESSES?.split(",").map(addr => addr.trim().toLowerCase()) || [];
+
+        if (
+          address.toLowerCase() === contractOwner.toLowerCase() ||
+          authorizedAddresses.includes(address.toLowerCase())
+        ) {
+          setIsOwner(true);
+        } else {
+          setIsOwner(false);
+        }
+      } catch (error) {
+        console.error("Error checking owner:", error);
+      }
+    };
+
+    if (signer && address) {
+      checkOwner();
+    }
+  }, [signer, address]);
+
+  const handleNavigation = () => {
+    console.log("Navigating to /OwnerOpsPage...");
+    router.push('/OwnerOpsPage').catch(err => console.error("Navigation error:", err));
+  };
 
   return (
     <div className={Style.theForge}>
@@ -593,16 +639,18 @@ const TheForgePage = () => {
                 setIsActive={() => { }}
                 title="User Agreement"
               />
-              <Button
-                btnName="Owner Operations"
-                onClick={() => router.push('/OwnerOpsPage')}
-                fontSize="inherit"
-                paddingLeft="0"
-                paddingRight="0"
-                isActive={false}
-                setIsActive={() => { }}
-                title="Go to OwnerOps"
-              />
+              {isOwner && (
+                <Button
+                  btnName="Owner Operations"
+                  onClick={handleNavigation}
+                  fontSize="inherit"
+                  paddingLeft="0"
+                  paddingRight="0"
+                  isActive={false}
+                  setIsActive={() => { }}
+                  title="Go to OwnerOps"
+                />
+              )}
             </div>
             <TermsOfService
               isOpen={isTermsModalOpen}

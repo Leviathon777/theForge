@@ -13,9 +13,18 @@ const OwnerOpsPage = () => {
 
   useEffect(() => {
     const checkOwner = async () => {
-      if (!signer) return;
+      if (!signer || !address) {
+        toast.warn('Please connect your wallet to access this page.');
+        return;
+      }
 
       try {
+       if (!process.env.NEXT_PUBLIC_MEDAL_CONTRACT_ADDRESS || !process.env.NEXT_PUBLIC_OWNER_ADDRESSES) {
+          console.error('Environment variables are missing.');
+          toast.error('Application error: Missing configuration.');
+          return;
+        }
+
         const contract = new ethers.Contract(
           process.env.NEXT_PUBLIC_MEDAL_CONTRACT_ADDRESS, 
           require('../Context/mohCA_ABI.json').abi,
@@ -23,7 +32,7 @@ const OwnerOpsPage = () => {
         );
 
         const contractOwner = await contract.owner();
-        const authorizedAddresses = process.env.NEXT_PUBLIC_OWNER_ADDRESSES?.split(",").map(addr => addr.toLowerCase()) || [];
+        const authorizedAddresses = process.env.NEXT_PUBLIC_OWNER_ADDRESSES.split(",").map(addr => addr.toLowerCase());
 
         console.log('Connected Wallet Address:', address);
         console.log('Contract Owner Address:', contractOwner);
@@ -39,6 +48,7 @@ const OwnerOpsPage = () => {
         }
       } catch (error) {
         console.error('Error checking owner:', error);
+        toast.error('An error occurred while checking authorization.');
       }
     };
 
@@ -51,7 +61,7 @@ const OwnerOpsPage = () => {
     <div className={styles.background}>
       <h1 className={styles.heading}>Owner Operations</h1>
       <ToastContainer position="top-center" />
-      
+
       {isOwner ? (
         <OwnerOps signer={signer} />
       ) : (

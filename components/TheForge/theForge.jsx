@@ -493,7 +493,7 @@ const TheForge = ({ setIsModalOpen }) => {
             btnName="WALLET TUTORIALS"
             onClick={() => setIsModalOpen(true)}
             className={Style.openWalkthroughButton}
-            fontSize="20px"
+            fontSize="inherit"
             paddingLeft="0"
             paddingRight="0"
             isActive={false}

@@ -688,8 +688,7 @@ const EntryPage = ({ onEnter , isModalVisible , handleAccept , handleDecline  })
                     ]
                 })
             }),
-            showSkipButton && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(framer_motion__WEBPACK_IMPORTED_MODULE_2__.motion.button, {
-                className: (_EntryPage_module_css__WEBPACK_IMPORTED_MODULE_6___default().skipButton),
+            showSkipButton && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(framer_motion__WEBPACK_IMPORTED_MODULE_2__.motion.div, {
                 initial: {
                     opacity: 0,
                     scale: 0.8
@@ -708,8 +707,17 @@ const EntryPage = ({ onEnter , isModalVisible , handleAccept , handleDecline  })
                     duration: 0.5,
                     ease: "easeInOut"
                 },
-                onClick: handleSkipClick,
-                children: "Skip"
+                style: {
+                    position: "fixed",
+                    bottom: "20px",
+                    right: "20px",
+                    zIndex: 1000
+                },
+                children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_componentsindex__WEBPACK_IMPORTED_MODULE_5__/* .Button */ .zx, {
+                    btnName: "Skip",
+                    onClick: handleSkipClick,
+                    className: (_EntryPage_module_css__WEBPACK_IMPORTED_MODULE_6___default().skipButton)
+                })
             }),
             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_componentsindex__WEBPACK_IMPORTED_MODULE_5__/* .TermsOfService */ .O$, {
                 isOpen: isTermsModalOpen,
@@ -2801,7 +2809,7 @@ const TheForge = ({ setIsModalOpen  })=>{
                                 btnName: "WALLET TUTORIALS",
                                 onClick: ()=>setIsModalOpen(true),
                                 className: (_TheForge_module_css__WEBPACK_IMPORTED_MODULE_17___default().openWalkthroughButton),
-                                fontSize: "20px",
+                                fontSize: "inherit",
                                 paddingLeft: "0",
                                 paddingRight: "0",
                                 isActive: false
