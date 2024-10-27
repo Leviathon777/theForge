@@ -1,0 +1,14 @@
+---
+deployment:
+  tasks:
+    - export NODE_ENV=production
+    - /bin/echo "Starting deployment"
+    - /bin/echo "Pulling the latest changes from GitHub..."
+    - /usr/bin/git pull
+    - /bin/echo "Installing dependencies..."
+    - /opt/cpanel/ea-nodejs18/bin/npm install
+    - /bin/echo "Building the project..."
+    - /opt/cpanel/ea-nodejs18/bin/npm run build
+    - /bin/echo "Restarting the application..."
+    - /usr/local/cpanel/scripts/restartsrv_apache_php_fpm
+    - /bin/echo "Deployment complete"

@@ -1,0 +1,9 @@
+{
+  "/_error": "pages/_error.js",
+  "/_app": "pages/_app.js",
+  "/OwnerOpsPage": "pages/OwnerOpsPage.html",
+  "/": "pages/index.html",
+  "/theForgePage": "pages/theForgePage.html",
+  "/_document": "pages/_document.js",
+  "/404": "pages/404.html"
+}
