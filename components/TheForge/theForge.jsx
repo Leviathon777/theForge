@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { gsap } from "gsap";
+import { motion, useAnimation } from "framer-motion";
 import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,20 +27,15 @@ import Web3 from "web3";
 import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
-
-
 const MohAddress = mohCA_ABI.address;
 const MohABI = mohCA_ABI.abi;
 const fetchMohContract = (signerOrProvider) =>
   new ethers.Contract(MohAddress, MohABI, signerOrProvider);
-
-// XdRiP Setup
 const XdRiPContractAddress = xdripCA_ABI.address;
 const XdRiPContractABI = xdripCA_ABI.abi;
 const web3 = new Web3("https://bsc-dataseed.binance.org/");
 const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
-
-const TheForge = () => {
+const TheForge = ({ setIsModalOpen }) => {
   const [selectedMedal, setSelectedMedal] = useState(null);
   const [bnbBalance, setBnbBalance] = useState(null);
   const [bnbToUsd, setBnbToUsd] = useState(null);
@@ -50,20 +45,16 @@ const TheForge = () => {
   const { nfts, fetchNFTs } = useContext(MyNFTDataContext);
   const [isBNBPrice, setIsBNBPrice] = useState(true);
   const [currentMedal, setCurrentMedal] = useState(null);
-
   const wallet = useWallet();
   const isGuestWallet = wallet?.walletId === "SmartWallet";
-
   const address = useAddress();
   const signer = useSigner();
-
+  const [mintedCounts, setMintedCounts] = useState({});
   const connectLocalWallet = useConnect(localWallet);
-
-
   const carouselRef = useRef();
   const cardRefs = useRef([]);
-  let currentIndex = 0;
-  let autoRotateTween = useRef(null);
+  const controls = useAnimation();
+  const [startX, setStartX] = useState(0);
   const mohData = [
     {
       title: "COMMON",
@@ -72,7 +63,7 @@ const TheForge = () => {
       collection: "MEDALS OF HONOR",
       price: "0.5 BNB",
       like: 1,
-      image: "../public/img/user1",
+      image: "../public/img/nft-image-1.webp",
       nftVideo: videos.common,
       description:
         "Forged in the fires of battle, this medal represents the courage and determination of the XdRiP warrior.",
@@ -89,7 +80,7 @@ const TheForge = () => {
       collection: "MEDALS OF HONOR",
       price: "1 BNB",
       like: 369,
-      image: "../public/img/user1",
+      image: "../public/img/nft-image-2.webp",
       nftVideo: videos.uncommon,
       description:
         "Crafted by the most skilled, this medal is a symbol of the exceptional strength and valor possessed by those who rise above the rest.",
@@ -106,7 +97,7 @@ const TheForge = () => {
       collection: "MEDALS OF HONOR",
       price: "1.5 BNB",
       like: 1,
-      image: "../public/img/user1",
+      image: "../public/img/nft-image-3.webp",
       nftVideo: videos.rare,
       description:
         "Forged from rare and precious metals, this medal is a testament to the elite few who have demonstrated unparalleled bravery and honor.",
@@ -123,7 +114,7 @@ const TheForge = () => {
       collection: "MEDALS OF HONOR",
       price: "2 BNB",
       like: 1,
-      image: "../public/img/user1",
+      image: "../public/img/nft-image-4.webp",
       nftVideo: videos.epic,
       description:
         "Wrought with mystical powers, this medal is a sign of the legendary feats accomplished by only the most heroic and mighty of warriors.",
@@ -140,7 +131,7 @@ const TheForge = () => {
       collection: "MEDALS OF HONOR",
       price: "2.5 BNB",
       like: 1,
-      image: "../public/img/user1",
+      image: "../public/img/nft-image-5.webp",
       nftVideo: videos.legendary,
       description:
         "Forged by the XdRiP Gods, this medal is a symbol of the ultimate achievement in battle, an honor bestowed only upon the greatest of heroes. ",
@@ -157,7 +148,7 @@ const TheForge = () => {
       collection: "MEDALS OF HONOR",
       price: "200 BNB",
       like: 1,
-      image: "../public/img/user1",
+      image: "../public/img/nft-image-6.webp",
       nftVideo: videos.eternals,
       description:
         "Forged in the heart of the universe itself, the Eternal medal is a symbol of timeless strength and immortality. Wielded by only the most enduring of warriors, this medal transcends the mortal realm, representing an unbreakable bond between heroism and the cosmos. To wear this medal is to be forever remembered as a champion of infinite valor.",
@@ -168,11 +159,9 @@ const TheForge = () => {
       },
     },
   ];
-
   const togglePrice = () => {
     setIsBNBPrice(!isBNBPrice);
   };
-
   const fetchXDRIPBalance = async () => {
     try {
       const balance = await XdRiPContract.methods.balanceOf(address).call();
@@ -186,9 +175,6 @@ const TheForge = () => {
       setXdripBalance("Error fetching balance");
     }
   };
-
-
-
   const handleConnectLocalWallet = async () => {
     try {
       await connectLocalWallet();
@@ -198,81 +184,57 @@ const TheForge = () => {
       toast.error("Error connecting local wallet.");
     }
   };
-
   useEffect(() => {
     if (address) {
       fetchXDRIPBalance();
     }
   }, [address]);
-
-
-  let isFirstArrowClick = true; // Track whether this is the first arrow click
-
-  // Carousel effect with GSAP
+  const lens = 500;
+  const rotationStep = 360 / mohData.length;
+  const [currentRotation, setCurrentRotation] = useState(0);
   useEffect(() => {
-    const lens = mohData.length;
-    const radius = 500;
-
     cardRefs.current.forEach((card, i) => {
-      gsap.set(card, {
-        rotationY: (360 / lens) * i,
-        transformOrigin: `50% 50% ${-radius}px`,
-        z: 500,
-        autoAlpha: 1,
-      });
+      const angle = rotationStep * i;
+      card.style.transform = `rotateY(${angle}deg) translateZ(${lens}px)`;
     });
-
-    // Smooth Auto-Rotate using GSAP Tween
-    autoRotateTween.current = gsap.to(carouselRef.current, {
-      rotationY: "+=360",
-      duration: 30,
-      ease: "linear",
-      repeat: -1,
-      modifiers: {
-        rotationY: (value) => `${parseFloat(value) % 360}deg`,
+  }, [mohData.length]);
+  useEffect(() => {
+    controls.start({
+      rotateY: [0, 360],
+      transition: {
+        ease: "linear",
+        duration: 30,
+        repeat: Infinity,
       },
     });
+    return () => controls.stop();
+  }, [controls]);
 
-    return () => {
-      autoRotateTween.current.kill();
-    };
-  }, [mohData.length]);
-
-  // Arrow Interaction - Scroll One Card at a Time
-  const handleArrowClick = (direction) => {
-    autoRotateTween.current.pause();
-
-    const lens = mohData.length;
-    const delta = direction === "left" ? -1 : 1;
-
-    if (isFirstArrowClick) {
-      // Reset carousel to a perfect center before applying rotation for the first click
-      isFirstArrowClick = false;
-      gsap.to(carouselRef.current, {
-        duration: 0.5,
-        rotationY: 0, // Reset to centered position
-        ease: "power1.out",
-
-      });
-    } else {
-      currentIndex = (currentIndex + delta + lens) % lens;
-      gsap.to(carouselRef.current, {
-        duration: 1,
-        rotationY: `+=${delta * (360 / lens)}`,
-        ease: "power1.out",
-        modifiers: {
-          rotationY: (value) => `${parseFloat(value) % 360}deg`,
-        },
-      });
-    }
+  const handleSwipeStart = (event) => {
+    setStartX(event.touches[0].clientX);
   };
 
+  const handleSwipeEnd = (event) => {
+    const endX = event.changedTouches[0].clientX;
+    const swipeDistance = startX - endX;
 
-
-
-
+    if (swipeDistance > 50) {
+      handleArrowClick("right");
+    } else if (swipeDistance < -50) {
+      handleArrowClick("left");
+    }
+  };
+  const handleArrowClick = (direction) => {
+    controls.stop();
+    const delta = direction === "left" ? -1 : 1;
+    const newRotation = currentRotation + delta * rotationStep;
+    setCurrentRotation(newRotation);
+    controls.start({
+      rotateY: newRotation,
+      transition: { duration: 1, ease: "easeInOut" },
+    });
+  };
   useEffect(() => {
-    // Fetch BNB to USD price
     const fetchBNBPrice = async () => {
       try {
         const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd');
@@ -283,18 +245,13 @@ const TheForge = () => {
         console.error("Error fetching BNB price:", error);
       }
     };
-
     fetchBNBPrice();
-    const interval = setInterval(fetchBNBPrice, 60000); // Update every 1 minute
-
+    const interval = setInterval(fetchBNBPrice, 60000);
     return () => clearInterval(interval);
   }, []);
-
-
   const handleMedalDetails = (medal) => {
     setSelectedMedal(medal);
   };
-
   useEffect(() => {
     const fetchBalance = async () => {
       if (signer && address) {
@@ -313,19 +270,63 @@ const TheForge = () => {
         }
       }
     };
-
     fetchBalance();
   }, [signer, address]);
 
+  const fetchMintedCounts = async () => {
+    if (!signer) return;
 
-  const handleMint = (medal) => {
-    setCurrentMedal(medal);
-    if (isGuestWallet) {
-      setIsConfirmationModalVisible(true);
-    } else {
-      confirmMint(medal);
+    try {
+      const contract = fetchMohContract(signer);
+      const [
+        commonMinted, commonRemaining,
+        uncommonMinted, uncommonRemaining,
+        rareMinted, rareRemaining,
+        epicMinted, epicRemaining,
+        legendaryMinted, legendaryRemaining,
+        eternalMinted, eternalRemaining
+      ] = await contract.getMintedCounts();
+
+      // Return the counts for updating the UI
+      return {
+        COMMON: { forged: commonMinted.toNumber(), available: commonRemaining.toNumber() },
+        UNCOMMON: { forged: uncommonMinted.toNumber(), available: uncommonRemaining.toNumber() },
+        RARE: { forged: rareMinted.toNumber(), available: rareRemaining.toNumber() },
+        EPIC: { forged: epicMinted.toNumber(), available: epicRemaining.toNumber() },
+        LEGENDARY: { forged: legendaryMinted.toNumber(), available: legendaryRemaining.toNumber() },
+        ETERNAL: { forged: eternalMinted.toNumber(), available: eternalRemaining.toNumber() },
+      };
+    } catch (error) {
+      console.error("Error fetching minted counts:", error);
+      return null;
     }
   };
+
+  useEffect(() => {
+    const loadMintedCounts = async () => {
+      const counts = await fetchMintedCounts();
+      if (counts) {
+        setMintedCounts(counts);
+      }
+    };
+
+    if (signer) {
+      loadMintedCounts();
+    }
+  }, [signer]);
+
+  // Function to get updated inventory counts for display
+  const getInventory = (item) => {
+    if (mintedCounts && mintedCounts[item.title]) {
+      return {
+        forged: mintedCounts[item.title].forged,
+        available: mintedCounts[item.title].available,
+      };
+    }
+    // Fallback to the original inventory if mintedCounts isn't available yet
+    return item.inventory;
+  };
+
 
 
   const confirmMint = async () => {
@@ -350,6 +351,12 @@ const TheForge = () => {
       const receipt = await transaction.wait();
       if (receipt.status === 1) {
         toast.success("Your Medal Of Honor was forged successfully!");
+        await fetchNFTs();
+        // Fetch updated minted counts after successful mint
+        const updatedCounts = await fetchMintedCounts();
+        if (updatedCounts) {
+          setMintedCounts(updatedCounts);
+        }
       } else {
         toast.error("Transaction failed. Please try again.");
       }
@@ -362,34 +369,25 @@ const TheForge = () => {
     }
   };
 
-
   const mint = async (medalType, ipfsHash) => {
     try {
       console.log("Minting medal of type:", medalType);
-
-      // Ensure signer and address are available
       if (!signer) {
         toast.error("Signer not available. Please connect your wallet.");
         return;
       }
-
       if (!address) {
         toast.error("No address found. Please connect your wallet.");
         return;
       }
-
-      const provider = signer.provider; // Ensure provider is available
+      const provider = signer.provider;
       if (!provider) {
         toast.error("Provider is missing. Please reconnect your wallet.");
-        console.log("Provider is missing!"); // Debugging log
+        console.log("Provider is missing!");
         return;
       }
-
-      // Initialize the contract with the signer
-      const contract = fetchMohContract(signer); // Fetch contract using the signer
+      const contract = fetchMohContract(signer);
       console.log("Connected to contract at:", MohAddress);
-
-      // Validate ownership for each medal type
       switch (medalType) {
         case "COMMON":
           break;
@@ -426,12 +424,8 @@ const TheForge = () => {
         default:
           throw new Error("Invalid medal type");
       }
-
-      // Get the price for the selected medal type from the JSON
       const itemPrice = mohData.find((item) => item.title === medalType).price.split(" ")[0];
       const price = ethers.utils.parseUnits(itemPrice, "ether");
-
-      // Define the correct mint function based on the medal type
       let mintFunction;
       switch (medalType) {
         case "COMMON":
@@ -455,31 +449,22 @@ const TheForge = () => {
         default:
           throw new Error("Invalid medal type");
       }
-
-
       let gasLimit;
       try {
         const estimatedGas = await contract.estimateGas[mintFunction.name](ipfsHash, { value: price });
-        gasLimit = estimatedGas.add(ethers.BigNumber.from(10000)); // Adding buffer
+        gasLimit = estimatedGas.add(ethers.BigNumber.from(10000));
         console.log("Estimated gas:", gasLimit.toString());
       } catch (error) {
         console.error("Gas estimation failed. Falling back ");
         gasLimit = ethers.BigNumber.from(990000);
       }
-
-
-      // Send the transaction with the estimated gas or manual gas limit
       const transaction = await mintFunction(ipfsHash, {
         value: price,
         gasLimit,
       });
-
       console.log("Transaction sent:", transaction);
-
-      // Wait for the transaction to be confirmed
       const receipt = await transaction.wait();
       console.log("Transaction Confirmed:", receipt);
-
       if (receipt.status === 1) {
         toast.success("Your Medal Of Honor was forged successfully!");
         await fetchNFTs();
@@ -488,7 +473,6 @@ const TheForge = () => {
       }
     } catch (error) {
       console.error("Minting failed:", error);
-
       if (error.code === 4001) {
         toast.error("You rejected the transaction.");
       } else if (error.data && error.data.message) {
@@ -501,66 +485,71 @@ const TheForge = () => {
       }
     }
   };
-
-
-
-
   return (
-    <div align="center">
-      <ConnectWallet
-        btnTitle="OPEN THE VAULT"
-        style={{
-          background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
-          color: 'white',
-          border: '2px solid #1c1c1c',
-          borderRadius: '12px',
-          boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
-          transition: 'all 0.3s ease',
-          padding: '0',
-          width: '300px',
-          height: '52px',
-          cursor: 'pointer',
-          textAlign: 'center',
-          textTransform: 'uppercase',
-          fontFamily: '"Good Timing", sans-serif',
-          fontSize: '20px',
-          textShadow: '0px 0px 2px black',
-          backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-        className={`${moreStyles.btn}`}
-        modalTitle="The Medals of Honor Collection"
-        theme={darkTheme({
-          colors: {
-            modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
-          },
-        })}
-
-
-      />
-
-      {address && (
-        <div>
-          <p>XDRIP Balance: {xdripBalance !== null ? `${xdripBalance} XDRIP` : "Loading..."}</p>
-        </div>
-      )}
-      <div className={Style.carousel_wrapper}>
-        <div>
+    <div className={Style.the_forge}>
+      <div className={Style.forge_button_upper}>
+        <div className={Style.forge_button_wrapper}>
           <Button
-            btnName="⟵"
-            onClick={() => handleArrowClick("left")}
-            fontSize="1.75rem"
-            padding="0px 0px"
+            btnName="WALLET TUTORIALS"
+            onClick={() => setIsModalOpen(true)}
+            className={Style.openWalkthroughButton}
+            fontSize="20px"
+            paddingLeft="0"
+            paddingRight="0"
             isActive={false}
-            classStyle={Style.arrowButton}
-            setIsActive={() => { }}
-            title="Go Left"
-            icon=""
+          />
+          <ConnectWallet
+            btnTitle="OPEN THE VAULT"
+            style={{
+              background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
+              color: 'white',
+              border: '2px solid #1c1c1c',
+              borderRadius: '12px',
+              boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
+              transition: 'all 0.3s ease',
+              padding: '0',
+              width: '240px',
+              height: '52px',
+              cursor: 'pointer',
+              textAlign: 'center',
+              textTransform: 'uppercase',
+              fontSize: '20px',
+              textShadow: '0px 0px 2px black',
+              backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            className={`${moreStyles.btn}`}
+            modalTitle="The Medals of Honor Collection"
+            theme={darkTheme({
+              colors: {
+                modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
+              },
+            })}
           />
         </div>
-        <div ref={carouselRef} className={Style.carousel_container}>
+        {address && (
+          <div className={Style.balances}>
+            <Button
+              btnName={`XDRIP Balance: ${xdripBalance !== null ? `${xdripBalance} XDRIP` : "Loading..."}`}
+              onClick={() => window.open('https://poocoin.app/tokens/0x905a46de6f99b6efc5fa062ab398153048e121ea', '_blank')}
+              fontSize="inherit"
+              paddingLeft="0"
+              paddingRight="0"
+              isActive={false}
+            />
+          </div>
+        )}
+      </div>
+      <div className={Style.carousel_wrapper}>
+        <motion.div
+          ref={carouselRef}
+          className={Style.carousel_container}
+          animate={controls}
+          onTouchStart={handleSwipeStart}
+          onTouchEnd={handleSwipeEnd}
+        >
           {mohData.map((item, index) => (
             <div
               key={index}
@@ -588,11 +577,10 @@ const TheForge = () => {
                         <div className={Style.card_right_bottom_bidding_box_timer}>
                           <div className={Style.card_right_bottom_bidding_box_timer_item}>
                             <span>FORGED</span>
-                            <p>{item.inventory.forged} OF</p>
-                            <p>{item.inventory.available}</p>
+                            <p>{getInventory(item).forged} OF</p>
+                            <p>{getInventory(item).available}</p>
                           </div>
                         </div>
-
                         <div className={Style.button_wrapper}>
                           <Button
                             btnName="FORGE"
@@ -611,23 +599,21 @@ const TheForge = () => {
                             <small className={Style.card_right_bottom_bidding_box_timer_item_small}>
                               Valuation
                               <FontAwesomeIcon
-                              icon={faSyncAlt}
-                              onClick={togglePrice}
-                              className={Style.toggle_price_icon}
-                              title="Switch Currency"
-                            />
+                                icon={faSyncAlt}
+                                onClick={togglePrice}
+                                className={Style.toggle_price_icon}
+                                title="Switch Currency"
+                              />
                             </small>
                             <p
                               className={Style.card_right_bottom_bidding_box_timer_item_price}
                               title={`$${bnbToUsd ? (parseFloat(item.price) * bnbToUsd).toFixed(2) : 'Loading...'} USD`}
                             >
                               {isBNBPrice
-                                ? `${item.price}` 
+                                ? `${item.price}`
                                 : `$${bnbToUsd ? (parseFloat(item.price) * bnbToUsd).toFixed(2) : 'Loading...'} USD` // Show USD price
                               }
                             </p>
-
-
                           </div>
                           <Button
                             btnName="DETAILS"
@@ -657,32 +643,39 @@ const TheForge = () => {
                 </div>
                 <div className={`${Style.card_face} ${Style.card_back}`}>
                   <Image
-                    src={"/img/metal.png"}
+                    src={"/img/metal.webp"}
                     alt={`${item.title} - Back`}
                     width={250}
                     height={250}
                     className={Style.card_image}
                   />
                 </div>
-
               </div>
             </div>
           ))}
-
+        </motion.div>
+        <div className={Style.arrow_container}>
+          <Button
+            btnName="⟵"
+            onClick={() => handleArrowClick("left")}
+            classStyle={Style.arrowButton}
+            fontSize="1.75rem"
+            isActive={false}
+            setIsActive={() => { }}
+            title="Go Left"
+            icon=""
+          />
+          <Button
+            btnName="⟶"
+            onClick={() => handleArrowClick("right")}
+            classStyle={Style.arrowButton}
+            fontSize="1.75rem"
+            isActive={false}
+            setIsActive={() => { }}
+            title="Go Right"
+            icon=""
+          />
         </div>
-
-        <Button
-          btnName="⟶"
-          onClick={() => handleArrowClick("right")}
-          classStyle={Style.arrowButton}
-          fontSize="1.75rem"
-          padding="0px 0px"
-          isActive={false}
-          setIsActive={() => { }}
-          title="Go Right"
-          icon=""
-        />
-
       </div>
       {selectedMedal && (
         <MedalDetailsModal medal={selectedMedal} onClose={() => setSelectedMedal(null)} />
@@ -706,5 +699,4 @@ const TheForge = () => {
     </div>
   );
 };
-
 export default TheForge;

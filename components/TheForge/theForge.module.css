@@ -1,3 +1,41 @@
+.the_forge{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  justify-items: center;
+  width: 100%;
+}
+
+.forge_button_upper{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.forge_button_wrapper{
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-content: center;
+  gap: 3rem;
+}
+
+.carousel_wrapper {
+  width: 100%;
+  height: 75vh;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  perspective: 2500px;
+  margin-top: 0rem;
+  margin-bottom: 2rem;
+  
+}
+
 .carousel_container {
   position: absolute;
   top: 50%;
@@ -8,19 +46,6 @@
   justify-content: center;
   align-items: center;
 
-}
-
-.carousel_wrapper {
-  position: relative;
-  width: 100%;
-  height: 80vh;
-  display: flex;
-  justify-content: space-around;
-  gap: 60rem;
-  align-items: center;
-  perspective: 2500px;
-  margin-top: 2.5rem;
-  
 }
 
 .card {
@@ -363,23 +388,33 @@
 }
 
 .arrowButton {
-  position: absolute;
-  top: 50%;
   cursor: pointer;
-  z-index: 1;
+  z-index: 2;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  transition: background 0.3s ease;
 }
-
 .arrowButton:hover {
   background-color: rgba(0, 0, 0, 0.8);
+}
+.arrow_container {
+  position: fixed; 
+  bottom: 50;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  gap: 90rem; 
+  z-index: 1000; 
 }
 
 .carousel_wrapper {
   position: relative;
   width: 100vw; 
 }
-
-
-
 .carousel {
   perspective: 1000px;
   width: 500px;
@@ -387,7 +422,6 @@
   margin: 50px auto;
   position: relative;
 }
-
 #spinner {
   width: 100%;
   height: 100%;
@@ -395,7 +429,6 @@
   transform-style: preserve-3d;
   transition: transform 1s;
 }
-
 #spinner img {
   position: absolute;
   width: 200px;
@@ -406,13 +439,11 @@
   transform-origin: 50% 50% -250px;
   transition: transform 1s;
 }
-
 .controls {
   display: flex;
   justify-content: center;
   margin-top: 20px;
 }
-
 .controls button {
   background: #333;
   color: #fff;
@@ -423,22 +454,17 @@
   margin: 0 10px;
   transition: background 0.3s;
 }
-
 .controls button:hover {
   background: #555;
 }
-
-
 .payment_option_modal h3 {
   font-size: 24px;
   margin-bottom: 20px;
   font-family: "Aldrich", sans-serif;
 }
-
 .payment_option_modal button {
   margin: 10px;
 }
-
 .stripe_iframe_modal {
   position: fixed;
   top: 0;
@@ -453,24 +479,90 @@
 }
 
 
-@media only screen and (max-width: 1199px) and (min-width: 768px) {
+
+/* Small screens (mobile) */
+@media only screen and (max-width: 768px) {
   .carousel_wrapper {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;     
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    transform-origin: top center; 
+    gap: 1rem;
+  }
+
+  .carousel_container {
+    transform: scale(0.9); 
+  }
+
+  .arrow_left,
+  .arrow_right {
+    position: static;
+    transform: none;
+  }
+
+  .arrow_container {
+    position: fixed; 
+    bottom: -150px; 
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    gap: 90px; 
+    z-index: 1000; 
+  }
+
+  .arrow_container .arrowButton {
+    font-size: 3rem !important; 
+  }
+
+  .the_forge {
+    transform: scale(0.7);
+    margin-bottom: 8rem;
+  }
+
+  .card {
     transform: scale(0.8);
   }
 }
 
-/* Small screens (mobile) */
-@media only screen and (max-width: 767px) {
-  .carousel_wrapper {
-    transform: scale(0.5);
-    margin-top: 4rem;
-    margin-bottom: 0rem;
-    padding-bottom: 0rem;
-    transform-origin: top center; 
+
+/* Tablet screens (min-width: 769px and max-width: 1024px) */
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+  
+  /* Arrow Button Styling for Tablets */
+  .arrow_container {
+    position: fixed; /* Fix the container to the bottom of the screen */
+    bottom: 0px; /* Align to the bottom */
+    left: 0;
+    right: 0;
+    display: flex;
+    margin: 0rem 0rem 0rem 0rem;
+    justify-content: center; /* Center arrows horizontally */
+    align-items: center;
+    gap: 90px; /* Space between the arrows */    
+    z-index: 1000; /* Make sure it's above other elements */
   }
 
-  .card {
-    width: 250px; 
-    height: 500px; 
+  .arrow_container .arrowButton {
+    font-size: 3rem !important; /* Make sure the arrows are visible against the background */
+  }
+
+  .carousel_wrapper {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;     
+    margin-top: 2rem;
+    
+    transform-origin: top center; 
+    gap: 1rem;
+    height: 70vh;
+  }
+
+  .carousel_container {
+    transform: scale(0.9); 
   }
 }

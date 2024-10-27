@@ -1,5 +1,0 @@
----
-deployment:
-  tasks:
-    - export DEPLOYPATH=/home/favormin/public_html/theForge/
-    - /bin/cp -R * $DEPLOYPATH

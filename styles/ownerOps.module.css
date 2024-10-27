@@ -1,57 +1,69 @@
-.login {
-    display: flex;
-    justify-items: center;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    padding-top: 14rem;
-  }
-  
-  .login_box { 
-    text-align: center;  
-    width: 90%; 
-    justify-items: center;
-    align-items: center;
-    
-  }
+.background {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
+  padding: 0rem 0rem 0rem 0rem;
+  margin: 0rem 0rem 0rem 0rem;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+  background-image: url("../public/img/background3.webp");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
 
 
-  
-  .login_box h1 {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    margin-bottom: 10rem;
-    text-decoration: underline;
-    text-shadow: 
-    0 0 2px rgb(1, 122, 254, 255),
-    0 0 2px rgb(1, 122, 254, 255),
-    0 0 2px rgb(1, 122, 254, 255), 
-    0 0 2px rgb(1, 122, 254, 255),
-    0 0 3px rgb(1, 122, 254, 255),
-    0 0 3px rgb(1, 122, 254, 255),
-    0 0 3px rgb(1, 122, 254, 255), 
-    0 0 5px rgb(1, 122, 254, 255), 
-    0 0 5px rgb(1, 122, 254, 255), 
-    0 0 8px rgb(1, 122, 254, 255), 
-    0 0 10px rgb(1, 122, 254, 255);
-    font-weight: 500;
+.heading {
+  font-size: 7rem;
+  margin: 7rem 0rem 7rem 0rem;
+}
+
+
+.functionBlock {
+  background-color: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.label {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
   }
-  
-  .login_box_para {
-    font-size: 16px;
+
+  .functionBlock {
+    padding: 15px;
   }
-  
-  @media (max-width: 768px) {
-    .login_box {
-      max-width: 100%; 
-      width: 100%; 
-    }
-  
-    .login_box h1 {
-      font-size: 20px; 
-    }
-  
-    .login_box_para {
-      font-size: 14px; 
-    }
+
+  .heading {
+    font-size: 1.75rem;
   }
+
+  .subheading {
+    font-size: 1.25rem;
+  }
+
+  .input {
+    font-size: 0.9rem;
+  }
+}

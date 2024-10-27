@@ -3,9 +3,7 @@ import { FaPlay, FaPause, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 import Modal from "react-modal";
 import PropTypes from "prop-types";
 import Style from "./VideoPlayer.module.css";
-
 Modal.setAppElement("#__next");
-
 const VideoPlayer = forwardRef(({
   videoSrc,
   isMuted = true,
@@ -24,8 +22,7 @@ const VideoPlayer = forwardRef(({
   const [isMutedState, setIsMutedState] = useState(isMuted);
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const videoRef = ref || useRef(null); // Use passed ref or internal ref
-
+  const videoRef = ref || useRef(null);
   useEffect(() => {
     if (disableInternalModal) {
       setIsPlaying(autoPlay);
@@ -39,13 +36,11 @@ const VideoPlayer = forwardRef(({
       }
       return;
     }
-
     const options = {
       root: null,
       rootMargin: "0px",
       threshold: 0.1,
     };
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -66,18 +61,15 @@ const VideoPlayer = forwardRef(({
         }
       });
     }, options);
-
     if (videoRef.current) {
       observer.observe(videoRef.current);
     }
-
     return () => {
       if (videoRef.current) {
         observer.unobserve(videoRef.current);
       }
     };
   }, [disableInternalModal, autoPlay]);
-
   useEffect(() => {
     if (hoverPlay && !disableInternalModal) {
       if (isHovered && videoRef.current) {
@@ -89,21 +81,17 @@ const VideoPlayer = forwardRef(({
       }
     }
   }, [isHovered, hoverPlay, disableInternalModal]);
-
   const openModal = () => {
     if (!disableInternalModal) {
       setIsModalOpen(true);
-
       if (videoRef.current) {
         videoRef.current.pause();
         setIsPlaying(false);
       }
     }
   };
-
   const closeModal = () => {
     setIsModalOpen(false);
-
     if (hoverPlay && !disableInternalModal) {
       if (isHovered && videoRef.current) {
         videoRef.current.play();
@@ -111,14 +99,12 @@ const VideoPlayer = forwardRef(({
       }
     }
   };
-
   const handleMuteClick = () => {
     setIsMutedState(!isMutedState);
     if (videoRef.current) {
       videoRef.current.muted = !isMutedState;
     }
   };
-
   const handlePlayPauseClick = () => {
     if (videoRef.current) {
       if (isPlaying) {
@@ -130,7 +116,6 @@ const VideoPlayer = forwardRef(({
       }
     }
   };
-
   return (
     <div
       className={`${Style.videoContainer} ${hoverGrow ? Style.hoverGrow : ""}`}
@@ -140,6 +125,7 @@ const VideoPlayer = forwardRef(({
     >
       <video
         ref={videoRef}
+        playsInline
         width="100%"
         height="100%"
         muted={isMutedState}
@@ -154,13 +140,11 @@ const VideoPlayer = forwardRef(({
         <source src={videoSrc} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-
       {!isPlaying && !isHovered && !alwaysShowControls && !hideControls && (
         <div className={Style.playIcon} onClick={!disableClickModal ? openModal : undefined}>
           <FaPlay size={50} />
         </div>
       )}
-
       {(!hideControls && (isHovered || alwaysShowControls)) && (
         <div className={Style.controls}>
           <div onClick={handlePlayPauseClick} className={Style.controlButton}>
@@ -171,7 +155,6 @@ const VideoPlayer = forwardRef(({
           </div>
         </div>
       )}
-
       {!disableInternalModal && (
         <Modal
           isOpen={isModalOpen}
@@ -184,6 +167,7 @@ const VideoPlayer = forwardRef(({
             <video
               src={videoSrc}
               muted={isMutedState}
+              playsInline
               loop={loop}
               autoPlay
               className={Style.modalVideo}
@@ -192,7 +176,6 @@ const VideoPlayer = forwardRef(({
               <source src={videoSrc} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
-
             {!hideControls && (isHovered || alwaysShowControls && isPlaying) && (
               <div className={Style.controls}>
                 <div onClick={handlePlayPauseClick} className={Style.controlButton}>
@@ -203,7 +186,6 @@ const VideoPlayer = forwardRef(({
                 </div>
               </div>
             )}
-
             <button className={Style.modalCloseButton} onClick={closeModal}>
               Close
             </button>
@@ -213,7 +195,6 @@ const VideoPlayer = forwardRef(({
     </div>
   );
 });
-
 VideoPlayer.propTypes = {
   videoSrc: PropTypes.string.isRequired,
   isMuted: PropTypes.bool,
@@ -228,5 +209,4 @@ VideoPlayer.propTypes = {
   hideControls: PropTypes.bool,
   onEnded: PropTypes.func,
 };
-
 export default VideoPlayer;

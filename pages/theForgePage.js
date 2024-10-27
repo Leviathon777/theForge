@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import HTMLFlipBook from "react-pageflip";
 import NFTWallet from "../components/NFTWallet/NFTWallet";
-import { Button, SocialButtons, TheForge, TermsOfService, UserAgreement } from "../components/componentsindex";
+import { Button, SocialButtons, TheForge, TermsOfService, UserAgreement, WalkthroughModal } from "../components/componentsindex";
 import MyNFTData from "../Context/MyNFTDataContext";
 import Style from "../styles/theForge.module.css";
+import { useRouter } from 'next/router';
 const TheForgePage = () => {
   const [bnbPrice, setBnbPrice] = useState(null);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isUserAgreementModalOpen, setIsUserAgreementModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const router = useRouter();
   useEffect(() => {
     const fetchBNBPrice = async () => {
       try {
@@ -72,7 +75,7 @@ const TheForgePage = () => {
         <MyNFTData>
           <div className={Style.second_component}>
             <h1 className={Style.lore_text}>MEDALS OF HONOR VAULT</h1>
-            <TheForge />
+            <TheForge setIsModalOpen={setIsModalOpen} />
           </div>
           <div className={Style.glowingDivider}></div>
           <div className={Style.third_component}>
@@ -101,7 +104,7 @@ const TheForgePage = () => {
             >
               <div className={Style.page}>
                 <div className={Style.page_image_top}>
-                  <img src="/img/metal.png" alt="Image 2" className={Style.image_front} />
+                  <img src="/img/metal.webp" alt="Image 2" className={Style.image_front} />
                 </div>
               </div>
               <div className={Style.content_page}>
@@ -129,7 +132,7 @@ const TheForgePage = () => {
               <div className={Style.page_left}>
                 <div className={Style.page_left_wrapper}>
                   <div className={Style.page_left_top}>
-                    <img src="/img/nft-image-1.png" alt="Image 1" className={Style.imagePage} />
+                    <img src="/img/nft-image-1.webp" alt="Image 1" className={Style.imagePage} />
                   </div>
                   <div className={Style.page_left_bottom}>
                     <h1>I. COMMON TIER</h1>
@@ -185,7 +188,7 @@ const TheForgePage = () => {
               <div className={Style.page_left}>
                 <div className={Style.page_left_wrapper}>
                   <div className={Style.page_left_top}>
-                    <img src="/img/nft-image-2.png" alt="Image 2" className={Style.imagePage} />
+                    <img src="/img/nft-image-2.webp" alt="Image 2" className={Style.imagePage} />
                   </div>
                   <div className={Style.page_left_bottom}>
                     <h1>II. UNCOMMON TIER</h1>
@@ -244,7 +247,7 @@ const TheForgePage = () => {
               <div className={Style.page_left}>
                 <div className={Style.page_left_wrapper}>
                   <div className={Style.page_left_top}>
-                    <img src="/img/nft-image-3.png" alt="Image 3" layout="fill" className={Style.imagePage} />
+                    <img src="/img/nft-image-3.webp" alt="Image 3" layout="fill" className={Style.imagePage} />
                   </div>
                   <div className={Style.page_left_bottom}>
                     <h1>III. RARE TIER</h1>
@@ -313,7 +316,7 @@ const TheForgePage = () => {
               <div className={Style.page_left}>
                 <div className={Style.page_left_wrapper}>
                   <div className={Style.page_left_top}>
-                    <img src="/img/nft-image-4.png" alt="Image 4" layout="fill" className={Style.imagePage} />
+                    <img src="/img/nft-image-4.webp" alt="Image 4" layout="fill" className={Style.imagePage} />
                   </div>
                   <div className={Style.page_left_bottom}>
                     <h1>IV. EPIC TIER</h1>
@@ -382,7 +385,7 @@ const TheForgePage = () => {
               <div className={Style.page_left}>
                 <div className={Style.page_left_wrapper}>
                   <div className={Style.page_left_top}>
-                    <img src="/img/nft-image-5.png" alt="Image 5" layout="fill" className={Style.imagePage} />
+                    <img src="/img/nft-image-5.webp" alt="Image 5" layout="fill" className={Style.imagePage} />
                   </div>
                   <div className={Style.page_left_bottom}>
                     <h1>V. LEGENDARY TIER</h1>
@@ -454,7 +457,7 @@ const TheForgePage = () => {
               <div className={Style.page_left}>
                 <div className={Style.page_left_wrapper}>
                   <div className={Style.page_left_top}>
-                    <img src="/img/nft-image-6.jpeg" alt="Image 5" layout="fill" className={Style.imagePage} />
+                    <img src="/img/nft-image-6.webp" alt="Image 5" layout="fill" className={Style.imagePage} />
                   </div>
                   <div className={Style.page_left_bottom}>
                     <h1>VI. ETERNAL TIER</h1>
@@ -527,70 +530,80 @@ const TheForgePage = () => {
               </div>
               <div className={Style.page}>
                 <div className={Style.page_left_wrapper_bottom}>
-                <h2 className={Style.page_left_wrapper_text}>XDRIP Holder Benefits AND Incentives</h2>
-                <p className={Style.page_p}>
-                  To encourage holders to invest in both NFTs and XDRIP, we offer unique bonuses for those who reach specific XDRIP thresholds, starting at 1% supply. These bonuses compound with each tier, adding up to 15% additional returns for holders of 5% of the total supply:
-                </p>
-                <ul className={Style.benefits}>
-                  <li><strong>Own Common Tier + 0.5% Supply XDRIP Tokens:</strong>
-                    <ul>
-                      <li>Early Insights - Receive early insights on upcoming tokenized projects, along with exclusive updates on new opportunities.</li>
-                    </ul>
-                  </li>
-                  <li><strong>Own UnCommon Tier + 1.0% Supply XDRIP Tokens:</strong>
-                    <ul>
-                      <li>5% revenue share bonus.</li>
-                      <li>Priority seating at company events.</li>
-                    </ul>
-                  </li>
-                  <li><strong>Own Rare Tier + 1.5% Supply XDRIP Tokens:</strong>
-                    <ul>
-                      <li>7% revenue share bonus.</li>
-                      <li>Priority seating at company events.</li>
-                    </ul>
-                  </li>
-                  <li><strong>Own Epic Tier + 2.0% Supply XDRIP Tokens:</strong>
-                    <ul>
-                      <li>10% revenue share bonus.</li>
-                      <li>Priority seating at company events.</li>
-                    </ul>
-                  </li>
-                  <li><strong>Own Legendary Tier + 2.5% Supply XDRIP Tokens:</strong>
-                    <ul>
-                      <li>15% revenue share bonus.</li>
-                      <li>Priority seating at company events.</li>
-                    </ul>
-                  </li>
-                </ul>
-              </div>
+                  <h2 className={Style.page_left_wrapper_text}>XDRIP Holder Benefits AND Incentives</h2>
+                  <p className={Style.page_p}>
+                    To encourage holders to invest in both NFTs and XDRIP, we offer unique bonuses for those who reach specific XDRIP thresholds, starting at 1% supply. These bonuses compound with each tier, adding up to 15% additional returns for holders of 5% of the total supply:
+                  </p>
+                  <ul className={Style.benefits}>
+                    <li><strong>Own Common Tier + 0.5% Supply XDRIP Tokens:</strong>
+                      <ul>
+                        <li>Early Insights - Receive early insights on upcoming tokenized projects, along with exclusive updates on new opportunities.</li>
+                      </ul>
+                    </li>
+                    <li><strong>Own UnCommon Tier + 1.0% Supply XDRIP Tokens:</strong>
+                      <ul>
+                        <li>5% revenue share bonus.</li>
+                        <li>Priority seating at company events.</li>
+                      </ul>
+                    </li>
+                    <li><strong>Own Rare Tier + 1.5% Supply XDRIP Tokens:</strong>
+                      <ul>
+                        <li>7% revenue share bonus.</li>
+                        <li>Priority seating at company events.</li>
+                      </ul>
+                    </li>
+                    <li><strong>Own Epic Tier + 2.0% Supply XDRIP Tokens:</strong>
+                      <ul>
+                        <li>10% revenue share bonus.</li>
+                        <li>Priority seating at company events.</li>
+                      </ul>
+                    </li>
+                    <li><strong>Own Legendary Tier + 2.5% Supply XDRIP Tokens:</strong>
+                      <ul>
+                        <li>15% revenue share bonus.</li>
+                        <li>Priority seating at company events.</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </HTMLFlipBook>
           </div>
           <div className={Style.glowingDivider}></div>
           <div className={Style.fifth_component}>
             <SocialButtons />
-            <Button
-              btnName="Terms of Service"
-              onClick={() => setIsTermsModalOpen(true)}
-              fontSize="inherit"
-              paddingLeft="0"
-              paddingRight="0"
-              isActive={false}
-              setIsActive={() => { }}
-              title="Terms of Service"
-            />
-            And
-            <Button
-              btnName="User Agreement"
-              onClick={() => setIsUserAgreementModalOpen(true)}
-              fontSize="inherit"
-              paddingLeft="0"
-              paddingRight="0"
-              isActive={false}
-              setIsActive={() => { }}
-              title="User Agreement"
-            />
-
+            <div className={Style.button_botton_box}>
+              <Button
+                btnName="Terms of Service"
+                onClick={() => setIsTermsModalOpen(true)}
+                fontSize="inherit"
+                paddingLeft="0"
+                paddingRight="0"
+                isActive={false}
+                setIsActive={() => { }}
+                title="Terms of Service"
+              />
+              <Button
+                btnName="User Agreement"
+                onClick={() => setIsUserAgreementModalOpen(true)}
+                fontSize="inherit"
+                paddingLeft="0"
+                paddingRight="0"
+                isActive={false}
+                setIsActive={() => { }}
+                title="User Agreement"
+              />
+              <Button
+                btnName="Owner Operations"
+                onClick={() => router.push('/OwnerOpsPage')}
+                fontSize="inherit"
+                paddingLeft="0"
+                paddingRight="0"
+                isActive={false}
+                setIsActive={() => { }}
+                title="Go to OwnerOps"
+              />
+            </div>
             <TermsOfService
               isOpen={isTermsModalOpen}
               onRequestClose={() => setIsTermsModalOpen(false)}
@@ -598,6 +611,10 @@ const TheForgePage = () => {
             <UserAgreement
               isOpen={isUserAgreementModalOpen}
               onRequestClose={() => setIsUserAgreementModalOpen(false)}
+            />
+            <WalkthroughModal
+              isOpen={isModalOpen}
+              onRequestClose={() => setIsModalOpen(false)}
             />
           </div>
         </MyNFTData>

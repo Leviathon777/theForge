@@ -1,28 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
-import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import styles from "./EntryPage.module.css";
 import videos from "../../public/videos";
-import { gsap } from "gsap";
 import Image from "next/image";
 import { VideoPlayer, TermsOfService, UserAgreement } from "../componentsindex";
-const PixiPlugin = dynamic(() => import("gsap/PixiPlugin"), { ssr: false });
-
 const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => {
   const [showEnterButton, setShowEnterButton] = useState(false);
-  const [showSkipButton, setShowSkipButton] = useState(false); // New state for Skip button
+  const [showSkipButton, setShowSkipButton] = useState(false); 
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isUserAgreementModalOpen, setIsUserAgreementModalOpen] = useState(false);
   const containerRef = useRef(null);
   const videoPlayerRef = useRef(null);
-
-  // Timer to show the "Enter" button after 16.5 seconds
   useEffect(() => {
-    gsap.registerPlugin(PixiPlugin);
     const timer = setTimeout(() => {
       setShowEnterButton(true);
     }, 16500);
-
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
         setShowEnterButton(true);
@@ -38,42 +30,34 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-
-  // Show the "Skip" button when the user accepts or declines cookies
   const handleAcceptCookies = () => {
-    handleAccept(); // Existing accept logic
-    setShowSkipButton(true); // Show Skip button after accepting cookies
+    handleAccept();
+    setShowSkipButton(true);
   };
-
   const handleDeclineCookies = () => {
-    handleDecline(); // Existing decline logic
-    setShowSkipButton(true); // Show Skip button after declining cookies
+    handleDecline();
+    setShowSkipButton(true);
   };
-
-  // Handle the Skip button click
   const handleSkipClick = () => {
     if (videoPlayerRef.current) {
-      videoPlayerRef.current.pause(); // Pause the video
+      videoPlayerRef.current.pause();
     }
-    setShowEnterButton(true); // Show the Enter button
-    setShowSkipButton(false); // Hide the Skip button
+    setShowEnterButton(true);
+    setShowSkipButton(false);
   };
-
   const handleEnterClick = () => {
     if (!isModalVisible) {
-      gsap.to(containerRef.current, {
-        duration: 1,
-        opacity: 0,
-        scale: 0.8,
-        filter: "blur(20px)",
-        onComplete: onEnter,
-        ease: "power3.inOut",
-      });
+      onEnter();
     }
   };
-
   return (
-    <div className={styles.entryPageContainer} ref={containerRef}>
+    <motion.div
+      ref={containerRef}
+      initial={{ opacity: 1, scale: 1 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      className={styles.entryPageContainer}
+    >
       <VideoPlayer
         ref={videoPlayerRef}
         videoSrc={videos.Forge1}
@@ -109,7 +93,6 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
           </div>
         </motion.div>
       )}
-
       {isModalVisible && (
         <div className={styles.cookieOverlay}>
           <div className={styles.cookieContent}>
@@ -131,8 +114,6 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
           </div>
         </div>
       )}
-
-     
       {showSkipButton && (
         <motion.button
           className={styles.skipButton}
@@ -146,7 +127,6 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
           Skip
         </motion.button>
       )}
-
       <TermsOfService
         isOpen={isTermsModalOpen}
         onRequestClose={() => setIsTermsModalOpen(false)}
@@ -155,8 +135,7 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         isOpen={isUserAgreementModalOpen}
         onRequestClose={() => setIsUserAgreementModalOpen(false)}
       />
-    </div>
+    </motion.div>
   );
 };
-
 export default EntryPage;

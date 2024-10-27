@@ -9,11 +9,16 @@
   width: 100%;
   overflow-x: hidden;
   position: relative;
-  background-image: url("../public/img/background3.jpg");
+  background-image: url("../public/img/background3.webp");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+}
+
+.button_botton_box{
+  display: flex;
+  gap: 2rem;
 }
 
 .theForge_content_wrapper {
@@ -493,16 +498,16 @@
   background-image: none;
 }
 
-@media only screen and (max-width: 767px) {
+
+
+
+
+@media only screen and (max-width: 768px) {
   .theForge_content {
-    padding: 4rem 1rem 1rem 1rem;
-    background-size: cover;
+    padding: 3rem 1rem;
   }
 
-  .theForge_content_wrapper {
-    height: auto;
-  }
-
+ 
   .second_component,
   .third_component,
   .fourth_component,
@@ -517,14 +522,25 @@
     height: 70vh;
   }
 
+  .glowingDivider {
+    width: 90%;
+    margin: 5rem 0;
+  }
+
   .title_text {
-    font-size: 2.5rem;
+    font-size: 3rem; 
+    text-align: center; 
+    margin: 0 auto; 
+    padding: 1rem; 
+    line-height: 1.2; 
   }
-
   .lore_text {
-    font-size: 1.8rem;
+    font-size: 2rem; 
+    text-align: center;
+    margin: 0 auto; 
+    padding: 1rem; 
+    line-height: 1.3; 
   }
-
   .medalsText {
     font-size: 1rem;
     padding: 0 1rem;
@@ -546,13 +562,261 @@
     font-size: 1rem;
   }
 
-  .glowingDivider {
-    width: 90%;
-    margin: 3rem 0;
-  }
+
 
   .contentsList li {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+
+/* Mobile Styles (max-width: 480px) */
+@media only screen and (max-width: 480px) {
+  .theForge_content {
+    padding: 1rem;
+  }
+
+  .second_component,
+  .third_component,
+  .fourth_component,
+  .fifth_component {
+    width: 100%;
+    margin: 1.5rem ;
+  }
+  .second_component {
+    margin: 8rem 0rem 0rem 0rem;
+    height: 100vh;
+  }
+  .title_text {
+    font-size: 2.5rem; /* Further reduce font size */
+    padding: 0.5rem; /* Reduce padding */
+    margin: 0 auto;
+  }
+  .lore_text {
+    font-size: 1.75rem; /* Further reduce font size */
+    padding: 1rem; /* Reduce padding */
+    margin: 0 auto;
+    line-height: 1.3;
+  }
+
+  .medalsText {
+    font-size: 1rem;
+    padding: 0 1rem;
+    line-height: 1.4;
+  }
+
+  .glowingDivider {
+    width: 85%;
+    margin: 3rem 0;
+  }
+
+  .flipBook {
+    width: 100%;
+    height: auto;
+    perspective: 1000px;
+    margin-top: 1rem;
+  }
+
+  .flipBook .page {
+    width: 100%;
+    height: auto;
+    padding: 0.5rem;
+  }
+
+  .image_front {
+    width: 100%;
+    height: auto;
+  }
+  .imagePage {
+    width: 100%;
+    height: auto;
+    max-width: 250px; /* Constrain max width for images */
+    margin: .5 auto; /* Center images */
+  }
+
+  .page_left_wrapper,
+  .page_left_wrapper_bottom {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .page_left_bottom  h1{
+    font-size: 1.75rem;
+  }
+
+  .benefits {
+    font-size: 0.9rem; /* Reduce text size in benefits list */
+    padding: 0.5rem;
+  }
+
+  .page h2 {
+    font-size: 1.5rem;
+    padding: 0.5rem;
+  }
+
+  .price,
+  .supply {
+    font-size: 1rem;
+  }
+
+  .benefits li {
+    justify-content: flex-start;
+    align-content: flex-start;
+    text-align: start;
+    justify-items: flex-start;
+    align-items: flex-start;
+    font-size: .8rem;
+    line-height: 1.1;
+    padding: .15rem;
+  }
+  
+  .benefits>li>ul {
+    list-style-type: none;
+    margin-left: 0px;
+    padding-left: 0;
+    font-weight: normal;
+  }
+  
+  .benefits>li>ul>li {
+    font-size: 10px;
+    list-style: circle;
+    color: #cccccc71;
+  }
+  .contentsList {
+    list-style: none;
+    padding: 0rem;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box; 
+  }
+  
+  .contentsList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+ 
+  .contentsList li .leader {
+    flex-grow: 1;
+    border-bottom: 1px dotted rgb(155, 155, 155);
+    margin: 0 5px;
+  }
+  
+  .contentsList li .pageNumber {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  
+  .contentsList li .title,
+  .contentsList li .pageNumber {
+    font-size: 0.9rem; 
+    color: #ffffffa6;
+  }
+  
+  /* Mobile Styles (max-width: 768px) */
+  @media only screen and (max-width: 768px) {
+    .contentsList li {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .theForge_content {
+      background-size: fill; 
+          }
+  
+    .contentsList li .title {
+      font-size: 0.8rem; 
+    }
+  
+    .contentsList li .leader {
+      border-bottom-width: 1px; 
+    }
+  
+    .contentsList li .pageNumber {
+      font-size: 0.8rem; 
+    }
+  
+    .contentsList {
+      padding: 0.5rem; 
+    }
+  }
+  
+}
+
+
+/* Tablet Styles (min-width: 481px and max-width: 1024px) */
+@media only screen and (min-width: 481px) and (max-width: 1024px) {
+  /* Main Content Styling */
+  .theForge_content {
+    padding: 2rem 1.5rem;
+  }
+
+  /* Component Widths and Margins */
+  .second_component,
+  .third_component,
+  .fourth_component,
+  .fifth_component {
+    width: 90%;
+    height: auto;
+    margin: 1.5rem 0;
+  }
+
+  .second_component {
+    margin: 6rem 0 0 0;
+    height: 75vh;
+  }
+
+  /* Divider Styling */
+  .glowingDivider {
+    width: 80%;
+    margin: 4rem 0;
+  }
+
+  /* Text Adjustments */
+  .title_text {
+    font-size: 4rem;
+    text-align: center;
+    margin: 0 auto;
+    padding: 1rem;
+    line-height: 1.2;
+  }
+
+  .lore_text {
+    font-size: 2.5rem;
+    text-align: center;
+    margin: 0 auto;
+    padding: 1rem;
+    line-height: 1.3;
+  }
+
+  .medalsText {
+    font-size: 1.2rem;
+    padding: 0 1.5rem;
+  }
+
+  /* Flipbook and Image Adjustments */
+  .flipBook .page,
+  .image_front {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Price and Supply */
+  .price,
+  .supply,
+  .page h2 {
+    font-size: 1.2rem;
+  }
+
+  /* Contents List Adjustments */
+  .contentsList li {
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 0;
   }
 }

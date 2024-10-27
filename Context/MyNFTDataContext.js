@@ -10,6 +10,8 @@ const MyNFTData = ({ children }) => {
   const [nfts, setNfts] = useState([]);
   const bscRpcUrl = "https://binance-testnet.rpc.thirdweb.com/";
 
+
+
   // Function to fetch NFTs
   const fetchNFTs = async () => {
     if (!address) return;

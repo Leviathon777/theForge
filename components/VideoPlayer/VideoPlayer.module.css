@@ -1,19 +1,15 @@
-/* components/VideoPlayer.module.css */
-
 .videoContainer {
   position: relative;
   width: 100%;
   height: auto;
-  cursor: pointer;
+  cursor: default;
   overflow: hidden;
 }
-
 .videoPlayer {
   width: 100%;
   height: auto;
   object-fit: cover;
 }
-
 .playIcon {
   position: absolute;
   top: 50%;
@@ -23,11 +19,9 @@
   opacity: 0.8;
   transition: opacity 0.3s ease-in-out;
 }
-
 .playIcon:hover {
   opacity: 1;
 }
-
 .controls {
   position: absolute;
   bottom: 10px;
@@ -41,19 +35,16 @@
   opacity: 0.8;
   transition: opacity 0.3s ease-in-out;
 }
-
 .controls:hover {
   opacity: 1;
 }
-
 .controlButton {
   color: white;
-  cursor: pointer;
+  cursor: default;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .modal {
   position: absolute;
   top: 50%;
@@ -68,7 +59,6 @@
   width: auto;
   height: 100%;
 }
-
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -78,19 +68,16 @@
   background-color: rgba(0, 0, 0, 0.85);
   z-index: 999;
 }
-
 .modalContent {
   position: relative;
   width: 100%;
   height: 100%;
 }
-
 .modalVideo {
   width: 100%;
   height: 100%;
   object-fit: fill;
 }
-
 .modalCloseButton {
   position: absolute;
   top: 20px;
@@ -99,38 +86,29 @@
   border: none;
   padding: 10px;
   border-radius: 50%;
-  cursor: pointer;
+  cursor: default;
   transition: background 0.3s ease-in-out;
 }
-
 .modalCloseButton:hover {
   background: rgba(255, 255, 255, 1);
 }
-
 .hoverGrow {
   transition: transform 0.3s ease-in-out;
 }
-
 .hoverGrow:hover {
   transform: scale(1.05);
 }
-
-
-/* components/VideoPlayer.module.css */
-
 .videoContainer {
   position: relative;
   width: 100%;
   height: 100%;
-  cursor: pointer;
+  cursor: default;
 }
-
 .videoPlayer {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
 .playIcon {
   position: absolute;
   top: 50%;
@@ -139,7 +117,6 @@
   color: white;
   z-index: 2;
 }
-
 .controls {
   position: absolute;
   bottom: 10px;
@@ -149,15 +126,13 @@
   gap: 10px;
   z-index: 3;
 }
-
 .controlButton {
   background: rgba(0, 0, 0, 0.5);
   padding: 10px;
   border-radius: 50%;
   color: white;
-  cursor: pointer;
+  cursor: default;
 }
-
 .modal {
   position: absolute;
   top: 50%;
@@ -174,22 +149,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 1001; /* Ensure it's above other content */
+  z-index: 1001; 
 }
-
 .modalOverlay {
   background-color: rgba(0, 0, 0, 0.75);
-  z-index: 1000; /* Below the modal */
+  z-index: 1000; 
 }
-
 .modalContent {
   position: relative;
   width: 100%;
   height: 100%;
 }
-
-
-
 .modalCloseButton {
   position: absolute;
   top: 10px;
@@ -198,32 +168,24 @@
   border: none;
   color: white;
   padding: 5px 10px;
-  cursor: pointer;
+  cursor: default;
   border-radius: 5px;
 }
-
-/* Hover Grow Effect */
 .hoverGrow:hover {
   transform: scale(1.05);
   transition: transform 0.3s ease-in-out;
 }
-
-
-/* components/VideoPlayer.module.css */
-
 .videoContainer {
   position: relative;
   width: 100%;
   height: 100%;
-  cursor: pointer;
+  cursor: default;
 }
-
 .videoPlayer {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
 .playIcon {
   position: absolute;
   top: 50%;
@@ -232,7 +194,6 @@
   color: white;
   opacity: 0.7;
 }
-
 .controls {
   position: absolute;
   bottom: 10px;
@@ -244,20 +205,17 @@
   padding: 5px 10px;
   border-radius: 10px;
 }
-
 .controlButton {
   background: rgba(255, 255, 255, 0.2);
   padding: 8px;
   border-radius: 50%;
   color: white;
-  cursor: pointer;
+  cursor: default;
   transition: background 0.3s ease;
 }
-
 .controlButton:hover {
   background: rgba(255, 255, 255, 0.4);
 }
-
 .modal {
   position: absolute;
   top: 50%;
@@ -275,20 +233,15 @@
   flex-direction: column;
   align-items: center;
 }
-
 .modalOverlay {
   background-color: rgba(0, 0, 0, 0.75);
   z-index: 1000;
 }
-
 .modalContent {
   position: relative;
   width: 100%;
   height: 100%;
 }
-
-
-
 .modalCloseButton {
   position: absolute;
   top: 10px;
@@ -297,45 +250,90 @@
   border: none;
   color: white;
   padding: 5px 10px;
-  cursor: pointer;
+  cursor: default;
   border-radius: 5px;
   transition: background 0.3s ease;
 }
-
 .modalCloseButton:hover {
   background: rgba(255, 255, 255, 0.4);
 }
-
-/* Hover Grow Effect */
 .hoverGrow:hover {
   transform: scale(1.05);
   transition: transform 0.3s ease-in-out;
 }
-
-/* Details Overlay Specific Styles */
 .detailsOverlay {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 33.333%; /* Bottom third */
-  background: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
-  backdrop-filter: blur(10px); /* Blurry effect */
+  height: 33.333%; 
+  background: rgba(0, 0, 0, 0.6); 
+  backdrop-filter: blur(10px); 
   color: white;
   padding: 20px;
   box-sizing: border-box;
-  opacity: 0; /* Hidden by default */
-  transition: opacity 0.3s ease-in-out; /* Smooth transition */
+  opacity: 0; 
+  transition: opacity 0.3s ease-in-out; 
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .videoContainer:hover .detailsOverlay {
-  opacity: 1; /* Show on hover */
+  opacity: 1; 
 }
-
 .detailsContent {
   width: 100%;
-  max-width: 800px; /* Adjust as needed */
+  max-width: 800px; 
+}
+
+
+/* Small screens (mobile) */
+@media only screen and (max-width: 768px) {
+  .modal {
+    position: fixed;
+    top: 5%;
+    left: 5%;
+    width: 100%;
+    height: 100%;
+    transform: none; /* Remove centering transform */
+    background: #1c1c1c; /* Set a solid or semi-transparent background */
+    padding: 1rem; /* Add some padding for visual comfort */
+    border-radius: 0; /* Remove rounded corners for full-screen look */
+    z-index: 1001; /* Ensure the modal stays above other elements */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center content vertically */
+  }
+
+  .modalContent {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modalCloseButton {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    border: none;
+    padding: 10px;
+    border-radius: .5rem;
+    cursor: pointer;
+    z-index: 1002; /* Ensure the button is above the modal content */
+    transition: background 0.3s ease-in-out;
+  }
+
+  .modalCloseButton:hover {
+    background: rgba(255, 255, 255, 1);
+  }
+
+  .modalVideo {
+    width: 100%;
+    height: auto; /* Keep aspect ratio intact */
+    max-height: 80%; /* To avoid overflow on small screens */
+  }
 }

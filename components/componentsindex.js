@@ -8,7 +8,11 @@ import MedalDetailsModal from "./MedalsDetails/MedaldetailsModal";
 import CheckForRewards from "./TheForge/CheckForRewards";
 import TermsOfService from "./Legal/TermsOfService";
 import UserAgreement from "./Legal/UserAgreement";
-export {  
+import WalkthroughModal from "./EntryPage/WalkthroughModal";
+import OwnerOps from "./OwnerOps/OwnerOps";
+export {
+  OwnerOps,
+  WalkthroughModal,  
   TermsOfService,
   UserAgreement,
   CheckForRewards,
