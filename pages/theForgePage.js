@@ -138,7 +138,7 @@ const TheForgePage = () => {
               minWidth={315}
               maxWidth={1000}
               minHeight={700}
-              maxHeight={1533}
+              maxHeight={1000}
               maxShadowOpacity={0.5}
               className={Style.flipBook}
               drawShadow={false}
