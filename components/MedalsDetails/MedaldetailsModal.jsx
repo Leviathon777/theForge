@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Modal from "react-modal";
 import PropTypes from "prop-types";
 import {VideoPlayer} from "../componentsindex"; 
@@ -11,6 +11,14 @@ if (typeof window !== 'undefined') {
 }
 const MedalDetailsModal = ({ medal, onClose }) => {
   const mohContractAddress = mohCA_ABI.address; 
+  useEffect(() => {
+    if (medal) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+    return () => document.body.classList.remove("no-scroll"); // Clean up on unmount
+  }, [medal]);
   const formatAddress = (address) => {
     return `${address.substring(0, 4)} ... ${address.substring(address.length - 4)}`;
   };

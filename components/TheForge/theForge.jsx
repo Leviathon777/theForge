@@ -487,215 +487,221 @@ const TheForge = ({ setIsModalOpen }) => {
   };
   return (
     <div className={Style.the_forge}>
-      <div className={Style.forge_button_upper}>
-        <div className={Style.forge_button_wrapper}>
-          <Button
-            btnName="WALLET TUTORIALS"
-            onClick={() => setIsModalOpen(true)}
-            className={Style.openWalkthroughButton}
-            fontSize="inherit"
-            paddingLeft="0"
-            paddingRight="0"
-            isActive={false}
-          />
-          <ConnectWallet
-            btnTitle="OPEN THE VAULT"
-            style={{
-              background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
-              color: 'white',
-              border: '2px solid #1c1c1c',
-              borderRadius: '12px',
-              boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
-              transition: 'all 0.3s ease',
-              padding: '0',
-              width: '240px',
-              height: '52px',
-              cursor: 'pointer',
-              textAlign: 'center',
-              textTransform: 'uppercase',
-              fontSize: '20px',
-              textShadow: '0px 0px 2px black',
-              backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            className={`${moreStyles.btn}`}
-            modalTitle="The Medals of Honor Collection"
-            theme={darkTheme({
-              colors: {
-                modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
-              },
-            })}
-          />
-        </div>
-        {address && (
-          <div className={Style.balances}>
+      <div className={Style.the_forge_wrapper}>
+        <div className={Style.forge_button_upper}>
+        <h1 className={Style.lore_text}>MEDALS OF HONOR VAULT</h1>
+          <div className={Style.forge_button_wrapper}>
             <Button
-              btnName={`XDRIP Balance: ${xdripBalance !== null ? `${xdripBalance} XDRIP` : "Loading..."}`}
-              onClick={() => window.open('https://poocoin.app/tokens/0x905a46de6f99b6efc5fa062ab398153048e121ea', '_blank')}
+              btnName="WALLET TUTORIALS"
+              onClick={() => setIsModalOpen(true)}
+              className={Style.openWalkthroughButton}
               fontSize="inherit"
               paddingLeft="0"
               paddingRight="0"
               isActive={false}
             />
+            <ConnectWallet
+              btnTitle="OPEN THE VAULT"
+              style={{
+                background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
+                color: 'white',
+                border: '2px solid #1c1c1c',
+                borderRadius: '12px',
+                boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
+                transition: 'all 0.3s ease',
+                padding: '0',
+                width: '240px',
+                height: '52px',
+                cursor: 'pointer',
+                textAlign: 'center',
+                textTransform: 'uppercase',
+                fontSize: '20px',
+                textShadow: '0px 0px 2px black',
+                backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              className={`${moreStyles.btn}`}
+              modalTitle="The Medals of Honor Collection"
+              theme={darkTheme({
+                colors: {
+                  modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
+                },
+              })}
+            />
           </div>
-        )}
-      </div>
-      <div className={Style.carousel_wrapper}>
-        <motion.div
-          ref={carouselRef}
-          className={Style.carousel_container}
-          animate={controls}
-          onTouchStart={handleSwipeStart}
-          onTouchEnd={handleSwipeEnd}
-        >
-          {mohData.map((item, index) => (
-            <div
-              key={index}
-              ref={(el) => (cardRefs.current[index] = el)}
-              className={Style.card}
+          {address && (
+            <div className={Style.balances}>
+              <Button
+                btnName={`XDRIP Balance: ${xdripBalance !== null ? `${xdripBalance} XDRIP` : "Loading..."}`}
+                onClick={() => window.open('https://poocoin.app/tokens/0x905a46de6f99b6efc5fa062ab398153048e121ea', '_blank')}
+                fontSize="inherit"
+                paddingLeft="0"
+                paddingRight="0"
+                isActive={false}
+              />
+            </div>
+          )}
+        </div>
+        <div className={Style.carousel}>
+          <div className={Style.carousel_wrapper}>
+            <motion.div
+              ref={carouselRef}
+              className={Style.carousel_container}
+              animate={controls}
+              onTouchStart={handleSwipeStart}
+              onTouchEnd={handleSwipeEnd}
             >
-              <div className={Style.card_inner}>
-                <div className={`${Style.card_face} ${Style.card_front}`}>
-                  <div className={Style.card_right}>
-                    <h2>{item.title}</h2>
-                    <div className={Style.card_right_top}>
-                      <VideoPlayer
-                        videoSrc={item.nftVideo}
-                        videoStyles={{ width: "100%" }}
-                        isMuted={true}
-                        hoverPlay={true}
-                        autoPlay={false}
-                        loop={true}
-                        hoverGrow={true}
-                        disableInternalModal={false}
-                      />
-                    </div>
-                    <div className={Style.card_right_bottom}>
-                      <div className={Style.card_right_bottom_bidding}>
-                        <div className={Style.card_right_bottom_bidding_box_timer}>
-                          <div className={Style.card_right_bottom_bidding_box_timer_item}>
-                            <span>FORGED</span>
-                            <p>{getInventory(item).forged} OF</p>
-                            <p>{getInventory(item).available}</p>
-                          </div>
+              {mohData.map((item, index) => (
+                <div
+                  key={index}
+                  ref={(el) => (cardRefs.current[index] = el)}
+                  className={Style.card}
+                >
+                  <div className={Style.card_inner}>
+                    <div className={`${Style.card_face} ${Style.card_front}`}>
+                      <div className={Style.card_right}>
+                        <h2>{item.title}</h2>
+                        <div className={Style.card_right_top}>
+                          <VideoPlayer
+                            videoSrc={item.nftVideo}
+                            playsInline
+                            videoStyles={{ width: "100%" }}
+                            isMuted={true}
+                            hoverPlay={true}
+                            autoPlay={true}
+                            loop={true}
+                            hoverGrow={true}
+                            disableInternalModal={false}
+                          />
                         </div>
-                        <div className={Style.button_wrapper}>
-                          <Button
-                            btnName="FORGE"
-                            onClick={() => mint(item.title, item.ipfsHash)}
-                            classStyle="size1"
-                            fontSize="12px"
-                            padding="0px 0px"
-                            isActive={false}
-                            setIsActive={() => { }}
-                            title="Forge Medal"
-                            imageWidth={50}
-                            imageHeight={50}
-                            icon=""
-                          />
-                          <div className={Style.card_right_bottom_bidding_box_timer_item_box}>
-                            <small className={Style.card_right_bottom_bidding_box_timer_item_small}>
-                              Valuation
-                              <FontAwesomeIcon
-                                icon={faSyncAlt}
-                                onClick={togglePrice}
-                                className={Style.toggle_price_icon}
-                                title="Switch Currency"
+                        <div className={Style.card_right_bottom}>
+                          <div className={Style.card_right_bottom_bidding}>
+                            <div className={Style.card_right_bottom_bidding_box_timer}>
+                              <div className={Style.card_right_bottom_bidding_box_timer_item}>
+                                <span>FORGED</span>
+                                <p>{getInventory(item).forged} OF</p>
+                                <p>{getInventory(item).available}</p>
+                              </div>
+                            </div>
+                            <div className={Style.button_wrapper}>
+                              <Button
+                                btnName="FORGE"
+                                onClick={() => mint(item.title, item.ipfsHash)}
+                                classStyle="size1"
+                                fontSize="12px"
+                                padding="0px 0px"
+                                isActive={false}
+                                setIsActive={() => { }}
+                                title="Forge Medal"
+                                imageWidth={50}
+                                imageHeight={50}
+                                icon=""
                               />
-                            </small>
-                            <p
-                              className={Style.card_right_bottom_bidding_box_timer_item_price}
-                              title={`$${bnbToUsd ? (parseFloat(item.price) * bnbToUsd).toFixed(2) : 'Loading...'} USD`}
-                            >
-                              {isBNBPrice
-                                ? `${item.price}`
-                                : `$${bnbToUsd ? (parseFloat(item.price) * bnbToUsd).toFixed(2) : 'Loading...'} USD` // Show USD price
-                              }
-                            </p>
+                              <div className={Style.card_right_bottom_bidding_box_timer_item_box}>
+                                <small className={Style.card_right_bottom_bidding_box_timer_item_small}>
+                                  Valuation
+                                  <FontAwesomeIcon
+                                    icon={faSyncAlt}
+                                    onClick={togglePrice}
+                                    className={Style.toggle_price_icon}
+                                    title="Switch Currency"
+                                  />
+                                </small>
+                                <p
+                                  className={Style.card_right_bottom_bidding_box_timer_item_price}
+                                  title={`$${bnbToUsd ? (parseFloat(item.price) * bnbToUsd).toFixed(2) : 'Loading...'} USD`}
+                                >
+                                  {isBNBPrice
+                                    ? `${item.price}`
+                                    : `$${bnbToUsd ? (parseFloat(item.price) * bnbToUsd).toFixed(2) : 'Loading...'} USD` // Show USD price
+                                  }
+                                </p>
+                              </div>
+                              <Button
+                                btnName="DETAILS"
+                                onClick={() => handleMedalDetails(item)}
+                                paddingLeft="default"
+                                paddingRight="default"
+                                fontSize="12px"
+                                isActive={false}
+                                setIsActive={() => { }}
+                                title="Medal Details"
+                                imageWidth={50}
+                                imageHeight={50}
+                                icon=""
+                              />
+                            </div>
                           </div>
-                          <Button
-                            btnName="DETAILS"
-                            onClick={() => handleMedalDetails(item)}
-                            paddingLeft="default"
-                            paddingRight="default"
-                            fontSize="12px"
-                            isActive={false}
-                            setIsActive={() => { }}
-                            title="Medal Details"
-                            imageWidth={50}
-                            imageHeight={50}
-                            icon=""
-                          />
                         </div>
                       </div>
                     </div>
+                    <div className={`${Style.card_side} ${Style.side_top}`}></div>
+                    <div className={`${Style.card_side} ${Style.side_bottom}`}></div>
+                    <div className={`${Style.card_side} ${Style.card_left_side}`}>
+                      <div className={Style.card_rside_text}>XDRIP MEDALS OF HONOR COLLECTION</div>
+                    </div>
+                    <div className={`${Style.card_side} ${Style.card_right_side}`}>
+                      <div className={Style.card_lside_text}>XDRIP MEDALS OF HONOR COLLECTION</div>
+                    </div>
+                    <div className={`${Style.card_face} ${Style.card_back}`}>
+                      <Image
+                        src={"/img/metal.webp"}
+                        alt={`${item.title} - Back`}
+                        width={250}
+                        height={250}
+                        className={Style.card_image}
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className={`${Style.card_side} ${Style.side_top}`}></div>
-                <div className={`${Style.card_side} ${Style.side_bottom}`}></div>
-                <div className={`${Style.card_side} ${Style.card_left_side}`}>
-                  <div className={Style.card_rside_text}>XDRIP MEDALS OF HONOR COLLECTION</div>
-                </div>
-                <div className={`${Style.card_side} ${Style.card_right_side}`}>
-                  <div className={Style.card_lside_text}>XDRIP MEDALS OF HONOR COLLECTION</div>
-                </div>
-                <div className={`${Style.card_face} ${Style.card_back}`}>
-                  <Image
-                    src={"/img/metal.webp"}
-                    alt={`${item.title} - Back`}
-                    width={250}
-                    height={250}
-                    className={Style.card_image}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-        </motion.div>
-        <div className={Style.arrow_container}>
-          <Button
-            btnName="⟵"
-            onClick={() => handleArrowClick("left")}
-            classStyle={Style.arrowButton}
-            fontSize="1.75rem"
-            isActive={false}
-            setIsActive={() => { }}
-            title="Go Left"
-            icon=""
-          />
-          <Button
-            btnName="⟶"
-            onClick={() => handleArrowClick("right")}
-            classStyle={Style.arrowButton}
-            fontSize="1.75rem"
-            isActive={false}
-            setIsActive={() => { }}
-            title="Go Right"
-            icon=""
-          />
-        </div>
-      </div>
-      {selectedMedal && (
-        <MedalDetailsModal medal={selectedMedal} onClose={() => setSelectedMedal(null)} />
-      )}
-      {isConfirmationModalVisible && (
-        <div className={Style.confirmation_modal}>
-          <div className={Style.confirmation_modal_content}>
-            <h2>Confirm Minting</h2>
-            <p>Are you sure you want to mint the {currentMedal.title} medal for {currentMedal.price}?</p>
-            <div className={Style.modal_buttons}>
-              <button onClick={confirmMint} className={Style.confirm_button}>Confirm</button>
-              <button onClick={() => setIsConfirmationModalVisible(false)} className={Style.cancel_button}>Cancel</button>
+              ))}
+            </motion.div>
+            <div className={Style.arrow_container}>
+              <Button
+                btnName="⟵"
+                onClick={() => handleArrowClick("left")}
+                classStyle={Style.arrowButton}
+                fontSize="1.75rem"
+                isActive={false}
+                setIsActive={() => { }}
+                title="Go Left"
+                icon=""
+              />
+              <Button
+                btnName="⟶"
+                onClick={() => handleArrowClick("right")}
+                classStyle={Style.arrowButton}
+                fontSize="1.75rem"
+                isActive={false}
+                setIsActive={() => { }}
+                title="Go Right"
+                icon=""
+              />
             </div>
           </div>
         </div>
-      )}
-      <ToastContainer
-        position={toast.POSITION.TOP_CENTER}
-        className={Style.toast_container_center}
-      />
+        {selectedMedal && (
+          <MedalDetailsModal medal={selectedMedal} onClose={() => setSelectedMedal(null)} />
+        )}
+        {isConfirmationModalVisible && (
+          <div className={Style.confirmation_modal}>
+            <div className={Style.confirmation_modal_content}>
+              <h2>Confirm Minting</h2>
+              <p>Are you sure you want to mint the {currentMedal.title} medal for {currentMedal.price}?</p>
+              <div className={Style.modal_buttons}>
+                <button onClick={confirmMint} className={Style.confirm_button}>Confirm</button>
+                <button onClick={() => setIsConfirmationModalVisible(false)} className={Style.cancel_button}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+        <ToastContainer
+          position={toast.POSITION.TOP_CENTER}
+          className={Style.toast_container_center}
+        />
+      </div>
     </div>
   );
 };

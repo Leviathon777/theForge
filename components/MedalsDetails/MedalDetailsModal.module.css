@@ -36,32 +36,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: white;
   z-index: 3003;
-  color: white;
-}
-.MedalDetailsModal_closeButton {
-  background: rgba(0, 0, 0, 0.3);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-.MedalDetailsModal_closeButton:hover {
-  background: rgba(0, 0, 0, 0.3);
 }
 .MedalDetailsModal_body {
   width: 100%;
   height: 100%;
   position: relative;
 }
-.videoContainer {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
+
+/* Adjusting spacing in text sections */
 .detailsOverlay {
   position: absolute;
   bottom: 0;
@@ -78,103 +62,122 @@
   flex-direction: column;
   z-index: 2;
 }
-.detailsContent {
-  width: 100%;
-  padding: 0rem 1rem 0rem 1rem;
-  display: flex;
-  flex-direction: column;
-}
-.MedalDetailsModal_description {
+
+/* Text content adjustments */
+.MedalDetailsModal_description h1,
+.MedalDetailsModal_description h2 {
+  margin: 0 0 1rem 0; /* Adds spacing between headings */
   font-weight: bold;
   text-align: center;
 }
-.MedalDetailsModal_description h1 {
-  text-transform: uppercase;
-  margin-bottom: 1.5rem;
-}
-.MedalDetailsModal_description h2 {
-  text-transform: capitalize;
-  font-size: 1.75rem;
-  margin-bottom: 4rem;
-}
+
 .MedalDetailsModal_creators,
-.MedalDetailsModal_price {
-  font-size: 1rem;
-  margin-bottom: 6px;
-  text-align: left;
-}
-.MedalDetailsModal_info {
-  font-size: 1rem;
-  margin-bottom: 10px;
-  text-align: right;
-  transform: translateY(-80px);
-}
+.MedalDetailsModal_price,
+.MedalDetailsModal_info,
 .MedalDetailsModal_notes {
   font-size: 1rem;
-  margin-bottom: 10px;
+  margin-bottom: 10px; /* Adds consistent space between sections */
   text-align: center;
-  transform: translateY(-80px);
 }
+
 .MedalDetailsModal_contractAddress {
   font-size: 1rem;
   cursor: pointer;
+  display: inline-block;
+  margin-top: 0.5rem; /* Adds space above the contract address */
 }
-.MedalDetailsModal_notes small {
-  font-size: 1rem;
-  color: #ccc;
-}
-.MedalDetailsModal_companies {
-  width: 100%;
-  font-size: 0.9rem;
-  text-align: left;
-  border-top: 1px solid #fff;
-  padding-top: 10px;
-}
+
 .MedalDetailsModal_companies h3 {
   font-size: 1.2rem;
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
+
 .MedalDetailsModal_companies ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px; /* Adds spacing between company items */
 }
+
 .MedalDetailsModal_companies ul li {
-  margin: 0 10px;
+  margin: 0;
 }
+
 .MedalDetailsModal_companies ul li a {
   color: #017afe;
-  /* Link color */
   text-decoration: none;
   transition: text-decoration 0.2s ease;
 }
+
 .MedalDetailsModal_companies ul li a:hover {
   text-decoration: underline;
 }
+
+.no-scroll {
+  overflow: hidden;
+}
+.MedalDetailsModal_closeButton {
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.MedalDetailsModal_closeButton:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Media queries */
 @media (max-width: 768px) {
   .MedalDetailsModal_content {
     width: 95%;
     height: 90%;
   }
   .detailsOverlay {
-    height: 44%;
+    height: 50%;
     padding: 15px;
   }
-  .MedalDetailsModal_description {
-    font-size: 1.5rem;
+  .MedalDetailsModal_description h1,
+  .MedalDetailsModal_description h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
   }
   .MedalDetailsModal_creators,
   .MedalDetailsModal_price,
   .MedalDetailsModal_info,
   .MedalDetailsModal_notes {
     font-size: 0.9rem;
+    margin-bottom: 6px;
   }
   .MedalDetailsModal_companies h3 {
     font-size: 1rem;
   }
-  .MedalDetailsModal_companies ul li a {
+  .MedalDetailsModal_companies ul {
+    gap: 5px; /* Reduce gap for small screens */
+  }
+}
+
+@media (max-width: 600px) {
+  .detailsOverlay {
+    padding: 10px;
+  }
+  .MedalDetailsModal_description h1,
+  .MedalDetailsModal_description h2 {
+    font-size: 1rem;
+  }
+  .MedalDetailsModal_creators,
+  .MedalDetailsModal_price,
+  .MedalDetailsModal_info,
+  .MedalDetailsModal_notes {
+    font-size: 0.8rem;
+  }
+  .MedalDetailsModal_companies h3 {
     font-size: 0.9rem;
   }
 }

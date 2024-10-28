@@ -60,6 +60,7 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
     >
       <VideoPlayer
         ref={videoPlayerRef}
+        playsInline
         videoSrc={videos.Forge1}
         videoStyles={{ width: "100%" }}
         isMuted={true}
@@ -72,6 +73,7 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         hideControls={true}
         onEnded={() => { }}
       />
+
       {showEnterButton && (
         <motion.div
           className={styles.enterContainer}
@@ -88,6 +90,7 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
               alt="Your Image"
               layout="fill"
               objectFit="contain"
+              priority
               className={styles.enterImage}
             />
           </div>
@@ -114,27 +117,27 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
           </div>
         </div>
       )}
-   {showSkipButton && (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.8 }}
-    animate={{ opacity: 1, scale: 1 }}
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    transition={{ duration: 0.5, ease: "easeInOut" }}
-    style={{
-      position: "fixed",
-      bottom: "20px",
-      right: "20px",
-      zIndex: 1000,
-    }}
-  >
-    <Button
-      btnName="Skip"
-      onClick={handleSkipClick}
-      className={styles.skipButton}
-    />
-  </motion.div>
-)}
+      {showSkipButton && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            zIndex: 1000,
+          }}
+        >
+          <Button
+            btnName="Skip"
+            onClick={handleSkipClick}
+            className={styles.skipButton}
+          />
+        </motion.div>
+      )}
 
       <TermsOfService
         isOpen={isTermsModalOpen}

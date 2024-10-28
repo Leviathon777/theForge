@@ -27,6 +27,8 @@ const VideoPlayer = forwardRef(({
     if (disableInternalModal) {
       setIsPlaying(autoPlay);
       if (autoPlay && videoRef.current) {
+        // Ensure video is muted for autoplay compatibility on iOS
+        videoRef.current.muted = true;
         const playPromise = videoRef.current.play();
         if (playPromise !== undefined) {
           playPromise.catch((error) => {
@@ -36,6 +38,8 @@ const VideoPlayer = forwardRef(({
       }
       return;
     }
+
+    // Intersection observer for autoplay control
     const options = {
       root: null,
       rootMargin: "0px",
@@ -45,6 +49,8 @@ const VideoPlayer = forwardRef(({
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           if (autoPlay && videoRef.current) {
+            // Ensure video is muted for iOS autoplay
+            videoRef.current.muted = true;
             const playPromise = videoRef.current.play();
             if (playPromise !== undefined) {
               playPromise.catch((error) => {
@@ -70,6 +76,7 @@ const VideoPlayer = forwardRef(({
       }
     };
   }, [disableInternalModal, autoPlay]);
+
   useEffect(() => {
     if (hoverPlay && !disableInternalModal) {
       if (isHovered && videoRef.current) {
@@ -126,9 +133,7 @@ const VideoPlayer = forwardRef(({
       <video
         ref={videoRef}
         playsInline
-        width="100%"
-        height="100%"
-        muted={isMutedState}
+        muted={isMutedState || autoPlay}
         loop={loop}
         autoPlay={autoPlay}
         className={Style.videoPlayer}
@@ -137,6 +142,7 @@ const VideoPlayer = forwardRef(({
         controls={false}
         onEnded={onEnded}
       >
+
         <source src={videoSrc} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
@@ -166,10 +172,10 @@ const VideoPlayer = forwardRef(({
           <div className={Style.modalContent}>
             <video
               src={videoSrc}
-              muted={isMutedState}
+              muted={isMutedState || autoPlay}
               playsInline
               loop={loop}
-              autoPlay
+              autoPlay={autoPlay}
               className={Style.modalVideo}
               controls={false}
             >
