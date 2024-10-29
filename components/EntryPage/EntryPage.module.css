@@ -16,6 +16,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
+  -webkit-object-fit: cover;
   object-fit: cover; 
   z-index: -1; 
   pointer-events: none; 

@@ -665,7 +665,6 @@ const TheForge = ({ setIsModalOpen }) => {
                 classStyle={Style.arrowButton}
                 fontSize="1.75rem"
                 isActive={false}
-                setIsActive={() => { }}
                 title="Go Left"
                 icon=""
               />
@@ -675,7 +674,6 @@ const TheForge = ({ setIsModalOpen }) => {
                 classStyle={Style.arrowButton}
                 fontSize="1.75rem"
                 isActive={false}
-                setIsActive={() => { }}
                 title="Go Right"
                 icon=""
               />

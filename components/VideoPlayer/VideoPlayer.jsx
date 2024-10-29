@@ -134,18 +134,18 @@ const VideoPlayer = forwardRef(({
         ref={videoRef}
         playsInline
         muted={isMutedState || autoPlay}
-        loop={loop}
         autoPlay={autoPlay}
+        loop={loop}
         className={Style.videoPlayer}
         style={videoStyles}
         onClick={!disableClickModal ? openModal : undefined}
         controls={false}
         onEnded={onEnded}
       >
-
         <source src={videoSrc} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
+
       {!isPlaying && !isHovered && !alwaysShowControls && !hideControls && (
         <div className={Style.playIcon} onClick={!disableClickModal ? openModal : undefined}>
           <FaPlay size={50} />

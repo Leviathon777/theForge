@@ -4,7 +4,7 @@
   align-items: center;
   width: 100%;
   height: auto;
-  padding: 2rem 1rem;
+  padding: 0rem 0rem;
 }
 
 .the_forge_wrapper {
@@ -524,11 +524,12 @@
     justify-content: center;
     align-items: center;
     gap: 90px;
-    z-index: 1000;
+    z-index: 2000;
     margin: 1rem 0rem 0rem 0rem;
   }
 
   .arrow_container .arrowButton {
+    z-index: 2000;
     font-size: 3rem !important;
   }
 
