@@ -35,6 +35,9 @@ const XdRiPContractAddress = xdripCA_ABI.address;
 const XdRiPContractABI = xdripCA_ABI.abi;
 const web3 = new Web3("https://bsc-dataseed.binance.org/");
 const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
+
+
+
 const TheForge = ({ setIsModalOpen }) => {
   const [selectedMedal, setSelectedMedal] = useState(null);
   const [bnbBalance, setBnbBalance] = useState(null);
@@ -557,7 +560,18 @@ const TheForge = ({ setIsModalOpen }) => {
               className={Style.card}
             >
               <div className={Style.card_inner}>
-                <div className={`${Style.card_face} ${Style.card_front}`}>
+              <div className={`${Style.card_face} ${Style.card_front}`} >
+                {/*
+                <div className={`${Style.card_face} ${Style.card_front}`} 
+                style={{
+                  backgroundImage: 'url("/crystalball3.jpg")',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat'
+                  }}>
+                  */}
+
+
                   <div className={Style.card_right}>
                     <h2>{item.title}</h2>
                     <div className={Style.card_right_top}>

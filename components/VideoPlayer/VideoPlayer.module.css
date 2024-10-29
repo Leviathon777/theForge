@@ -96,7 +96,7 @@
   transition: transform 0.3s ease-in-out;
 }
 .hoverGrow:hover {
-  transform: scale(1.05);
+  transform: scale(1.005);
 }
 .videoContainer {
   position: relative;
@@ -258,7 +258,7 @@
   background: rgba(255, 255, 255, 0.4);
 }
 .hoverGrow:hover {
-  transform: scale(1.05);
+  transform: scale(1.01);
   transition: transform 0.3s ease-in-out;
 }
 .detailsOverlay {
@@ -336,4 +336,16 @@
     height: auto; /* Keep aspect ratio intact */
     max-height: 80%; /* To avoid overflow on small screens */
   }
+}
+
+
+
+.videoContainer {
+  border-radius: 40px;
+  box-shadow: 
+    inset 0 0 80px rgba(0, 0, 0, 0.9), /* Deep, dark inset shadow */
+    inset 0 0 20px rgba(255, 255, 255, 0.1), /* Soft inner glow for a subtle contrast */
+    0 0 60px rgba(0, 0, 0, 0.6); /* Slight outer shadow for a floating effect */
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)); /* Darkened center for depth */
+  overflow: hidden;
 }
