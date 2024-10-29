@@ -1,4 +1,13 @@
-.the_forge{
+.the_forge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  padding: 0rem 0rem;
+}
+
+.the_forge_wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -6,17 +15,19 @@
   align-content: center;
   justify-items: center;
   width: 100%;
+  height: 100%;
 }
 
-.forge_button_upper{
+.forge_button_upper {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
   width: 100%;
 }
 
-.forge_button_wrapper{
+.forge_button_wrapper {
   display: flex;
   width: 100%;
   justify-content: center;
@@ -24,28 +35,46 @@
   gap: 3rem;
 }
 
-.carousel_wrapper {
-  width: 100%;
-  height: 75vh;
+.lore_text {
+  font-size: 4rem;
+  margin: 3rem 0rem 1rem 0rem;
+}
+
+.openWalkthroughButton {
   display: flex;
-  justify-content: space-around;
+}
+
+.balance {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.carousel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 800px;
+  position: relative;
+}
+
+.carousel_wrapper {
+  display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  padding: 1rem 0;
   perspective: 2500px;
-  margin-top: 0rem;
-  margin-bottom: 2rem;
-  
 }
 
 .carousel_container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transform-style: preserve-3d;
   display: flex;
   justify-content: center;
   align-items: center;
-
+  transform-style: preserve-3d;
+  position: relative;
 }
 
 .card {
@@ -55,17 +84,7 @@
   transform-style: preserve-3d;
   transition: transform 0.6s;
   backface-visibility: hidden;
- 
 }
-
-.toggle_price_icon {
-  cursor: pointer;
-  font-size: .8rem;
-  color: #017afe;
-  margin-left: 10px;
-}
-
-
 .card_right {
   display: flex;
   flex-direction: column;
@@ -102,9 +121,10 @@
 .card_side {
   position: absolute;
   background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
-  box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5); /* Adds bevel and depth */
+  box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+  /* Adds bevel and depth */
   width: 100%;
-  height: 20px; 
+  height: 20px;
 }
 
 .side_top {
@@ -121,11 +141,12 @@
   box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 
-.card_left_side, .card_right_side {
+.card_left_side,
+.card_right_side {
   position: absolute;
   background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
   box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
-  width: 20px; 
+  width: 20px;
   height: 100%;
 }
 
@@ -143,30 +164,31 @@
 
 .card_lside_text {
   position: absolute;
-  transform: rotate(90deg); 
-  transform-origin: left center; 
-  white-space: nowrap; 
-  left: 50%; 
-  top: 25%; 
-  font-size: .7rem; 
-  color: rgb(0, 0, 0); 
-  text-align: center; 
+  transform: rotate(90deg);
+  transform-origin: left center;
+  white-space: nowrap;
+  left: 50%;
+  top: 25%;
+  font-size: .7rem;
+  color: rgb(0, 0, 0);
+  text-align: center;
 }
 
 .card_rside_text {
   position: absolute;
-  transform: rotate(90deg) scaleY(-1); 
-  transform-origin: left center; 
-  white-space: nowrap; 
-  left: 50%; 
-  top: 25%; 
-  font-size: .7rem; 
-  color: rgb(0, 0, 0); 
-  text-align: center; 
+  transform: rotate(90deg) scaleY(-1);
+  transform-origin: left center;
+  white-space: nowrap;
+  left: 50%;
+  top: 25%;
+  font-size: .7rem;
+  color: rgb(0, 0, 0);
+  text-align: center;
 }
 
 
-.card_front, .card_back {
+.card_front,
+.card_back {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -211,16 +233,7 @@
   margin-bottom: 0rem;
 }
 
-.theForge_container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 0rem;
-}
 
-.theForge {
-  display: none;
-}
 
 .card_left {
   display: flex;
@@ -237,12 +250,12 @@
 
 
 
-.card_right_bottom{
+.card_right_bottom {
   padding: 0rem;
   margin: 0rem;
 }
 
-.card_right_bottom_bidding{
+.card_right_bottom_bidding {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -272,7 +285,7 @@
   padding: .25rem;
 }
 
-.card_right_bottom_bidding_box_timer_item p{
+.card_right_bottom_bidding_box_timer_item p {
   margin: 0;
   padding: 0;
   display: inline-block;
@@ -280,7 +293,7 @@
 
 }
 
-.card_right_bottom_bidding_box_timer_item span{
+.card_right_bottom_bidding_box_timer_item span {
   margin: 0;
   padding: 0;
   display: inline-block;
@@ -325,8 +338,8 @@
 }
 
 .card_right_bottom_bidding_box_timer_item_price {
- margin-bottom: 0rem;
- padding-bottom: 0rem;
+  margin-bottom: 0rem;
+  padding-bottom: 0rem;
 }
 
 .button_wrapper {
@@ -338,7 +351,7 @@
   gap: 0.2rem;
   width: 100%;
   padding: 0rem 0rem 0.75rem 0rem;
-  
+
 }
 
 .card_right_bottom_button {
@@ -371,20 +384,11 @@
   margin: 0.5rem 0 0;
 }
 
-.payment_option_modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(42, 42, 42, 0.9);
-  border-radius: 12px;
-  padding: 20px;
-  width: 400px;
-  max-width: 90%;
-  z-index: 1000;
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
-  color: white;
-  text-align: center;
+.toggle_price_icon {
+  cursor: pointer;
+  font-size: .8rem;
+  color: #017afe;
+  margin-left: 10px;
 }
 
 .arrowButton {
@@ -396,32 +400,24 @@
   font-size: 2rem;
   transition: background 0.3s ease;
 }
+
 .arrowButton:hover {
   background-color: rgba(0, 0, 0, 0.8);
 }
+
 .arrow_container {
-  position: fixed; 
+  position: fixed;
   bottom: 50;
   left: 0;
   right: 0;
   display: flex;
-  justify-content: center; 
+  justify-content: center;
   align-items: center;
-  gap: 90rem; 
-  z-index: 1000; 
+  gap: 90rem;
+  z-index: 1000;
 }
 
-.carousel_wrapper {
-  position: relative;
-  width: 100vw; 
-}
-.carousel {
-  perspective: 1000px;
-  width: 500px;
-  height: 500px;
-  margin: 50px auto;
-  position: relative;
-}
+
 #spinner {
   width: 100%;
   height: 100%;
@@ -429,6 +425,7 @@
   transform-style: preserve-3d;
   transition: transform 1s;
 }
+
 #spinner img {
   position: absolute;
   width: 200px;
@@ -439,11 +436,13 @@
   transform-origin: 50% 50% -250px;
   transition: transform 1s;
 }
+
 .controls {
   display: flex;
   justify-content: center;
   margin-top: 20px;
 }
+
 .controls button {
   background: #333;
   color: #fff;
@@ -454,17 +453,21 @@
   margin: 0 10px;
   transition: background 0.3s;
 }
+
 .controls button:hover {
   background: #555;
 }
+
 .payment_option_modal h3 {
   font-size: 24px;
   margin-bottom: 20px;
   font-family: "Aldrich", sans-serif;
 }
+
 .payment_option_modal button {
   margin: 10px;
 }
+
 .stripe_iframe_modal {
   position: fixed;
   top: 0;
@@ -484,17 +487,26 @@
 @media only screen and (max-width: 768px) {
   .carousel_wrapper {
     display: flex;
-    flex-direction: column; 
-    align-items: center;     
+    flex-direction: column;
+    align-items: center;
     margin-top: 2rem;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    transform-origin: top center; 
+    transform-origin: top center;
     gap: 1rem;
   }
 
+  .lore_text {
+    font-size: 4rem;
+    text-align: center;
+    margin: 0rem 0rem 1.5rem 0rem;
+    padding: 0rem;
+    line-height: 1.1;
+  }
+
+
   .carousel_container {
-    transform: scale(0.9); 
+    transform: scale(0.9);
   }
 
   .arrow_left,
@@ -504,19 +516,21 @@
   }
 
   .arrow_container {
-    position: fixed; 
-    bottom: -150px; 
+    position: fixed;
+    bottom: -150px;
     left: 0;
     right: 0;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     align-items: center;
-    gap: 90px; 
-    z-index: 1000; 
+    gap: 90px;
+    z-index: 2000;
+    margin: 1rem 0rem 0rem 0rem;
   }
 
   .arrow_container .arrowButton {
-    font-size: 3rem !important; 
+    z-index: 2000;
+    font-size: 3rem !important;
   }
 
   .the_forge {
@@ -532,37 +546,38 @@
 
 /* Tablet screens (min-width: 769px and max-width: 1024px) */
 @media only screen and (min-width: 769px) and (max-width: 1024px) {
-  
+
   /* Arrow Button Styling for Tablets */
   .arrow_container {
-    position: fixed; /* Fix the container to the bottom of the screen */
-    bottom: 0px; /* Align to the bottom */
+    position: fixed;
+    bottom: 0px;
     left: 0;
     right: 0;
     display: flex;
     margin: 0rem 0rem 0rem 0rem;
-    justify-content: center; /* Center arrows horizontally */
+    justify-content: center;
     align-items: center;
-    gap: 90px; /* Space between the arrows */    
-    z-index: 1000; /* Make sure it's above other elements */
+    gap: 90px;
+    z-index: 1000;
   }
 
   .arrow_container .arrowButton {
-    font-size: 3rem !important; /* Make sure the arrows are visible against the background */
+    font-size: 3rem !important;
+    /* Make sure the arrows are visible against the background */
   }
 
   .carousel_wrapper {
     display: flex;
-    flex-direction: column; 
-    align-items: center;     
+    flex-direction: column;
+    align-items: center;
     margin-top: 2rem;
-    
-    transform-origin: top center; 
+
+    transform-origin: top center;
     gap: 1rem;
     height: 70vh;
   }
 
   .carousel_container {
-    transform: scale(0.9); 
+    transform: scale(0.9);
   }
 }

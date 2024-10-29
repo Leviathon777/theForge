@@ -9,6 +9,7 @@
   width: 100%;
   height: auto;
   object-fit: cover;
+  -webkit-object-fit: cover;
 }
 .playIcon {
   position: absolute;
@@ -76,6 +77,7 @@
 .modalVideo {
   width: 100%;
   height: 100%;
+  -webkit-object-fit: fill;
   object-fit: fill;
 }
 .modalCloseButton {

@@ -1,33 +1,55 @@
 .entryPageContainer {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Fullscreen background video */
+.fullscreenVideo {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  background-color: black;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  -webkit-object-fit: cover;
+  object-fit: cover; 
+  z-index: -1; 
+  pointer-events: none; 
 }
 
+/* Centering container for the image */
 .enterContainer {
   position: absolute;
-  top: 24%;
-  left: 37%;
-  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  z-index: 1; 
 }
 
+/* Image wrapper for size adjustments */
 .imageWrapper {
-  position: relative;
-  width: 500px; 
-  height: 500px; 
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+}
+
+/* Image styling */
+.enterImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; 
 }
 
 .cookieOverlay {
@@ -72,15 +94,6 @@
 
 
 
-
-
-
-
-
-.fullscreenVideo {
-  object-fit: cover;
-}
-
 .linkButton {
   background: none;
   border: none;
@@ -96,9 +109,6 @@
 }
 
 .skipButton {
-  position: absolute;
-  bottom: 20px; 
-  right: 20px; 
   background-color: #333;
   color: white;
   border: none;
@@ -107,7 +117,6 @@
   font-size: 16px;
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.3s ease;
-  z-index: 1000;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -120,8 +129,6 @@
   transform: scale(0.95);
 }
 
-
-
 .enterButton:hover {
   color: rgb(122, 122, 122);
 }
@@ -132,71 +139,59 @@
   gap: 2rem;
 }
 
-/* Tablet Styles (max-width: 768px) */
-@media only screen and (max-width: 768px) {
+@media (max-width: 599px) {
   .entryPageContainer {
-    padding: 20px;
-  }
-  
-  .enterContainer {    
-    top: 30%;
-    left: 12.5%;
-    transform: translate(-50%, -30%);
+    align-items: center;
+    justify-content: center;
   }
 
+
   .imageWrapper {
-    width: 300px;
+    width: 300px; /* Smaller width for mobile */
     height: 300px;
   }
 
   .cookieOverlay {
-    width: 90%;
-    padding: 0.5rem;
+    width: 90%; /* Adjust width for mobile */
+    padding: 1rem;
   }
 
   .cookieContent h2 {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 
   .cookieContent p {
     font-size: 0.8rem;
   }
-
-  .fullscreenVideo {
-    width: 1%;
-    height: auto;
-    max-height: 100%;
-  }
 }
 
-@media only screen and (max-width: 480px) {
+@media (min-width: 600px) and (max-width: 899px) {
   .entryPageContainer {
-    padding: 10px;
+    align-items: center;
+    justify-content: center;
   }
-  
+
   .enterContainer {
-    top: 30%;
-    left: 12.5%;
+    top: 50%; /* Center for tablet */
+    left: 50%;
     transform: translate(-50%, -50%);
   }
 
   .imageWrapper {
-    width: 300px;
-    height: 300px;
+    width: 400px; /* Adjust width for tablets */
+    height: 400px;
   }
 
   .cookieOverlay {
-    width: 90%;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
+    width: 80%; /* Adjust overlay width for tablets */
+    padding: 1rem;
   }
 
   .cookieContent h2 {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
   }
 
   .cookieContent p {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
   }
 }
-

@@ -1,27 +1,32 @@
+/* MAIN PAGE CSS CODE BASIC AND MEDIA QUERYS */
+.theForge {
+  position: relative;
+  padding-bottom: 0rem;
+  margin-bottom: 0rem;
+  position: relative;
+  background: url("../public/img/background3.webp") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  overflow-x: hidden;
+  padding-bottom: 4rem;
+
+}
+
+
+
 .theForge_content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-items: center;
   justify-content: center;
-  padding: 0rem 0rem 0rem 0rem;
-  margin: 0rem 0rem 0rem 0rem;
   width: 100%;
-  overflow-x: hidden;
-  position: relative;
-  background-image: url("../public/img/background3.webp");
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+
 }
 
-.button_botton_box{
-  display: flex;
-  gap: 2rem;
-}
-
-.theForge_content_wrapper {
+.first_component {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -33,44 +38,9 @@
   margin: 0rem 0rem 0rem 0rem;
 }
 
-.second_component {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  justify-items: center;
-  align-items: center;
-  align-content: center;
-  width: 85%;
-  height: 100%;
-
-  margin: 0rem 0rem 0rem 0rem;
-  padding: 0rem 0rem 0rem 0rem;
-}
-
-.third_component {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  justify-items: center;
-  align-items: center;
-  align-content: center;
-  width: 90%;
-  height: 100vh;
-  margin: 0rem 0rem 0rem 0rem;
-}
-
-.fourth_component {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  justify-items: center;
-  align-items: center;
-  align-content: center;
-  margin: 0rem 0rem 0rem 0rem;
-  width: 100%;
-  height: 100vh;
-}
-
+.second_component,
+.third_component,
+.fourth_component,
 .fifth_component {
   display: flex;
   flex-direction: column;
@@ -78,8 +48,9 @@
   justify-items: center;
   align-items: center;
   align-content: center;
-  margin: 0rem 0rem 4rem 0rem;
-  width: 50%;
+  margin: 0rem 0rem 0rem 0rem;
+  width: 100%;
+  height: 100%;
 }
 
 .glowingDivider {
@@ -93,222 +64,24 @@
   margin: 15rem 0rem 15rem 0rem;
 }
 
-.glowingDivider::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 70%;
-  height: 60px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), transparent);
-  filter: blur(5px);
-  z-index: -1;
-}
-
-.theForge {
-  position: relative;
-  padding-bottom: 0rem;
-  margin-bottom: 0rem;
-  position: relative;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  overflow-x: hidden;
-}
-
-.flipBook {
-  width: 100%;
-  height: auto;
-  perspective: 1500px;
-  margin-top: 3rem;
-  transform-style: preserve-3d;
-}
-
-.flipBook .page {
-  width: 500px;
-  height: 100%;
-  background: var(--background-gradient-dark);
-  color: #ffffffa6;
+.button_botton_box {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  gap: 2rem;
   justify-content: center;
-  padding: .75rem;
-  border-radius: 8px;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
 }
 
-.content_page {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-content: center;
-  padding: .5rem;  
-  width: 100%;
-  min-height: 500px;
-  max-height: 825px;
-  color: #ffffffa6;
-  border-radius: 8px;
-  text-align: center;
-  background: var(--background-gradient-dark);
-  border: .2rem solid var(--color-border);
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-}
-
-.page_left{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  justify-items: center;
-  align-content: center;
-  align-items: center;
-  width: 100%;
-  min-height: 500px;
-  max-height: 825px;
-  color: #ffffffa6;
-  border-radius: 8px;
-  text-align: center;
-  background-color: black;
-  border: .2rem solid var(--color-border);
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-}
+/* END OF MAIN PAGE CSS CODE BASIC AND MEDIA QUERYS */
 
 
-.page_left_wrapper{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  justify-content: center;
-  align-content: center;
-  align-items: center; 
-  background: var(--background-gradient-light);
-  width: 95%;
-  height: 95%;
-  
-}
 
-.page_left_wrapper_bottom{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  justify-content: center;
-  align-content: center;
-  align-items: center; 
-  background: var(--background-gradient-light);
-  width: 95%;
-  height: 95%;
-  padding-top: 1rem;
-}
-
-.page_left_wrapper_text{
-  display: flex;
-  flex-direction: column;
-  margin-top: 1rem;
- 
-  line-height: 1.1;
-}
-
-.page_left_top {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  justify-content: center;
-  align-content: center;
-  align-items: center;
-  width: 100%; 
-  
-}
-
-.page_left_bottom {
-  display: flex;
-  flex-direction: column;
-  justify-items: center;
-  align-items: center;
-  width: 100%;
-}
-
-.page_left_bottom  h1{
-  font-size: 2.5rem;
-}
-
-.page {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  justify-items: center;
-  align-content: center;
-  align-items: center;
-  width: 100%;
-  min-height: 500px;
-  max-height: 825px;
-  color: #ffffffa6;
-  border-radius: 8px;
-  text-align: center;
-  background: var(--background-gradient-light);
-  border: .2rem solid var(--color-border);
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-}
-
-.page_p {
-  margin: 0.25rem 0rem 0rem 0rem;
-  color: #ffffffa6;
-}
-
-.page h2 {
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0rem;
-  padding: 0rem;
-  text-transform: uppercase;
-}
-
-.imagePage {
-  width: 400px;
-  border: .5rem solid grey;
-  border-radius: 50%;
-  margin: 3rem 0rem 3rem 0rem;
-
-}
-
-.page_image_top {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-content: center;
-  align-items: center;
-  justify-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-.image_front {
-  object-fit: cover;
-  width: 550px;
-  height: 550px;
-  opacity: 0.1;
-}
-
-.video {
-  opacity: 0.7;
-}
-
-.theForge_cont {
-  display: flex;
-  align-content: center;
-  justify-content: center;
-  margin-top: 8rem;
-  background: black;
-}
-
-.title_text {
+/* FIRST COMPONENT CONTENT CSS CODE BASIC AND MEDIA QUERYS */
+.first_component h1 {
   font-size: 7rem;
 }
 
-.theForgeContent {
+
+/* SECOND COMPONENT CONTENT CSS CODE BASIC AND MEDIA QUERYS */
+.theLoreContent {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -319,144 +92,95 @@
   background: var(--background-gradient-light);
   border-radius: .5rem;
   border: 2px solid var(--color-border);
-  margin: 4rem 0rem 4rem 0rem;
+  margin: 0rem 0rem 4rem 0rem;
 }
 
-.lore_text {
+.component_title_text {
   font-size: 4rem;
   margin: 3rem 0rem 1rem 0rem;
 }
 
-
-.medalsTitle {
-  font-size: 4rem;
-  margin: 3rem 7rem 2rem 7rem;
-  display: inline-block;
-  border-bottom: 0.5rem double white;
-  line-height: 1em;
-  padding-bottom: 0.5rem;
-  color: #ffffffa6;
-  font-weight: bold;
-  text-shadow:
-    2px 2px 4px rgba(0, 0, 0, 0.9),
-    -1px -1px 2px rgba(92, 107, 115, 0.7),
-    1px 1px 10px rgba(37, 95, 244, 0.5);
-}
-
-.medalsText {
+.loreText {
   font-size: 1.2rem;
   line-height: 1.4;
   padding: 0rem 6rem 6rem 6rem;
 }
 
-.videoContainer {
+
+/* FLIP BOOK MAIN CONTENT CSS CODE BASIC AND MEDIA QUERYS */
+.flipBook {
+  width: 100%;
+  max-width: 1250px;
+  min-width: 600px;
+  height: auto;
+  max-height: 1650px;
+  min-height: 700px;
+  margin: auto;
   position: relative;
 }
 
-.video_background {
-  width: 100%;
-}
-
-.buttonContainer {
-  display: flex;
-  position: absolute;
-  bottom: 10px;
-}
-
-.mute_button,
-.pause_button {
-  color: #ffffffa6;
-  font-size: 1.4rem;
-  cursor: pointer;
-  margin: 0 5px;
-  z-index: 2;
-}
-
-.bottomLeft {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  z-index: 2;
-}
-
-.bottomRight {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  z-index: 2;
-}
-
-.swiperContainer {
-  width: 100%;
-  height: 100%;
-  margin: auto;
-}
-
-
-
-.supply {
-  font-size: 1rem;
-  margin: 0rem 0;
-  padding: 0rem;
-}
-
-.price {
-  font-size: 1rem;
-  font-weight: bold;
-  color: #ffffffa6;
-  margin: 0;
-  padding: 0;
-}
-
-.price span {
-  color: #ffd700;
-  font-size: 1rem;
-}
-
-.benefits {
+/* FRONT INNER PAGE CSS CODE BASIC AND MEDIA QUERYS */
+.front_inner_page {
   display: flex;
   flex-direction: column;
-  justify-items: flex-start;
-  align-items: flex-start;
-  list-style-type: decimal;
-  padding: 1rem 0rem 1rem 2rem;
+  justify-content: center;
+  justify-items: center;
+  align-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
-  margin: 0rem 0rem 0rem 0rem;
-}
-
-.benefits li {
-  justify-content: flex-start;
-  align-content: flex-start;
-  text-align: start;
-  justify-items: flex-start;
-  align-items: flex-start;
-  font-size: 1rem;
-  line-height: 1.1;
-  padding: .25rem;
-}
-
-.benefits>li>ul {
-  list-style-type: none;
-  margin-left: 0px;
-  padding-left: 0;
-  font-weight: normal;
-}
-
-.benefits>li>ul>li {
-  font-size: 14px;
-  list-style: circle;
-  color: #cccccc71;
-}
-
-/* Styling for the section headers */
-.benefits>li strong {
-  padding: 0rem;
-  margin: 0rem;
   color: #ffffffa6;
+  border-radius: 8px;
+  background: var(--background-gradient-light);
+  border: .2rem solid var(--color-border);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.front_inner_page_inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  justify-items: center;
+  background: var(--background-gradient-dark);
+  width: 100%;
+  height: 100%;
+}
+
+.front_inner_page_inner_image {
+  padding: 2rem;
+  object-fit: cover;
+  opacity: 0.3;
 }
 
 
+
+/* CONTENT PAGE CSS CODE BASIC AND MEDIA QUERYS */
+.content_page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  padding: .5rem;
+  width: 100%;
+  height: 100%;
+  color: #ffffffa6;
+  border-radius: 8px;
+  text-align: center;
+  background: var(--background-gradient-dark);
+  border: .2rem solid var(--color-border);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.content_page h2 {
+  font-size: 3rem;
+}
+
+
+/* CONTENTS PAGE CONTENTS LIST CSS CODE BASIC AND MEDIA QUERYS */
 .contentsList {
   list-style: none;
   padding: 1rem;
@@ -491,35 +215,191 @@
   color: #ffffffa6;
 }
 
-.iframe_box {
+
+
+/* LEFT PAGE CSS CODE BASIC AND MEDIA QUERYS */
+.page_left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  height: 100vh;
-  background-color: transparent;
-  background-image: none;
+  height: 100%;
+  color: #ffffffa6;
+  border-radius: 8px;
+  text-align: center;
+  background: var(--background-gradient-dark);
+  border: 0.2rem solid var(--color-border);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.page_left_wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.page_left_top {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 2rem;
+}
+
+.imagePage {
+  width: 100%;
+  border: 0.5rem solid grey;
+  border-radius: 50%;
+  padding: 1rem;
+  margin: 0;
+}
+
+.page_left_bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.page_left_bottom h1 {
+  font-size: 2.5rem;
+}
+
+
+/* RIGHT PAGE CSS CODE BASIC AND MEDIA QUERYS */
+.page_right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  justify-items: center;
+  align-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  color: #ffffffa6;
+  border-radius: 8px;
+  background: var(--background-gradient-dark);
+  border: .2rem solid var(--color-border);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.page_right_wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--background-gradient-light);
+  width: 100%;
+  height: 100%;
+}
+
+.benefits {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: flex-start;
+  list-style-type: decimal;
+  padding: 1.5rem 1rem 1rem 3rem;
+  width: 95%;
+  height: auto;
+  gap: 1rem;
+  margin: 0rem 0rem 0rem 0rem;
+}
+
+.benefits li {
+  justify-content: flex-start;
+  align-content: flex-start;
+  text-align: start;
+  justify-items: flex-start;
+  align-items: flex-start;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  padding: .25rem;
+}
+
+.benefits>li>ul {
+  list-style-type: none;
+  margin-left: 0px;
+  padding-left: 0;
+  font-weight: normal;
+}
+
+.benefits>li>ul>li {
+  font-size: 14px;
+  list-style: circle;
+  color: #cccccc71;
+}
+
+.benefits>li strong {
+  padding: 0rem;
+  margin: 0rem;
+  color: #ffffffa6;
 }
 
 
 
-
-
-@media only screen and (max-width: 768px) {
-  .theForge_content {
-    padding: 3rem 1rem;
+/* Extra Small Devices (Phones, 0px - 599px) */
+@media (max-width: 599px) {
+  .theForge {
+    padding: 1rem;
+    /* Adds some padding for readability */
   }
 
- 
+  .content_page h2 {
+    font-size: 1.5rem;
+    padding-bottom: 0rem;
+    margin-bottom: 0rem;
+  }
+  .contentsList {
+    padding: 0.25rem;
+  }
+
+  .contentsList li {
+    padding: 4px 0; /* Reduce vertical padding for compact layout */
+  }
+
+  .contentsList li .title,
+  .contentsList li .pageNumber {
+    font-size: 0.7rem; /* Smaller font for compact devices */
+  }
+
+  .contentsList li .leader {
+    margin: 0 5px; /* Reduce spacing between title and page number */
+  }
+
+
+  .theForge_content,
+  .first_component,
   .second_component,
   .third_component,
   .fourth_component,
   .fifth_component {
     width: 100%;
-    height: auto;
-    margin: 1rem 0;
+    padding: 1rem;
+    flex-direction: column;
+    align-items: center;
   }
 
-  .second_component {
-    margin: 8rem 0rem 0rem 0rem;
-    height: 70vh;
+  .first_component h1 {
+    font-size: 3rem;
+    text-align: center;
+  }
+
+  .component_title_text {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .loreText {
+    font-size: 1rem;
+    padding: 1rem;
   }
 
   .glowingDivider {
@@ -527,296 +407,147 @@
     margin: 5rem 0;
   }
 
-  .title_text {
-    font-size: 3rem; 
-    text-align: center; 
-    margin: 0 auto; 
-    padding: 1rem; 
-    line-height: 1.2; 
-  }
-  .lore_text {
-    font-size: 2rem; 
-    text-align: center;
-    margin: 0 auto; 
-    padding: 1rem; 
-    line-height: 1.3; 
-  }
-  .medalsText {
-    font-size: 1rem;
-    padding: 0 1rem;
-  }
-
-  .flipBook .page {
-    width: 100%;
-    height: auto;
-  }
-
-  .image_front {
-    width: 100%;
-    height: auto;
-  }
-
-  .price,
-  .supply,
-  .page h2 {
-    font-size: 1rem;
-  }
-
-
-
-  .contentsList li {
+  .button_botton_box {
     flex-direction: column;
-    align-items: flex-start;
+    gap: 1rem;
   }
-}
 
-
-/* Mobile Styles (max-width: 480px) */
-@media only screen and (max-width: 480px) {
-  .theForge_content {
+  .page_left,
+  .page_right {
     padding: 1rem;
   }
 
-  .second_component,
-  .third_component,
-  .fourth_component,
-  .fifth_component {
-    width: 100%;
-    margin: 1.5rem ;
-  }
-  .second_component {
-    margin: 8rem 0rem 0rem 0rem;
-    height: 100vh;
-  }
-  .title_text {
-    font-size: 2.5rem; /* Further reduce font size */
-    padding: 0.5rem; /* Reduce padding */
-    margin: 0 auto;
-  }
-  .lore_text {
-    font-size: 1.75rem; /* Further reduce font size */
-    padding: 1rem; /* Reduce padding */
-    margin: 0 auto;
-    line-height: 1.3;
-  }
-
-  .medalsText {
-    font-size: 1rem;
-    padding: 0 1rem;
-    line-height: 1.4;
-  }
-
-  .glowingDivider {
-    width: 85%;
-    margin: 3rem 0;
-  }
-
-  .flipBook {
-    width: 100%;
-    height: auto;
-    perspective: 1000px;
-    margin-top: 1rem;
-  }
-
-  .flipBook .page {
-    width: 100%;
-    height: auto;
-    padding: 0.5rem;
-  }
-
-  .image_front {
-    width: 100%;
-    height: auto;
-  }
   .imagePage {
-    width: 100%;
-    height: auto;
-    max-width: 250px; /* Constrain max width for images */
-    margin: .5 auto; /* Center images */
-  }
-
-  .page_left_wrapper,
-  .page_left_wrapper_bottom {
-    width: 100%;
-    padding: 1rem;
-  }
-
-  .page_left_bottom  h1{
-    font-size: 1.75rem;
+    width: 80%;
+    /* Scale down the image size on small screens */
+    padding: 0.5rem;
   }
 
   .benefits {
-    font-size: 0.9rem; /* Reduce text size in benefits list */
-    padding: 0.5rem;
-  }
-
-  .page h2 {
-    font-size: 1.5rem;
-    padding: 0.5rem;
-  }
-
-  .price,
-  .supply {
-    font-size: 1rem;
+    padding: 1rem 0.5rem;
+    padding-left: .75rem;
+    gap: 0rem;
+    width: 100%;
+    /* Allow benefits list to take full width */
   }
 
   .benefits li {
-    justify-content: flex-start;
-    align-content: flex-start;
-    text-align: start;
-    justify-items: flex-start;
-    align-items: flex-start;
-    font-size: .8rem;
-    line-height: 1.1;
+    font-size: .5rem;
+    line-height: 1.4;
     padding: .15rem;
   }
-  
-  .benefits>li>ul {
-    list-style-type: none;
-    margin-left: 0px;
-    padding-left: 0;
-    font-weight: normal;
+
+  .page_right_wrapper h2 {
+    font-size: 1.5rem;
+    text-align: center;
   }
-  
+
+  .page_left_bottom h1 {
+    font-size: 1.25rem;
+  }
+
+  .benefits>li>ul {
+    padding-left: 1rem;
+    /* Add slight padding for indentation */
+  }
+
   .benefits>li>ul>li {
-    font-size: 10px;
+    font-size: 8px;
+    /* Reduce font size for better readability on small screens */
+    line-height: 1;
+    /* Adjust line height for a compact layout */
     list-style: circle;
     color: #cccccc71;
   }
-  .contentsList {
-    list-style: none;
-    padding: 0rem;
-    margin: 0;
-    width: 100%;
-    box-sizing: border-box; 
-  }
-  
-  .contentsList li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 4px 0;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
- 
-  .contentsList li .leader {
-    flex-grow: 1;
-    border-bottom: 1px dotted rgb(155, 155, 155);
-    margin: 0 5px;
-  }
-  
-  .contentsList li .pageNumber {
-    flex-shrink: 0;
-    white-space: nowrap;
-  }
-  
-  .contentsList li .title,
-  .contentsList li .pageNumber {
-    font-size: 0.9rem; 
+
+  .benefits>li strong {
+    font-size: .6rem;
+    /* Reduce font size for strong elements */
     color: #ffffffa6;
   }
-  
-  /* Mobile Styles (max-width: 768px) */
-  @media only screen and (max-width: 768px) {
-    .contentsList li {
-      flex-direction: row;
-      align-items: center;
-    }
-
-    .theForge_content {
-      background-size: fill; 
-          }
-  
-    .contentsList li .title {
-      font-size: 0.8rem; 
-    }
-  
-    .contentsList li .leader {
-      border-bottom-width: 1px; 
-    }
-  
-    .contentsList li .pageNumber {
-      font-size: 0.8rem; 
-    }
-  
-    .contentsList {
-      padding: 0.5rem; 
-    }
-  }
-  
 }
 
-
-/* Tablet Styles (min-width: 481px and max-width: 1024px) */
-@media only screen and (min-width: 481px) and (max-width: 1024px) {
-  /* Main Content Styling */
-  .theForge_content {
-    padding: 2rem 1.5rem;
+/* Small Devices (Tablets, 600px - 899px) */
+@media (min-width: 600px) and (max-width: 899px) {
+  .theForge {
+    padding: 2rem;
   }
 
-  /* Component Widths and Margins */
-  .second_component,
-  .third_component,
-  .fourth_component,
-  .fifth_component {
-    width: 90%;
-    height: auto;
-    margin: 1.5rem 0;
+  .content_page h2 {
+    font-size: 2rem;
+  }
+  .contentsList {
+    padding: 0.5rem;
   }
 
-  .second_component {
-    margin: 6rem 0 0 0;
-    height: 75vh;
-  }
-
-  /* Divider Styling */
-  .glowingDivider {
-    width: 80%;
-    margin: 4rem 0;
-  }
-
-  /* Text Adjustments */
-  .title_text {
-    font-size: 4rem;
-    text-align: center;
-    margin: 0 auto;
-    padding: 1rem;
-    line-height: 1.2;
-  }
-
-  .lore_text {
-    font-size: 2.5rem;
-    text-align: center;
-    margin: 0 auto;
-    padding: 1rem;
-    line-height: 1.3;
-  }
-
-  .medalsText {
-    font-size: 1.2rem;
-    padding: 0 1.5rem;
-  }
-
-  /* Flipbook and Image Adjustments */
-  .flipBook .page,
-  .image_front {
-    width: 100%;
-    height: auto;
-  }
-
-  /* Price and Supply */
-  .price,
-  .supply,
-  .page h2 {
-    font-size: 1.2rem;
-  }
-
-  /* Contents List Adjustments */
   .contentsList li {
-    flex-direction: row;
-    align-items: center;
-    padding: 6px 0;
+    padding: 4px 0; /* Reduce vertical padding for compact layout */
+  }
+
+  .contentsList li .title,
+  .contentsList li .pageNumber {
+    font-size: 0.7rem; /* Smaller font for compact devices */
+  }
+
+  .contentsList li .leader {
+    margin: 0 5px; /* Reduce spacing between title and page number */
+  }
+
+  .first_component h1 {
+    font-size: 5rem;
+  }
+
+  .component_title_text {
+    font-size: 3rem;
+  }
+
+  .loreText {
+    font-size: 1.1rem;
+    padding: 2rem;
+  }
+
+  .button_botton_box {
+    gap: 1.5rem;
+  }
+
+  .imagePage {
+    width: 90%;
+    /* Scale image slightly smaller for tablet view */
+  }
+
+  .benefits {
+    padding: 1.5rem;
+    /* Adjust padding to maintain spacing */
+    width: 90%;
+  }
+
+  .benefits li {
+    font-size: 1.2rem;
+    /* Slightly larger font for readability */
+  }
+}
+
+/* Medium Devices (Larger Tablets or Small Laptops, 900px - 1199px) */
+@media (min-width: 900px) and (max-width: 1199px) {
+  .first_component h1 {
+    font-size: 6rem;
+  }
+
+  .component_title_text {
+    font-size: 3.5rem;
+  }
+
+  .loreText {
+    font-size: 1.15rem;
+    padding: 3rem;
+  }
+}
+
+/* Adjustments for FlipBook */
+@media (max-width: 899px) {
+  .flipBook {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
   }
 }
