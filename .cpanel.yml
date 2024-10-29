@@ -5,12 +5,14 @@ deployment:
     - /bin/echo "Starting deployment"
     - /bin/echo "Pulling the latest changes from GitHub..."
     - /usr/bin/git pull
-    - /bin/echo "Checking and installing dependencies if necessary..."
-    # Only install dependencies if node_modules is missing or outdated
-    - if [ ! -d "node_modules" ]; then /opt/cpanel/ea-nodejs18/bin/npm install; fi
+    - /bin/echo "Clearing node_modules..."
+    - /bin/rm -rf node_modules
+    - /bin/echo "Installing dependencies..."
+    - /opt/cpanel/ea-nodejs18/bin/npm install
+    # - /bin/echo "Clearing .next..."
+    # - /bin/rm -rf .next
     - /bin/echo "Building the project..."
-    # Ensure .next isn't cleared automatically every deploy
-    - if [ ! -d ".next" ]; then /opt/cpanel/ea-nodejs18/bin/npm run build; fi
+    - /opt/cpanel/ea-nodejs18/bin/npm run build
     - /bin/echo "Restarting the application..."
     - /usr/local/cpanel/scripts/restartsrv_apache_php_fpm
     - /bin/echo "Deployment complete"
