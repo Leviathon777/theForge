@@ -35,9 +35,6 @@ const XdRiPContractAddress = xdripCA_ABI.address;
 const XdRiPContractABI = xdripCA_ABI.abi;
 const web3 = new Web3("https://bsc-dataseed.binance.org/");
 const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
-
-
-
 const TheForge = ({ setIsModalOpen }) => {
   const [selectedMedal, setSelectedMedal] = useState(null);
   const [bnbBalance, setBnbBalance] = useState(null);
