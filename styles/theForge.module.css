@@ -1,17 +1,18 @@
 /* MAIN PAGE CSS CODE BASIC AND MEDIA QUERYS */
 .theForge {
   position: relative;
-  padding-bottom: 0rem;
-  margin-bottom: 0rem;
-  position: relative;
-  background: url("../public/img/background3.webp") no-repeat center center fixed;
+  padding-bottom: 4rem;
+  background: url("../public/img/background.png") no-repeat center center fixed;
   -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
+  -moz-background-size: cover;   
+  -o-background-size: cover;      
   background-size: cover;
   overflow-x: hidden;
   padding-bottom: 4rem;
-
+  background-attachment: fixed; 
+  -webkit-background-attachment: fixed; 
+  width: 100%;
+  height: 100%;
 }
 
 
@@ -23,19 +24,15 @@
   justify-items: center;
   justify-content: center;
   width: 100%;
-
 }
 
 .first_component {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-content: center;
-  justify-items: center;
   align-items: center;
   width: 100%;
   height: 100vh;
-  margin: 0rem 0rem 0rem 0rem;
 }
 
 .second_component,
@@ -45,10 +42,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  justify-items: center;
   align-items: center;
-  align-content: center;
-  margin: 0rem 0rem 0rem 0rem;
   width: 100%;
   height: 100%;
 }
@@ -349,7 +343,6 @@
 @media (max-width: 599px) {
   .theForge {
     padding: 1rem;
-    /* Adds some padding for readability */
   }
 
   .content_page h2 {
@@ -362,16 +355,16 @@
   }
 
   .contentsList li {
-    padding: 4px 0; /* Reduce vertical padding for compact layout */
+    padding: 4px 0; 
   }
 
   .contentsList li .title,
   .contentsList li .pageNumber {
-    font-size: 0.7rem; /* Smaller font for compact devices */
+    font-size: 0.7rem; 
   }
 
   .contentsList li .leader {
-    margin: 0 5px; /* Reduce spacing between title and page number */
+    margin: 0 5px; 
   }
 
 
@@ -419,7 +412,6 @@
 
   .imagePage {
     width: 80%;
-    /* Scale down the image size on small screens */
     padding: 0.5rem;
   }
 
@@ -428,7 +420,6 @@
     padding-left: .75rem;
     gap: 0rem;
     width: 100%;
-    /* Allow benefits list to take full width */
   }
 
   .benefits li {
@@ -448,21 +439,17 @@
 
   .benefits>li>ul {
     padding-left: 1rem;
-    /* Add slight padding for indentation */
   }
 
   .benefits>li>ul>li {
     font-size: 8px;
-    /* Reduce font size for better readability on small screens */
     line-height: 1;
-    /* Adjust line height for a compact layout */
     list-style: circle;
     color: #cccccc71;
   }
 
   .benefits>li strong {
     font-size: .6rem;
-    /* Reduce font size for strong elements */
     color: #ffffffa6;
   }
 }
@@ -481,16 +468,16 @@
   }
 
   .contentsList li {
-    padding: 4px 0; /* Reduce vertical padding for compact layout */
+    padding: 4px 0; 
   }
 
   .contentsList li .title,
   .contentsList li .pageNumber {
-    font-size: 0.7rem; /* Smaller font for compact devices */
+    font-size: 0.7rem; 
   }
 
   .contentsList li .leader {
-    margin: 0 5px; /* Reduce spacing between title and page number */
+    margin: 0 5px; 
   }
 
   .first_component h1 {
@@ -512,18 +499,15 @@
 
   .imagePage {
     width: 90%;
-    /* Scale image slightly smaller for tablet view */
   }
 
   .benefits {
     padding: 1.5rem;
-    /* Adjust padding to maintain spacing */
     width: 90%;
   }
 
   .benefits li {
     font-size: 1.2rem;
-    /* Slightly larger font for readability */
   }
 }
 
@@ -543,7 +527,7 @@
   }
 }
 
-/* Adjustments for FlipBook */
+
 @media (max-width: 899px) {
   .flipBook {
     width: 100%;

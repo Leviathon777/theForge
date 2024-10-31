@@ -1,91 +1,172 @@
 .container {
-    max-width: 800px;
-    margin: 0rem 0rem 6rem 0rem;
-    padding: 20px;
-    background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 0 6rem 0;
+  padding: 20px;
+  background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.subheading {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #c9c9c9;
+}
+
+.functionBlock {
+  background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #7e7e7e;
+  border-radius: 8px;
+}
+
+.input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  -webkit-appearance: none; /* Safari */
+  appearance: none; /* Standard */
+}
+
+.checkbox {
+  margin-right: 10px;
+}
+
+.label {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  -webkit-appearance: button; /* Safari */
+  appearance: button; /* Standard */
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+.button:not(:last-child) {
+  margin-right: 10px;
+}
+
+/* Media queries */
+
+/* Medium devices (tablets and smaller desktops) */
+@media (max-width: 1024px) {
+  .container {
+    padding: 15px;
   }
-  
-  
+
   .heading {
-    font-size: 2rem;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
+    font-size: 1.75rem;
   }
-  
+
   .subheading {
+    font-size: 1.25rem;
+  }
+
+  .functionBlock {
+    padding: 15px;
+  }
+
+  .input, .button {
+    font-size: 0.95rem;
+  }
+}
+
+/* Small devices (smartphones) */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .heading {
     font-size: 1.5rem;
     margin-bottom: 15px;
-    color: #c9c9c9;
   }
-  
+
+  .subheading {
+    font-size: 1.2rem;
+  }
+
   .functionBlock {
-    background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
-    padding: 20px;
-    margin-bottom: 20px;
-    border: 1px solid #7e7e7e;
-    border-radius: 8px;
+    padding: 12px;
   }
-  
-  .input {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
+
+  .input, .button {
+    font-size: 0.85rem;
   }
-  
-  .checkbox {
-    margin-right: 10px;
+
+  .button {
+    padding: 8px 15px;
   }
-  
-  .label {
+}
+
+/* Extra-small devices (very small smartphones) */
+@media (max-width: 480px) {
+  .heading {
+    font-size: 1.3rem;
+  }
+
+  .subheading {
     font-size: 1rem;
     margin-bottom: 10px;
-    display: inline-block;
   }
-  
+
+  .functionBlock {
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+
+  .input, .button {
+    font-size: 0.8rem;
+  }
+
   .button {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    padding: 7px 12px;
+    width: 100%; /* Makes button full-width on extra-small screens */
   }
-  
-  .button:hover {
-    background-color: #0056b3;
-  }
-  
-  .button:not(:last-child) {
-    margin-right: 10px;
-  }
-  
-  @media (max-width: 768px) {
+}
+
+/* Safari/iOS-specific compatibility adjustments */
+@media not all and (min-resolution:.001dpcm) { 
+  @supports (-webkit-appearance:none) { /* Safari-specific detection */
+    
     .container {
-      padding: 15px;
+      -webkit-background-clip: padding-box; /* Ensures gradients display as expected */
+      background-clip: padding-box;
     }
-  
-    .functionBlock {
-      padding: 15px;
+
+    .input {
+      -webkit-appearance: none;
+      appearance: none;
     }
-  
-    .heading {
-      font-size: 1.75rem;
+
+    .button {
+      -webkit-tap-highlight-color: transparent; /* Prevents tap highlight on iOS */
+      -webkit-appearance: button;
+      appearance: button;
     }
-  
-    .subheading {
-      font-size: 1.25rem;
-    }
-  
-    .input, .button {
-      font-size: 0.9rem;
-    }
-  } 
-  
+  }
+}

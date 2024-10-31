@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './SocialButtons.module.css';
 
 const SocialButtons = () => {
-  
+
 
   return (
     <div className={styles.BtnBox_main}>
@@ -11,24 +11,24 @@ const SocialButtons = () => {
         <a href={"https://www.xdrip.io"} target="_blank" rel="noopener noreferrer" title="XDRIP">
           <button className={styles.Btn}>
             <span className={styles.svgContainer}>
-            <img 
-                src="/img/xdrip_social.svg"
+              <img
+                src="/img/xdrip_social.png"
                 alt="Twitter Icon"
-                width="38px" 
+                width="38px"
                 height="38px"
               />
             </span>
             <span className={styles.BG}></span>
           </button>
         </a>
-                {/* XTALES Button */}
-                <a href={"https://www.talesofxdripia.com"} target="_blank" rel="noopener noreferrer" title="X-TALES">
+        {/* XTALES Button */}
+        <a href={"https://www.talesofxdripia.com"} target="_blank" rel="noopener noreferrer" title="X-TALES">
           <button className={styles.Btn}>
             <span className={styles.svgContainer}>
-            <img 
-                src="/img/tales_social.svg"
+              <img
+                src="/img/tales_social.png"
                 alt="Twitter Icon"
-                width="38px" 
+                width="38px"
                 height="38px"
               />
             </span>

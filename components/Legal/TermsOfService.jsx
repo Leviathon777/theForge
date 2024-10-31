@@ -10,6 +10,7 @@ const TermsOfService = ({ isOpen, onRequestClose }) => (
     className={Style.modal}
     overlayClassName={Style.modalOverlay}
   >
+    <div className={Style.modal_wrapper}>
     <h2>Terms of Service</h2>
     <p>These Terms of Service govern your use of our minting platform. Please read them carefully.</p>
 
@@ -62,7 +63,7 @@ const TermsOfService = ({ isOpen, onRequestClose }) => (
     <p>
       These Terms of Service shall be governed by and construed in accordance with the laws of [Your Jurisdiction]. Any disputes arising from these terms shall be subject to the exclusive jurisdiction of the courts of [Your Jurisdiction].
     </p>
-
+    </div>
     <button onClick={onRequestClose} className={Style.closeButton}>Close</button>
   </Modal>
 );

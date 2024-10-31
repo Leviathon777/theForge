@@ -17,9 +17,9 @@
   width: 100vw;
   height: 100vh;
   -webkit-object-fit: cover;
-  object-fit: cover; 
-  z-index: -1; 
-  pointer-events: none; 
+  object-fit: cover;
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* Centering container for the image */
@@ -27,11 +27,12 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); 
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1; 
+  z-index: 1;
 }
 
 /* Image wrapper for size adjustments */
@@ -49,13 +50,15 @@
 .enterImage {
   width: 100%;
   height: 100%;
-  object-fit: contain; 
+  -webkit-object-fit: contain;
+  object-fit: contain;
 }
 
 .cookieOverlay {
   position: absolute;
   bottom: 0;
   left: 50%;
+  -webkit-transform: translateX(-50%);
   transform: translateX(-50%);
   width: 70%;
   background: var(--background-gradient-light);
@@ -63,20 +66,24 @@
   padding: 0.5rem 1rem 1rem 1rem;
   border-radius: 12px 12px 0 0;
   text-align: center;
-  border: .2rem solid var(--color-border);
+  border: 0.2rem solid var(--color-border);
 }
+
 .cookieContent h2 {
   margin: 0px;
   font-size: 1.5rem;
 }
+
 .cookieContent p {
   font-size: 0.9rem;
   margin-bottom: 12px;
 }
+
 .cookieContent a {
   color: #007bff;
   text-decoration: underline;
 }
+
 .cookieButton {
   margin: 0 8px;
   padding: 10px 20px;
@@ -85,14 +92,13 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  -webkit-transition: background-color 0.3s;
   transition: background-color 0.3s;
 }
+
 .cookieButton:hover {
   background-color: #0056b3;
 }
-
-
-
 
 .linkButton {
   background: none;
@@ -116,16 +122,20 @@
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
+  -webkit-transition: -webkit-transform 0.2s ease, background-color 0.3s ease;
   transition: transform 0.2s ease, background-color 0.3s ease;
+  -webkit-box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .skipButton:hover {
   background-color: #555;
+  -webkit-transform: scale(1.05);
   transform: scale(1.05);
 }
 
 .skipButton:active {
+  -webkit-transform: scale(0.95);
   transform: scale(0.95);
 }
 
@@ -133,7 +143,7 @@
   color: rgb(122, 122, 122);
 }
 
-.button_container_lower{
+.button_container_lower {
   display: flex;
   justify-content: center;
   gap: 2rem;
@@ -144,7 +154,6 @@
     align-items: center;
     justify-content: center;
   }
-
 
   .imageWrapper {
     width: 300px; /* Smaller width for mobile */
@@ -174,6 +183,7 @@
   .enterContainer {
     top: 50%; /* Center for tablet */
     left: 50%;
+    -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
   }
 

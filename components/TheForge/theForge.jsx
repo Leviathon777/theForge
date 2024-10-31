@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { motion, useAnimation } from "framer-motion";
 import Image from "next/image";
@@ -12,14 +11,12 @@ import {
   useWallet,
   localWallet,
   useSigner,
-  ConnectButton,
-  ConnectEmbed, PayEmbed
 } from "@thirdweb-dev/react";
-import { MyNFTDataContext } from "../../Context/MyNFTDataContext";
+import { MyDotDataContext } from "../../Context/MyDotDataContext.js";
 import Style from "./TheForge.module.css";
 import moreStyles from "../Button/Button.module.css";
 import videos from "../../public/videos/index.js";
-import { Button, VideoPlayer, MedalDetailsModal } from "../componentsindex.js";
+import { Button, VideoPlayer, DotDetailsModal } from "../componentsindex.js";
 import { ethers } from "ethers";
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
 import ipfsHashes from "../../Context/ipfsHashes.js";
@@ -27,6 +24,7 @@ import Web3 from "web3";
 import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { useSwipeable } from 'react-swipeable';
 const MohAddress = mohCA_ABI.address;
 const MohABI = mohCA_ABI.abi;
 const fetchMohContract = (signerOrProvider) =>
@@ -42,7 +40,7 @@ const TheForge = ({ setIsModalOpen }) => {
   const [rewardStatus, setRewardStatus] = useState(null);
   const [xdripBalance, setXdripBalance] = useState(null);
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] = useState(false);
-  const { nfts, fetchNFTs } = useContext(MyNFTDataContext);
+  const { dots, fetchDots } = useContext(MyDotDataContext);
   const [isBNBPrice, setIsBNBPrice] = useState(true);
   const [currentMedal, setCurrentMedal] = useState(null);
   const wallet = useWallet();
@@ -56,112 +54,14 @@ const TheForge = ({ setIsModalOpen }) => {
   const controls = useAnimation();
   const [startX, setStartX] = useState(0);
   const mohData = [
-    {
-      title: "COMMON",
-      id: 1,
-      name: "XDRIP OFFICIAL",
-      collection: "MEDALS OF HONOR",
-      price: "0.5 BNB",
-      like: 1,
-      image: "../public/img/nft-image-1.webp",
-      nftVideo: videos.common,
-      description:
-        "Forged in the fires of battle, this medal represents the courage and determination of the XdRiP warrior.",
-      ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url,
-      inventory: {
-        forged: 0,
-        available: 10000,
-      },
-    },
-    {
-      title: "UNCOMMON",
-      id: 2,
-      name: "XDRIP OFFICIAL",
-      collection: "MEDALS OF HONOR",
-      price: "1 BNB",
-      like: 369,
-      image: "../public/img/nft-image-2.webp",
-      nftVideo: videos.uncommon,
-      description:
-        "Crafted by the most skilled, this medal is a symbol of the exceptional strength and valor possessed by those who rise above the rest.",
-      ipfsHash: ipfsHashes.find((hash) => hash.title === "UNCOMMON").url,
-      inventory: {
-        forged: 0,
-        available: 5000,
-      },
-    },
-    {
-      title: "RARE",
-      id: 3,
-      name: "XDRIP OFFICIAL",
-      collection: "MEDALS OF HONOR",
-      price: "1.5 BNB",
-      like: 1,
-      image: "../public/img/nft-image-3.webp",
-      nftVideo: videos.rare,
-      description:
-        "Forged from rare and precious metals, this medal is a testament to the elite few who have demonstrated unparalleled bravery and honor.",
-      ipfsHash: ipfsHashes.find((hash) => hash.title === "RARE").url,
-      inventory: {
-        forged: 0,
-        available: 2500,
-      },
-    },
-    {
-      title: "EPIC",
-      id: 4,
-      name: "XDRIP OFFICIAL",
-      collection: "MEDALS OF HONOR",
-      price: "2 BNB",
-      like: 1,
-      image: "../public/img/nft-image-4.webp",
-      nftVideo: videos.epic,
-      description:
-        "Wrought with mystical powers, this medal is a sign of the legendary feats accomplished by only the most heroic and mighty of warriors.",
-      ipfsHash: ipfsHashes.find((hash) => hash.title === "EPIC").url,
-      inventory: {
-        forged: 0,
-        available: 1000,
-      },
-    },
-    {
-      title: "LEGENDARY",
-      id: 5,
-      name: "XDRIP OFFICIAL",
-      collection: "MEDALS OF HONOR",
-      price: "2.5 BNB",
-      like: 1,
-      image: "../public/img/nft-image-5.webp",
-      nftVideo: videos.legendary,
-      description:
-        "Forged by the XdRiP Gods, this medal is a symbol of the ultimate achievement in battle, an honor bestowed only upon the greatest of heroes. ",
-      ipfsHash: ipfsHashes.find((hash) => hash.title === "LEGENDARY").url,
-      inventory: {
-        forged: 0,
-        available: 500,
-      },
-    },
-    {
-      title: "ETERNAL",
-      id: 6,
-      name: "XDRIP OFFICIAL",
-      collection: "MEDALS OF HONOR",
-      price: "200 BNB",
-      like: 1,
-      image: "../public/img/nft-image-6.webp",
-      nftVideo: videos.eternals,
-      description:
-        "Forged in the heart of the universe itself, the Eternal medal is a symbol of timeless strength and immortality. Wielded by only the most enduring of warriors, this medal transcends the mortal realm, representing an unbreakable bond between heroism and the cosmos. To wear this medal is to be forever remembered as a champion of infinite valor.",
-      ipfsHash: ipfsHashes.find((hash) => hash.title === "ETERNAL").url,
-      inventory: {
-        forged: 0,
-        available: 20,
-      },
-    },
-  ];
+    { title: "COMMON", id: 1, price: "0.5 BNB", medalVideo: videos.common, ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url, inventory: {forged: 0,available: 10000,},},
+    { title: "UNCOMMON", id: 2, price: "1 BNB", medalVideo: videos.uncommon, ipfsHash: ipfsHashes.find((hash) => hash.title === "UNCOMMON").url, inventory: {forged: 0,available: 5000,},},
+    { title: "RARE", id: 3, price: "1.5 BNB", medalVideo: videos.rare, ipfsHash: ipfsHashes.find((hash) => hash.title === "RARE").url, inventory: {forged: 0,available: 2500,},},
+    { title: "EPIC", id: 4, price: "2 BNB", medalVideo: videos.epic, ipfsHash: ipfsHashes.find((hash) => hash.title === "EPIC").url, inventory: {forged: 0,available: 1000,},},
+    { title: "LEGENDARY", id: 5, price: "2.5 BNB", medalVideo: videos.legendary, ipfsHash: ipfsHashes.find((hash) => hash.title === "LEGENDARY").url, inventory: {forged: 0,available: 500,},},
+    { title: "ETERNAL", id: 6, price: "200 BNB", medalVideo: videos.eternals, ipfsHash: ipfsHashes.find((hash) => hash.title === "ETERNAL").url, inventory: {forged: 0,available: 20,},},];  
   const togglePrice = () => {
-    setIsBNBPrice(!isBNBPrice);
-  };
+    setIsBNBPrice(!isBNBPrice);  };
   const fetchXDRIPBalance = async () => {
     try {
       const balance = await XdRiPContract.methods.balanceOf(address).call();
@@ -173,15 +73,6 @@ const TheForge = ({ setIsModalOpen }) => {
     } catch (error) {
       console.error("Error retrieving XDRIP balance:", error);
       setXdripBalance("Error fetching balance");
-    }
-  };
-  const handleConnectLocalWallet = async () => {
-    try {
-      await connectLocalWallet();
-      toast.success("Local Wallet connected!");
-    } catch (error) {
-      console.error("Error connecting local wallet:", error);
-      toast.error("Error connecting local wallet.");
     }
   };
   useEffect(() => {
@@ -209,24 +100,15 @@ const TheForge = ({ setIsModalOpen }) => {
     });
     return () => controls.stop();
   }, [controls]);
-
-  const handleSwipeStart = (event) => {
-    setStartX(event.touches[0].clientX);
-  };
-
-  const handleSwipeEnd = (event) => {
-    const endX = event.changedTouches[0].clientX;
-    const swipeDistance = startX - endX;
-
-    if (swipeDistance > 50) {
-      handleArrowClick("right");
-    } else if (swipeDistance < -50) {
-      handleArrowClick("left");
-    }
-  };
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => handleArrowClick("right"),
+    onSwipedRight: () => handleArrowClick("left"),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true,
+  });
   const handleArrowClick = (direction) => {
     controls.stop();
-    const delta = direction === "left" ? -1 : 1;
+    const delta = direction === "right" ? -1 : 1;
     const newRotation = currentRotation + delta * rotationStep;
     setCurrentRotation(newRotation);
     controls.start({
@@ -272,10 +154,8 @@ const TheForge = ({ setIsModalOpen }) => {
     };
     fetchBalance();
   }, [signer, address]);
-
   const fetchMintedCounts = async () => {
     if (!signer) return;
-
     try {
       const contract = fetchMohContract(signer);
       const [
@@ -286,8 +166,6 @@ const TheForge = ({ setIsModalOpen }) => {
         legendaryMinted, legendaryRemaining,
         eternalMinted, eternalRemaining
       ] = await contract.getMintedCounts();
-
-      // Return the counts for updating the UI
       return {
         COMMON: { forged: commonMinted.toNumber(), available: commonRemaining.toNumber() },
         UNCOMMON: { forged: uncommonMinted.toNumber(), available: uncommonRemaining.toNumber() },
@@ -301,7 +179,6 @@ const TheForge = ({ setIsModalOpen }) => {
       return null;
     }
   };
-
   useEffect(() => {
     const loadMintedCounts = async () => {
       const counts = await fetchMintedCounts();
@@ -309,13 +186,10 @@ const TheForge = ({ setIsModalOpen }) => {
         setMintedCounts(counts);
       }
     };
-
     if (signer) {
       loadMintedCounts();
     }
   }, [signer]);
-
-  // Function to get updated inventory counts for display
   const getInventory = (item) => {
     if (mintedCounts && mintedCounts[item.title]) {
       return {
@@ -323,12 +197,8 @@ const TheForge = ({ setIsModalOpen }) => {
         available: mintedCounts[item.title].available,
       };
     }
-    // Fallback to the original inventory if mintedCounts isn't available yet
     return item.inventory;
   };
-
-
-
   const confirmMint = async () => {
     if (!currentMedal) return;
     try {
@@ -336,23 +206,18 @@ const TheForge = ({ setIsModalOpen }) => {
         toast.error("Signer not available. Please connect your wallet.");
         return;
       }
-
       const contract = fetchMohContract(signer);
       const ipfsHash = currentMedal.ipfsHash;
       const itemPrice = currentMedal.price.split(" ")[0];
       const price = ethers.utils.parseUnits(itemPrice, "ether");
-
       const mintFunction = contract[`mint${currentMedal.title}`];
-
       const transaction = await mintFunction(ipfsHash, {
         value: price,
       });
-
       const receipt = await transaction.wait();
       if (receipt.status === 1) {
         toast.success("Your Medal Of Honor was forged successfully!");
-        await fetchNFTs();
-        // Fetch updated minted counts after successful mint
+        await fetchDots();
         const updatedCounts = await fetchMintedCounts();
         if (updatedCounts) {
           setMintedCounts(updatedCounts);
@@ -368,7 +233,6 @@ const TheForge = ({ setIsModalOpen }) => {
       setCurrentMedal(null);
     }
   };
-
   const mint = async (medalType, ipfsHash) => {
     try {
       console.log("Minting medal of type:", medalType);
@@ -467,7 +331,7 @@ const TheForge = ({ setIsModalOpen }) => {
       console.log("Transaction Confirmed:", receipt);
       if (receipt.status === 1) {
         toast.success("Your Medal Of Honor was forged successfully!");
-        await fetchNFTs();
+        await fetchDots();
       } else {
         toast.error("Transaction failed. Please try again.");
       }
@@ -485,6 +349,25 @@ const TheForge = ({ setIsModalOpen }) => {
       }
     }
   };
+  const [showArrows, setShowArrows] = useState(true); // State to control arrow visibility based on screen size
+
+  useEffect(() => {
+    const updateArrowsVisibility = () => {
+      if (window.innerWidth < 768) {
+        setShowArrows(false);
+      } else {
+        setShowArrows(true);
+      }
+    };
+
+    updateArrowsVisibility(); // Set initial value based on current screen width
+
+    window.addEventListener('resize', updateArrowsVisibility); // Update visibility on resize
+
+    return () => {
+      window.removeEventListener('resize', updateArrowsVisibility); // Clean up listener
+    };
+  }, []);
   return (
     <div className={Style.the_forge}>
       <div className={Style.the_forge_wrapper}>
@@ -550,8 +433,7 @@ const TheForge = ({ setIsModalOpen }) => {
               ref={carouselRef}
               className={Style.carousel_container}
               animate={controls}
-              onTouchStart={handleSwipeStart}
-              onTouchEnd={handleSwipeEnd}
+              {...swipeHandlers} 
             >
               {mohData.map((item, index) => (
                 <div
@@ -565,7 +447,7 @@ const TheForge = ({ setIsModalOpen }) => {
                         <h2>{item.title}</h2>
                         <div className={Style.card_right_top}>
                           <VideoPlayer
-                            videoSrc={item.nftVideo}
+                            videoSrc={item.medalVideo}
                             playsInline
                             videoStyles={{ width: "100%" }}
                             isMuted={true}
@@ -647,7 +529,7 @@ const TheForge = ({ setIsModalOpen }) => {
                     </div>
                     <div className={`${Style.card_face} ${Style.card_back}`}>
                       <Image
-                        src={"/img/metal.webp"}
+                        src={"/img/metal.png"}
                         alt={`${item.title} - Back`}
                         width={250}
                         height={250}
@@ -661,7 +543,7 @@ const TheForge = ({ setIsModalOpen }) => {
             <div className={Style.arrow_container}>
               <Button
                 btnName="⟵"
-                onClick={() => handleArrowClick("left")}
+                onClick={() => handleArrowClick("right")}             
                 classStyle={Style.arrowButton}
                 fontSize="1.75rem"
                 isActive={false}
@@ -670,7 +552,7 @@ const TheForge = ({ setIsModalOpen }) => {
               />
               <Button
                 btnName="⟶"
-                onClick={() => handleArrowClick("right")}
+                onClick={() => handleArrowClick("left")}
                 classStyle={Style.arrowButton}
                 fontSize="1.75rem"
                 isActive={false}
@@ -681,7 +563,7 @@ const TheForge = ({ setIsModalOpen }) => {
           </div>
         </div>
         {selectedMedal && (
-          <MedalDetailsModal medal={selectedMedal} onClose={() => setSelectedMedal(null)} />
+          <DotDetailsModal medal={selectedMedal} onClose={() => setSelectedMedal(null)} />
         )}
         {isConfirmationModalVisible && (
           <div className={Style.confirmation_modal}>
