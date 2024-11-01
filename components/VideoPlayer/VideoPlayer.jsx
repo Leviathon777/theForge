@@ -17,6 +17,7 @@ const VideoPlayer = forwardRef(({
   disableClickModal = false,
   hideControls = false,
   onEnded,
+  borderRadius = "40px",
 }, ref) => {
   const [isPlaying, setIsPlaying] = useState(autoPlay);
   const [isMutedState, setIsMutedState] = useState(isMuted);
@@ -137,7 +138,7 @@ const VideoPlayer = forwardRef(({
         autoPlay={autoPlay}
         loop={loop}
         className={Style.videoPlayer}
-        style={videoStyles}
+        style={{ ...videoStyles, borderRadius }}
         onClick={!disableClickModal ? openModal : undefined}
         controls={false}
         onEnded={onEnded}
@@ -176,6 +177,7 @@ const VideoPlayer = forwardRef(({
               playsInline
               loop={loop}
               autoPlay={autoPlay}
+              style={{ borderRadius }}
               className={Style.modalVideo}
               controls={false}
             >
@@ -214,5 +216,6 @@ VideoPlayer.propTypes = {
   disableClickModal: PropTypes.bool,
   hideControls: PropTypes.bool,
   onEnded: PropTypes.func,
+  borderRadius: PropTypes.string,
 };
 export default VideoPlayer;

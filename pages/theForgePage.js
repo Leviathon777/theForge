@@ -74,6 +74,7 @@ const TheForgePage = () => {
   };
 
   return (
+
     <div className={Style.theForge}>
       <div className={Style.theForge_content}>
         <div className={Style.first_component}>
@@ -667,6 +668,7 @@ const TheForgePage = () => {
         </MyDotData>
       </div >
     </div >
+  
   );
 };
 export default TheForgePage;

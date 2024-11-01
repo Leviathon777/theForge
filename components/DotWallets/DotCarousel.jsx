@@ -62,7 +62,7 @@ const Carousel = ({ medals = [] }) => {
           const position = (index - currentIndex + 5) % 5;
           const cardClass = `${styles.card} ${styles[`position${position}`]}`;
           return (
-            <div key={item.id} className={cardClass}>
+            <div key={`${item.id}-${index}`} className={cardClass}>
               {item.isPlaceholder ? (
                 <div className={styles.placeholder}>
                   <small className={styles.token_id} >{item.title || item.metadata.name}</small>
