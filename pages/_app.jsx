@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   ThirdwebProvider,
-  ConnectButton,
   inAppWallet,
   metamaskWallet,
   trustWallet,
@@ -10,48 +9,35 @@ import {
   walletConnect,
   localWallet,
   smartWallet,
-  useProfiles,
-  useLinkProfile,
-  PayEmbed,
 } from "@thirdweb-dev/react";
- 
-
- import Head from "next/head";
+import Head from "next/head";
 import Cookies from "js-cookie";
 import { MOHProvider } from "../Context/MOHProviderContext";
 import "../styles/globals.css";
-import { EntryPage } from "../components/componentsindex"; 
+import { EntryPage } from "../components/componentsindex";
 import { ChainId } from "@thirdweb-dev/sdk";
-
 const MyApp = ({ Component, pageProps }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [hasEntered, setHasEntered] = useState(false);
   const [useGuestWallet, setUseGuestWallet] = useState(false);
   const [adminConnected, setAdminConnected] = useState(false);
   const [adminWallet, setAdminWallet] = useState(null);
-
-
   const handleEnter = () => {
     setHasEntered(true);
   };
-
   useEffect(() => {
     const hasAcceptedCookies = Cookies.get("acceptedCookies");
     if (!hasAcceptedCookies) {
       setIsModalVisible(true);
     }
   }, []);
-
   const handleAccept = () => {
     Cookies.set("acceptedCookies", "true", { expires: 30 });
     setIsModalVisible(false);
   };
-
   const handleDecline = () => {
     setIsModalVisible(false);
   };
-
-
   const connectAdminWallet = async () => {
     try {
       const adminWalletInstance = metamaskWallet();
@@ -62,11 +48,9 @@ const MyApp = ({ Component, pageProps }) => {
       console.error("Error connecting admin wallet:", error);
     }
   };
-
   useEffect(() => {
     connectAdminWallet();
   }, []);
-
   const guestWallet = smartWallet({
     chain: ChainId.BinanceSmartChainTestnet,
     factoryAddress: process.env.NEXT_PUBLIC_THIRDWEB_FACTORY_ADDRESS,
@@ -77,7 +61,6 @@ const MyApp = ({ Component, pageProps }) => {
     },
     personalWallet: adminWallet,
   });
-  
   const wallets = [
     inAppWallet({ persist: true }),
     metamaskWallet({ recommended: true }),
@@ -86,20 +69,19 @@ const MyApp = ({ Component, pageProps }) => {
     walletConnect(),
     coinbaseWallet(),
     localWallet(),
-  ];  
-  return (    
+  ];
+  return (
     <>
-   
       {!hasEntered ? (
-        <EntryPage 
-          onEnter={handleEnter} 
-          isModalVisible={isModalVisible} 
-          handleAccept={handleAccept} 
-          handleDecline={handleDecline} 
-        />      
+        <EntryPage
+          onEnter={handleEnter}
+          isModalVisible={isModalVisible}
+          handleAccept={handleAccept}
+          handleDecline={handleDecline}
+        />
       ) : (
         <ThirdwebProvider
-          activeChain={ChainId.BinanceSmartChainTestnet} 
+          activeChain={ChainId.BinanceSmartChainTestnet}
           clientId={process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
           supportedWallets={useGuestWallet && guestWallet ? [guestWallet] : wallets}
         >
@@ -122,7 +104,6 @@ const MyApp = ({ Component, pageProps }) => {
             </div>
           )}
           <MOHProvider>
-          
             <Component {...pageProps} />
           </MOHProvider>
         </ThirdwebProvider>
@@ -130,6 +111,5 @@ const MyApp = ({ Component, pageProps }) => {
     </>
   );
 };
-
 export default MyApp;
 

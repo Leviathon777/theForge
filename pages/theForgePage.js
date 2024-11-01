@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import HTMLFlipBook from "react-pageflip";
-import NFTWallet from "../components/NFTWallet/NFTWallet";
+import DotWallet from "../components/DotWallets/DotWallet";
 import { Button, SocialButtons, TheForge, TermsOfService, UserAgreement, WalkthroughModal } from "../components/componentsindex";
-import MyNFTData from "../Context/MyNFTDataContext";
+import MyDotData from "../Context/MyDotDataContext";
 import Style from "../styles/theForge.module.css";
 import { useSigner, useAddress } from '@thirdweb-dev/react';
 import { ethers } from 'ethers';
@@ -118,14 +118,15 @@ const TheForgePage = () => {
           </p>
         </div>
         <div className={Style.glowingDivider}></div>
-        <MyNFTData>
+        <MyDotData>
           <div className={Style.second_component}>
             <TheForge setIsModalOpen={setIsModalOpen} />
           </div>
           <div className={Style.glowingDivider}></div>
           <div className={Style.third_component}>
             <h1 className={Style.component_title_text}>YOUR MEDALS DISPLAY CASE</h1>
-            <NFTWallet />
+            <DotWallet />
+           
           </div>
           <div className={Style.glowingDivider}></div>
           <h1 className={Style.component_title_text}>A WARRIOR'S SPOILS</h1>
@@ -151,7 +152,7 @@ const TheForgePage = () => {
 
                 <div className={Style.front_inner_page}>
                   <div className={Style.front_inner_page_inner}>
-                    <img src="/img/metal.webp" alt="Image 2" className={Style.front_inner_page_inner_image} />
+                    <img src="/img/metal.png" alt="Image 2" className={Style.front_inner_page_inner_image} />
                   </div>
                 </div>
                 <div className={Style.content_page}>
@@ -179,7 +180,7 @@ const TheForgePage = () => {
                 <div className={Style.page_left}>
                   <div className={Style.page_left_wrapper}>
                     <div className={Style.page_left_top}>
-                      <img src="/img/nft-image-1.webp" alt="Image 1" className={Style.imagePage} />
+                      <img src="/img/common.png" alt="Image 1" className={Style.imagePage} />
                     </div>
                     <div className={Style.page_left_bottom}>
                       <h1>I. COMMON TIER</h1>
@@ -235,7 +236,7 @@ const TheForgePage = () => {
                 <div className={Style.page_left}>
                   <div className={Style.page_left_wrapper}>
                     <div className={Style.page_left_top}>
-                      <img src="/img/nft-image-2.webp" alt="Image 2" className={Style.imagePage} />
+                      <img src="/img/uncommon.png" alt="Image 2" className={Style.imagePage} />
                     </div>
                     <div className={Style.page_left_bottom}>
                       <h1>II. UNCOMMON TIER</h1>
@@ -294,7 +295,7 @@ const TheForgePage = () => {
                 <div className={Style.page_left}>
                   <div className={Style.page_left_wrapper}>
                     <div className={Style.page_left_top}>
-                      <img src="/img/nft-image-3.webp" alt="Image 3" layout="fill" className={Style.imagePage} />
+                      <img src="/img/rare.png" alt="Image 3" layout="fill" className={Style.imagePage} />
                     </div>
                     <div className={Style.page_left_bottom}>
                       <h1>III. RARE TIER</h1>
@@ -363,7 +364,7 @@ const TheForgePage = () => {
                 <div className={Style.page_left}>
                   <div className={Style.page_left_wrapper}>
                     <div className={Style.page_left_top}>
-                      <img src="/img/nft-image-4.webp" alt="Image 4" layout="fill" className={Style.imagePage} />
+                      <img src="/img/epic.png" alt="Image 4" layout="fill" className={Style.imagePage} />
                     </div>
                     <div className={Style.page_left_bottom}>
                       <h1>IV. EPIC TIER</h1>
@@ -432,7 +433,7 @@ const TheForgePage = () => {
                 <div className={Style.page_left}>
                   <div className={Style.page_left_wrapper}>
                     <div className={Style.page_left_top}>
-                      <img src="/img/nft-image-5.webp" alt="Image 5" layout="fill" className={Style.imagePage} />
+                      <img src="/img/legendary.png" alt="Image 5" layout="fill" className={Style.imagePage} />
                     </div>
                     <div className={Style.page_left_bottom}>
                       <h1>V. LEGENDARY TIER</h1>
@@ -504,7 +505,7 @@ const TheForgePage = () => {
                 <div className={Style.page_left}>
                   <div className={Style.page_left_wrapper}>
                     <div className={Style.page_left_top}>
-                      <img src="/img/nft-image-6.webp" alt="Image 5" layout="fill" className={Style.imagePage} />
+                      <img src="/img/eternal.png" alt="Image 5" layout="fill" className={Style.imagePage} />
                     </div>
                     <div className={Style.page_left_bottom}>
                       <h1>VI. ETERNAL TIER</h1>
@@ -663,7 +664,7 @@ const TheForgePage = () => {
               onRequestClose={() => setIsModalOpen(false)}
             />
           </div>
-        </MyNFTData>
+        </MyDotData>
       </div >
     </div >
   );

@@ -37,12 +37,12 @@ const WalkthroughModal = ({ isOpen, onRequestClose }) => {
         'Step 7: View your forged DOTs in the "Your Medals Display Case" or directly in your connected wallet once the transaction is successful.'
     ];
 
-    // Render walkthrough based on user type
     const renderSteps = () => {
         if (hasWallet === null) {
             return (
                 <>
-                    <h3>Do you already have a DeFi wallet?</h3>
+                    <h3 className={styles.stepsText}>Do you already have a DeFi wallet?</h3>
+                    <div className={styles.buttonContainer}>
                     <Button
                         btnName="Yes, I have a wallet"
                         onClick={() => setHasWallet(true)}
@@ -59,6 +59,7 @@ const WalkthroughModal = ({ isOpen, onRequestClose }) => {
                         paddingRight="0"
                         isActive={false}
                     />
+                    </div>
                 </>
             );
         }
@@ -68,8 +69,8 @@ const WalkthroughModal = ({ isOpen, onRequestClose }) => {
         return (
             <>
                 <h2>{hasWallet ? "Wallet User Walkthrough" : "New User Walkthrough"}</h2>
-                <p>{steps[step - 1]}</p>
-                <div>
+                <p className={styles.stepsText}>{steps[step - 1]}</p>
+                <div className={styles.buttonContainer}>
                     {step > 1 && (
                         <Button
                             btnName="Back"
@@ -108,16 +109,18 @@ const WalkthroughModal = ({ isOpen, onRequestClose }) => {
     return (
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
+            <div className={styles.close_buttonContainer}>
                 <Button
                     btnName="X"
                     onClick={onRequestClose}
                     className={styles.closeButton}
-                    fontSize="inherit"
+                    fontSize="10px"
                     paddingLeft="0"
                     paddingRight="0"
                     isActive={false}
                 />
-                {renderSteps()}
+                 </div>
+                {renderSteps()}          
             </div>
         </div>
     );

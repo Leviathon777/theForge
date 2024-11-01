@@ -68,6 +68,7 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         autoPlay={true}
         loop={false}
         hoverGrow={false}
+        borderRadius="0"
         disableInternalModal={false}
         disableClickModal={true}
         hideControls={true}
@@ -86,7 +87,7 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         >
           <div className={styles.imageWrapper}>
             <Image
-              src="/img/entry_x.svg"
+              src="/img/entry_x.png"
               alt="Your Image"
               layout="fill"
               objectFit="contain"
@@ -117,7 +118,7 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
           </div>
         </div>
       )}
-      {showSkipButton && (
+
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -133,11 +134,11 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         >
           <Button
             btnName="Skip"
-            onClick={handleSkipClick}
+            onClick={isModalVisible ? null : handleSkipClick}
             className={styles.skipButton}
           />
         </motion.div>
-      )}
+    
 
       <TermsOfService
         isOpen={isTermsModalOpen}

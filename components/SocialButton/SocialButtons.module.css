@@ -1,11 +1,9 @@
-.BtnBox_main{
+.BtnBox_main {
   display: flex;
   width: 100%;
   justify-content: center;
-  justify-items: center;
   align-items: center;
-  align-content: center;
-  padding-left: 0rem;
+  padding-left: 0;
 }
 
 .BtnBox {
@@ -13,13 +11,11 @@
   width: 100%;
   align-items: center;
   justify-content: center;
-  justify-items: center;
-  align-content: center;
   gap: 2rem;
   padding-bottom: 1rem;
 }
 
-.Btn {
+.Btn, .Btntwit, .Btninsta, .Btnstock {
   width: 50px;
   height: 50px;
   display: flex;
@@ -31,9 +27,11 @@
   border-radius: 7px;
   cursor: pointer;
   transition: all 0.3s;
+  -webkit-appearance: none;
+  appearance: none; /* Standard appearance property for compatibility */
 }
 
-.svgContainer {
+.svgContainer, .svgContainertwit, .svgContainerinsta, .svgContainerstock {
   width: 100%;
   height: 100%;
   display: flex;
@@ -41,13 +39,14 @@
   justify-content: center;
   background-color: transparent;
   backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px); 
   letter-spacing: 0.8px;
   border-radius: 10px;
   transition: all 0.3s;
   border: 1px solid var(--color-border);
 }
 
-.BG {
+.BG, .BGtwit, .BGinsta, .BGstock {
   position: absolute;
   content: "";
   width: 100%;
@@ -59,227 +58,106 @@
   transition: all 0.3s;
 }
 
-.Btn:hover .BG {
+.Btn:hover .BG, .Btntwit:hover .BGtwit, .Btninsta:hover .BGinsta, .Btnstock:hover .BGstock {
   transform: rotate(-35deg);
   transform-origin: bottom;
 }
 
-.Btn:hover .svgContainer {
+.Btn:hover .svgContainer,
+.Btntwit:hover .svgContainertwit,
+.Btninsta:hover .svgContainerinsta,
+.Btnstock:hover .svgContainerstock {
   border: 1px solid var(--color-border);
   background-color: rgba(204, 204, 204, 0.466);
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px); /* Safari/iOS support */
 }
 
-.Btntwit {
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background-color: transparent;
-  position: relative;
-  border-radius: 7px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.svgContainertwit {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  backdrop-filter: blur(0px);
-  letter-spacing: 0.8px;
-  border-radius: 10px;
-  transition: all 0.3s;
-  border: 1px solid var(--color-border);
-}
-
-.BGtwit {
-  position: absolute;
-  content: "";
-  width: 100%;
-  height: 100%;
-  background: var(--color-background);
-  z-index: -1;
-  border-radius: 10px;
-  pointer-events: none;
-  transition: all 0.3s;
-}
-
-.Btntwit:hover .BGtwit {
-  transform: rotate(-35deg);
-  transform-origin: bottom;
-}
-
-.Btntwit:hover .svgContainertwit {
-  background-color: rgba(156, 156, 156, 0.466);
-  backdrop-filter: blur(4px);
-}
-
-.Btninsta {
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background-color: transparent;
-  position: relative;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.svgContainerinsta {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  backdrop-filter: blur(4px);
-  letter-spacing: 0.8px;
-  border-radius: 10px;
-  transition: all 0.3s;
-  border: 1px solid var(--color-border);
-}
-
-.BGinsta {
-  position: absolute;
-  content: "";
-  width: 100%;
-  height: 100%;
-  background: var(--color-background);
-  z-index: -1;
-  border-radius: 9px;
-  pointer-events: none;
-  transition: all 0.3s;
-}
-
-.Btninsta:hover .BGinsta {
-  transform: rotate(-35deg);
-  transform-origin: bottom;
-}
-
+.Btntwit:hover .svgContainertwit,
 .Btninsta:hover .svgContainerinsta {
   background-color: rgba(156, 156, 156, 0.466);
 }
 
-.Btnstock {
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background-color: transparent;
-  position: relative;
-  border-radius: 7px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.svgContainerstock {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  backdrop-filter: blur(0px);
-  letter-spacing: 0.8px;
-  border-radius: 10px;
-  transition: all 0.3s;
-  border: 1px solid var(--color-border);
-}
-
-.BGstock {
-  position: absolute;
-  content: "";
-  width: 100%;
-  height: 100%;
-  background: var(--color-background);
-  z-index: -1;
-  border-radius: 10px;
-  pointer-events: none;
-  transition: all 0.3s;
-}
-
-.Btnstock:hover .BGstock {
-  transform: rotate(-35deg);
-  transform-origin: bottom;
-}
-
 .Btnstock:hover .svgContainerstock {
   background-color: rgba(202, 202, 202, 0.466);
-  backdrop-filter: blur(4px);
 }
 
+/* Responsive adjustments */
+
+/* Tablets and smaller desktops */
 @media (max-width: 1024px) {
   .BtnBox {
-    flex-direction: row; /* Change to row on tablets */
-    gap: 0.5rem; /* Adjust gap between buttons */
-    justify-content: center; /* Center align the buttons */
+    flex-direction: row;
+    gap: 0.5rem;
+    justify-content: center;
   }
 
   .Btn, .Btntwit, .Btninsta, .Btnstock {
-    width: 40px;  /* Increase button size for tablets */
+    width: 40px;
     height: 40px;
   }
 
   .svgContainer, .svgContainertwit, .svgContainerinsta, .svgContainerstock {
-    width: 35px;  /* Adjust icon size */
+    width: 35px;
     height: 35px;
   }
 }
 
+/* Small devices (smartphones) */
 @media (max-width: 768px) {
   .BtnBox {
     flex-direction: row;
     gap: 0.3rem;
     padding-bottom: 0.5rem;
+    align-items: center;
   }
 
   .Btn, .Btntwit, .Btninsta, .Btnstock {
-    width: 35px;  /* Reduce button size for smaller screens */
+    width: 35px;
     height: 35px;
   }
 
   .svgContainer, .svgContainertwit, .svgContainerinsta, .svgContainerstock {
-    width: 30px;  /* Adjust icon size accordingly */
+    width: 30px;
     height: 30px;
   }
 }
 
+/* Extra-small devices (very small smartphones) */
 @media (max-width: 576px) {
   .BtnBox {
     flex-direction: row;
-    gap: 0.2rem;  /* Tighter spacing on mobile */
+    gap: 0.2rem;
   }
 
   .Btn, .Btntwit, .Btninsta, .Btnstock {
-    width: 30px;  /* Reduce button size further for mobile */
+    width: 30px;
     height: 30px;
   }
 
   .svgContainer, .svgContainertwit, .svgContainerinsta, .svgContainerstock {
-    width: 25px;  /* Reduce icon size */
+    width: 25px;
     height: 25px;
   }
-}
 
-@media (max-width: 576px) {
   .Btn:hover .BG, .Btntwit:hover .BGtwit, .Btninsta:hover .BGinsta, .Btnstock:hover .BGstock {
-    transform: rotate(-20deg);  /* Less rotation on mobile */
+    transform: rotate(-20deg); /* Less rotation on mobile */
   }
 }
 
-@media (max-width: 768px) {
-  .BtnBox {
-    align-items: center;  /* Center buttons for smaller screens */
+/* Safari/iOS-specific compatibility */
+@media not all and (min-resolution:.001dpcm) { 
+  @supports (-webkit-appearance:none) { /* Safari-specific detection */
+    
+    .Btn, .Btntwit, .Btninsta, .Btnstock {
+      -webkit-appearance: none;
+      appearance: none;
+      -webkit-tap-highlight-color: transparent; /* Prevents tap highlight on iOS */
+    }
+    
+    .svgContainer, .svgContainertwit, .svgContainerinsta, .svgContainerstock {
+      backdrop-filter: blur(4px); /* Standard property */
+      -webkit-backdrop-filter: blur(4px); /* Safari/iOS compatibility */
+    }
   }
 }

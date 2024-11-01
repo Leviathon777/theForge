@@ -1,0 +1,218 @@
+.dot_wallet {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  margin-top: 3rem;
+  width: 100%;
+  box-sizing: border-box; /* Ensures consistent sizing across browsers */
+}
+
+.eternal_font {
+  padding: 0rem 0rem 1rem 0rem;
+  margin: 0rem 0rem 0rem 0rem;
+}
+
+.dot_wallet_box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0rem;
+}
+
+.eternal_dot_card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 500px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4rem;
+}
+
+.card {
+  position: relative;
+  width: 300px;
+  max-width: 100%; /* Ensures card fits on smaller screens */
+  height: 325px;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  -webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease; /* WebKit for Safari */
+  display: flex;  
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; 
+  background-color: #333;
+  border-radius: 40px;
+  margin-top: 2rem;
+  -webkit-backface-visibility: hidden; /* Fixes flickering issue in Safari */
+}
+
+.card:hover {
+  transform: scale(1.05);
+  -webkit-transform: scale(1.05); /* WebKit for Safari */
+}
+
+.video {
+  width: 100%;
+  height: 70%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 90%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.507);
+  text-align: center;
+  color: white;
+  border-top-left-radius: 3rem;
+  border-top-right-radius: 3rem;
+  overflow: hidden;
+  padding: 0.5rem 0; /* Added padding for better readability */
+  -webkit-backface-visibility: hidden; /* Fix for Safari */
+}
+
+.overlay h3 {
+  padding: 0.5rem 0rem 0.15rem 0rem;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.overlay p {
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.arrow {
+  font-size: 2em;
+  color: #333;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+  -webkit-transition: -webkit-transform 0.2s; /* WebKit for Safari */
+}
+
+.arrow:hover {
+  transform: scale(1.1);
+  -webkit-transform: scale(1.1); /* WebKit for Safari */
+}
+
+.placeholder {
+  position: absolute;
+  width: 300px;
+  max-width: 100%; /* Ensures placeholder fits on smaller screens */
+  height: 300px;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  -webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease; /* WebKit for Safari */
+  display: flex;  
+  background-color: #333;
+  border-radius: 2rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; 
+}
+
+.lower_card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0rem;
+  margin: 0rem;
+  justify-content: center;
+  align-items: center; 
+  cursor: pointer;
+  gap: 0;
+}
+
+.dots {
+  font-size: 1rem;
+  padding: 0rem 0rem 0.25rem 0rem;
+  margin: 0rem;
+  line-height: 1;
+  color: white;
+}
+
+.token_id {
+  padding: 0.25rem 0rem 0rem 0rem;
+  margin: 0rem;
+  line-height: 1;
+  color: white;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+  .dot_wallet_box {
+    flex-direction: column;
+    align-items: center;
+
+  }
+  
+  .dot_wallet h2{
+    text-align: center;
+  }
+  
+  .eternal_dot_card {
+    height: 350px;
+    text-align: center;
+  }
+
+  .card {
+    width: 100%;
+    height: 300px;
+    border-radius: 40px;
+    
+  }
+
+  .placeholder {
+    width: 100%;
+    height: 300px;
+    border-radius: 40px;
+    overflow: hidden;
+  }
+
+  .overlay {
+    bottom: 92%; /* Slightly adjust position for better visibility */
+  }
+}
+
+@media (max-width: 480px) {
+  .dot_wallet_box {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .eternal_dot_card {
+    height: 400px;
+    text-align: center;
+  }
+
+  .card {
+    width: 100%;
+    height: 300px;
+    border-radius: 40px;
+  }
+
+  .placeholder {
+    width: 100%;
+    height: 300px;
+    border-radius: 40px;
+  }
+
+  .overlay h3 {
+    font-size: 0.9rem;
+  }
+
+  .overlay p {
+    font-size: 0.8rem;
+  }
+
+  .video {
+    height: 100%; /* Adjust video size for better fit on smaller screens */
+  }
+}

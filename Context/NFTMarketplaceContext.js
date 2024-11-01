@@ -28,7 +28,7 @@ const fetchMohContract = (signerOrProvider) =>
   new ethers.Contract(MohAddress, MohABI, signerOrProvider);
 export const MOHProviderContext = React.createContext();
 export const MOHProvider = ({ children }) => {
-  const titleData = "Discover, collect, and sell NFTs";
+  const titleData = "Discover, collect, and sell Dots";
   const sdk = useSDK();
   const connect = useConnect();
   const address = useAddress();
@@ -37,7 +37,7 @@ export const MOHProvider = ({ children }) => {
   const [openError, setOpenError] = useState(false);
   const [currentAccount, setCurrentAccount] = useState("");
   const [accountBalance, setAccountBalance] = useState("");
-  const [nfts, setNfts] = useState([]);
+  const [dots, setDots] = useState([]);
   const [searchNavQuery, setSearchNavQuery] = useState("");
   const router = useRouter();
   const disconnectWallet = () => {

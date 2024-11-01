@@ -10,6 +10,7 @@ const UserAgreement = ({ isOpen, onRequestClose }) => (
     className={Style.modal}
     overlayClassName={Style.modalOverlay}
   >
+    <div className={Style.modal_wrapper}>
     <h2>User Agreement</h2>
     <p>Welcome to our minting platform. By accessing or using this site, you agree to be bound by the terms of this User Agreement. Please read it carefully.</p>
 
@@ -57,7 +58,7 @@ const UserAgreement = ({ isOpen, onRequestClose }) => (
     <p>
       We may modify this User Agreement at any time. Changes will be posted on our platform, and continued use of the platform constitutes acceptance of those changes.
     </p>
-
+    </div>
     <button onClick={onRequestClose} className={Style.closeButton}>Close</button>
   </Modal>
 );
