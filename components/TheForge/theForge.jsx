@@ -106,16 +106,24 @@ const TheForge = ({ setIsModalOpen }) => {
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
-  const handleArrowClick = (direction) => {
-    controls.stop();
-    const delta = direction === "right" ? -1 : 1;
-    const newRotation = currentRotation + delta * rotationStep;
-    setCurrentRotation(newRotation);
-    controls.start({
-      rotateY: newRotation,
-      transition: { duration: 1, ease: "easeInOut" },
-    });
-  };
+const handleArrowClick = (direction) => {
+  controls.stop();
+
+  // Calculate the rotation offset to the nearest card
+  const remainder = currentRotation % rotationStep;
+  const closestRotationAdjustment = remainder > rotationStep / 2 ? rotationStep - remainder : -remainder;
+
+  // Calculate target rotation to move directly to the closest card
+  const delta = direction === "right" ? -rotationStep : rotationStep;
+  const targetRotation = currentRotation + closestRotationAdjustment + delta;
+
+  // Update current rotation state and start the animation
+  setCurrentRotation(targetRotation);
+  controls.start({
+    rotateY: targetRotation,
+    transition: { duration: 1, ease: "easeInOut" },
+  });
+};
   useEffect(() => {
     const fetchBNBPrice = async () => {
       try {

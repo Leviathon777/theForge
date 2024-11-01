@@ -17,6 +17,20 @@
 
 
 
+@media not all and (min-resolution:.001dpcm) {
+  .theForge {
+    background-attachment: fixed;
+  }
+}
+
+
+@supports (-webkit-touch-callout: none) {
+  .theForge {
+    background-attachment: scroll;
+  }
+}
+
+
 .theForge_content {
   display: flex;
   flex-direction: column;
@@ -71,6 +85,7 @@
 /* FIRST COMPONENT CONTENT CSS CODE BASIC AND MEDIA QUERYS */
 .first_component h1 {
   font-size: 7rem;
+  text-align: center;
 }
 
 
@@ -92,6 +107,7 @@
 .component_title_text {
   font-size: 4rem;
   margin: 3rem 0rem 1rem 0rem;
+
 }
 
 .loreText {
@@ -343,6 +359,8 @@
 @media (max-width: 599px) {
   .theForge {
     padding: 1rem;
+    background-attachment: fixed; 
+    -webkit-background-attachment: fixed; 
   }
 
   .content_page h2 {
@@ -458,6 +476,8 @@
 @media (min-width: 600px) and (max-width: 899px) {
   .theForge {
     padding: 2rem;
+    background-attachment: fixed; 
+    -webkit-background-attachment: fixed; 
   }
 
   .content_page h2 {

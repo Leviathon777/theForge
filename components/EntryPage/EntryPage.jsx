@@ -68,7 +68,7 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         autoPlay={true}
         loop={false}
         hoverGrow={false}
-        borderRadius="0"
+        borderRadius="0px"
         disableInternalModal={false}
         disableClickModal={true}
         hideControls={true}
@@ -119,26 +119,26 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         </div>
       )}
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            zIndex: 1000,
-          }}
-        >
-          <Button
-            btnName="Skip"
-            onClick={isModalVisible ? null : handleSkipClick}
-            className={styles.skipButton}
-          />
-        </motion.div>
-    
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          zIndex: 1000,
+        }}
+      >
+        <Button
+          btnName="Skip"
+          onClick={isModalVisible ? null : handleSkipClick}
+          className={styles.skipButton}
+        />
+      </motion.div>
+
 
       <TermsOfService
         isOpen={isTermsModalOpen}
