@@ -93,7 +93,7 @@ const MedalDetailsModal = ({ medal, onClose }) => {
                   <p><h5>Medals Worth: {medal.price}</h5></p>
                 </div>
                 <div className={Style.MedalDetailsModal_creators}>
-                  <strong>Created by:</strong> XdRiP Dev Team: Brad, Jim, Flo, and Jordi
+                  <strong>Created by:</strong> Created by the XdRiP Executive Staff: Brad, Jim, Flo, and Jordi
                 </div>
                 <div className={Style.MedalDetailsModal_info}>
                   <p><h5>Collection: {medal.collection || "MEDALS of HONOR"}</h5></p>
