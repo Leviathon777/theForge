@@ -13,7 +13,7 @@ import {
   useSigner,
 } from "@thirdweb-dev/react";
 import { MyDotDataContext } from "../../Context/MyDotDataContext.js";
-import Style from "./TheForge.module.css";
+import Style from "./theForge.module.css";
 import moreStyles from "../Button/Button.module.css";
 import videos from "../../public/videos/index.js";
 import { Button, VideoPlayer, DotDetailsModal } from "../componentsindex.js";
@@ -56,7 +56,7 @@ const TheForge = ({ setIsModalOpen }) => {
   const mohData = [
     { title: "COMMON", id: 1, price: "0.5 BNB", description: "Common Medal, forged in the fires of battle, honors the unwavering courage and steadfast determination of XdRiP warriors. This emblem recognizes those who consistently face adversity with resilience and commitment, playing a foundational role within the XdRiP community. Bearing this medal signifies a warrior’s dedication to the cause and their readiness to uphold the strength and integrity of our ranks in every challenge they encounter.", medalVideo: videos.common, ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url, inventory: {forged: 0,available: 10000,},},
     { title: "UNCOMMON", id: 2, price: "1 BNB", description: "Uncommon Medal, meticulously crafted by master artisans, symbolizes the exceptional strength and valor of XdRiP warriors who transcend the ordinary. This prestigious emblem honors individuals who demonstrate superior skills and unwavering bravery in the face of formidable challenges. Holding this medal signifies a distinguished place within the XdRiP community, acknowledging those who strive to exceed expectations and lead by remarkable example.", medalVideo: videos.uncommon, ipfsHash: ipfsHashes.find((hash) => hash.title === "UNCOMMON").url, inventory: {forged: 0,available: 5000,},},
-    { title: "RARE", id: 3, price: "1.5 BNB", description: "Rare Medal, forged from rare and precious metals, stands as a testament to the elite few who exhibit unparalleled bravery and honor within the XdRiP ranks. This distinguished emblem recognizes warriors who achieve extraordinary feats, showcasing exceptional prowess and unwavering dedication. Possessing this medal signifies an esteemed status and highlights significant contributions to the enduring mission of XdRiP, celebrating those who consistently go above and beyond..", medalVideo: videos.rare, ipfsHash: ipfsHashes.find((hash) => hash.title === "RARE").url, inventory: {forged: 0,available: 2500,},},
+    { title: "RARE", id: 3, price: "1.5 BNB", description: "Rare Medal, forged from rare and precious metals, stands as a testament to the elite few who exhibit unparalleled bravery and honor within the XdRiP ranks. This distinguished emblem recognizes warriors who achieve extraordinary feats, showcasing exceptional prowess and unwavering dedication. Possessing this medal signifies an esteemed status and highlights significant contributions to the enduring mission of XdRiP, celebrating those who consistently go above and beyond.", medalVideo: videos.rare, ipfsHash: ipfsHashes.find((hash) => hash.title === "RARE").url, inventory: {forged: 0,available: 2500,},},
     { title: "EPIC", id: 4, price: "2 BNB", description: "Epic Medal, wrought with mystical powers, signifies the legendary feats accomplished by the most heroic and mighty of XdRiP warriors. This extraordinary emblem honors individuals who demonstrate remarkable heroism and strategic brilliance in the most challenging battles. Bearing this medal marks a warrior as a legend within our ranks, celebrated for their enduring impact and heroic legacy that shapes the destiny of XdRiP through unmatched valor and tactical genius", medalVideo: videos.epic, ipfsHash: ipfsHashes.find((hash) => hash.title === "EPIC").url, inventory: {forged: 0,available: 1000,},},
     { title: "LEGENDARY", id: 5, price: "2.5 BNB", description: "Legendary Medal, forged by the XdRiP Gods themselves, embodies the ultimate achievement in battle—a rare honor bestowed solely upon the greatest heroes of all time within the XdRiP legacy. This unparalleled emblem recognizes warriors who transcend the ordinary, leaving an indelible mark through extraordinary actions and unwavering dedication. Holding this medal signifies a legacy of greatness and an everlasting bond with the very essence of XdRiP’s heroic spirit.", medalVideo: videos.legendary, ipfsHash: ipfsHashes.find((hash) => hash.title === "LEGENDARY").url, inventory: {forged: 0,available: 500,},},
     { title: "ETERNAL", id: 6, price: "200 BNB", description: "Forged in celestial fires, The Eternal DOT embodies a bond of absolute strength with XdRiP Digital Management LLC, reserved for those who seek influence beyond the ordinary. This singular emblem bestows an authority that extends deeply into our realm, empowering its holders with a lasting presence and rare access to the inner sanctum of XdRiP’s vision. As custodians of this legacy, they stand unmatched in their role, helping to shape the future with every step.", medalVideo: videos.eternals, ipfsHash: ipfsHashes.find((hash) => hash.title === "ETERNAL").url, inventory: {forged: 0,available: 20,},},];  
@@ -457,12 +457,16 @@ const handleArrowClick = (direction) => {
                           <VideoPlayer
                             videoSrc={item.medalVideo}
                             playsInline
-                            videoStyles={{ width: "100%" }}
-                            isMuted={true}
+                            videoStyles={{
+                              width: "100%",
+                              borderRadius: '40px'
+                            }}
+                            
                             hoverPlay={true}
                             autoPlay={true}
                             loop={true}
                             hoverGrow={true}
+                            borderRadius="40px"
                             disableInternalModal={false}
                           />
                         </div>

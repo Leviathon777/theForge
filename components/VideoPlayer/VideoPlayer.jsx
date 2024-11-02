@@ -17,7 +17,7 @@ const VideoPlayer = forwardRef(({
   disableClickModal = false,
   hideControls = false,
   onEnded,
-  borderRadius = "40px",
+  borderRadius = "0px",
 }, ref) => {
   const [isPlaying, setIsPlaying] = useState(autoPlay);
   const [isMutedState, setIsMutedState] = useState(isMuted);
