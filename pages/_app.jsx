@@ -70,6 +70,13 @@ const MyApp = ({ Component, pageProps }) => {
     coinbaseWallet(),
     localWallet(),
   ];
+
+
+
+
+
+
+  
   return (
     <>
       {!hasEntered ? (
@@ -86,9 +93,15 @@ const MyApp = ({ Component, pageProps }) => {
           supportedWallets={useGuestWallet && guestWallet ? [guestWallet] : wallets}
         >
           <Head>
+          <link rel="manifest" href="/manifest.json" />
             <title>Medals of HONOR by XdRiP</title>
+            <link rel="icon" href="/favicon.ico" />
+            <meta name="theme-color" content="#000000" />
+
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <meta name="description" content="The Medals of Honor Collection by XdRiP Digital Management, LLC" />
+            
+        
           </Head>
           {isModalVisible && (
             <div className="welcomeMessageOverlay">

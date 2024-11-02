@@ -38,6 +38,7 @@
 .lore_text {
   font-size: 4rem;
   margin: 3rem 0rem 1rem 0rem;
+  text-align: center;
 }
 
 .openWalkthroughButton {
@@ -106,6 +107,7 @@
   height: auto;
   padding: 0rem 0rem 0rem 0rem;
   margin: 0rem;
+  
 }
 
 .card_inner {
@@ -458,28 +460,7 @@
   background: #555;
 }
 
-.payment_option_modal h3 {
-  font-size: 24px;
-  margin-bottom: 20px;
-  font-family: "Aldrich", sans-serif;
-}
 
-.payment_option_modal button {
-  margin: 10px;
-}
-
-.stripe_iframe_modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
 
 
 
@@ -524,7 +505,7 @@
 
   .the_forge {
     transform: scale(0.7);
-    margin-bottom: 8rem;
+    margin-bottom: 4rem;
   }
 
   .card {
@@ -537,7 +518,7 @@
 @media only screen and (max-width: 480px) {
   .carousel{
     width: 100%;
-    height: 800px;
+    height: 700px;
   }
   .forge_button_upper{
     margin-bottom: 2rem;
@@ -545,6 +526,11 @@
   .arrowButton,
   .arrow_container {
     display: none;
+  }
+  .lore_text {
+    font-size: 3rem;
+    text-align: center;
+
   }
 
   .carousel_wrapper {
@@ -557,8 +543,19 @@
     gap: 1rem;
     height: 70vh;
   }
-
+  .the_forge {
+    margin-bottom: 4rem;
+  }
   .carousel_container {
     transform: scale(0.9);
+  }
+}
+
+/* Medium Devices (Larger Tablets or Small Laptops, 900px - 1199px) */
+@media (min-width: 900px) and (max-width: 1199px) {
+  .lore_text {
+    font-size: 4rem;
+    text-align: center;
+
   }
 }

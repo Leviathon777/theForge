@@ -340,10 +340,7 @@
   }
 }
 
-
-
 .videoContainer {
-  border-radius: 40px;
   box-shadow: 
     inset 0 0 80px rgba(0, 0, 0, 0.9), /* Deep, dark inset shadow */
     inset 0 0 20px rgba(255, 255, 255, 0.1), /* Soft inner glow for a subtle contrast */
