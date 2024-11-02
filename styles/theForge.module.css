@@ -381,7 +381,7 @@
   }
 
   .contentsList li {
-    padding: 4px 0; 
+    padding: 2.5px 0; 
   }
 
   .contentsList li .title,
@@ -514,6 +514,7 @@
 
   .component_title_text {
     font-size: 3rem;
+    text-align: center;
   }
 
   .loreText {
@@ -547,6 +548,7 @@
 
   .component_title_text {
     font-size: 3.5rem;
+    text-align: center;
   }
 
   .loreText {
@@ -563,3 +565,4 @@
     min-width: 100%;
   }
 }
+

@@ -135,7 +135,7 @@
   }
 
   .card {
-    width: 100%;
+    width: 50%;
     height: 300px;
     border-radius: 40px;
     
@@ -189,3 +189,5 @@
     height: 100%; /* Adjust video size for better fit on smaller screens */
   }
 }
+
+

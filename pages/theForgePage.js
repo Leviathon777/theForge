@@ -218,7 +218,7 @@ const TheForgePage = () => {
                           <li>Livestream access to main events hosted by the company, including keynotes and announcements.</li>
                         </ul>
                       </li>
-                      <li><strong>XDRIP Holder Bonus:</strong> (7.5 Million XDRIP Tokens)
+                      <li><strong>XDRIP Holder Bonus:</strong> (0.5% TOKEN SUPPLY)
                         <ul>
                           <li>Early Insights - Receive early insights on upcoming tokenized projects, along with exclusive updates on new opportunities.</li>
                         </ul>
@@ -276,7 +276,7 @@ const TheForgePage = () => {
                           <li>Priority on tickets for events and discounts on travel packages for attendees.</li>
                         </ul>
                       </li>
-                      <li><strong>Unlocks XDRIP Holder Bonus:</strong> 1.00% XDRIP Tokens Supply
+                      <li><strong>Unlocks XDRIP Holder Bonus:</strong> (0.75% TOKEN SUPPLY)
                         <ul>
                           <li>5% revenue share bonus.</li>
                           <li>Priority seating at company events.</li>
@@ -345,7 +345,7 @@ const TheForgePage = () => {
                           <li>Voting rights on company-driven initiatives and new tokenization projects.</li>
                         </ul>
                       </li>
-                      <li><strong>Unlocks XDRIP Holder Bonus:</strong> 1.50% XDRIP Tokens Supply
+                      <li><strong>Unlocks XDRIP Holder Bonus:</strong> (1.0% TOKEN SUPPLY)
                         <ul>
                           <li>7% revenue share bonus.</li>
                           <li>Priority seating at company events.</li>
@@ -414,7 +414,7 @@ const TheForgePage = () => {
                           <li>Voting rights on company-driven initiatives and new tokenization projects.</li>
                         </ul>
                       </li>
-                      <li><strong>Unlocks XDRIP Holder Bonus:</strong> 2.00% XDRIP Tokens Supply
+                      <li><strong>Unlocks XDRIP Holder Bonus:</strong> (1.25% TOKEN SUPPLY)
                         <ul>
                           <li>10% revenue share bonus.</li>
                           <li>Priority seating at company events.</li>
@@ -485,7 +485,7 @@ const TheForgePage = () => {
                           <li>Voting rights on company-driven initiatives and new tokenization projects.</li>
                         </ul>
                       </li>
-                      <li><strong>Unlocks XDRIP Holder Bonus:</strong> 2.50% XDRIP Tokens Supply
+                      <li><strong>Unlocks XDRIP Holder Bonus:</strong> 2.00% XDRIP Tokens Supply
                         <ul>
                           <li>15% revenue share bonus.</li>
                           <li>Priority seating at company events.</li>
@@ -553,11 +553,6 @@ const TheForgePage = () => {
                           <li>Voting rights on company-driven initiatives and new tokenization projects.</li>
                         </ul>
                       </li>
-                      <li><strong>Collectible Perks:</strong>
-                        <ul>
-                          <li>Quarterly distribution of digital artwork and collectibles from partner collaborations.</li>
-                        </ul>
-                      </li>
                       <li><strong>Executive Board Access:</strong>
                         <ul>
                           <li>Executive Board access, with a direct influence on future projects (20% cumulative voting power among all the Eternals).</li>
@@ -589,25 +584,25 @@ const TheForgePage = () => {
                           <li>Early Insights - Receive early insights on upcoming tokenized projects, along with exclusive updates on new opportunities.</li>
                         </ul>
                       </li>
-                      <li><strong>Own UnCommon Tier + 1.0% Supply XDRIP Tokens:</strong>
+                      <li><strong>Own UnCommon Tier + 0.75% Supply XDRIP Tokens:</strong>
                         <ul>
                           <li>5% revenue share bonus.</li>
                           <li>Priority seating at company events.</li>
                         </ul>
                       </li>
-                      <li><strong>Own Rare Tier + 1.5% Supply XDRIP Tokens:</strong>
+                      <li><strong>Own Rare Tier + 1.0% Supply XDRIP Tokens:</strong>
                         <ul>
                           <li>7% revenue share bonus.</li>
                           <li>Priority seating at company events.</li>
                         </ul>
                       </li>
-                      <li><strong>Own Epic Tier + 2.0% Supply XDRIP Tokens:</strong>
+                      <li><strong>Own Epic Tier + 1.25% Supply XDRIP Tokens:</strong>
                         <ul>
                           <li>10% revenue share bonus.</li>
                           <li>Priority seating at company events.</li>
                         </ul>
                       </li>
-                      <li><strong>Own Legendary Tier + 2.5% Supply XDRIP Tokens:</strong>
+                      <li><strong>Own Legendary Tier + 1.5% Supply XDRIP Tokens:</strong>
                         <ul>
                           <li>15% revenue share bonus.</li>
                           <li>Priority seating at company events.</li>

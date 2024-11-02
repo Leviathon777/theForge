@@ -84,32 +84,44 @@ const MedalDetailsModal = ({ medal, onClose }) => {
             <div className={Style.detailsOverlay}>
               <div className={Style.detailsContent}>
                 <div className={Style.MedalDetailsModal_description}>
-                  <h1>The {medal.title || "NO DATA AVAILABLE"} Medal</h1>
+                  <h1>{medal.title || "NO DATA AVAILABLE"}</h1>
                 </div>
+
                 <div className={Style.MedalDetailsModal_description}>
-                  <h2>{medal.description || "NO DATA AVAILABLE"}</h2>
+                  <h2 className={Style.MedalDetailsModal_description_font}>{medal.description || "NO DATA AVAILABLE"}</h2>
+                </div>
+
+
+                <div className={Style.MedalDetailsModal_price}>
+                <h2 className={Style.MedalDetailsModal_description_font}>MEDAL OF HONOR WORTH:</h2>
+                  <p>{medal.price}</p>
                 </div>
                 <div className={Style.MedalDetailsModal_price}>
-                  <p><h5>Medals Worth: {medal.price}</h5></p>
+                <h2 className={Style.MedalDetailsModal_description_font}>CREATED BY THE XDRIP EXECUTIVE STAFF:</h2>
+                  <p>Brad Messier ~ Jim Carney ~ Flo Righetti ~ Jordi</p>                   
                 </div>
-                <div className={Style.MedalDetailsModal_creators}>
-                  <strong>Created by:</strong> Created by the XdRiP Executive Staff: Brad, Jim, Flo, and Jordi
+
+                <div className={Style.MedalDetailsModal_price}>
+                <h2 className={Style.MedalDetailsModal_description_font}>DIGITAL OWNERSHIP TOKEN COLLECTION:</h2>
+                  <p>{medal.collection || "MEDALS OF HONOR"}</p>
                 </div>
-                <div className={Style.MedalDetailsModal_info}>
-                  <p><h5>Collection: {medal.collection || "MEDALS of HONOR"}</h5></p>
-                  <p><strong>Contract: </strong>
+                
+                <div className={Style.MedalDetailsModal_price}>
+                <h2 className={Style.MedalDetailsModal_description_font}>MEDALS OF HONOR CONTRACT:</h2>
+                  <p>
                     <span className={Style.MedalDetailsModal_contractAddress} onClick={() => copyToClipboard(mohContractAddress)}>
-                      {mohContractAddress && formatAddress(mohContractAddress)}
+                      {mohContractAddress}
                     </span>
                   </p>
                 </div>
+
                 <div className={Style.MedalDetailsModal_notes}>
                   <small align="center">For The Honor of Forging Medals</small>
                   <br />
                   <small>Excluding the COMMON, you must own each previous tier to be eligible to forge the next, while the Eternal stands alone</small>
                 </div>
                 <div className={Style.MedalDetailsModal_companies}>
-                  <h3>Global Businesses & Partnerships</h3>
+                  <h5>GLOBAL BUSINESS AND PARTNERSHIP LINKS</h5>
                   <ul>
                     {companies.map((company, idx) => (
                       <li key={idx}>
