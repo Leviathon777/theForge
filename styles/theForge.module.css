@@ -1,8 +1,7 @@
 /* MAIN PAGE CSS CODE BASIC AND MEDIA QUERYS */
-.theForge {
-  position: relative;
+.theForge {  
   padding-bottom: 4rem;
-  background: url("../public/img/background.png") no-repeat center center fixed;
+  background: url("../public/img/background.png") no-repeat center center fixed;  
   -webkit-background-size: cover;
   -moz-background-size: cover;   
   -o-background-size: cover;      
@@ -13,8 +12,31 @@
   -webkit-background-attachment: fixed; 
   width: 100%;
   height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../public/img/background.png");
+  background-size: 1;
+  background-position: center;
+  
 }
 
+
+
+@media not all and (min-resolution:.001dpcm) {
+  .theForge {
+    background-attachment: fixed;
+  }
+}
+
+
+@supports (-webkit-touch-callout: none) {
+  .theForge {
+    background-attachment: scroll;
+  }
+}
 
 
 .theForge_content {
@@ -71,6 +93,7 @@
 /* FIRST COMPONENT CONTENT CSS CODE BASIC AND MEDIA QUERYS */
 .first_component h1 {
   font-size: 7rem;
+  text-align: center;
 }
 
 
@@ -92,6 +115,7 @@
 .component_title_text {
   font-size: 4rem;
   margin: 3rem 0rem 1rem 0rem;
+
 }
 
 .loreText {
@@ -343,6 +367,8 @@
 @media (max-width: 599px) {
   .theForge {
     padding: 1rem;
+    background-attachment: fixed; 
+    -webkit-background-attachment: fixed; 
   }
 
   .content_page h2 {
@@ -458,6 +484,8 @@
 @media (min-width: 600px) and (max-width: 899px) {
   .theForge {
     padding: 2rem;
+    background-attachment: fixed; 
+    -webkit-background-attachment: fixed; 
   }
 
   .content_page h2 {

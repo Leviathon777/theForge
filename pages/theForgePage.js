@@ -74,6 +74,7 @@ const TheForgePage = () => {
   };
 
   return (
+
     <div className={Style.theForge}>
       <div className={Style.theForge_content}>
         <div className={Style.first_component}>
@@ -126,7 +127,7 @@ const TheForgePage = () => {
           <div className={Style.third_component}>
             <h1 className={Style.component_title_text}>YOUR MEDALS DISPLAY CASE</h1>
             <DotWallet />
-           
+
           </div>
           <div className={Style.glowingDivider}></div>
           <h1 className={Style.component_title_text}>A WARRIOR'S SPOILS</h1>
@@ -527,28 +528,24 @@ const TheForgePage = () => {
                 <div className={Style.page_right}>
                   <div className={Style.page_right_wrapper}>
                     <ul className={Style.benefits}>
-                      <li><strong>Revenue Pool Access:</strong>
-                        <ul>
-                          <li>100% cumulative revenue share.</li>
-                          <li>10% multiplier on annual revenue upon full-tier completion.</li>
-                        </ul>
-                      </li>
                       <li><strong>Tokenization Access:</strong>
                         <ul>
-                          <li>Premium Discounts and Investment Rights - Benefit from a 20% discount on purchase fees for high-demand tokenized projects and receive the first right of refusal on premium investments.</li>
+                          <li>The most high VIP inclusive access to the most in-demand tokenized investments and XdRiP Digital Management LLC with a special discount on purchase fees.</li>
                         </ul>
                       </li>
                       <li><strong>Event Access:</strong>
                         <ul>
-                          <li>Exclusive offers on XdRiP Fly Block Reservations and Hotel Arrangements</li>
-                          <li>Livestream access to main events hosted by the company, including keynotes and announcements</li>
-                          <li>Priority on tickets for events and discounts on travel packages for attendees.</li>
-                          <li>One free ticket per year to any company-hosted event, with VIP seating and lounge access.</li>
+                          <li>Lifetime highest VIP access to all company-hosted and global events.</li>
+                        </ul>
+                      </li>
+                      <li><strong>Private Events:</strong>
+                        <ul>
+                          <li>Invitations to exclusive, invite-only events with industry leaders and visionary creators among the Executive Board of XdRiP Digital Management LLC.</li>
                         </ul>
                       </li>
                       <li><strong>Revenue Statement:</strong>
                         <ul>
-                          <li>Personalized quarterly reports on platform performance, projections, and revenue growth.</li>
+                          <li>Detailed and personalized quarterly reports with 1:1 interaction with the Executive board in private channel 365/365.</li>
                         </ul>
                       </li>
                       <li><strong>Community Voting:</strong>
@@ -556,15 +553,24 @@ const TheForgePage = () => {
                           <li>Voting rights on company-driven initiatives and new tokenization projects.</li>
                         </ul>
                       </li>
-                      <li><strong>Unlocks XDRIP Holder Bonus:</strong> 2.50% XDRIP Tokens Supply
-                        <ul>
-                          <li>15% revenue share bonus.</li>
-                          <li>Priority seating at company events.</li>
-                        </ul>
-                      </li>
                       <li><strong>Collectible Perks:</strong>
                         <ul>
-                          <li>Quarterly distribution of digital collectibles from partner collaborations.</li>
+                          <li>Quarterly distribution of digital artwork and collectibles from partner collaborations.</li>
+                        </ul>
+                      </li>
+                      <li><strong>Executive Board Access:</strong>
+                        <ul>
+                          <li>Executive Board access, with a direct influence on future projects (20% cumulative voting power among all the Eternals).</li>
+                        </ul>
+                      </li>
+                      <li><strong>Global Revenue Share:</strong>
+                        <ul>
+                          <li>Highest and significant ROI Benefit translating into 0.5% share of total platform revenue (all revenue streams, including tokenized real estate, subscription services, and future income of XdRiP Digital Management LLC).</li>
+                        </ul>
+                      </li>
+                      <li><strong>Legacy Recognition:</strong>
+                        <ul>
+                          <li>Eternal holders are immortalized in a special section of the platform. Your soul will be forever tied to XdRiP Digital Management LLC and to the Realm of XdRiPia.</li>
                         </ul>
                       </li>
                     </ul>
@@ -573,9 +579,8 @@ const TheForgePage = () => {
 
 
 
-
                 <div className={Style.page_left}></div>
-                <div className={Style.page_right}>                  
+                <div className={Style.page_right}>
                   <div className={Style.page_right_wrapper}>
                     <h2>XDRIP Token Holders Benefits</h2>
                     <ul className={Style.benefits}>
@@ -667,6 +672,7 @@ const TheForgePage = () => {
         </MyDotData>
       </div >
     </div >
+
   );
 };
 export default TheForgePage;
