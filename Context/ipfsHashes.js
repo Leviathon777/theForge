@@ -1,3 +1,4 @@
+/*
 const ipfsHashes = [
   {
     title: "COMMON",
@@ -22,6 +23,36 @@ const ipfsHashes = [
   {
     title: "ETERNAL",
     url: "https://gateway.pinata.cloud/ipfs/QmSRNHm6hBqfi3rv5zhEuVZDmNhpB29X3UUV4kfip4nbXB?filename=LEGENDARY.json",
+  },
+];
+
+export default ipfsHashes;
+*/
+
+const ipfsHashes = [
+  {
+    title: "COMMON",
+    url: "https://gateway.pinata.cloud/ipfs/QmdncQS6fuZKW4q5CzAmXLz3wVFYEibeNpW6RbtCquZAUh/COMMON.json",
+  },
+  {
+    title: "UNCOMMON",
+    url: "https://gateway.pinata.cloud/ipfs/QmdncQS6fuZKW4q5CzAmXLz3wVFYEibeNpW6RbtCquZAUh/UNCOMMON.json",
+  },
+  {
+    title: "RARE",
+    url: "https://gateway.pinata.cloud/ipfs/QmdncQS6fuZKW4q5CzAmXLz3wVFYEibeNpW6RbtCquZAUh/RARE.json",
+  },
+  {
+    title: "EPIC",
+    url: "https://gateway.pinata.cloud/ipfs/QmdncQS6fuZKW4q5CzAmXLz3wVFYEibeNpW6RbtCquZAUh/EPIC.json",
+  },
+  {
+    title: "LEGENDARY",
+    url: "https://gateway.pinata.cloud/ipfs/QmdncQS6fuZKW4q5CzAmXLz3wVFYEibeNpW6RbtCquZAUh/LEGENDARY.json",
+  },
+  {
+    title: "ETERNAL",
+    url: "https://gateway.pinata.cloud/ipfs/QmdncQS6fuZKW4q5CzAmXLz3wVFYEibeNpW6RbtCquZAUh/ETERNAL.json",
   },
 ];
 

@@ -33,6 +33,8 @@ const XdRiPContractAddress = xdripCA_ABI.address;
 const XdRiPContractABI = xdripCA_ABI.abi;
 const web3 = new Web3("https://bsc-dataseed.binance.org/");
 const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
+
+
 const TheForge = ({ setIsModalOpen }) => {
   const [selectedMedal, setSelectedMedal] = useState(null);
   const [bnbBalance, setBnbBalance] = useState(null);
@@ -53,6 +55,20 @@ const TheForge = ({ setIsModalOpen }) => {
   const cardRefs = useRef([]);
   const controls = useAnimation();
   const [startX, setStartX] = useState(0);
+  const [currentAccount, setCurrentAccount] = useState("");
+
+
+  useEffect(() => {
+    if (address) {
+      setCurrentAccount(address);
+    } else {
+      setCurrentAccount("");
+    }
+  }, [address]);
+  
+
+
+
   const mohData = [
     { title: "COMMON", id: 1, price: "0.5 BNB", description: "Common Medal, forged in the fires of battle, honors the unwavering courage and steadfast determination of XdRiP warriors. This emblem recognizes those who consistently face adversity with resilience and commitment, playing a foundational role within the XdRiP community. Bearing this medal signifies a warrior’s dedication to the cause and their readiness to uphold the strength and integrity of our ranks in every challenge they encounter.", medalVideo: videos.common, ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url, inventory: {forged: 0,available: 10000,},},
     { title: "UNCOMMON", id: 2, price: "1 BNB", description: "Uncommon Medal, meticulously crafted by master artisans, symbolizes the exceptional strength and valor of XdRiP warriors who transcend the ordinary. This prestigious emblem honors individuals who demonstrate superior skills and unwavering bravery in the face of formidable challenges. Holding this medal signifies a distinguished place within the XdRiP community, acknowledging those who strive to exceed expectations and lead by remarkable example.", medalVideo: videos.uncommon, ipfsHash: ipfsHashes.find((hash) => hash.title === "UNCOMMON").url, inventory: {forged: 0,available: 5000,},},
@@ -241,6 +257,8 @@ const handleArrowClick = (direction) => {
       setCurrentMedal(null);
     }
   };
+  
+  
   const mint = async (medalType, ipfsHash) => {
     try {
       console.log("Minting medal of type:", medalType);
@@ -357,6 +375,7 @@ const handleArrowClick = (direction) => {
       }
     }
   };
+  
   const [showArrows, setShowArrows] = useState(true); // State to control arrow visibility based on screen size
 
   useEffect(() => {
@@ -376,6 +395,59 @@ const handleArrowClick = (direction) => {
       window.removeEventListener('resize', updateArrowsVisibility); // Clean up listener
     };
   }, []);
+
+
+
+  const [medalCount, setMedalCount] = useState(0);
+
+
+  const fetchMedalCount = async (userAddress) => {
+    if (!signer) return;
+    try {
+      const contract = fetchMohContract(signer);
+      const count = await contract.balanceOf(userAddress); // Ensure your contract has this method
+      setMedalCount(count.toNumber()); // Update the medal count state
+    } catch (error) {
+      console.error("Error fetching medal count:", error);
+      setMedalCount(0); // Reset to 0 in case of error
+    }
+  };
+
+
+
+  useEffect(() => {
+    if (address) {
+      setCurrentAccount(address);
+      fetchMedalCount(address); // Fetch medal count when the address changes
+    } else {
+      setCurrentAccount("");
+    }
+  }, [address]);
+
+
+
+const fetchMintedCountsForAddress = async (address) => {
+  if (!signer) return;
+  try {
+    const contract = fetchMohContract(signer);
+    const counts = await contract.getMintedCountsForAddress(address); // Ensure your contract has this method
+    setMedalCount(counts); // Update state with the number of minted medals
+  } catch (error) {
+    console.error("Error fetching minted counts for address:", error);
+  }
+};
+
+useEffect(() => {
+  if (address) {
+    fetchMintedCountsForAddress(address); // Fetch counts when address changes
+  }
+}, [address]);
+
+
+
+
+
+
   return (
     <div className={Style.the_forge}>
       <div className={Style.the_forge_wrapper}>
@@ -391,6 +463,8 @@ const handleArrowClick = (direction) => {
               paddingRight="0"
               isActive={false}
             />
+
+            {/*
             <ConnectWallet
               btnTitle="OPEN THE VAULT"
               style={{
@@ -422,6 +496,150 @@ const handleArrowClick = (direction) => {
               })}
             />
           </div>
+              */}
+
+
+
+            <ConnectWallet
+              btnTitle="OPEN THE VAULT"
+              style={{
+                background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
+                color: 'white',
+                border: '2px solid #1c1c1c',
+                borderRadius: '12px',
+                boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
+                transition: 'all 0.3s ease',
+                padding: '0',
+                width: '240px',
+                height: '52px',
+                cursor: 'pointer',
+                textAlign: 'center',
+                textTransform: 'uppercase',
+                fontSize: '20px',
+                textShadow: '0px 0px 2px black',
+                backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              
+              detailsBtn={() => {
+                return (
+                  <button
+                    className={Style.genericInfoBox}
+                    style={{ backgroundColor: "transparent" }}
+                  >
+                    <div
+                      style={{
+                        background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
+                        color: 'white',
+                        border: '2px solid #1c1c1c',
+                        borderRadius: '12px',
+                        boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
+                        transition: 'all 0.3s ease',
+                        padding: '0',
+                        width: '240px',
+                        height: '52px',
+                        cursor: 'pointer',
+                        textAlign: 'center',
+                        textTransform: 'uppercase',
+                        fontSize: '20px',
+                        textShadow: '0px 0px 2px black',
+                        backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <div
+                        
+                      >
+
+
+<p style={{ fontSize: "small", color: "lightgray", marginTop: "14px", marginLeft: "20px" }}>
+            {`${medalCount} Medals Found`}  
+          </p>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <p
+                            style={{
+                              fontSize: "medium",
+                              marginBottom: "4px",
+                              marginTop: "0",
+                              maxWidth: "160px",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              color: "white",
+                            }}
+                          >
+                            {/* label connected wallet here */}
+
+                          </p>
+                        </div>
+                        <p
+                          style={{
+                            color: "white",
+                            fontSize: "10px",
+                            marginTop: "-10px",
+                            marginLeft: "18px",
+                          }}
+                        >
+                          {currentAccount.slice(0, 4) +
+                            " . . . . " +
+                            currentAccount.slice(-4)}
+                        </p>
+
+                      </div>
+                      <div
+                        style={{
+                          marginLeft: "10px",
+                          display: "flex",
+                          alignItems: "center",
+                          paddingLeft: "5px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        
+                        <Image
+                          src="/img/mohwallet-logo.png"
+                          alt="MOH"
+                          width="30"
+                          height="30"
+                        />
+                        
+
+                      </div>
+                    </div>
+                  </button>
+                );
+              }}
+              className={`${moreStyles.btn}`}
+              modalTitle="ACCESS  OPTIONS"
+              theme={darkTheme({
+                colors: {
+                  modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
+                },
+              })}
+              
+              modalSize={"wide"}
+              switchToActiveChain={true}
+              termsOfServiceUrl="/components/Legal/TermsOfService.jsx"
+              privacyPolicyUrl="/components/Legal/UserAgreement.jsx"
+              ThirdwebBranding={false}
+              welcomeScreen={{
+                title: " ",
+                subtitle: " ",
+                img: {
+                  src: "/img/mohwalletmodal.png",
+                  width: 420,
+                  height: 420,
+                },
+                
+              }}
+              
+            />
+          </div>
+
           {address && (
             <div className={Style.balances}>
               <Button
@@ -575,7 +793,11 @@ const handleArrowClick = (direction) => {
           </div>
         </div>
         {selectedMedal && (
-          <DotDetailsModal medal={selectedMedal} onClose={() => setSelectedMedal(null)} />
+          <DotDetailsModal 
+            medal={selectedMedal} 
+            onClose={() => setSelectedMedal(null)} 
+            mint={mint}
+            />
         )}
         {isConfirmationModalVisible && (
           <div className={Style.confirmation_modal}>
@@ -597,4 +819,4 @@ const handleArrowClick = (direction) => {
     </div>
   );
 };
-export default TheForge;
+export default React.memo(TheForge);

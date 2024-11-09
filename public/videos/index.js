@@ -7,6 +7,7 @@ import Forge1 from "./Forge1.mp4";
 import eternals from "./eternals.mp4";
 
 
+
 export default {
     Forge1,
     common,
@@ -14,5 +15,6 @@ export default {
     rare,
     epic,
     eternals,
-    legendary
+    legendary,
+  
 };

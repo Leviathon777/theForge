@@ -2,8 +2,18 @@ const CACHE_NAME = "Medals Of Honor";
 const urlsToCache = [
   "/",
   "/index.jsx",
-  "/styles/theForge.module.css"
-  //anything we want to cache locally on phone
+  "/styles/theForge.module.css",
+  "/videos/splashmobile.mp4",
+  "/videos/Forge1.mp4",
+  "/videos/common.mp4",
+  "/videos/uncommon.mp4",
+  "/videos/rare.mp4",
+  "/videos/epic.mp4",
+  "/videos/legendary.mp4",
+  "/videos/eternal.mp4",
+  "/img/background.png",
+  "/img/xdrip_social.png",
+  "/img/tales_social.png"
   
 ];
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   ThirdwebProvider,
   inAppWallet,
@@ -21,48 +21,56 @@ const MyApp = ({ Component, pageProps }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [hasEntered, setHasEntered] = useState(false);
   const [useGuestWallet, setUseGuestWallet] = useState(false);
-  const [adminConnected, setAdminConnected] = useState(false);
   const [adminWallet, setAdminWallet] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Loading state for splash screen
-  const [splashVideo, setSplashVideo] = useState("/videos/splash.mp4"); // Default video for PC
-
-  const handleEnter = () => {
-    setHasEntered(true);
-  };
-
+  const [isLoading, setIsLoading] = useState(true);
+  const [splashVideo, setSplashVideo] = useState("/videos/splash.mp4");
+  const [deferredPrompt, setDeferredPrompt] = useState(null); // strictly forbidden on ios - may work some android
+  const [isInstallable, setIsInstallable] = useState(false); // strictly forbidden on ios - may work some android
 
   useEffect(() => {
-    const hasAcceptedCookies = Cookies.get("acceptedCookies");
-    if (!hasAcceptedCookies) {
-      setIsModalVisible(true);
-    }
+    const mobileVideo = "/videos/splashmobile.mp4";
+    const pcVideo = "/videos/splashpc.mp4";
+    setSplashVideo(window.innerWidth <= 768 ? mobileVideo : pcVideo);
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 3500);
+    return () => clearTimeout(timer);
+  }, []);
 
+  useEffect(() => {
+    if (!isLoading && !Cookies.get("acceptedCookies")) {
+      setIsModalVisible(true);
+    }
+  }, [isLoading]);
 
   const handleAccept = () => {
     Cookies.set("acceptedCookies", "true", { expires: 30 });
     setIsModalVisible(false);
   };
 
-  const handleDecline = () => {
-    setIsModalVisible(false);
-  };
+  const handleDecline = () => setIsModalVisible(false);
 
-  const connectAdminWallet = async () => {
+  const connectAdminWallet = useCallback(async () => {
+    const savedAdminWallet = sessionStorage.getItem("adminWallet");
+    if (savedAdminWallet) {
+      setAdminWallet(savedAdminWallet);
+      return;
+    }
     try {
-      const adminWalletInstance = metamaskWallet();
-      await adminWalletInstance.connect();
-      setAdminWallet(adminWalletInstance);
-      console.log("Admin wallet connected:", await adminWalletInstance.getAddress());
+      const walletInstance = metamaskWallet();
+      await walletInstance.connect();
+      const walletAddress = await walletInstance.getAddress();
+      setAdminWallet(walletInstance);
+      sessionStorage.setItem("adminWallet", walletAddress);
     } catch (error) {
       console.error("Error connecting admin wallet:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     connectAdminWallet();
-  }, []);
+  }, [connectAdminWallet]);
 
   const guestWallet = smartWallet({
     chain: ChainId.BinanceSmartChainTestnet,
@@ -86,35 +94,48 @@ const MyApp = ({ Component, pageProps }) => {
   ];
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false); 
-    }, 3500);
-
-    // Detect if the user is on a mobile device or PC
-    const detectDevice = () => {
-      const mobileVideo = "/videos/splashmobile.mp4"; // Mobile splash video path
-      const pcVideo = "/videos/splashpc.mp4"; // PC splash video path
-      const isMobile = window.innerWidth <= 768; // Adjust screen width as needed for your criteria
-      setSplashVideo(isMobile ? mobileVideo : pcVideo);
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      console.log("Before Install Prompt fired"); // Log to see if it's triggered
+      setDeferredPrompt(e);
+      setIsInstallable(true);
     };
-
-    detectDevice(); // Run on load
-    window.addEventListener("resize", detectDevice); // Update on window resize
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("resize", detectDevice);
-    };
+  
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+  
+    return () => window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
   }, []);
+  
+
+  const handleInstallClick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("User accepted the install prompt");
+        } else {
+          console.log("User dismissed the install prompt");
+        }
+        setDeferredPrompt(null);
+        setIsInstallable(false);
+      });
+    }
+  };
 
   useEffect(() => {
-    if (!isLoading) {
-      const hasAcceptedCookies = Cookies.get("acceptedCookies");
-      if (!hasAcceptedCookies) {
-        setIsModalVisible(true);
-      }
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          })
+          .catch(error => {
+            console.error('ServiceWorker registration failed: ', error);
+          });
+      });
     }
-  }, [isLoading]);
+  }, []);
+  
 
   return (
     <>
@@ -134,7 +155,7 @@ const MyApp = ({ Component, pageProps }) => {
           }}
         >
           <video
-            src={splashVideo} // Use the detected video source
+            src={splashVideo}
             autoPlay
             muted
             loop
@@ -154,7 +175,7 @@ const MyApp = ({ Component, pageProps }) => {
         <>
           {!hasEntered ? (
             <EntryPage
-              onEnter={handleEnter}
+              onEnter={() => setHasEntered(true)}
               isModalVisible={isModalVisible}
               handleAccept={handleAccept}
               handleDecline={handleDecline}
@@ -173,6 +194,7 @@ const MyApp = ({ Component, pageProps }) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <meta name="description" content="The Medals of Honor Collection by XdRiP Digital Management, LLC" />
               </Head>
+
               {isModalVisible && (
                 <div className="welcomeMessageOverlay">
                   <div className="welcomeMessageContent">
@@ -186,6 +208,28 @@ const MyApp = ({ Component, pageProps }) => {
                   </div>
                 </div>
               )}
+
+              {isInstallable && (
+                <button
+                  onClick={handleInstallClick}
+                  style={{
+                    position: "fixed",
+                    bottom: "20px",
+                    right: "20px",
+                    padding: "10px 20px",
+                    fontSize: "16px",
+                    backgroundColor: "#007aff",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    zIndex: 1002,
+                  }}
+                >
+                  Install App
+                </button>
+              )}
+
               <MOHProvider>
                 <Component {...pageProps} />
               </MOHProvider>

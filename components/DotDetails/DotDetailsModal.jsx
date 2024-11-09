@@ -1,3 +1,4 @@
+/*
 import React, { useEffect } from "react";
 import Modal from "react-modal";
 import PropTypes from "prop-types";
@@ -143,4 +144,313 @@ MedalDetailsModal.propTypes = {
   medal: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
 };
+export default MedalDetailsModal;
+*/
+
+/*
+import React, { useEffect, useCallback, useMemo } from "react";
+import Modal from "react-modal";
+import PropTypes from "prop-types";
+import { VideoPlayer } from "../componentsindex";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Style from "./DotDetailsModal.module.css";
+import mohCA_ABI from "../../Context/mohCA_ABI.json";
+
+if (typeof window !== 'undefined') {
+  Modal.setAppElement('#__next');
+}
+
+const MedalDetailsModal = React.memo(({ medal, onClose }) => {
+  const mohContractAddress = useMemo(() => mohCA_ABI.address, []);
+  const companies = useMemo(() => [
+    { name: "XdRiP Digital Management, LLC", url: "https://xdrip.io" },
+    { name: "XMarket Digital Asset Solutions, LLC", url: "https://xdrip.io" },
+    { name: "XECHO", url: "https://xdrip.io" },
+    { name: "TalesofXdRiPia", url: "https://talesofxdripia.com" },
+    { name: "XdRiPiaWaves", url: "https://xdripiawaves.com" },
+    { name: "The Skywalk 1000", url: "https://skywalk1000.com" },
+    { name: "ElaraTech", url: "https://elaratech.ch" },
+    { name: "Arcadian Pixels", url: "https://arcadianpixels.com" },
+  ], []);
+
+  useEffect(() => {
+    if (medal) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+    return () => document.body.classList.remove("no-scroll"); // Clean up on unmount
+  }, [medal]);
+
+  const formatAddress = useCallback((address) => {
+    return `${address.substring(0, 4)} ... ${address.substring(address.length - 4)}`;
+  }, []);
+
+  const copyToClipboard = useCallback((text) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => toast.success("Address copied to clipboard"))
+      .catch(() => toast.error("Could not copy text"));
+  }, []);
+
+  return (
+    <Modal
+      isOpen={!!medal}
+      onRequestClose={onClose}
+      className={Style.MedalDetailsModal}
+      overlayClassName={Style.modalOverlay}
+      contentLabel="Medal Details"
+    >
+      <div className={Style.MedalDetailsModal_content}>
+        <div className={Style.MedalDetailsModal_header}>
+          <h1>#{medal.id}</h1>
+          <button
+            className={Style.MedalDetailsModal_closeButton}
+            onClick={onClose}
+            aria-label="Close Medal Details Modal"
+          >
+            Close
+          </button>
+        </div>
+        <div className={Style.MedalDetailsModal_body}>
+          <div className={Style.videoContainer}>
+            <VideoPlayer
+              videoSrc={medal.medalVideo}
+              isMuted={true}
+              hoverPlay={false}
+              autoPlay={true}
+              loop={true}
+              videoStyles={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                WebkitObjectFit: "cover",
+              }}
+              playsInline
+              hoverGrow={false}
+              disableInternalModal={true}
+            />
+            <div className={Style.detailsOverlay}>
+              <div className={Style.detailsContent}>
+                <div className={Style.MedalDetailsModal_description}>
+                  <h1>{medal.title || "NO DATA AVAILABLE"}</h1>
+                </div>
+                <div className={Style.MedalDetailsModal_description}>
+                  <h2 className={Style.MedalDetailsModal_description_font}>{medal.description || "NO DATA AVAILABLE"}</h2>
+                </div>
+                <div className={Style.MedalDetailsModal_price}>
+                  <h2 className={Style.MedalDetailsModal_description_font}>MEDAL OF HONOR WORTH:</h2>
+                  <p>{medal.price}</p>
+                </div>
+                <div className={Style.MedalDetailsModal_price}>
+                  <h2 className={Style.MedalDetailsModal_description_font}>CREATED BY THE XDRIP EXECUTIVE STAFF:</h2>
+                  <p>Brad Messier ~ Jim Carney ~ Flo Righetti ~ Jordi</p>                   
+                </div>
+                <div className={Style.MedalDetailsModal_price}>
+                  <h2 className={Style.MedalDetailsModal_description_font}>DIGITAL OWNERSHIP TOKEN COLLECTION:</h2>
+                  <p>{medal.collection || "MEDALS OF HONOR"}</p>
+                </div>
+                <div className={Style.MedalDetailsModal_price}>
+                  <h2 className={Style.MedalDetailsModal_description_font}>MEDALS OF HONOR CONTRACT:</h2>
+                  <p>
+                    <span className={Style.MedalDetailsModal_contractAddress} onClick={() => copyToClipboard(mohContractAddress)}>
+                      {formatAddress(mohContractAddress)}
+                    </span>
+                  </p>
+                </div>
+                <div className={Style.MedalDetailsModal_notes}>
+                  <small align="center">For The Honor of Forging Medals</small>
+                  <br />
+                  <small>Excluding the COMMON, you must own each previous tier to be eligible to forge the next, while the Eternal stands alone</small>
+                </div>
+                <div className={Style.MedalDetailsModal_companies}>
+                  <h5>GLOBAL BUSINESS AND PARTNERSHIP LINKS</h5>
+                  <ul>
+                    {companies.map((company, idx) => (
+                      <li key={idx}>
+                        <a href={company.url} target="_blank" rel="noopener noreferrer">{company.name}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ToastContainer position="top-center" />
+    </Modal>
+  );
+});
+
+MedalDetailsModal.propTypes = {
+  medal: PropTypes.object.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
+
+export default MedalDetailsModal;
+*/
+
+
+
+import React, { useEffect, useCallback, useMemo } from "react";
+import Modal from "react-modal";
+import PropTypes from "prop-types";
+import { VideoPlayer } from "../componentsindex";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Style from "./DotDetailsModal.module.css";
+import mohCA_ABI from "../../Context/mohCA_ABI.json";
+
+if (typeof window !== 'undefined') {
+  Modal.setAppElement('#__next');
+}
+
+const MedalDetailsModal = React.memo(({ medal, onClose, mint }) => {
+  const mohContractAddress = useMemo(() => mohCA_ABI.address, []);
+  const companies = useMemo(() => [
+    { name: "XdRiP Digital Management, LLC", url: "https://xdrip.io" },
+    { name: "XMarket Digital Asset Solutions, LLC", url: "https://xdrip.io" },
+    { name: "XECHO", url: "https://xdrip.io" },
+    { name: "TalesofXdRiPia", url: "https://talesofxdripia.com" },
+    { name: "XdRiPiaWaves", url: "https://xdripiawaves.com" },
+    { name: "The Skywalk 1000", url: "https://skywalk1000.com" },
+    { name: "ElaraTech", url: "https://elaratech.ch" },
+    { name: "Arcadian Pixels", url: "https://arcadianpixels.com" },
+  ], []);
+
+  useEffect(() => {
+    if (medal) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+    return () => document.body.classList.remove("no-scroll");
+  }, [medal]);
+
+  const formatAddress = useCallback((address) => {
+    return `${address.substring(0, 4)} ... ${address.substring(address.length - 4)}`;
+  }, []);
+
+  const copyToClipboard = useCallback((text) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => toast.success("Address copied to clipboard"))
+      .catch(() => toast.error("Could not copy text"));
+  }, []);
+
+  return (
+    <Modal
+      isOpen={!!medal}
+      onRequestClose={onClose}
+      className={Style.MedalDetailsModal}
+      overlayClassName={Style.modalOverlay}
+      contentLabel="Medal Details"
+    >
+      <div className={Style.MedalDetailsModal_content}>
+        <div className={Style.MedalDetailsModal_header}>
+          <h1>#{medal.id}</h1>
+          <button
+            className={Style.MedalDetailsModal_closeButton}
+            onClick={onClose}
+            aria-label="Close Medal Details Modal"
+          >
+            Close
+          </button>
+        </div>
+
+        <div className={Style.MedalDetailsModal_body}>
+          <div className={Style.videoContainer}>
+            <VideoPlayer
+              videoSrc={medal.medalVideo}
+              isMuted={true}
+              hoverPlay={false}
+              autoPlay={true}
+              loop={true}
+              videoStyles={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                WebkitObjectFit: "cover",
+              }}
+              playsInline
+              hoverGrow={false}
+              disableInternalModal={true}
+            />
+
+            <div className={Style.detailsOverlay}>
+              <div className={Style.detailsContent}>
+                <button
+                  onClick={() => mint(medal.title, medal.ipfsHash)}
+                  className={`${Style.forgeButton} ${Style.detailsButtonStyle}`}
+                >
+                  Forge
+                </button>
+
+                <div className={Style.MedalDetailsModal_description}>
+
+                  <h1>{medal.title || "NO DATA AVAILABLE"}</h1>
+                </div>
+                <div className={Style.MedalDetailsModal_description}>
+                  <h2 className={Style.MedalDetailsModal_description_font}>{medal.description || "NO DATA AVAILABLE"}</h2>
+                </div>
+                <div className={Style.MedalDetailsModal_price}>
+                  <h2 className={Style.MedalDetailsModal_description_font}>MEDAL OF HONOR WORTH:</h2>
+                  <p>{medal.price}</p>
+                </div>
+                <div className={Style.MedalDetailsModal_price}>
+                  <h2 className={Style.MedalDetailsModal_description_font}>CREATED BY THE XDRIP EXECUTIVE STAFF:</h2>
+                  <p>Brad Messier ~ Jim Carney ~ Flo Righetti ~ Jordi</p>
+                </div>
+                <div className={Style.MedalDetailsModal_price}>
+                  <h2 className={Style.MedalDetailsModal_description_font}>DIGITAL OWNERSHIP TOKEN COLLECTION:</h2>
+                  <p>{medal.collection || "MEDALS OF HONOR"}</p>
+                </div>
+                <div className={Style.MedalDetailsModal_price}>
+                  <h2 className={Style.MedalDetailsModal_description_font}>MEDALS OF HONOR CONTRACT:</h2>
+                  <p>
+                    <span className={Style.MedalDetailsModal_contractAddress} onClick={() => copyToClipboard(mohContractAddress)}>
+                      {formatAddress(mohContractAddress)}
+                    </span>
+                  </p>
+                </div>
+                <div className={Style.MedalDetailsModal_notes}>
+                  <small align="center">For The Honor of Forging Medals</small>
+                  <br />
+                  <small>Excluding the COMMON, you must own each previous tier to be eligible to forge the next, while the Eternal stands alone</small>
+                </div>
+                <div className={Style.MedalDetailsModal_companies}>
+                  <h5>GLOBAL BUSINESS AND PARTNERSHIP LINKS</h5>
+                  <ul>
+                    {companies.map((company, idx) => (
+                      <li key={idx}>
+                        <a href={company.url} target="_blank" rel="noopener noreferrer">{company.name}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className={Style.MedalDetailsModal_actions}>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className={Style.fixedForgeButtonContainer}>
+      </div>
+
+      <ToastContainer position="top-center" />
+    </Modal>
+  );
+});
+
+MedalDetailsModal.propTypes = {
+  medal: PropTypes.object.isRequired,
+  onClose: PropTypes.func.isRequired,
+  mint: PropTypes.func.isRequired,
+};
+
 export default MedalDetailsModal;
