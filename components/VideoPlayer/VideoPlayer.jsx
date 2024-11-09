@@ -3,7 +3,9 @@ import { FaPlay, FaPause, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 import Modal from "react-modal";
 import PropTypes from "prop-types";
 import Style from "./VideoPlayer.module.css";
+
 Modal.setAppElement("#__next");
+
 const VideoPlayer = forwardRef(({
   videoSrc,
   isMuted = true,
@@ -24,6 +26,7 @@ const VideoPlayer = forwardRef(({
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const videoRef = ref || useRef(null);
+
   useEffect(() => {
     if (disableInternalModal) {
       setIsPlaying(autoPlay);
@@ -98,6 +101,7 @@ const VideoPlayer = forwardRef(({
       }
     }
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
     if (hoverPlay && !disableInternalModal) {
@@ -107,12 +111,14 @@ const VideoPlayer = forwardRef(({
       }
     }
   };
+
   const handleMuteClick = () => {
     setIsMutedState(!isMutedState);
     if (videoRef.current) {
       videoRef.current.muted = !isMutedState;
     }
   };
+
   const handlePlayPauseClick = () => {
     if (videoRef.current) {
       if (isPlaying) {
@@ -124,6 +130,7 @@ const VideoPlayer = forwardRef(({
       }
     }
   };
+
   return (
     <div
       className={`${Style.videoContainer} ${hoverGrow ? Style.hoverGrow : ""}`}
@@ -203,6 +210,7 @@ const VideoPlayer = forwardRef(({
     </div>
   );
 });
+
 VideoPlayer.propTypes = {
   videoSrc: PropTypes.string.isRequired,
   isMuted: PropTypes.bool,
@@ -218,4 +226,5 @@ VideoPlayer.propTypes = {
   onEnded: PropTypes.func,
   borderRadius: PropTypes.string,
 };
-export default VideoPlayer;
+
+export default React.memo(VideoPlayer);

@@ -1,15 +1,15 @@
 /* MAIN PAGE CSS CODE BASIC AND MEDIA QUERYS */
-.theForge {  
+.theForge {
   padding-bottom: 4rem;
-  background: url("../public/img/background.png") no-repeat center center fixed;  
+  background: url("../public/img/background.png") no-repeat center center fixed;
   -webkit-background-size: cover;
-  -moz-background-size: cover;   
-  -o-background-size: cover;      
+  -moz-background-size: cover;
+  -o-background-size: cover;
   background-size: cover;
   overflow-x: hidden;
   padding-bottom: 4rem;
-  background-attachment: fixed; 
-  -webkit-background-attachment: fixed; 
+  background-attachment: fixed;
+  -webkit-background-attachment: fixed;
   width: 100%;
   height: 100%;
   position: fixed;
@@ -20,9 +20,8 @@
   background-image: url("../public/img/background.png");
   background-size: 1;
   background-position: center;
-  
-}
 
+}
 
 
 @media not all and (min-resolution:.001dpcm) {
@@ -31,13 +30,11 @@
   }
 }
 
-
 @supports (-webkit-touch-callout: none) {
   .theForge {
     background-attachment: scroll;
   }
 }
-
 
 .theForge_content {
   display: flex;
@@ -66,7 +63,6 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
 }
 
 .glowingDivider {
@@ -89,13 +85,11 @@
 /* END OF MAIN PAGE CSS CODE BASIC AND MEDIA QUERYS */
 
 
-
 /* FIRST COMPONENT CONTENT CSS CODE BASIC AND MEDIA QUERYS */
 .first_component h1 {
   font-size: 7rem;
   text-align: center;
 }
-
 
 /* SECOND COMPONENT CONTENT CSS CODE BASIC AND MEDIA QUERYS */
 .theLoreContent {
@@ -107,7 +101,7 @@
   width: 85%;
   height: 100%;
   background: var(--background-gradient-light);
-  border-radius: .5rem;
+  border-radius: 1rem;
   border: 2px solid var(--color-border);
   margin: 0rem 0rem 4rem 0rem;
 }
@@ -124,242 +118,313 @@
   padding: 0rem 6rem 6rem 6rem;
 }
 
-
 /* FLIP BOOK MAIN CONTENT CSS CODE BASIC AND MEDIA QUERYS */
-.flipBook {
-  width: 100%;
-  max-width: 1250px;
-  min-width: 600px;
-  height: auto;
-  max-height: 1650px;
-  min-height: 700px;
-  margin: auto;
-  position: relative;
-}
-
-/* FRONT INNER PAGE CSS CODE BASIC AND MEDIA QUERYS */
-.front_inner_page {
+.page_inner,
+.pageWrapper {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  justify-items: center;
-  align-content: center;
-  align-items: center;
   width: 100%;
   height: 100%;
-  color: #ffffffa6;
-  border-radius: 8px;
+  padding: 0rem;
+  margin: 0rem;
+}
+
+.flipbookwrapper{
   background: var(--background-gradient-light);
-  border: .2rem solid var(--color-border);
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-}
-
-.front_inner_page_inner {
+  border-radius: 1rem;
+  border: 2px solid var(--color-border);
+  padding: 3rem;
+  width: 80%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-content: center;
   align-items: center;
-  justify-items: center;
-  background: var(--background-gradient-dark);
+ 
+}
+
+.flipBook {
+  display: flex;
+  flex-direction: column;
+  width: 550px;
+  height: 733px;
+  margin: 0 auto;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.flipBookMobile {
+  display: flex;
+  flex-direction: column;
+  width: 75%;
+  height: 75%;
+  margin: 0 auto;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+
+}
+
+/* CSS for the front cover page */
+.cover {
+  background: rgb(0, 0, 0);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border-bottom: .1rem solid rgba(78, 78, 78, 0.411);
+  border-top: .1rem solid rgba(78, 78, 78, 0.411);
+  border-right: .1rem solid rgba(78, 78, 78, 0.411);
+  border-bottom-right-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.cover .pageWrapper {
   width: 100%;
   height: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
-.front_inner_page_inner_image {
-  padding: 2rem;
-  object-fit: cover;
-  opacity: 0.3;
-}
-
-
-
-/* CONTENT PAGE CSS CODE BASIC AND MEDIA QUERYS */
-.content_page {
+.cover .page_inner {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-content: center;
-  padding: .5rem;
+  align-items: center;
   width: 100%;
   height: 100%;
-  color: #ffffffa6;
-  border-radius: 8px;
+  padding: 0rem 0rem 0rem 0rem;
+}
+
+.cover .imagePage {
+  width: 500px;
+  height: 733px;
+  object-fit: cover;
+  margin: 0rem 0rem 0rem 0rem;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+
+.hideTitle {
+  display: none;
+}
+
+.cover .page_inner_image {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.cover .pageContent_title {
+  font-size: 2.75rem;
+  padding-top: 1.5rem;
   text-align: center;
+}
+
+/* CSS for the front dedication page */
+.dedicationContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: var(--background-gradient-dark);
-  border: .2rem solid var(--color-border);
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
+  border-top-left-radius: 1rem;
+  border-bottom-left-radius: 1rem;
 }
 
-.content_page h2 {
+.dedicationContainer{
+  background: var(--background-gradient-light);
+  background: var(--background-gradient-light);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.144);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  padding: .75rem;
+  padding-bottom: 0.25rem;
+}
+
+.dedicationTop,
+.dedicationBottom {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.pageContent_title {
+  font-size: 1.75rem;
+}
+
+.dedicationText { 
+  max-width: 95%;
+  padding-bottom: 0rem;
+  margin-bottom: 0rem;
+  
+}
+
+.dedicationParagraph{
+  font-size: .9rem;
+  line-height: 1.1;
+}
+
+
+/* CSS for the table of contents page */
+.contents_page {
+  background: var(--background-gradient-dark);
+  padding: 20px;
+  border-bottom-right-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.contents_page .page_inner {
+  width: 95%;
+}
+
+.contents_page .pageWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--background-gradient-light);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.144);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.contents_page h1 {
+  text-align: center;
   font-size: 3rem;
+  margin-bottom: 20px;
 }
 
-
-/* CONTENTS PAGE CONTENTS LIST CSS CODE BASIC AND MEDIA QUERYS */
 .contentsList {
   list-style: none;
-  padding: 1rem;
-  margin: 0;
+  padding: 0;
 }
 
 .contentsList li {
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
 }
 
-.contentsList li .title {
-  flex-shrink: 0;
+.contentTitle {
+  flex: 1;
+  text-align: left;
+  font-size: .9rem;
 }
 
-.contentsList li .leader {
-  flex-grow: 1;
-  border-bottom: 1px dotted rgb(155, 155, 155);
-  margin: 0 10px;
-}
-
-.contentsList li .pageNumber {
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-.contentsList li .title,
-.contentsList li .pageNumber {
-  font-size: 1rem;
-  color: #ffffffa6;
-}
-
-
-
-/* LEFT PAGE CSS CODE BASIC AND MEDIA QUERYS */
-.page_left {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  color: #ffffffa6;
-  border-radius: 8px;
-  text-align: center;
+/* RIGHT PAGE CSS CODE REVERSED PAGE NAMES */
+.page_right {
   background: var(--background-gradient-dark);
+  border-top-right-radius: 1rem;
+  border-bottom-right-radius: 1rem;
   border: 0.2rem solid var(--color-border);
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
+  padding: 20px;
 }
 
-.page_left_wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-.page_left_top {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 2rem;
-}
-
-.imagePage {
-  width: 100%;
-  border: 0.5rem solid grey;
-  border-radius: 50%;
-  padding: 1rem;
-  margin: 0;
-}
-
-.page_left_bottom {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.page_left_bottom h1 {
-  font-size: 2.5rem;
-}
-
-
-/* RIGHT PAGE CSS CODE BASIC AND MEDIA QUERYS */
-.page_right {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  justify-items: center;
-  align-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  color: #ffffffa6;
-  border-radius: 8px;
-  background: var(--background-gradient-dark);
-  border: .2rem solid var(--color-border);
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-}
-
-.page_right_wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.page_right .pageWrapper {
   background: var(--background-gradient-light);
-  width: 100%;
-  height: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.144);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.benefits {
+.page_right .page_inner {
   display: flex;
   flex-direction: column;
-  justify-items: center;
-  align-items: flex-start;
-  list-style-type: decimal;
-  padding: 1.5rem 1rem 1rem 3rem;
-  width: 95%;
+  width: 100%;
+  align-items: center;
+}
+
+.page_right .page_lower .pageContent_title {
+  font-size: 2.25rem;
+}
+
+.page_right .page_inner .benefits {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  margin: 1rem 0rem 0rem 0rem;
+}
+
+.benefit_description {
+  padding-bottom: 0rem;
+  margin-bottom: 0.2rem;
+  color: #6d6d6d;
+}
+
+.page_right .page_inner .benefits li {
+  list-style: disc;
+  font-size: .9rem;
+  padding: 0rem 0rem 0rem 0rem;
+  margin: 0px;
+}
+
+.page_right .page_inner .benefits li strong {
+  display: block;
+  font-weight: bold;
+  margin: .5rem 0rem .25rem 0rem;
+  text-decoration: underline;
+}
+
+.page_right .pageWrapper .pageNumber {
+  font-size: .9rem;
+  text-align: right;
+  padding: 0px 6px 4px 0px;
+  color: #6d6d6d;
+}
+
+/* CSS for Page Right with Benefits */
+.page_left {
+  background: var(--background-gradient-dark);
+  border-top-left-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+  border: 0.2rem solid var(--color-border);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+}
+
+.page_left img {
+  border-radius: 40px;
+  border: 0.369rem solid var(--color-border);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+  padding: .5rem;
+}
+
+.page_left .page_lower {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   height: auto;
-  gap: 1rem;
-  margin: 0rem 0rem 0rem 0rem;
+  padding: 1rem;
+  justify-content: center;
+  align-items: center;
 }
 
-.benefits li {
-  justify-content: flex-start;
-  align-content: flex-start;
-  text-align: start;
-  justify-items: flex-start;
-  align-items: flex-start;
-  font-size: 1.5rem;
-  line-height: 1.2;
-  padding: .25rem;
+.page_left .pageContent_title {
+  font-size: 3rem;
 }
 
-.benefits>li>ul {
-  list-style-type: none;
-  margin-left: 0px;
-  padding-left: 0;
-  font-weight: normal;
-}
-
-.benefits>li>ul>li {
-  font-size: 14px;
-  list-style: circle;
-  color: #cccccc71;
-}
-
-.benefits>li strong {
+.page_left .page_lower p {
   padding: 0rem;
   margin: 0rem;
-  color: #ffffffa6;
 }
+
+.page_left .pageNumber {
+  font-size: .9rem;
+  text-align: left;
+  padding-left: 8px;
+  color: #6d6d6d;
+}
+
+
+
 
 
 
@@ -367,32 +432,9 @@
 @media (max-width: 599px) {
   .theForge {
     padding: 1rem;
-    background-attachment: fixed; 
-    -webkit-background-attachment: fixed; 
+    background-attachment: fixed;
+    -webkit-background-attachment: fixed;
   }
-
-  .content_page h2 {
-    font-size: 1.5rem;
-    padding-bottom: 0rem;
-    margin-bottom: 0rem;
-  }
-  .contentsList {
-    padding: 0.25rem;
-  }
-
-  .contentsList li {
-    padding: 2.5px 0; 
-  }
-
-  .contentsList li .title,
-  .contentsList li .pageNumber {
-    font-size: 0.7rem; 
-  }
-
-  .contentsList li .leader {
-    margin: 0 5px; 
-  }
-
 
   .theForge_content,
   .first_component,
@@ -401,7 +443,7 @@
   .fourth_component,
   .fifth_component {
     width: 100%;
-    padding: 1rem;
+    padding: .25rem;
     flex-direction: column;
     align-items: center;
   }
@@ -431,81 +473,134 @@
     gap: 1rem;
   }
 
-  .page_left,
-  .page_right {
-    padding: 1rem;
-  }
-
-  .imagePage {
-    width: 80%;
-    padding: 0.5rem;
-  }
-
-  .benefits {
-    padding: 1rem 0.5rem;
-    padding-left: .75rem;
-    gap: 0rem;
+  .cover .imagePage {
     width: 100%;
+    height: 100%;
+    margin: 0rem 0rem 0rem 0rem;
   }
 
-  .benefits li {
-    font-size: .5rem;
-    line-height: 1.4;
-    padding: .15rem;
-  }
-
-  .page_right_wrapper h2 {
+  .cover .pageContent_title {
     font-size: 1.5rem;
+  }
+
+  .pageContent_title {
+    font-size: 1.5rem;
+  }
+
+  .dedicationContent{
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    border-top-left-radius: 0rem;
+    border-bottom-left-radius: 0rem;
+  }
+
+  .dedicationTitle{
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  
+  .dedicationText { 
+    max-width: 95%;    
+  }
+  
+  .dedicationSignature,
+  .dedicationParagraph{
+    font-size: .5rem;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+
+  .contents_page h1 {
     text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 5px;
   }
 
-  .page_left_bottom h1 {
-    font-size: 1.25rem;
+  .contentsList li {
+    padding: 1.5px 0;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+
+    justify-content: space-between;
   }
 
-  .benefits>li>ul {
-    padding-left: 1rem;
+  .contentsList .pageNumber {
+    font-size: .7rem;
   }
 
-  .benefits>li>ul>li {
-    font-size: 8px;
-    line-height: 1;
-    list-style: circle;
-    color: #cccccc71;
+  .contentsList .contentTitle {
+    flex: 1;
+    text-align: left;
+    font-size: .7rem;
   }
 
-  .benefits>li strong {
-    font-size: .6rem;
-    color: #ffffffa6;
+  .page_left{
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    border-top-left-radius: 0rem;
+    border-bottom-left-radius: 0rem;
+  }
+
+  .page_left .page_lower {
+    padding: .5rem;
+  }
+
+  .page_left .pageContent_title {
+    font-size: 1.5rem;
+  }
+
+  .page_left .pageNumber {
+    font-size: .7rem;
+  }
+
+  .page_right .page_lower .pageContent_title {
+    font-size: 1.1rem;
+  }
+  
+  .benefit_description {
+    margin-bottom: 0rem;
+    font-size: .52rem;
+  }
+  
+  .page_right .page_inner .benefits {
+    display: flex;
+    flex-direction: column;
+    width: 85%;
+    margin: 0.1rem 0rem 0rem 0rem;
+  }
+
+  .page_right .page_inner .benefits li {
+    font-size: .5rem;
+  }
+  
+  .page_right .page_inner .benefits li strong {
+    margin: 0rem 0rem 0rem 0rem;
+  }
+  
+  .page_right .pageWrapper .pageNumber {
+    font-size: .7rem;
+    padding: 0px 3px 2px 0px;
+  }
+
+  .flipbookwrapper{
+    background: transparent;
+    padding: 0rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
   }
 }
 
 /* Small Devices (Tablets, 600px - 899px) */
 @media (min-width: 600px) and (max-width: 899px) {
   .theForge {
-    padding: 2rem;
-    background-attachment: fixed; 
-    -webkit-background-attachment: fixed; 
-  }
-
-  .content_page h2 {
-    font-size: 2rem;
-  }
-  .contentsList {
-    padding: 0.5rem;
-  }
-
-  .contentsList li {
-    padding: 4px 0; 
-  }
-
-  .contentsList li .title,
-  .contentsList li .pageNumber {
-    font-size: 0.7rem; 
-  }
-
-  .contentsList li .leader {
-    margin: 0 5px; 
+    padding: 1rem;
+    background-attachment: fixed;
+    -webkit-background-attachment: fixed;
   }
 
   .first_component h1 {
@@ -526,17 +621,116 @@
     gap: 1.5rem;
   }
 
-  .imagePage {
-    width: 90%;
+  .cover{
+    border-bottom-right-radius: 0rem;
+    border-top-right-radius: 0rem;
   }
 
-  .benefits {
-    padding: 1.5rem;
-    width: 90%;
+  .cover .imagePage {
+    width: 100%;
+    height: 100%;
+    margin: 0rem 0rem 0rem 0rem;
   }
 
-  .benefits li {
-    font-size: 1.2rem;
+  .cover .pageContent_title {
+    font-size: 2rem;
+  }
+
+  .pageContent_title {
+    font-size: 1.5rem;
+  }
+
+  .dedicationTitle{
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  
+  .dedicationText { 
+    max-width: 95%;    
+  }
+  
+  .dedicationSignature,
+  .dedicationParagraph{
+    font-size: .5rem;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+
+  .contents_page h1 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+  }
+
+  .contentsList li {
+    padding: 1.5px 0;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+
+    justify-content: space-between;
+  }
+
+  .contentsList .pageNumber {
+    font-size: .7rem;
+  }
+
+  .contentsList .contentTitle {
+    flex: 1;
+    text-align: left;
+    font-size: .7rem;
+  }
+
+  .page_left .page_lower {
+    padding: .5rem;
+  }
+
+  .page_left .pageContent_title {
+    font-size: 1.5rem;
+  }
+
+  .page_left .pageNumber {
+    font-size: .7rem;
+  }
+  
+  .page_right .page_lower .pageContent_title {
+    font-size: 1.5rem;
+  }
+  
+  .benefit_description {
+    margin-bottom: 0rem;
+    font-size: .52rem;
+  }
+  
+  .page_right .page_inner .benefits {
+    display: flex;
+    flex-direction: column;
+    width: 85%;
+    margin: 0.1rem 0rem 0rem 0rem;
+  }
+
+  .page_right .page_inner .benefits li {
+    font-size: .5rem;
+  }
+  
+  .page_right .page_inner .benefits li strong {
+    margin: 0rem 0rem 0rem 0rem;
+  }
+  
+  .page_right .pageWrapper .pageNumber {
+    font-size: .7rem;
+    padding: 0px 3px 2px 0px;
+  }
+
+  .flipbookwrapper{
+    background: transparent;
+    padding: 0rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
   }
 }
 
@@ -556,13 +750,3 @@
     padding: 3rem;
   }
 }
-
-
-@media (max-width: 899px) {
-  .flipBook {
-    width: 100%;
-    max-width: 100%;
-    min-width: 100%;
-  }
-}
-

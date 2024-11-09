@@ -1,13 +1,40 @@
-import React, { useContext, useEffect, useState } from "react";
+
+import React, { useContext, useEffect, useState, useCallback, useMemo } from "react";
 import Style from "./DotWallet.module.css";
 import DotCarousel from "./DotCarousel.jsx";
 import { MyDotDataContext } from '../../Context/MyDotDataContext.js';
 import { Button, VideoPlayer, DotDetailsModal } from "../componentsindex.js";
+
+import videos from "../../public/videos/index.js"; 
+
+const videoPaths = {
+  "COMMON MEDAL OF HONOR": videos.common,
+  "UNCOMMON MEDAL OF HONOR": videos.uncommon,
+  "RARE MEDAL OF HONOR": videos.rare,
+  "EPIC MEDAL OF HONOR": videos.epic,
+  "LEGENDARY MEDAL OF HONOR": videos.legendary,
+  "ETERNAL MEDAL OF HONOR": videos.eternals,
+};
+
+/*
+const videoPathsHR = {
+  "COMMON MEDAL OF HONOR": videos.COMMONHR,  
+  "UNCOMMON MEDAL OF HONOR": videos.UNCOMMONHR,
+  "RARE MEDAL OF HONOR": videos.RAREHR,
+  "EPIC MEDAL OF HONOR": videos.EPICHR,
+  "LEGENDARY MEDAL OF HONOR": videos.LEGENDARYHR,
+  "ETERNAL MEDAL OF HONOR": videos.ETERNALSHR,
+};
+*/
+
+
 const DotWallet = () => {
   const { dots } = useContext(MyDotDataContext);
   const [ramps, setRamps] = useState({});
   const [selectedMedal, setSelectedMedal] = useState(null);
   const [eternalMedal, setEternalMedal] = useState(null);
+
+  /*
   const organizeMedalsByRarity = (medals) => {
     const rarityLevels = ["COMMON MEDAL OF HONOR", "UNCOMMON MEDAL OF HONOR", "RARE MEDAL OF HONOR", "EPIC MEDAL OF HONOR", "LEGENDARY MEDAL OF HONOR"];
     const ramps = { ramp1: [], ramp2: [], ramp3: [], ramp4: [] };
@@ -27,6 +54,46 @@ const DotWallet = () => {
     });
     return { ramps, eternal };
   };
+  */
+
+  const organizeMedalsByRarity = (medals) => {
+    const orderedRarity = 
+          ["COMMON MEDAL OF HONOR", 
+           "UNCOMMON MEDAL OF HONOR", 
+           "RARE MEDAL OF HONOR", 
+           "EPIC MEDAL OF HONOR", 
+           "LEGENDARY MEDAL OF HONOR"
+          ];
+    const ramps = {};
+    let currentRamp = [];
+    let rampNumber = 1;
+    let eternal = null;
+  
+    medals.forEach((medal) => {
+      if (medal.metadata.name === "ETERNAL MEDAL OF HONOR") {
+        eternal = medal;
+      } else if (orderedRarity.includes(medal.metadata.name)) {
+        currentRamp.push(medal);
+  
+        if (currentRamp.length === 5) {
+          const rampKey = `ramp${rampNumber}`;
+          ramps[rampKey] = currentRamp;
+          currentRamp = [];
+          rampNumber++;
+        }
+      }
+    });
+  
+    if (currentRamp.length > 0) {
+      ramps[`ramp${rampNumber}`] = currentRamp;
+    }
+  
+    console.log("Organized Ramps:", ramps);
+    console.log("Eternal Medal:", eternal);
+    return { ramps, eternal };
+  };
+  
+
   useEffect(() => {
     if (dots && dots.length > 0) {
       const { ramps: organizedRamps, eternal } = organizeMedalsByRarity(dots);
@@ -46,10 +113,15 @@ const DotWallet = () => {
       setEternalMedal(null);
     }
   }, [dots]);
-  const handleMedalDetails = (medal) => {
+  
+
+  const handleMedalDetails = useCallback((medal) => {
+    const videoPath = videoPaths[medal.metadata.name] || ""; 
+    console.log(`Loading video for ${medal.metadata.name}: ${videoPath}`); 
+
     const formattedMedal = {
       id: medal.tokenId,
-      medalVideo: medal.metadata.animation_url,
+      medalVideo: videoPath,
       title: medal.metadata?.name || medal.title,
       description: medal.metadata?.description || "NO DATA AVAILABLE",
       price: medal.metadata?.attributes?.find(attr => attr.trait_type === "Value")?.value || "N/A",
@@ -58,7 +130,10 @@ const DotWallet = () => {
       isPlaceholder: medal.isPlaceholder
     };
     setSelectedMedal(formattedMedal);
-  };
+  }, []);
+
+  
+
   return (
     <div className={Style.dot_wallet}>
       <div className={Style.dot_wallet}>
@@ -76,7 +151,7 @@ const DotWallet = () => {
         <div onClick={() => eternalMedal && handleMedalDetails(eternalMedal)} className={Style.card}>
           {eternalMedal ? (
             <VideoPlayer
-              videoSrc={eternalMedal.metadata.animation_url}
+              videoSrc={videoPaths[eternalMedal.metadata.name]}
               isMuted={true}
               hoverPlay={true}
               autoPlay={false}
@@ -112,4 +187,4 @@ const DotWallet = () => {
     </div>
   );
 };
-export default DotWallet;
+export default React.memo(DotWallet);

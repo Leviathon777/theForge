@@ -4,12 +4,13 @@ import styles from "./EntryPage.module.css";
 import videos from "../../public/videos";
 import Image from "next/image";
 import { VideoPlayer, TermsOfService, UserAgreement, Button } from "../componentsindex";
+
 const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => {
   const [showEnterButton, setShowEnterButton] = useState(false);
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isUserAgreementModalOpen, setIsUserAgreementModalOpen] = useState(false);
-  const containerRef = useRef(null);
+  const [isExiting, setIsExiting] = useState(false); 
   const videoPlayerRef = useRef(null);
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -22,14 +23,23 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         if (videoPlayerRef.current) {
           videoPlayerRef.current.pause();
         }
+      } else if (event.key === "Enter" && showEnterButton) {
+        handleEnterClick();
       }
     };
+    
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       clearTimeout(timer);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [showEnterButton]);
+  const handleEnterClick = () => {
+    if (!isModalVisible) {
+      setIsExiting(true);
+      setTimeout(() => onEnter(), 1000); 
+    }
+  };
   const handleAcceptCookies = () => {
     handleAccept();
     setShowSkipButton(true);
@@ -45,18 +55,12 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
     setShowEnterButton(true);
     setShowSkipButton(false);
   };
-  const handleEnterClick = () => {
-    if (!isModalVisible) {
-      onEnter();
-    }
-  };
   return (
     <motion.div
-      ref={containerRef}
-      initial={{ opacity: 1, scale: 1 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8 }}
       className={styles.entryPageContainer}
+      initial={{ opacity: 1, scale: 1 }}
+      animate={isExiting ? { opacity: 0, scale: 0.9 } : { opacity: 1, scale: 1 }} 
+      transition={{ duration: 1, ease: "easeInOut" }} 
     >
       <VideoPlayer
         ref={videoPlayerRef}
@@ -72,9 +76,8 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         disableInternalModal={false}
         disableClickModal={true}
         hideControls={true}
-        onEnded={() => { }}
+        onEnded={() => {}}
       />
-
       {showEnterButton && (
         <motion.div
           className={styles.enterContainer}
@@ -118,7 +121,6 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
           </div>
         </div>
       )}
-
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -127,19 +129,18 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         transition={{ duration: 0.5, ease: "easeInOut" }}
         style={{
           position: "fixed",
-          bottom: "20px",
+          top: "20px",
           right: "20px",
           zIndex: 1000,
         }}
       >
         <Button
           btnName="Skip"
+          fontSize="12px"
           onClick={isModalVisible ? null : handleSkipClick}
           className={styles.skipButton}
         />
       </motion.div>
-
-
       <TermsOfService
         isOpen={isTermsModalOpen}
         onRequestClose={() => setIsTermsModalOpen(false)}
@@ -151,4 +152,4 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
     </motion.div>
   );
 };
-export default EntryPage;
+export default React.memo(EntryPage);
