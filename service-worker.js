@@ -4,16 +4,21 @@ const urlsToCache = [
   "/index.jsx",
   "/styles/theForge.module.css",
   "/videos/splashmobile.mp4",
+ 
+  /*
   "/videos/Forge1.mp4",
   "/videos/common.mp4",
   "/videos/uncommon.mp4",
   "/videos/rare.mp4",
   "/videos/epic.mp4",
   "/videos/legendary.mp4",
-  "/videos/eternal.mp4",
+  "/videos/eternals.mp4",
+  */
+
   "/img/background.png",
   "/img/xdrip_social.png",
-  "/img/tales_social.png"
+  "/img/tales_social.png",
+  "/img/metal.png"
   
 ];
 
