@@ -1,6 +1,152 @@
 {
-    "address": "0xECFAAaea7B95cbbb4caCe3B05885386f009Bc3d7",
+    "address": "0x713901DfaAb4735DA5EeF6eb7682746108a42B4A",
     "abi": [
+        {
+            "inputs": [],
+            "name": "ERC721EnumerableForbiddenBatchMint",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "sender",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC721IncorrectOwner",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "operator",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "ERC721InsufficientApproval",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "approver",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC721InvalidApprover",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "operator",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC721InvalidOperator",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC721InvalidOwner",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "receiver",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC721InvalidReceiver",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "sender",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC721InvalidSender",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "ERC721NonexistentToken",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "index",
+                    "type": "uint256"
+                }
+            ],
+            "name": "ERC721OutOfBoundsIndex",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnableInvalidOwner",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "account",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnableUnauthorizedAccount",
+            "type": "error"
+        },
         {
             "anonymous": false,
             "inputs": [
@@ -174,67 +320,6 @@
             "anonymous": false,
             "inputs": [
                 {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "ownersShare",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "operatingShare",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "marketingShare",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "taxOnGrossShare",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "revenueShareFunds",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "ownersNetShareFunds",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "remainingNetAllocationsFunds",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "remainingNetEarnings",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "finalRemainingBalance",
-                    "type": "uint256"
-                }
-            ],
-            "name": "FundsDistributedSummary",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
                     "indexed": true,
                     "internalType": "address",
                     "name": "owner",
@@ -323,25 +408,6 @@
             "anonymous": false,
             "inputs": [
                 {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "totalAmount",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "holderCount",
-                    "type": "uint256"
-                }
-            ],
-            "name": "RevenueDistributedToHolders",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
                     "indexed": true,
                     "internalType": "address",
                     "name": "from",
@@ -421,13 +487,6 @@
                 }
             ],
             "name": "approve",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "distributeToHolders",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
@@ -589,141 +648,12 @@
         {
             "inputs": [
                 {
-                    "internalType": "uint256",
-                    "name": "price",
-                    "type": "uint256"
-                }
-            ],
-            "name": "setCommonPrice",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
                     "internalType": "string",
                     "name": "newContractURI",
                     "type": "string"
                 }
             ],
             "name": "setContractURI",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "price",
-                    "type": "uint256"
-                }
-            ],
-            "name": "setEpicPrice",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "price",
-                    "type": "uint256"
-                }
-            ],
-            "name": "setEternalPrice",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint16",
-                    "name": "_ownersPercentage",
-                    "type": "uint16"
-                },
-                {
-                    "internalType": "uint16",
-                    "name": "_operatingCostsPercentage",
-                    "type": "uint16"
-                },
-                {
-                    "internalType": "uint16",
-                    "name": "_marketingCostsPercentage",
-                    "type": "uint16"
-                },
-                {
-                    "internalType": "uint16",
-                    "name": "_taxOnGrossPercentage",
-                    "type": "uint16"
-                }
-            ],
-            "name": "setGrossAllocations",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "price",
-                    "type": "uint256"
-                }
-            ],
-            "name": "setLegendaryPrice",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint16",
-                    "name": "_revenueSharePercentage",
-                    "type": "uint16"
-                },
-                {
-                    "internalType": "uint16",
-                    "name": "_ownersNetSharePercentage",
-                    "type": "uint16"
-                },
-                {
-                    "internalType": "uint16",
-                    "name": "_remainingNetAllocationsPercentage",
-                    "type": "uint16"
-                }
-            ],
-            "name": "setNetAllocations",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "price",
-                    "type": "uint256"
-                }
-            ],
-            "name": "setRarePrice",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "price",
-                    "type": "uint256"
-                }
-            ],
-            "name": "setUncommonPrice",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
@@ -769,31 +699,6 @@
                 {
                     "internalType": "address payable",
                     "name": "_operatingWallet",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "_revenueShareWallet",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "_marketingWallet",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "_taxWallet",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "_profitWallet",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "_netEarningsWallet",
                     "type": "address"
                 }
             ],
@@ -845,31 +750,6 @@
                 {
                     "internalType": "address payable",
                     "name": "_operatingWallet",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "_revenueShareWallet",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "_marketingWallet",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "_taxWallet",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "_profitWallet",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address payable",
-                    "name": "_netEarningsWallet",
                     "type": "address"
                 }
             ],
@@ -1163,51 +1043,12 @@
         },
         {
             "inputs": [],
-            "name": "marketingCostsPercentage",
-            "outputs": [
-                {
-                    "internalType": "uint16",
-                    "name": "",
-                    "type": "uint16"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "marketingWallet",
-            "outputs": [
-                {
-                    "internalType": "address payable",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
             "name": "name",
             "outputs": [
                 {
                     "internalType": "string",
                     "name": "",
                     "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "netEarningsWallet",
-            "outputs": [
-                {
-                    "internalType": "address payable",
-                    "name": "",
-                    "type": "address"
                 }
             ],
             "stateMutability": "view",
@@ -1273,19 +1114,6 @@
         },
         {
             "inputs": [],
-            "name": "ownersNetSharePercentage",
-            "outputs": [
-                {
-                    "internalType": "uint16",
-                    "name": "",
-                    "type": "uint16"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
             "name": "ownersPercentage",
             "outputs": [
                 {
@@ -1309,19 +1137,6 @@
             "outputs": [
                 {
                     "internalType": "address",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "profitWallet",
-            "outputs": [
-                {
-                    "internalType": "address payable",
                     "name": "",
                     "type": "address"
                 }
@@ -1356,45 +1171,6 @@
             "type": "function"
         },
         {
-            "inputs": [],
-            "name": "remainingNetAllocationsPercentage",
-            "outputs": [
-                {
-                    "internalType": "uint16",
-                    "name": "",
-                    "type": "uint16"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "revenueSharePercentage",
-            "outputs": [
-                {
-                    "internalType": "uint16",
-                    "name": "",
-                    "type": "uint16"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "revenueShareWallet",
-            "outputs": [
-                {
-                    "internalType": "address payable",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
             "inputs": [
                 {
                     "internalType": "bytes4",
@@ -1421,32 +1197,6 @@
                     "internalType": "string",
                     "name": "",
                     "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "taxOnGrossPercentage",
-            "outputs": [
-                {
-                    "internalType": "uint16",
-                    "name": "",
-                    "type": "uint16"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "taxWallet",
-            "outputs": [
-                {
-                    "internalType": "address payable",
-                    "name": "",
-                    "type": "address"
                 }
             ],
             "stateMutability": "view",
