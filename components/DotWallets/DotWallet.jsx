@@ -227,12 +227,24 @@ const DotWallet = () => {
       const { ramps: organizedRamps, eternal } = organizeMedalsByRarity(dots);
       setRamps(organizedRamps);
       setEternalMedal(eternal);
+    } else {
+      const placeholderRamps = {
+        ramp1: [
+          { title: "COMMON MEDAL OF HONOR", isPlaceholder: true },
+          { title: "UNCOMMON MEDAL OF HONOR", isPlaceholder: true },
+          { title: "RARE MEDAL OF HONOR", isPlaceholder: true },
+          { title: "EPIC MEDAL OF HONOR", isPlaceholder: true },
+          { title: "LEGENDARY MEDAL OF HONOR", isPlaceholder: true },
+        ],
+      };
+      setRamps(placeholderRamps);
+      setEternalMedal(null);
     }
   }, [dots]);
 
   const handleRampInfo = (rampKey) => {
     const medals = ramps[rampKey];
-    const walletAddress = "0x123...ABC"; // Replace with actual wallet address if available
+    const walletAddress = "0x123...ABC"; 
     contractAddress: mohAddress.address;
     const baseCost = 0.5;
     const rampData = {
@@ -246,9 +258,9 @@ const DotWallet = () => {
           name: medal.metadata.name,
           cost: `${medalCost} BNB`,
           rewardIncome: medal.metadata.attributes.find(attr => attr.trait_type === "Reward")?.value || "N/A",
-          xdripRewards: "50 XdRiP", // Placeholder
-          revenueShare: "20%", // Placeholder
-          otherIncome: "10%", // Placeholder
+          xdripRewards: "50 XdRiP", 
+          revenueShare: "20%", 
+          otherIncome: "10%", 
         };
       }),
     };

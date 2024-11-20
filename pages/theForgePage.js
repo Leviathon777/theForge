@@ -2,14 +2,12 @@ import React, { useState, useEffect, useRef, memo, forwardRef } from "react";
 import { motion } from "framer-motion";
 import HTMLFlipBook from "react-pageflip";
 import DotWallet from "../components/DotWallets/DotWallet";
-import { Button, SocialButtons, TheForge, TermsOfService, UserAgreement, WalkthroughModal } from "../components/componentsindex";
+import { Button, SocialButtons, TheForge, TermsOfService, UserAgreement } from "../components/componentsindex";
 import MyDotData from "../Context/MyDotDataContext";
 import Style from "../styles/theForge.module.css";
 import { useSigner, useAddress } from '@thirdweb-dev/react';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
-
-
 
 
 const PageComponent = memo(
@@ -110,6 +108,24 @@ const TheForgePage = () => {
   const router = useRouter();
   const pageRefs = useRef([]);
 
+  const handleFlip = (e) => {
+    const currentPage = e.data;
+    if (currentPage === 0) {
+      setIsBookOpen(false);
+      console.log("Book is closed.");
+    } else {
+      setIsBookOpen(true);
+      console.log("Book is open.");
+    }
+  };
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
@@ -168,44 +184,44 @@ const TheForgePage = () => {
       description: (
         <>
           <div className={Style.dedicationContainer}>
-  <h2 className={Style.dedicationTitle}>To Our Unbreakable Community</h2>
-  <div className={Style.dedicationPages}>
-    <div className={Style.dedicationPage}>
-      <p className={Style.dedicationParagraph}>
-        This is for you—the loyal, rock-solid holders who have stood by us through every high and low. The Medals of Honor are our tribute to you, to your belief in us when we were tested, to the strength of your support that lifted us up and carried us forward. You’ve been more than a community; you are our family, the very heartbeat of everything we’ve built, and you deserve all the gratitude and honor we can give.
-      </p>
-    </div>
-    <div className={Style.dedicationPage}>
-      <p className={Style.dedicationParagraph}>
-        We remember the times when the path grew dark. Not only did the Caller Syndicate try to tear us down, but two of our own team members betrayed us, challenging everything we had worked for. But through it all, you stayed. You believed. Your unwavering dedication gave us the courage to rise above every challenge. Because of you, we didn’t just survive—we thrived. Today, our businesses are reaching new heights, our vision is expanding, and our future looks brighter than ever, all thanks to your steadfast loyalty and unbreakable faith.
-      </p>
-    </div>
-    <div className={Style.dedicationPage}>
-      <p className={Style.dedicationParagraph}>
-        These Medals are more than symbols; they carry the story of resilience, unity, and the powerful loyalty that you showed us. They honor those who stayed true, who believed in a vision bigger than any setback, and who have been with us through every step of this journey. They are for you, and for those who will join us, inspired by your example to become part of something extraordinary.
-      </p>
-    </div>
-    <div className={Style.dedicationPage}>
-      <p className={Style.dedicationParagraph}>
-        As we look to the future, these Medals represent the legacy we are building together. They are a promise to each of you—a promise that we will continue to grow, to innovate, and to honor the incredible support you have given us. For those who join us next, may they learn from the strength of this community and feel the depth of commitment that each Medal represents.
-      </p>
-    </div>
-    <div className={Style.dedicationPage}>
-      <p className={Style.dedicationParagraph}>
-        From the depths of our hearts, thank you. Thank you for standing by us, for fighting with us, and for believing in a vision that grows brighter every day because of you. We are endlessly grateful to have each of you with us, not just as holders, but as true partners in this dream.
-      </p>
-    </div>
-    <div className={Style.dedicationPage}>
-      <p className={Style.dedicationParagraph}>
-        To all of you, with all that we have: here’s to the future, to your future, and to the legacy we are building together. You are the soul of this project, the reason we strive, and the family we are so proud to have by our side.
-      </p>
-    </div>
-    <p className={Style.dedicationSignature}>
-      With all our love, gratitude, and admiration,<br />
-      Brad, Jim, Flo, Jordi & Amos
-    </p>
-  </div>
-</div>
+            <h2 className={Style.dedicationTitle}>To Our Unbreakable Community</h2>
+            <div className={Style.dedicationPages}>
+              <div className={Style.dedicationPage}>
+                <p className={Style.dedicationParagraph}>
+                  This is for you—the loyal, rock-solid holders who have stood by us through every high and low. The Medals of Honor are our tribute to you, to your belief in us when we were tested, to the strength of your support that lifted us up and carried us forward. You’ve been more than a community; you are our family, the very heartbeat of everything we’ve built, and you deserve all the gratitude and honor we can give.
+                </p>
+              </div>
+              <div className={Style.dedicationPage}>
+                <p className={Style.dedicationParagraph}>
+                  We remember the times when the path grew dark. Not only did the Caller Syndicate try to tear us down, but two of our own team members betrayed us, challenging everything we had worked for. But through it all, you stayed. You believed. Your unwavering dedication gave us the courage to rise above every challenge. Because of you, we didn’t just survive—we thrived. Today, our businesses are reaching new heights, our vision is expanding, and our future looks brighter than ever, all thanks to your steadfast loyalty and unbreakable faith.
+                </p>
+              </div>
+              <div className={Style.dedicationPage}>
+                <p className={Style.dedicationParagraph}>
+                  These Medals are more than symbols; they carry the story of resilience, unity, and the powerful loyalty that you showed us. They honor those who stayed true, who believed in a vision bigger than any setback, and who have been with us through every step of this journey. They are for you, and for those who will join us, inspired by your example to become part of something extraordinary.
+                </p>
+              </div>
+              <div className={Style.dedicationPage}>
+                <p className={Style.dedicationParagraph}>
+                  As we look to the future, these Medals represent the legacy we are building together. They are a promise to each of you—a promise that we will continue to grow, to innovate, and to honor the incredible support you have given us. For those who join us next, may they learn from the strength of this community and feel the depth of commitment that each Medal represents.
+                </p>
+              </div>
+              <div className={Style.dedicationPage}>
+                <p className={Style.dedicationParagraph}>
+                  From the depths of our hearts, thank you. Thank you for standing by us, for fighting with us, and for believing in a vision that grows brighter every day because of you. We are endlessly grateful to have each of you with us, not just as holders, but as true partners in this dream.
+                </p>
+              </div>
+              <div className={Style.dedicationPage}>
+                <p className={Style.dedicationParagraph}>
+                  To all of you, with all that we have: here’s to the future, to your future, and to the legacy we are building together. You are the soul of this project, the reason we strive, and the family we are so proud to have by our side.
+                </p>
+              </div>
+              <p className={Style.dedicationSignature}>
+                With all our love, gratitude, and admiration,<br />
+                Brad, Jim, Flo, Jordi & Amos
+              </p>
+            </div>
+          </div>
 
         </>
       )
@@ -369,7 +385,7 @@ const TheForgePage = () => {
         { title: "Event Access", description: "Lifetime highest VIP access to all company-hosted events." },
         { title: "Private Events", description: "Invitations to exclusive, events with industry leaders and creators among the Executive Board of XdRiP Digital Management LLC." },
         { title: "Revenue Statement", description: "Detailed and personalized quarterly reports with 1:1 interaction with the Executive board." },
-        { title: "Community Voting", description:"Voting rights on company initiatives and tokenization projects." },
+        { title: "Community Voting", description: "Voting rights on company initiatives and tokenization projects." },
         { title: "Executive Board Access", description: "Executive Board access, with a direct influence on future projects." },
         { title: "Global Revenue Share", description: "Highest and significative ROI Benefit translating into 0.5% share of total platform revenue." },
         { title: "Legacy Recognition", description: "Eternal holders are immortalized in a special section of the platform." },
@@ -438,17 +454,9 @@ const TheForgePage = () => {
           </div>
           <div className={Style.glowingDivider}></div>
           <div className={Style.fourth_component}>
-          <h1 className={Style.component_title_text}>DOT DOCUMENTATION</h1>
+            <h1 className={Style.component_title_text}>DOT DOCUMENTATION</h1>
             <div className={Style.flipbookwrapper}>
-              <div
-                className={
-                  isMobile
-                    ? Style.flipBookMobile
-                    : isBookOpen
-                      ? Style.flipBookOpen
-                      : Style.flipBookClosed
-                }
-              >
+              <div className={isMobile ? Style.flipBookMobile : isBookOpen ? Style.flipBookOpen : Style.flipBookClosed}>
                 <HTMLFlipBook
                   width={isMobile ? window.innerWidth * 0.8 : 550}
                   height={isMobile ? window.innerHeight * 0.6 : 733}
@@ -459,14 +467,11 @@ const TheForgePage = () => {
                   flippingTime={1000}
                   usePortrait={isMobile}
                   startZIndex={0}
+                  showSwipeHint={true}
+                  autoCenter={true}
                   autoSize={true}
                   mobileScrollSupport={true}
-                  onStartFlip={(e) => setIsBookOpen(true)}
-                  onFlipEnd={(e) => {
-                    if (e.data === 0) {
-                      setIsBookOpen(false);
-                    }
-                  }}
+                  onFlip={handleFlip}
                 >
                   {pages.map((pageContent, index) => (
                     <PageComponent
@@ -481,6 +486,7 @@ const TheForgePage = () => {
               </div>
             </div>
           </div>
+
           <div className={Style.glowingDivider}></div>
           <div className={Style.fifth_component}>
             <SocialButtons />
@@ -525,10 +531,6 @@ const TheForgePage = () => {
             <UserAgreement
               isOpen={isUserAgreementModalOpen}
               onRequestClose={() => setIsUserAgreementModalOpen(false)}
-            />
-            <WalkthroughModal
-              isOpen={isModalOpen}
-              onRequestClose={() => setIsModalOpen(false)}
             />
           </div>
         </MyDotData>
