@@ -1,0 +1,98 @@
+.infoModal {
+    background: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    align-content: center;
+    z-index: 1000;
+  }
+
+  .infoModalOverlay {
+    background: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .infoModalContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    align-content: center;   
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 90%;
+    width: 90%;
+    background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
+    box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+    max-height: 90vh;
+    position: relative;
+  }
+
+  .infoModalContent h3 {
+    margin: 0 0 0px;
+    font-size: 1.2em;
+  }
+
+  .infoModalContent p {
+    margin: 5px 0;
+  }  
+
+  .tableWrapper {
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+  
+  .medalTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  
+  .medalTable th, .medalTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .medalTable th {
+    font-weight: bold;
+  }
+  
+  .closeButtonContainer {
+    text-align: center;
+    margin-top: 15px;
+  }
+  
+  .closeButton{
+    background-color: #444;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .closeButtonContainer button:hover {
+    background-color: #666;
+  }
+
+  .top{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }

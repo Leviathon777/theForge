@@ -4,30 +4,52 @@ import { arrayUnion } from 'firebase/firestore';
 import { firestore, db } from "./config";
 
 /************************************************************************************
-                   ADD NEW USER TO FIREBASE WHEN WALLET CONNECTS
-*************************************************************************************/
-export const addWalletUser = async (walletAddress) => {
+                   ADD NEW FORGER TO FIREBASE AND SEND EMAIL
+************************************************************************************/
+export const addForger = async (walletAddress, email, name, agreed, dateOfJoin) => {
   const firestore = getFirestore();
-  const userRef = collection(firestore, "forgeUsers");  
+  const forgerRef = collection(firestore, "forgers");  
+  const mailRef = collection(firestore, "mail");
+
   try {
-    const userDocData = {
-      walletAddress: walletAddress,
-      createdAt: new Date(),
-    };
-    await setDoc(doc(userRef, walletAddress), userDocData);
-    console.log('User created successfully');
+      const forgerDocData = {
+          walletAddress,
+          email,
+          name,
+          agreed,
+          dateOfJoin
+      };
+      await setDoc(doc(forgerRef, walletAddress), forgerDocData);
+      console.log("Forger created successfully:", forgerDocData);
+
+      const emailDocData = {
+          to: [email],
+          message: {
+              subject: "Welcome to The Forge!",
+              text: `Hi ${name},\n\nWelcome to The Forge! Your journey has begun.`,
+              html: `
+                <p>Hi <strong>${name}</strong>,</p>
+                <p>Welcome to <strong>The Forge</strong>! We're thrilled to have you on this journey.</p>
+                <p>Start forging your legacy today.</p>
+                <p>Best regards,</p>
+                <p><strong>The XDRIP Digital Management Team</strong></p>
+              `,
+          },
+      };
+      await addDoc(mailRef, emailDocData);
+      console.log("Welcome email queued successfully:", emailDocData);
   } catch (error) {
-    console.error("Error adding user: ", error.message);
-    throw error;
+      console.error("Error adding forger or sending email:", error.message);
+      throw error;
   }
 };
 
 /************************************************************************************
                         GET USER INFO WHEN WALLET CONNECTS
 *************************************************************************************/
-export const getWalletUser = async (walletAddress) => {
+export const getForger = async (walletAddress) => {
     const firestore = getFirestore();
-    const userRef = collection(firestore, "forgeUsers");  
+    const userRef = collection(firestore, "forgers");  
     try {
       const existingUserQuery = query(userRef, where("walletAddress", "==", walletAddress));
       const existingUserSnapshot = await getDocs(existingUserQuery);  
@@ -48,9 +70,9 @@ export const getWalletUser = async (walletAddress) => {
 /************************************************************************************
                   LOGGING MEDAL PURCHASE AND RAMP PROGRESSION
 *************************************************************************************/
-  export const logMedalPurchase = async (walletAddress, medalType, price, transactionHash) => {
+  export const logMedalPurchase = async (walletAddress, medalType, price, transactionHash, revenuePrecent, xdripBonusPercent) => {
     const firestore = getFirestore();
-    const userRef = doc(firestore, "forgeUsers", walletAddress);  
+    const userRef = doc(firestore, "forgers", walletAddress);  
     try {
       const userDoc = await getDoc(userRef);      
       if (!userDoc.exists()) {
@@ -74,6 +96,8 @@ export const getWalletUser = async (walletAddress) => {
         medalType,
         price,
         transactionHash,
+        revenuePrecent,
+        xdripBonusPercent,
         timestamp: new Date(),
       };  
       await updateDoc(userRef, {
@@ -85,6 +109,44 @@ export const getWalletUser = async (walletAddress) => {
       throw error;
     }
   };  
+
+/************************************************************************************
+                          SEND RECIEPT EMAIL TO THE FORGER
+*************************************************************************************/
+  export const sendReceiptEmail = async (email, name, medalType, price, transactionHash) => {
+    const firestore = getFirestore();
+    const mailRef = collection(firestore, "mail");
+  
+    try {
+      const emailDocData = {
+        to: [email],
+        message: {
+          subject: "Your Medal of Honor Receipt",
+          text: `Hi ${name},\n\nCongratulations on forging your ${medalType} Medal of Honor. Here are the details:\n\nMedal Type: ${medalType}\nPrice: ${price} BNB\nTransaction ID: ${transactionHash}\n\nThank you for your continued support!\n\nThe Forge Team`,
+          html: `
+            <div style="font-family: Arial, sans-serif; text-align: left;">
+              <h1>Congratulations on forging your ${medalType} MEDAL OF HONOR!</h1>
+              <p><strong>Here are your transaction details:</strong></p>
+              <ul>
+                <li><strong>Medal Type:</strong> ${medalType}</li>
+                <li><strong>Price:</strong> ${price} BNB</li>
+                <li><strong>Transaction ID:</strong> ${transactionHash}</li>
+              </ul>
+              <p>We appreciate your support and hope you enjoy your new medal.</p>
+              <p>Best regards,</p>
+              <p><strong>The Forge Team</strong></p>
+            </div>
+          `,
+        },
+      };
+  
+      await addDoc(mailRef, emailDocData);
+      console.log("Receipt email queued successfully:", emailDocData);
+    } catch (error) {
+      console.error("Error sending receipt email:", error.message);
+      throw error;
+    }
+  };
 
 /************************************************************************************
                   TRACKING TRANSACTIONS FOR FULL LOGGING

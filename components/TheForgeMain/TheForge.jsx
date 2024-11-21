@@ -16,7 +16,7 @@ import { MyDotDataContext } from "../../Context/MyDotDataContext.js";
 import Style from "./theForge.module.css";
 import moreStyles from "../Button/Button.module.css";
 import videos from "../../public/videos/index.js";
-import { Button, VideoPlayer, DotDetailsModal, WalkthroughModal } from "../componentsindex.js";
+import { Button, VideoPlayer, DotDetailsModal, WalkthroughModal, CheckoutModal } from "../componentsindex.js";
 import { ethers } from "ethers";
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
 import ipfsHashes from "../../Context/ipfsHashes.js";
@@ -25,7 +25,7 @@ import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
-import { getWalletUser, addWalletUser, logMedalPurchase, trackDetailedTransaction } from "../../firebase/forgeServices";
+import { getForger, addForger, logMedalPurchase, sendReceiptEmail, trackDetailedTransaction } from "../../firebase/forgeServices";
 const MohAddress = mohCA_ABI.address;
 const MohABI = mohCA_ABI.abi;
 const fetchMohContract = (signerOrProvider) =>
@@ -58,40 +58,40 @@ const TheForge = () => {
   const [currentAccount, setCurrentAccount] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+
   useEffect(() => {
     const handleWalletConnect = async () => {
       if (address) {
         setCurrentAccount(address);
+        console.log(`Wallet connected: ${address}`);        
         try {
-          const userData = await getWalletUser(address);          
+          const userData = await getForger(address);
           if (userData) {
             setCurrentUser(userData);
-            console.log("Existing user data loaded:", userData);
+            console.log("User info fetched successfully:", userData);
           } else {
-            await addWalletUser(address);
-            const newUserData = await getWalletUser(address);
-            setCurrentUser(newUserData);
-            console.log("New user created and data loaded:", newUserData);
+            console.log("No user info available. Proceeding without user info.");
           }
         } catch (error) {
-          toast.error("Error handling wallet connection. Please try again.");
-          console.error(error);
+          console.error("Error fetching user info:", error);
         }
       } else {
         setCurrentAccount("");
         setCurrentUser(null);
       }
-    };
+    };  
     handleWalletConnect();
   }, [address]);
 
   const mohData = [
-    { title: "COMMON", id: 1, price: "0.5 BNB", description: "Common Medal, forged in the fires of battle, honors the unwavering courage and steadfast determination of XdRiP warriors. This emblem recognizes those who consistently face adversity with resilience and commitment, playing a foundational role within the XdRiP community. Bearing this medal signifies a warrior’s dedication to the cause and their readiness to uphold the strength and integrity of our ranks in every challenge they encounter.", medalVideo: videos.common, ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url, inventory: { forged: 0, available: 10000, }, },
-    { title: "UNCOMMON", id: 2, price: "1 BNB", description: "Uncommon Medal, meticulously crafted by master artisans, symbolizes the exceptional strength and valor of XdRiP warriors who transcend the ordinary. This prestigious emblem honors individuals who demonstrate superior skills and unwavering bravery in the face of formidable challenges. Holding this medal signifies a distinguished place within the XdRiP community, acknowledging those who strive to exceed expectations and lead by remarkable example.", medalVideo: videos.uncommon, ipfsHash: ipfsHashes.find((hash) => hash.title === "UNCOMMON").url, inventory: { forged: 0, available: 5000, }, },
-    { title: "RARE", id: 3, price: "1.5 BNB", description: "Rare Medal, forged from rare and precious metals, stands as a testament to the elite few who exhibit unparalleled bravery and honor within the XdRiP ranks. This distinguished emblem recognizes warriors who achieve extraordinary feats, showcasing exceptional prowess and unwavering dedication. Possessing this medal signifies an esteemed status and highlights significant contributions to the enduring mission of XdRiP, celebrating those who consistently go above and beyond.", medalVideo: videos.rare, ipfsHash: ipfsHashes.find((hash) => hash.title === "RARE").url, inventory: { forged: 0, available: 2500, }, },
-    { title: "EPIC", id: 4, price: "2 BNB", description: "Epic Medal, wrought with mystical powers, signifies the legendary feats accomplished by the most heroic and mighty of XdRiP warriors. This extraordinary emblem honors individuals who demonstrate remarkable heroism and strategic brilliance in the most challenging battles. Bearing this medal marks a warrior as a legend within our ranks, celebrated for their enduring impact and heroic legacy that shapes the destiny of XdRiP through unmatched valor and tactical genius", medalVideo: videos.epic, ipfsHash: ipfsHashes.find((hash) => hash.title === "EPIC").url, inventory: { forged: 0, available: 1000, }, },
-    { title: "LEGENDARY", id: 5, price: "2.5 BNB", description: "Legendary Medal, forged by the XdRiP Gods themselves, embodies the ultimate achievement in battle—a rare honor bestowed solely upon the greatest heroes of all time within the XdRiP legacy. This unparalleled emblem recognizes warriors who transcend the ordinary, leaving an indelible mark through extraordinary actions and unwavering dedication. Holding this medal signifies a legacy of greatness and an everlasting bond with the very essence of XdRiP’s heroic spirit.", medalVideo: videos.legendary, ipfsHash: ipfsHashes.find((hash) => hash.title === "LEGENDARY").url, inventory: { forged: 0, available: 500, }, },
-    { title: "ETERNAL", id: 6, price: "200 BNB", description: "Forged in celestial fires, The Eternal DOT embodies a bond of absolute strength with XdRiP Digital Management LLC, reserved for those who seek influence beyond the ordinary. This singular emblem bestows an authority that extends deeply into our realm, empowering its holders with a lasting presence and rare access to the inner sanctum of XdRiP’s vision. As custodians of this legacy, they stand unmatched in their role, helping to shape the future with every step.", medalVideo: videos.eternals, ipfsHash: ipfsHashes.find((hash) => hash.title === "ETERNAL").url, inventory: { forged: 0, available: 20, }, },];
+    { title: "COMMON", id: 1, price: "0.5 BNB", description: "Common Medal, forged in the fires of battle, honors the unwavering courage and steadfast determination of XdRiP warriors. This emblem recognizes those who consistently face adversity with resilience and commitment, playing a foundational role within the XdRiP community. Bearing this medal signifies a warrior’s dedication to the cause and their readiness to uphold the strength and integrity of our ranks in every challenge they encounter.", revenueAccess: "10%", xdripBonus: "2%", medalVideo: videos.common, ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url, inventory: { forged: 0, available: 10000, }, },
+    { title: "UNCOMMON", id: 2, price: "1 BNB", description: "Uncommon Medal, meticulously crafted by master artisans, symbolizes the exceptional strength and valor of XdRiP warriors who transcend the ordinary. This prestigious emblem honors individuals who demonstrate superior skills and unwavering bravery in the face of formidable challenges. Holding this medal signifies a distinguished place within the XdRiP community, acknowledging those who strive to exceed expectations and lead by remarkable example.", revenueAccess: "25%", xdripBonus: "5%", medalVideo: videos.uncommon, ipfsHash: ipfsHashes.find((hash) => hash.title === "UNCOMMON").url, inventory: { forged: 0, available: 5000, }, },
+    { title: "RARE", id: 3, price: "1.5 BNB", description: "Rare Medal, forged from rare and precious metals, stands as a testament to the elite few who exhibit unparalleled bravery and honor within the XdRiP ranks. This distinguished emblem recognizes warriors who achieve extraordinary feats, showcasing exceptional prowess and unwavering dedication. Possessing this medal signifies an esteemed status and highlights significant contributions to the enduring mission of XdRiP, celebrating those who consistently go above and beyond.", revenueAccess: "45%", xdripBonus: "7%", medalVideo: videos.rare, ipfsHash: ipfsHashes.find((hash) => hash.title === "RARE").url, inventory: { forged: 0, available: 2500, }, },
+    { title: "EPIC", id: 4, price: "2 BNB", description: "Epic Medal, wrought with mystical powers, signifies the legendary feats accomplished by the most heroic and mighty of XdRiP warriors. This extraordinary emblem honors individuals who demonstrate remarkable heroism and strategic brilliance in the most challenging battles. Bearing this medal marks a warrior as a legend within our ranks, celebrated for their enduring impact and heroic legacy that shapes the destiny of XdRiP through unmatched valor and tactical genius", revenueAccess: "70%", xdripBonus: "10%", medalVideo: videos.epic, ipfsHash: ipfsHashes.find((hash) => hash.title === "EPIC").url, inventory: { forged: 0, available: 1000, }, },
+    { title: "LEGENDARY", id: 5, price: "2.5 BNB", description: "Legendary Medal, forged by the XdRiP Gods themselves, embodies the ultimate achievement in battle—a rare honor bestowed solely upon the greatest heroes of all time within the XdRiP legacy. This unparalleled emblem recognizes warriors who transcend the ordinary, leaving an indelible mark through extraordinary actions and unwavering dedication. Holding this medal signifies a legacy of greatness and an everlasting bond with the very essence of XdRiP’s heroic spirit.", revenueAccess: "100%", xdripBonus: "15%", medalVideo: videos.legendary, ipfsHash: ipfsHashes.find((hash) => hash.title === "LEGENDARY").url, inventory: { forged: 0, available: 500, }, },
+    { title: "ETERNAL", id: 6, price: "200 BNB", description: "Forged in celestial fires, The Eternal DOT embodies a bond of absolute strength with XdRiP Digital Management LLC, reserved for those who seek influence beyond the ordinary. This singular emblem bestows an authority that extends deeply into our realm, empowering its holders with a lasting presence and rare access to the inner sanctum of XdRiP’s vision. As custodians of this legacy, they stand unmatched in their role, helping to shape the future with every step.", revenueAccess: "Global", xdripBonus: "N/A", medalVideo: videos.eternals, ipfsHash: ipfsHashes.find((hash) => hash.title === "ETERNAL").url, inventory: { forged: 0, available: 20, }, },];
   const togglePrice = () => {
     setIsBNBPrice(!isBNBPrice);
   };
@@ -136,27 +136,46 @@ const TheForge = () => {
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => handleArrowClick("right"),
     onSwipedRight: () => handleArrowClick("left"),
+    onTap: (eventData) => {
+      const tappedCard = eventData.event.target.closest(`.${Style.card}`);
+      if (tappedCard) {
+        const index = cardRefs.current.indexOf(tappedCard);
+        if (index !== -1) {
+          handleCardClick(index);
+        }
+      }
+    },
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
+  
   const handleArrowClick = (direction) => {
     controls.stop();
 
-    // Calculate the rotation offset to the nearest card
     const remainder = currentRotation % rotationStep;
     const closestRotationAdjustment = remainder > rotationStep / 2 ? rotationStep - remainder : -remainder;
 
-    // Calculate target rotation to move directly to the closest card
     const delta = direction === "right" ? -rotationStep : rotationStep;
     const targetRotation = currentRotation + closestRotationAdjustment + delta;
 
-    // Update current rotation state and start the animation
+
     setCurrentRotation(targetRotation);
     controls.start({
       rotateY: targetRotation,
       transition: { duration: 1, ease: "easeInOut" },
     });
   };
+  const handleCardClick = (index) => {
+    controls.stop();  
+    const targetRotation = -rotationStep * index;
+    setCurrentRotation(targetRotation);
+  
+    controls.start({
+      rotateY: targetRotation,
+      transition: { duration: 1, ease: "easeInOut" },
+    });
+  };
+  
   useEffect(() => {
     const fetchBNBPrice = async () => {
       try {
@@ -275,8 +294,37 @@ const TheForge = () => {
     }
   };
 
+  const handleUserInfoSubmit = async (info) => {
+    if (!address) {
+        console.error("Wallet address is not available.");
+        return;
+    }
+    try {
+        const dateOfJoin = new Date();
+        await addForger(address, info.email, info.name, info.agreed, dateOfJoin);
+        setUserInfo({ ...info, dateOfJoin });
+        console.log("Forger info collected and saved:", { ...info, dateOfJoin });
+    } catch (error) {
+        console.error("Error adding forger:", error);
+        toast.error("Failed to save your information. Please try again.");
+    }
+};
 
-  const mint = async (medalType, ipfsHash) => {
+  
+
+  const handleMintClick = (medalType, ipfsHash, revenueAccess, xdripBonus) => {
+    if (!userInfo) {
+      setIsUserInfoModalOpen(true);
+    } else {
+      mint(medalType, ipfsHash, revenueAccess, xdripBonus);
+    }
+  };
+
+  const mint = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
+    if (!userInfo) {
+      console.error("User info not provided!");
+      return;
+    }
     try {
       console.log("Minting medal of type:", medalType);
       if (!signer) {
@@ -375,7 +423,14 @@ const TheForge = () => {
       if (receipt.status === 1) {
         toast.success("Your Medal Of Honor was forged successfully!");
         await fetchDots();
-        await logMedalPurchase(address, medalType, itemPrice, transaction.hash);   
+        await logMedalPurchase(address, medalType, itemPrice, transaction.hash, revenueAccess, xdripBonus);
+        await sendReceiptEmail(
+          userInfo.email,
+          userInfo.name,
+          medalType,
+          itemPrice,
+          transaction.hash
+        );
         const transactionData = {
           transactionHash: receipt.transactionHash,
           status: "Success",
@@ -385,10 +440,12 @@ const TheForge = () => {
           from: address,
           to: MohAddress,
           valueBNB: ethers.utils.formatEther(ethers.utils.parseUnits(itemPrice, "ether")),
-          gasUsed: receipt.gasUsed?.toNumber(),       
+          gasUsed: receipt.gasUsed?.toNumber(),
           inputData: transaction.data,
+          revenuePrecent: revenueAccess,
+          xdripBonusPercent: xdripBonus,
         };
-  
+
         await trackDetailedTransaction(address, medalType, transactionData);
       } else {
         toast.error("Transaction failed. Please try again.");
@@ -649,6 +706,7 @@ const TheForge = () => {
                   key={index}
                   ref={(el) => (cardRefs.current[index] = el)}
                   className={Style.card}
+                  onClick={() => handleCardClick(index)}
                 >
                   <div className={Style.card_inner}>
                     <div className={`${Style.card_face} ${Style.card_front}`}>
@@ -683,7 +741,7 @@ const TheForge = () => {
                             <div className={Style.button_wrapper}>
                               <Button
                                 btnName="FORGE"
-                                onClick={() => mint(item.title, item.ipfsHash)}
+                                onClick={() => handleMintClick(item.title, item.ipfsHash, item.revenueAccess, item.xdripBonus)}
                                 classStyle="size1"
                                 fontSize="12px"
                                 padding="0px 0px"
@@ -710,7 +768,7 @@ const TheForge = () => {
                                 >
                                   {isBNBPrice
                                     ? `${item.price}`
-                                    : `$${bnbToUsd ? (parseFloat(item.price) * bnbToUsd).toFixed(2) : 'Loading...'} USD` // Show USD price
+                                    : `$${bnbToUsd ? (parseFloat(item.price) * bnbToUsd).toFixed(2) : 'Loading...'} USD`
                                   }
                                 </p>
                               </div>
@@ -783,13 +841,16 @@ const TheForge = () => {
           />
         )}
         {isModalOpen && (
-          <div className={Style.walkthrough_overlay}>
-            <WalkthroughModal
-              isOpen={isModalOpen}
-              onRequestClose={() => setIsModalOpen(false)}
-            />
-          </div>
+          <WalkthroughModal
+            isOpen={isModalOpen}
+            onRequestClose={() => setIsModalOpen(false)}
+          />
         )}
+        <CheckoutModal
+          isOpen={isUserInfoModalOpen}
+          onClose={() => setIsUserInfoModalOpen(false)}
+          onSubmit={handleUserInfoSubmit}
+        />
         {isConfirmationModalVisible && (
           <div className={Style.confirmation_modal}>
             <div className={Style.confirmation_modal_content}>

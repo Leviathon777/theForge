@@ -19,6 +19,7 @@
   padding: 2rem;
   max-width: 1000px;
   max-height: 100%;
+  gap: 1rem;
 }
 
 .modalOverlay {
@@ -37,14 +38,14 @@
 .modalOverlay h2 {
   font-size: 2.5rem;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   text-align: center;
 }
 
 .h3 {
   font-size: 18px;
   font-weight: 600;
-  margin-top: 20px;
+  margin-top: 0px;
   margin-bottom: 10px;
   color: #444;
 }

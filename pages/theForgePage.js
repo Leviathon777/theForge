@@ -93,8 +93,6 @@ const PageComponent = memo(
     );
   })
 );
-
-
 const TheForgePage = () => {
   const [bnbPrice, setBnbPrice] = useState(null);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
@@ -266,9 +264,6 @@ const TheForgePage = () => {
         },
       ]
     },
-
-
-
     { title: "Uncommon Tier", imageSrc: "/img/uncommon.png", supply: "5,000 Medals", price: 1.0 },
     {
       title: "Uncommon Tier Benefits", benefits: [
@@ -292,9 +287,6 @@ const TheForgePage = () => {
         },
       ]
     },
-
-
-
     { title: "Rare Tier", imageSrc: "/img/rare.png", supply: "2,500 Medals", price: 1.5 },
     {
       title: "Rare Tier Benefits", benefits: [
@@ -394,11 +386,18 @@ const TheForgePage = () => {
   ];
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 1.5, ease: "easeInOut" }}
-      style={{ willChange: "opacity, transform" }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 2, ease: "easeInOut" }}
       className={Style.theForge}
+      style={{
+        height: "100vh",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+      }}
     >
       <div className={Style.theForge_content}>
         <div className={Style.first_component}>
@@ -449,12 +448,12 @@ const TheForgePage = () => {
           </div>
           <div className={Style.glowingDivider}></div>
           <div className={Style.third_component}>
-            <h1 className={Style.component_title_text}>YOUR MEDALS DISPLAY CASE</h1>
-            <DotWallet />
+            <h1 className={Style.component_title_text}>MEDALS OF HONOR WALLET</h1>
+            <DotWallet address={address} />
           </div>
           <div className={Style.glowingDivider}></div>
           <div className={Style.fourth_component}>
-            <h1 className={Style.component_title_text}>DOT DOCUMENTATION</h1>
+            <h1 className={Style.component_title_text}>MEDALS OF HONOR BENEFITS</h1>
             <div className={Style.flipbookwrapper}>
               <div className={isMobile ? Style.flipBookMobile : isBookOpen ? Style.flipBookOpen : Style.flipBookClosed}>
                 <HTMLFlipBook

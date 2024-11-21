@@ -137,6 +137,7 @@
   justify-content: center;
   align-items: center;
   position: relative;
+  
 }
 
 .flipBook {
@@ -148,6 +149,7 @@
   padding: 20px;
   justify-content: center;
   align-items: center;  
+  
 }
 
 .flipBookMobile {
@@ -185,6 +187,7 @@
   border-right: .1rem solid rgba(78, 78, 78, 0.411);
   border-bottom-right-radius: 1rem;
   border-top-right-radius: 1rem;
+  cursor: pointer;
 }
 
 .cover .pageWrapper {
@@ -238,6 +241,7 @@
   background: var(--background-gradient-dark);
   border-top-left-radius: 1rem;
   border-bottom-left-radius: 1rem;
+  cursor: pointer;
 }
 
 .dedicationContainer{
@@ -286,6 +290,7 @@
   padding: 20px;
   border-bottom-right-radius: 1rem;
   border-top-right-radius: 1rem;
+  cursor: pointer;
 }
 
 .contents_page .page_inner {
@@ -329,6 +334,7 @@
 
 /* RIGHT PAGE CSS CODE REVERSED PAGE NAMES */
 .page_right {
+  cursor: pointer;
   background: var(--background-gradient-dark);
   border-top-right-radius: 1rem;
   border-bottom-right-radius: 1rem;
@@ -391,6 +397,7 @@
 
 /* CSS for Page Right with Benefits */
 .page_left {
+  cursor: pointer;
   background: var(--background-gradient-dark);
   border-top-left-radius: 1rem;
   border-bottom-left-radius: 1rem;

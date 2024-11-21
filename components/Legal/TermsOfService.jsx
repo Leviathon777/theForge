@@ -11,60 +11,103 @@ const TermsOfService = ({ isOpen, onRequestClose }) => (
     overlayClassName={Style.modalOverlay}
   >
     <div className={Style.modal_wrapper}>
-    <h2>Terms of Service</h2>
-    <p>These Terms of Service govern your use of our minting platform. Please read them carefully.</p>
+      <h2>Terms of Service</h2>
+      <p>
+        Welcome to <strong>The Forge - Medals of Honor</strong>, a platform
+        developed by XDRIP Digital Management LLC. Please read these Terms of
+        Service carefully before using the platform.
+      </p>
 
-    <h3>1. Scope of Service</h3>
-    <p>
-      Our platform allows users to mint digital assets on the blockchain by connecting their wallets. We do not control or manage user wallets or blockchain networks, and we provide no warranties regarding the availability or performance of blockchain services.
-    </p>
+      <h3>1. Acceptance of Terms</h3>
+      <p>
+        By accessing or using the platform, you confirm that you are at least 18
+        years old and have the legal capacity to enter into these Terms. If you
+        do not agree with these Terms, please refrain from using the platform.
+      </p>
 
-    <h3>2. Account and Wallet Responsibility</h3>
-    <p>
-      You are solely responsible for securing access to your wallet and private keys. We do not have access to your private keys and cannot recover lost assets or accounts. Any transaction initiated through your wallet is your responsibility.
-    </p>
+      <h3>2. Overview of Services</h3>
+      <p>
+        The Forge enables users to invest in blockchain-based Digital Ownership
+        Tokens ("D.O.Ts") and manage them within decentralized finance ("DeFi")
+        wallets. Users can either:
+      </p>
+      <ul>
+        <li>Create a DeFi wallet via the platform using thirdweb dev tools.</li>
+        <li>Connect an existing self-custody wallet.</li>
+      </ul>
+      <p>
+        The platform also tracks transactions and purchases using Firebase. KYC
+        is not currently required but may be implemented in the future to comply
+        with regulations.
+      </p>
 
-    <h3>3. Fees and Transactions</h3>
-    <p>
-      All transactions involve network fees, and we may charge a fee for minting services. You agree to pay all fees associated with transactions on this platform, and you acknowledge that all fees are non-refundable.
-    </p>
+      <h3>3. Wallet Responsibility</h3>
+      <p>
+        You are solely responsible for maintaining the security of your wallet
+        credentials. XDRIP Digital Management LLC is not liable for unauthorized
+        access to your wallet or transactions initiated from it.
+      </p>
 
-    <h3>4. Prohibited Conduct</h3>
-    <p>
-      You may not use the platform for illegal activities, including but not limited to money laundering, fraud, or any other activity prohibited by applicable law. We reserve the right to restrict access to the platform for any user engaging in prohibited conduct.
-    </p>
+      <h3>4. Investment Disclaimer</h3>
+      <p>
+        Investing in D.O.Ts involves inherent risks, including market volatility
+        and regulatory uncertainties. XDRIP Digital Management LLC does not
+        provide financial or investment advice. Consult a qualified professional
+        before making investment decisions.
+      </p>
 
-    <h3>5. Compliance with Local Laws</h3>
-    <p>
-      You are responsible for ensuring that your use of the platform complies with all applicable laws, regulations, and guidelines in your jurisdiction. You acknowledge that we have no obligation to monitor compliance on your behalf.
-    </p>
+      <h3>5. User Conduct</h3>
+      <p>
+        By using the platform, you agree to:
+      </p>
+      <ul>
+        <li>Use the platform solely for lawful purposes.</li>
+        <li>
+          Refrain from activities that disrupt or compromise the platform’s
+          functionality.
+        </li>
+        <li>Not engage in fraudulent or misleading activities.</li>
+      </ul>
 
-    <h3>6. Intellectual Property</h3>
-    <p>
-      All content on this platform, including text, graphics, logos, and software, is our property or the property of our licensors. You agree not to reproduce, distribute, or otherwise use any content without our express permission.
-    </p>
+      <h3>6. Privacy</h3>
+      <p>
+        The platform collects wallet-related data to track transactions and
+        purchases. By connecting your wallet, you consent to this collection and
+        usage as outlined in our Privacy Policy.
+      </p>
 
-    <h3>7. Indemnification</h3>
-    <p>
-      You agree to indemnify, defend, and hold us harmless from any claims, damages, or expenses arising from your use of the platform or any breach of these Terms of Service.
-    </p>
+      <h3>7. Limitation of Liability</h3>
+      <p>
+        XDRIP Digital Management LLC is not liable for losses caused by:
+      </p>
+      <ul>
+        <li>Blockchain network outages or technical failures.</li>
+        <li>Unauthorized wallet access.</li>
+        <li>Investment losses due to market conditions.</li>
+      </ul>
 
-    <h3>8. Limitation of Liability</h3>
-    <p>
-      We are not liable for any damages arising from your use of the platform, including loss of assets, data breaches, or unauthorized access to your wallet. You use the platform at your own risk.
-    </p>
+      <h3>8. Dispute Resolution</h3>
+      <p>
+        If you have a dispute, please contact us at [Insert Contact Email]. We
+        will attempt to resolve disputes amicably.
+      </p>
 
-    <h3>9. Modifications to Terms</h3>
-    <p>
-      We may revise these Terms of Service at any time. Continued use of the platform constitutes acceptance of any modified terms.
-    </p>
+      <h3>9. Changes to Terms</h3>
+      <p>
+        We may update these Terms from time to time. Continued use of the
+        platform constitutes acceptance of the updated Terms.
+      </p>
 
-    <h3>10. Governing Law</h3>
-    <p>
-      These Terms of Service shall be governed by and construed in accordance with the laws of [Your Jurisdiction]. Any disputes arising from these terms shall be subject to the exclusive jurisdiction of the courts of [Your Jurisdiction].
-    </p>
+      <h3>10. Governing Law</h3>
+      <p>
+        These Terms are governed by and construed in accordance with the laws of
+        [COLORADO, USA]. Disputes will be resolved under the exclusive
+        jurisdiction of the courts of [COLORADO, USA].
+      </p>
     </div>
-    <button onClick={onRequestClose} className={Style.closeButton}>Close</button>
+    <button onClick={onRequestClose} className={Style.closeButton}>
+      Close
+    </button>
   </Modal>
 );
 
