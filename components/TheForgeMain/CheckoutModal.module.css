@@ -1,0 +1,103 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modalContent {
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
+    box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+    text-align: center;
+  }
+  
+  .modalContent h2 {
+    margin-bottom: 20px;
+  }
+  
+  .modalContent input[type="text"],
+  .modalContent input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .checkboxWrapper {
+    margin: 15px 0;
+    text-align: center;
+  }
+  
+  .checkboxWrapper label {
+    font-size: 16px;
+    padding-left: .25rem;
+  }
+  
+  .modalContent .submitButton {
+    margin: 10px 5px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .modalContent .cancelButton {
+    background-color: #d9534f;
+    margin: 10px 5px;
+    padding: 10px 20px;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+
+  .linkButton {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font-size: inherit;
+    color: #0056b3;
+  }
+  
+  .linkButton:hover {
+    color: #0071eb;
+  }
+
+  .notice {
+    font-size: 14px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    text-align: left;
+    background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
+    box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .notice ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  
+  .notice li {
+    margin-bottom: 10px;
+    list-style-type: disc;
+  }
+  
+  

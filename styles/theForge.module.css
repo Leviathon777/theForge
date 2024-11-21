@@ -130,16 +130,14 @@
 }
 
 .flipbookwrapper{
-  background: var(--background-gradient-light);
-  border-radius: 1rem;
-  border: 2px solid var(--color-border);
   padding: 3rem;
-  width: 80%;
+  width: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
- 
+  position: relative;
+  
 }
 
 .flipBook {
@@ -150,7 +148,7 @@
   margin: 0 auto;
   padding: 20px;
   justify-content: center;
-  align-items: center;
+  align-items: center;  
   
 }
 
@@ -166,6 +164,16 @@
 
 }
 
+.flipBookClosed {
+  transform: translateX(-25%);
+  transition: transform 1s ease;
+}
+
+.flipBookOpen {
+  transform: translateX(0);
+  transition: transform 1s ease; 
+}
+
 /* CSS for the front cover page */
 .cover {
   background: rgb(0, 0, 0);
@@ -179,6 +187,7 @@
   border-right: .1rem solid rgba(78, 78, 78, 0.411);
   border-bottom-right-radius: 1rem;
   border-top-right-radius: 1rem;
+  cursor: pointer;
 }
 
 .cover .pageWrapper {
@@ -206,7 +215,6 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-
 .hideTitle {
   display: none;
 }
@@ -233,9 +241,12 @@
   background: var(--background-gradient-dark);
   border-top-left-radius: 1rem;
   border-bottom-left-radius: 1rem;
+  cursor: pointer;
 }
 
 .dedicationContainer{
+  display: flex;
+  flex-direction: column;
   background: var(--background-gradient-light);
   background: var(--background-gradient-light);
   border-radius: 1rem;
@@ -243,6 +254,8 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   padding: .75rem;
   padding-bottom: 0.25rem;
+  width: 100%;
+  height: 100%;
 }
 
 .dedicationTop,
@@ -252,6 +265,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+  
 }
 
 .pageContent_title {
@@ -270,13 +284,13 @@
   line-height: 1.1;
 }
 
-
 /* CSS for the table of contents page */
 .contents_page {
   background: var(--background-gradient-dark);
   padding: 20px;
   border-bottom-right-radius: 1rem;
   border-top-right-radius: 1rem;
+  cursor: pointer;
 }
 
 .contents_page .page_inner {
@@ -320,6 +334,7 @@
 
 /* RIGHT PAGE CSS CODE REVERSED PAGE NAMES */
 .page_right {
+  cursor: pointer;
   background: var(--background-gradient-dark);
   border-top-right-radius: 1rem;
   border-bottom-right-radius: 1rem;
@@ -382,6 +397,7 @@
 
 /* CSS for Page Right with Benefits */
 .page_left {
+  cursor: pointer;
   background: var(--background-gradient-dark);
   border-top-left-radius: 1rem;
   border-bottom-left-radius: 1rem;
@@ -487,6 +503,11 @@
     font-size: 1.5rem;
   }
 
+  .dedicationContainer{
+    width: 100%;
+    height: 100%;
+  }
+
   .dedicationContent{
     border-top-right-radius: 1rem;
     border-bottom-right-radius: 1rem;
@@ -501,7 +522,8 @@
 
   
   .dedicationText { 
-    max-width: 95%;    
+    max-width: 95%; 
+    height: auto;   
   }
   
   .dedicationSignature,
@@ -750,3 +772,40 @@
     padding: 3rem;
   }
 }
+
+
+.dedicationContainer {
+  background: var(--background-gradient-dark);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.144); 
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); 
+  justify-content: center;
+  color: var(--color-light);
+  font-family: Georgia, "Times New Roman", Times, serif;
+  line-height: 1.6;
+}
+
+.dedicationTitle {
+  text-align: center;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  color: var(--color-light); /* Adjust to match background */
+  font-weight: bold;
+}
+
+.dedicationParagraph {
+  text-align: justify;
+  text-indent: 2em;
+  margin-bottom: 1em;
+  color: var(--color-light); /* Ensure readability on darker background */
+}
+
+.dedicationSignature {
+  text-align: right;
+  font-style: italic;
+  color: var(--color-light); /* Match the font color */
+  margin-top: 20px;
+}
+
+
+

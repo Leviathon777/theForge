@@ -3,8 +3,9 @@ import { useAddress, useSigner } from '@thirdweb-dev/react';
 import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { findTransaction } from "../firebase/forgeServices";
 
-// Import ABI and Contract Address
+
 import mohCA_ABI from '../Context/mohCA_ABI.json';
 
 const OwnerOps = () => {
@@ -26,6 +27,10 @@ const OwnerOps = () => {
   const [profitPercentage, setProfitPercentage] = useState('');
   const [contractURI, setContractURI] = useState('');
   const [balance, setBalance] = useState('0');
+  const [searchParam, setSearchParam] = useState('');
+  const [searchType, setSearchType] = useState('transactionHash');
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const address = useAddress();
   const signer = useSigner();
@@ -133,6 +138,36 @@ const OwnerOps = () => {
     }
   };
 
+  const handleSearch = async () => {
+    setLoading(true);
+    setSearchResults([]);
+    try {
+      let results;
+      switch (searchType) {
+        case 'transactionHash':
+          results = await findTransaction({ transactionHash: searchParam });
+          break;
+        case 'tokenId':
+          results = await findTransaction({ tokenId: searchParam });
+          break;
+        case 'purchasedMedal':
+          results = await findTransaction({ purchasedMedal: searchParam });
+          break;
+        default:
+          toast.error('Invalid search type');
+          return;
+      }
+      setSearchResults(results || []);
+      if (!results || results.length === 0) toast.info('No results found.');
+    } catch (error) {
+      toast.error('Error fetching transaction data.');
+      console.error('Error fetching transaction data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <div>
       <h2>Owner Operations</h2>
@@ -177,8 +212,46 @@ const OwnerOps = () => {
         <input type="text" placeholder="Contract URI" value={contractURI} onChange={(e) => setContractURI(e.target.value)} />
         <button onClick={handleUpdateContractURI}>Update URI</button>
       </div>
+      <div>
+        <h3>Search Transactions</h3>
+        <select value={searchType} onChange={(e) => setSearchType(e.target.value)}>
+          <option value="transactionHash">Transaction Hash</option>
+          <option value="tokenId">Token ID</option>
+          <option value="purchasedMedal">Purchased Medal</option>
+        </select>
+        <input
+          type="text"
+          placeholder={`Enter ${searchType}`}
+          value={searchParam}
+          onChange={(e) => setSearchParam(e.target.value)}
+        />
+        <button onClick={handleSearch} disabled={loading}>
+          {loading ? 'Searching...' : 'Search'}
+        </button>
+      </div>
+
+       <div>
+        <h4>Search Results</h4>
+        {searchResults.length > 0 ? (
+          searchResults.map((result, index) => (
+            <div key={index} style={{ border: '1px solid #ddd', padding: '10px', marginBottom: '10px' }}>
+              <p><strong>Transaction Hash:</strong> {result.transactionDetails.transactionHash}</p>
+              <p><strong>Status:</strong> {result.transactionDetails.status}</p>
+              <p><strong>Block Number:</strong> {result.transactionDetails.blockNumber}</p>
+              <p><strong>Timestamp:</strong> {new Date(result.transactionDetails.timestamp.seconds * 1000).toLocaleString()}</p>
+              <p><strong>From:</strong> {result.transactionDetails.from}</p>
+              <p><strong>To:</strong> {result.transactionDetails.to}</p>
+              <p><strong>Medal Purchased:</strong> {result.purchase.medalType}</p>
+              <p><strong>Price:</strong> {result.purchase.price}</p>
+            </div>
+          ))
+        ) : (
+          <p>No results to display</p>
+        )}
+      </div>
     </div>
   );
 };
 
 export default OwnerOps;
+

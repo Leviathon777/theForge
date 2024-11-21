@@ -7,6 +7,18 @@
   padding: 0rem 0rem;
 }
 
+.walkthrough_overlay {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.438); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+
 .the_forge_wrapper {
   display: flex;
   flex-direction: column;

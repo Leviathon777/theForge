@@ -57,16 +57,17 @@ const MyApp = ({ Component, pageProps }) => {
       setAdminWallet(savedAdminWallet);
       return;
     }
+  
     try {
-      const walletInstance = metamaskWallet();
-      await walletInstance.connect();
-      const walletAddress = await walletInstance.getAddress();
-      setAdminWallet(walletInstance);
+      
+      const walletAddress = await walletInstance.getAddress(); // Get wallet address
+      setAdminWallet(walletAddress);
       sessionStorage.setItem("adminWallet", walletAddress);
     } catch (error) {
       console.error("Error connecting admin wallet:", error);
     }
   }, []);
+  
 
   useEffect(() => {
     connectAdminWallet();

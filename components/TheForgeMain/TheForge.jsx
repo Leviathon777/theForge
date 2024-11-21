@@ -16,7 +16,7 @@ import { MyDotDataContext } from "../../Context/MyDotDataContext.js";
 import Style from "./theForge.module.css";
 import moreStyles from "../Button/Button.module.css";
 import videos from "../../public/videos/index.js";
-import { Button, VideoPlayer, DotDetailsModal } from "../componentsindex.js";
+import { Button, VideoPlayer, DotDetailsModal, WalkthroughModal, CheckoutModal } from "../componentsindex.js";
 import { ethers } from "ethers";
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
 import ipfsHashes from "../../Context/ipfsHashes.js";
@@ -25,6 +25,7 @@ import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
+import { getForger, addForger, logMedalPurchase, sendReceiptEmail, trackDetailedTransaction } from "../../firebase/forgeServices";
 const MohAddress = mohCA_ABI.address;
 const MohABI = mohCA_ABI.abi;
 const fetchMohContract = (signerOrProvider) =>
@@ -35,7 +36,7 @@ const web3 = new Web3("https://bsc-dataseed.binance.org/");
 const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
 
 
-const TheForge = ({ setIsModalOpen }) => {
+const TheForge = () => {
   const [selectedMedal, setSelectedMedal] = useState(null);
   const [bnbBalance, setBnbBalance] = useState(null);
   const [bnbToUsd, setBnbToUsd] = useState(null);
@@ -54,30 +55,46 @@ const TheForge = ({ setIsModalOpen }) => {
   const carouselRef = useRef();
   const cardRefs = useRef([]);
   const controls = useAnimation();
-  const [startX, setStartX] = useState(0);
   const [currentAccount, setCurrentAccount] = useState("");
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
-    if (address) {
-      setCurrentAccount(address);
-    } else {
-      setCurrentAccount("");
-    }
+    const handleWalletConnect = async () => {
+      if (address) {
+        setCurrentAccount(address);
+        console.log(`Wallet connected: ${address}`);        
+        try {
+          const userData = await getForger(address);
+          if (userData) {
+            setCurrentUser(userData);
+            console.log("User info fetched successfully:", userData);
+          } else {
+            console.log("No user info available. Proceeding without user info.");
+          }
+        } catch (error) {
+          console.error("Error fetching user info:", error);
+        }
+      } else {
+        setCurrentAccount("");
+        setCurrentUser(null);
+      }
+    };  
+    handleWalletConnect();
   }, [address]);
-  
-
-
 
   const mohData = [
-    { title: "COMMON", id: 1, price: "0.5 BNB", description: "Common Medal, forged in the fires of battle, honors the unwavering courage and steadfast determination of XdRiP warriors. This emblem recognizes those who consistently face adversity with resilience and commitment, playing a foundational role within the XdRiP community. Bearing this medal signifies a warrior’s dedication to the cause and their readiness to uphold the strength and integrity of our ranks in every challenge they encounter.", medalVideo: videos.common, ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url, inventory: {forged: 0,available: 10000,},},
-    { title: "UNCOMMON", id: 2, price: "1 BNB", description: "Uncommon Medal, meticulously crafted by master artisans, symbolizes the exceptional strength and valor of XdRiP warriors who transcend the ordinary. This prestigious emblem honors individuals who demonstrate superior skills and unwavering bravery in the face of formidable challenges. Holding this medal signifies a distinguished place within the XdRiP community, acknowledging those who strive to exceed expectations and lead by remarkable example.", medalVideo: videos.uncommon, ipfsHash: ipfsHashes.find((hash) => hash.title === "UNCOMMON").url, inventory: {forged: 0,available: 5000,},},
-    { title: "RARE", id: 3, price: "1.5 BNB", description: "Rare Medal, forged from rare and precious metals, stands as a testament to the elite few who exhibit unparalleled bravery and honor within the XdRiP ranks. This distinguished emblem recognizes warriors who achieve extraordinary feats, showcasing exceptional prowess and unwavering dedication. Possessing this medal signifies an esteemed status and highlights significant contributions to the enduring mission of XdRiP, celebrating those who consistently go above and beyond.", medalVideo: videos.rare, ipfsHash: ipfsHashes.find((hash) => hash.title === "RARE").url, inventory: {forged: 0,available: 2500,},},
-    { title: "EPIC", id: 4, price: "2 BNB", description: "Epic Medal, wrought with mystical powers, signifies the legendary feats accomplished by the most heroic and mighty of XdRiP warriors. This extraordinary emblem honors individuals who demonstrate remarkable heroism and strategic brilliance in the most challenging battles. Bearing this medal marks a warrior as a legend within our ranks, celebrated for their enduring impact and heroic legacy that shapes the destiny of XdRiP through unmatched valor and tactical genius", medalVideo: videos.epic, ipfsHash: ipfsHashes.find((hash) => hash.title === "EPIC").url, inventory: {forged: 0,available: 1000,},},
-    { title: "LEGENDARY", id: 5, price: "2.5 BNB", description: "Legendary Medal, forged by the XdRiP Gods themselves, embodies the ultimate achievement in battle—a rare honor bestowed solely upon the greatest heroes of all time within the XdRiP legacy. This unparalleled emblem recognizes warriors who transcend the ordinary, leaving an indelible mark through extraordinary actions and unwavering dedication. Holding this medal signifies a legacy of greatness and an everlasting bond with the very essence of XdRiP’s heroic spirit.", medalVideo: videos.legendary, ipfsHash: ipfsHashes.find((hash) => hash.title === "LEGENDARY").url, inventory: {forged: 0,available: 500,},},
-    { title: "ETERNAL", id: 6, price: "200 BNB", description: "Forged in celestial fires, The Eternal DOT embodies a bond of absolute strength with XdRiP Digital Management LLC, reserved for those who seek influence beyond the ordinary. This singular emblem bestows an authority that extends deeply into our realm, empowering its holders with a lasting presence and rare access to the inner sanctum of XdRiP’s vision. As custodians of this legacy, they stand unmatched in their role, helping to shape the future with every step.", medalVideo: videos.eternals, ipfsHash: ipfsHashes.find((hash) => hash.title === "ETERNAL").url, inventory: {forged: 0,available: 20,},},];  
+    { title: "COMMON", id: 1, price: "0.5 BNB", description: "Common Medal, forged in the fires of battle, honors the unwavering courage and steadfast determination of XdRiP warriors. This emblem recognizes those who consistently face adversity with resilience and commitment, playing a foundational role within the XdRiP community. Bearing this medal signifies a warrior’s dedication to the cause and their readiness to uphold the strength and integrity of our ranks in every challenge they encounter.", revenueAccess: "10%", xdripBonus: "2%", medalVideo: videos.common, ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url, inventory: { forged: 0, available: 10000, }, },
+    { title: "UNCOMMON", id: 2, price: "1 BNB", description: "Uncommon Medal, meticulously crafted by master artisans, symbolizes the exceptional strength and valor of XdRiP warriors who transcend the ordinary. This prestigious emblem honors individuals who demonstrate superior skills and unwavering bravery in the face of formidable challenges. Holding this medal signifies a distinguished place within the XdRiP community, acknowledging those who strive to exceed expectations and lead by remarkable example.", revenueAccess: "25%", xdripBonus: "5%", medalVideo: videos.uncommon, ipfsHash: ipfsHashes.find((hash) => hash.title === "UNCOMMON").url, inventory: { forged: 0, available: 5000, }, },
+    { title: "RARE", id: 3, price: "1.5 BNB", description: "Rare Medal, forged from rare and precious metals, stands as a testament to the elite few who exhibit unparalleled bravery and honor within the XdRiP ranks. This distinguished emblem recognizes warriors who achieve extraordinary feats, showcasing exceptional prowess and unwavering dedication. Possessing this medal signifies an esteemed status and highlights significant contributions to the enduring mission of XdRiP, celebrating those who consistently go above and beyond.", revenueAccess: "45%", xdripBonus: "7%", medalVideo: videos.rare, ipfsHash: ipfsHashes.find((hash) => hash.title === "RARE").url, inventory: { forged: 0, available: 2500, }, },
+    { title: "EPIC", id: 4, price: "2 BNB", description: "Epic Medal, wrought with mystical powers, signifies the legendary feats accomplished by the most heroic and mighty of XdRiP warriors. This extraordinary emblem honors individuals who demonstrate remarkable heroism and strategic brilliance in the most challenging battles. Bearing this medal marks a warrior as a legend within our ranks, celebrated for their enduring impact and heroic legacy that shapes the destiny of XdRiP through unmatched valor and tactical genius", revenueAccess: "70%", xdripBonus: "10%", medalVideo: videos.epic, ipfsHash: ipfsHashes.find((hash) => hash.title === "EPIC").url, inventory: { forged: 0, available: 1000, }, },
+    { title: "LEGENDARY", id: 5, price: "2.5 BNB", description: "Legendary Medal, forged by the XdRiP Gods themselves, embodies the ultimate achievement in battle—a rare honor bestowed solely upon the greatest heroes of all time within the XdRiP legacy. This unparalleled emblem recognizes warriors who transcend the ordinary, leaving an indelible mark through extraordinary actions and unwavering dedication. Holding this medal signifies a legacy of greatness and an everlasting bond with the very essence of XdRiP’s heroic spirit.", revenueAccess: "100%", xdripBonus: "15%", medalVideo: videos.legendary, ipfsHash: ipfsHashes.find((hash) => hash.title === "LEGENDARY").url, inventory: { forged: 0, available: 500, }, },
+    { title: "ETERNAL", id: 6, price: "200 BNB", description: "Forged in celestial fires, The Eternal DOT embodies a bond of absolute strength with XdRiP Digital Management LLC, reserved for those who seek influence beyond the ordinary. This singular emblem bestows an authority that extends deeply into our realm, empowering its holders with a lasting presence and rare access to the inner sanctum of XdRiP’s vision. As custodians of this legacy, they stand unmatched in their role, helping to shape the future with every step.", revenueAccess: "Global", xdripBonus: "N/A", medalVideo: videos.eternals, ipfsHash: ipfsHashes.find((hash) => hash.title === "ETERNAL").url, inventory: { forged: 0, available: 20, }, },];
   const togglePrice = () => {
-    setIsBNBPrice(!isBNBPrice);  };
+    setIsBNBPrice(!isBNBPrice);
+  };
   const fetchXDRIPBalance = async () => {
     try {
       const balance = await XdRiPContract.methods.balanceOf(address).call();
@@ -119,27 +136,46 @@ const TheForge = ({ setIsModalOpen }) => {
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => handleArrowClick("right"),
     onSwipedRight: () => handleArrowClick("left"),
+    onTap: (eventData) => {
+      const tappedCard = eventData.event.target.closest(`.${Style.card}`);
+      if (tappedCard) {
+        const index = cardRefs.current.indexOf(tappedCard);
+        if (index !== -1) {
+          handleCardClick(index);
+        }
+      }
+    },
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
-const handleArrowClick = (direction) => {
-  controls.stop();
+  
+  const handleArrowClick = (direction) => {
+    controls.stop();
 
-  // Calculate the rotation offset to the nearest card
-  const remainder = currentRotation % rotationStep;
-  const closestRotationAdjustment = remainder > rotationStep / 2 ? rotationStep - remainder : -remainder;
+    const remainder = currentRotation % rotationStep;
+    const closestRotationAdjustment = remainder > rotationStep / 2 ? rotationStep - remainder : -remainder;
 
-  // Calculate target rotation to move directly to the closest card
-  const delta = direction === "right" ? -rotationStep : rotationStep;
-  const targetRotation = currentRotation + closestRotationAdjustment + delta;
+    const delta = direction === "right" ? -rotationStep : rotationStep;
+    const targetRotation = currentRotation + closestRotationAdjustment + delta;
 
-  // Update current rotation state and start the animation
-  setCurrentRotation(targetRotation);
-  controls.start({
-    rotateY: targetRotation,
-    transition: { duration: 1, ease: "easeInOut" },
-  });
-};
+
+    setCurrentRotation(targetRotation);
+    controls.start({
+      rotateY: targetRotation,
+      transition: { duration: 1, ease: "easeInOut" },
+    });
+  };
+  const handleCardClick = (index) => {
+    controls.stop();  
+    const targetRotation = -rotationStep * index;
+    setCurrentRotation(targetRotation);
+  
+    controls.start({
+      rotateY: targetRotation,
+      transition: { duration: 1, ease: "easeInOut" },
+    });
+  };
+  
   useEffect(() => {
     const fetchBNBPrice = async () => {
       try {
@@ -257,9 +293,38 @@ const handleArrowClick = (direction) => {
       setCurrentMedal(null);
     }
   };
+
+  const handleUserInfoSubmit = async (info) => {
+    if (!address) {
+        console.error("Wallet address is not available.");
+        return;
+    }
+    try {
+        const dateOfJoin = new Date();
+        await addForger(address, info.email, info.name, info.agreed, dateOfJoin);
+        setUserInfo({ ...info, dateOfJoin });
+        console.log("Forger info collected and saved:", { ...info, dateOfJoin });
+    } catch (error) {
+        console.error("Error adding forger:", error);
+        toast.error("Failed to save your information. Please try again.");
+    }
+};
+
   
-  
-  const mint = async (medalType, ipfsHash) => {
+
+  const handleMintClick = (medalType, ipfsHash, revenueAccess, xdripBonus) => {
+    if (!userInfo) {
+      setIsUserInfoModalOpen(true);
+    } else {
+      mint(medalType, ipfsHash, revenueAccess, xdripBonus);
+    }
+  };
+
+  const mint = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
+    if (!userInfo) {
+      console.error("User info not provided!");
+      return;
+    }
     try {
       console.log("Minting medal of type:", medalType);
       if (!signer) {
@@ -358,6 +423,30 @@ const handleArrowClick = (direction) => {
       if (receipt.status === 1) {
         toast.success("Your Medal Of Honor was forged successfully!");
         await fetchDots();
+        await logMedalPurchase(address, medalType, itemPrice, transaction.hash, revenueAccess, xdripBonus);
+        await sendReceiptEmail(
+          userInfo.email,
+          userInfo.name,
+          medalType,
+          itemPrice,
+          transaction.hash
+        );
+        const transactionData = {
+          transactionHash: receipt.transactionHash,
+          status: "Success",
+          blockNumber: receipt.blockNumber,
+          timestamp: new Date(),
+          action: `Mint ${medalType}`,
+          from: address,
+          to: MohAddress,
+          valueBNB: ethers.utils.formatEther(ethers.utils.parseUnits(itemPrice, "ether")),
+          gasUsed: receipt.gasUsed?.toNumber(),
+          inputData: transaction.data,
+          revenuePrecent: revenueAccess,
+          xdripBonusPercent: xdripBonus,
+        };
+
+        await trackDetailedTransaction(address, medalType, transactionData);
       } else {
         toast.error("Transaction failed. Please try again.");
       }
@@ -375,9 +464,7 @@ const handleArrowClick = (direction) => {
       }
     }
   };
-  
-  const [showArrows, setShowArrows] = useState(true); // State to control arrow visibility based on screen size
-
+  const [showArrows, setShowArrows] = useState(true);
   useEffect(() => {
     const updateArrowsVisibility = () => {
       if (window.innerWidth < 768) {
@@ -386,30 +473,25 @@ const handleArrowClick = (direction) => {
         setShowArrows(true);
       }
     };
-
-    updateArrowsVisibility(); // Set initial value based on current screen width
-
-    window.addEventListener('resize', updateArrowsVisibility); // Update visibility on resize
-
+    updateArrowsVisibility();
+    window.addEventListener('resize', updateArrowsVisibility);
     return () => {
-      window.removeEventListener('resize', updateArrowsVisibility); // Clean up listener
+      window.removeEventListener('resize', updateArrowsVisibility);
     };
   }, []);
 
 
 
   const [medalCount, setMedalCount] = useState(0);
-
-
   const fetchMedalCount = async (userAddress) => {
     if (!signer) return;
     try {
       const contract = fetchMohContract(signer);
-      const count = await contract.balanceOf(userAddress); // Ensure your contract has this method
-      setMedalCount(count.toNumber()); // Update the medal count state
+      const count = await contract.balanceOf(userAddress);
+      setMedalCount(count.toNumber());
     } catch (error) {
       console.error("Error fetching medal count:", error);
-      setMedalCount(0); // Reset to 0 in case of error
+      setMedalCount(0);
     }
   };
 
@@ -418,7 +500,7 @@ const handleArrowClick = (direction) => {
   useEffect(() => {
     if (address) {
       setCurrentAccount(address);
-      fetchMedalCount(address); // Fetch medal count when the address changes
+      fetchMedalCount(address);
     } else {
       setCurrentAccount("");
     }
@@ -426,22 +508,22 @@ const handleArrowClick = (direction) => {
 
 
 
-const fetchMintedCountsForAddress = async (address) => {
-  if (!signer) return;
-  try {
-    const contract = fetchMohContract(signer);
-    const counts = await contract.getMintedCountsForAddress(address); // Ensure your contract has this method
-    setMedalCount(counts); // Update state with the number of minted medals
-  } catch (error) {
-    console.error("Error fetching minted counts for address:", error);
-  }
-};
+  const fetchMintedCountsForAddress = async (address) => {
+    if (!signer) return;
+    try {
+      const contract = fetchMohContract(signer);
+      const counts = await contract.getMintedCountsForAddress(address);
+      setMedalCount(counts);
+    } catch (error) {
+      console.error("Error fetching minted counts for address:", error);
+    }
+  };
 
-useEffect(() => {
-  if (address) {
-    fetchMintedCountsForAddress(address); // Fetch counts when address changes
-  }
-}, [address]);
+  useEffect(() => {
+    if (address) {
+      fetchMintedCountsForAddress(address);
+    }
+  }, [address]);
 
 
 
@@ -452,7 +534,7 @@ useEffect(() => {
     <div className={Style.the_forge}>
       <div className={Style.the_forge_wrapper}>
         <div className={Style.forge_button_upper}>
-        <h1 className={Style.lore_text}>MEDALS OF HONOR VAULT</h1>
+          <h1 className={Style.lore_text}>MEDALS OF HONOR VAULT</h1>
           <div className={Style.forge_button_wrapper}>
             <Button
               btnName="WALLET TUTORIALS"
@@ -464,7 +546,6 @@ useEffect(() => {
               isActive={false}
             />
 
-            {/*
             <ConnectWallet
               btnTitle="OPEN THE VAULT"
               style={{
@@ -487,42 +568,7 @@ useEffect(() => {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
-              className={`${moreStyles.btn}`}
-              modalTitle="The Medals of Honor Collection"
-              theme={darkTheme({
-                colors: {
-                  modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
-                },
-              })}
-            />
-          </div>
-              */}
 
-
-
-            <ConnectWallet
-              btnTitle="OPEN THE VAULT"
-              style={{
-                background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
-                color: 'white',
-                border: '2px solid #1c1c1c',
-                borderRadius: '12px',
-                boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
-                transition: 'all 0.3s ease',
-                padding: '0',
-                width: '240px',
-                height: '52px',
-                cursor: 'pointer',
-                textAlign: 'center',
-                textTransform: 'uppercase',
-                fontSize: '20px',
-                textShadow: '0px 0px 2px black',
-                backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              
               detailsBtn={() => {
                 return (
                   <button
@@ -551,14 +597,10 @@ useEffect(() => {
                         justifyContent: 'center',
                       }}
                     >
-                      <div
-                        
-                      >
-
-
-<p style={{ fontSize: "small", color: "lightgray", marginTop: "14px", marginLeft: "20px" }}>
-            {`${medalCount} Medals Found`}  
-          </p>
+                      <div>
+                        <p style={{ fontSize: "small", color: "lightgray", marginTop: "14px", marginLeft: "20px" }}>
+                          {`${medalCount} Medals Found`}
+                        </p>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <p
                             style={{
@@ -572,8 +614,6 @@ useEffect(() => {
                               color: "white",
                             }}
                           >
-                            {/* label connected wallet here */}
-
                           </p>
                         </div>
                         <p
@@ -599,14 +639,14 @@ useEffect(() => {
                           marginBottom: "10px",
                         }}
                       >
-                        
+
                         <Image
                           src="/img/mohwallet-logo.png"
                           alt="MOH"
                           width="30"
                           height="30"
                         />
-                        
+
 
                       </div>
                     </div>
@@ -620,7 +660,7 @@ useEffect(() => {
                   modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
                 },
               })}
-              
+
               modalSize={"wide"}
               switchToActiveChain={true}
               termsOfServiceUrl="/components/Legal/TermsOfService.jsx"
@@ -634,9 +674,9 @@ useEffect(() => {
                   width: 420,
                   height: 420,
                 },
-                
+
               }}
-              
+
             />
           </div>
 
@@ -659,13 +699,14 @@ useEffect(() => {
               ref={carouselRef}
               className={Style.carousel_container}
               animate={controls}
-              {...swipeHandlers} 
+              {...swipeHandlers}
             >
               {mohData.map((item, index) => (
                 <div
                   key={index}
                   ref={(el) => (cardRefs.current[index] = el)}
                   className={Style.card}
+                  onClick={() => handleCardClick(index)}
                 >
                   <div className={Style.card_inner}>
                     <div className={`${Style.card_face} ${Style.card_front}`}>
@@ -679,7 +720,7 @@ useEffect(() => {
                               width: "100%",
                               borderRadius: '40px'
                             }}
-                            
+
                             hoverPlay={true}
                             autoPlay={true}
                             loop={true}
@@ -700,7 +741,7 @@ useEffect(() => {
                             <div className={Style.button_wrapper}>
                               <Button
                                 btnName="FORGE"
-                                onClick={() => mint(item.title, item.ipfsHash)}
+                                onClick={() => handleMintClick(item.title, item.ipfsHash, item.revenueAccess, item.xdripBonus)}
                                 classStyle="size1"
                                 fontSize="12px"
                                 padding="0px 0px"
@@ -727,7 +768,7 @@ useEffect(() => {
                                 >
                                   {isBNBPrice
                                     ? `${item.price}`
-                                    : `$${bnbToUsd ? (parseFloat(item.price) * bnbToUsd).toFixed(2) : 'Loading...'} USD` // Show USD price
+                                    : `$${bnbToUsd ? (parseFloat(item.price) * bnbToUsd).toFixed(2) : 'Loading...'} USD`
                                   }
                                 </p>
                               </div>
@@ -773,7 +814,7 @@ useEffect(() => {
             <div className={Style.arrow_container}>
               <Button
                 btnName="⟵"
-                onClick={() => handleArrowClick("right")}             
+                onClick={() => handleArrowClick("right")}
                 classStyle={Style.arrowButton}
                 fontSize="1.75rem"
                 isActive={false}
@@ -793,12 +834,23 @@ useEffect(() => {
           </div>
         </div>
         {selectedMedal && (
-          <DotDetailsModal 
-            medal={selectedMedal} 
-            onClose={() => setSelectedMedal(null)} 
+          <DotDetailsModal
+            medal={selectedMedal}
+            onClose={() => setSelectedMedal(null)}
             mint={mint}
-            />
+          />
         )}
+        {isModalOpen && (
+          <WalkthroughModal
+            isOpen={isModalOpen}
+            onRequestClose={() => setIsModalOpen(false)}
+          />
+        )}
+        <CheckoutModal
+          isOpen={isUserInfoModalOpen}
+          onClose={() => setIsUserInfoModalOpen(false)}
+          onSubmit={handleUserInfoSubmit}
+        />
         {isConfirmationModalVisible && (
           <div className={Style.confirmation_modal}>
             <div className={Style.confirmation_modal_content}>
@@ -815,6 +867,7 @@ useEffect(() => {
           position={toast.POSITION.TOP_CENTER}
           className={Style.toast_container_center}
         />
+
       </div>
     </div>
   );
