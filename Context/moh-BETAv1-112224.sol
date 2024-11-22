@@ -4213,12 +4213,9 @@ contract MEDALS_OF_HONOR_by_XdRiP is
     address[] public padroneTascas;
     mapping(address => bool) public isPadrone;
 
-    /* Gross Revenue Allocations */
-    uint16 public padronesPercentage = 70; // 70% of Gross Revenue
-    uint16 public operatingCostsPercentage = 30; // 30% of Gross Revenue
-    // Total Gross Allocations: 100%
+    uint16 public padronesPercentage = 70; 
+    uint16 public operatingCostsPercentage = 30; 
 
-    /* forgeing counters */
     Counters.Counter private _commonCounter;
     Counters.Counter private _uncommonCounter;
     Counters.Counter private _rareCounter;
@@ -4228,7 +4225,6 @@ contract MEDALS_OF_HONOR_by_XdRiP is
 
     string private _contractURI;
 
-    /* Mapping padroneship flags for cycles */
     mapping(address => mapping(uint256 => bool)) private _ownsCommonPerCycle;
     mapping(address => mapping(uint256 => bool)) private _ownsUncommonPerCycle;
     mapping(address => mapping(uint256 => bool)) private _ownsRarePerCycle;
@@ -4246,13 +4242,11 @@ contract MEDALS_OF_HONOR_by_XdRiP is
     /* @dev mapping from address to last forge timestamp */
     mapping(address => mapping(uint256 => uint256)) private _lastforgeTimestamp;
 
-    /* Events */
-    event PadroneUpdated(address indexed padrone, bool isAdded);
+    event TransferFailed(
+        address indexed recipient, 
+        uint256 amount
+        );
 
-    event TransferFailed(address indexed recipient, uint256 amount);
-    // Removed holder distribution event
-
-    // forgeing events for each tier
     event Commonforged(
         address indexed padrone,
         uint256 tokenId,
@@ -4287,7 +4281,6 @@ contract MEDALS_OF_HONOR_by_XdRiP is
         address indexed padrone, 
         uint256 cycleNumber
     );
-    //event FundsDistributed(string tascaType, address tasca, uint256 amount);
 
     constructor(
         address payable _padroneTasca1,
@@ -4306,11 +4299,6 @@ contract MEDALS_OF_HONOR_by_XdRiP is
             _padroneTasca3,
             _padroneTasca4
         ];
-
-        emit PadroneUpdated(_padroneTasca1, true);
-        emit PadroneUpdated(_padroneTasca2, true);
-        emit PadroneUpdated(_padroneTasca3, true);
-        emit PadroneUpdated(_padroneTasca4, true);
         operatingTasca = _operatingTasca;
     }
 
@@ -4328,40 +4316,20 @@ contract MEDALS_OF_HONOR_by_XdRiP is
         uint256 eachPadroneShare = padronesShare / padroneTascas.length;
         for (uint256 i = 0; i < padroneTascas.length; i++) {
             _safeTransfer(payable(padroneTascas[i]), eachPadroneShare);
-            /*
-            emit FundsDistributed(
-                "Padrone Tasca",
-                padroneTascas[i],
-                eachPadroneShare
-            );
-            */
+            
         }
 
         _safeTransfer(operatingTasca, operatingShare);
-        /*
-        emit FundsDistributed(
-            "Operating Tasca",
-            operatingTasca,
-            operatingShare
-        );
-        */
-
         uint256 allocated = padronesShare + operatingShare;
         uint256 remainingBalance = totalFunds - allocated;
 
         if (remainingBalance > 0) {
             _safeTransfer(operatingTasca, remainingBalance);
-            /*
-            emit FundsDistributed(
-                "Remaining Balance to Operating Tasca",
-                operatingTasca,
-                remainingBalance
-            );
-            */
+            
         }
     }
 
-    /* Safe transfer function */
+    /* safe transfer function */
     function _safeTransfer(address payable recipient, uint256 amount) internal {
         (bool success, ) = recipient.call{value: amount}("");
         if (!success) {
@@ -4598,8 +4566,6 @@ contract MEDALS_OF_HONOR_by_XdRiP is
         return _tokenIPFSHashes[tokenId];
     }
 
-    /* Configurable forge prices - unused */
-    /*
     function setCommonPrice(uint256 price) public onlyPadrones {
         commonPrice = price;
     }
@@ -4624,16 +4590,16 @@ contract MEDALS_OF_HONOR_by_XdRiP is
         eternalPrice = price;
     }
 
-*/
+
     function updatePadrone(address newPadrone, bool add) public onlyPadrones {
         require(newPadrone != address(0), "Invalid address");
 
         if (add) {
-            require(!isPadrone[newPadrone], "Address is already a padrone");
+            require(!isPadrone[newPadrone], "Address already exisits");
             padroneTascas.push(newPadrone);
             isPadrone[newPadrone] = true;
         } else {
-            require(isPadrone[newPadrone], "Address is not a padrone");
+            require(isPadrone[newPadrone], "Address invalid");
             isPadrone[newPadrone] = false;
 
             for (uint256 i = 0; i < padroneTascas.length; i++) {
@@ -4645,7 +4611,6 @@ contract MEDALS_OF_HONOR_by_XdRiP is
             }
         }
 
-        emit PadroneUpdated(newPadrone, add);
     }
 
     function updateDistributionTascas(address payable _operatingTasca)
