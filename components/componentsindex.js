@@ -11,9 +11,13 @@ import UserAgreement from "./Legal/UserAgreement";
 import WalkthroughModal from "./EntryPage/WalkthroughModal";
 import OwnerOps from "./OwnerOps/OwnerOps";
 import DotCarousel from "./DotWallets/DotCarousel";
+import RampDetails from "./DotWallets/RampDetails";
+import CheckoutModal from "./TheForgeMain/CheckoutModal";
 
 export {
+  CheckoutModal,
   OwnerOps,
+  RampDetails,
   DotCarousel,
   WalkthroughModal,  
   TermsOfService,

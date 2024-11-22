@@ -4,7 +4,7 @@
   justify-content: center;
   justify-items: center;
   align-items: center;
-  margin-top: 3rem;
+  margin-top: 1rem;
   width: 100%;
   box-sizing: border-box;
 }
@@ -99,6 +99,8 @@
   color: white;
 }
 .token_id {
+  display: flex;
+  flex-direction: column;
   padding: 0.25rem 0rem 0rem 0rem;
   margin: 0rem;
   line-height: 1;
@@ -120,6 +122,8 @@
 }
 .infoModal {
   position: fixed;
+  display: flex;
+  flex-direction: column;
   margin-top: 210%;
   top: 50%;
   left: 50%;
@@ -130,12 +134,12 @@
   border-radius: 8px;
   padding: 20px;
   width: 90%;
-  max-width: 400px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
 }
 .infoModalContent {
+  display: flex;
+  flex-direction: column;
   color: #fff;
-  font-family: Arial, sans-serif;
   text-align: left;  
 }
 .infoModalContent h3 {
@@ -145,22 +149,34 @@
 .infoModalContent p {
   margin: 5px 0;
 }
-.medalList {
-  list-style: none;
-  padding: 0;
-}
-.medalItem {
+
+.top{
   display: flex;
-  justify-content: space-between;
-  margin: 8px 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin: 20px 0;
+}
+
+.medalTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.medalTable th, .medalTable td {
+  border: 1px solid #ddd;
   padding: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
 }
-.medalItem p {
-  margin: 0;
-  font-size: 0.9em;
+
+.medalTable th {
+  font-weight: bold;
 }
+
 .closeButtonContainer {
   text-align: center;
   margin-top: 15px;
