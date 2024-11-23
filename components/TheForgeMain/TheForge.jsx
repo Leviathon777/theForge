@@ -60,16 +60,17 @@ const TheForge = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
 
   useEffect(() => {
     const handleWalletConnect = async () => {
       if (address) {
         setCurrentAccount(address);
-        console.log(`Wallet connected: ${address}`);        
+        console.log(`Wallet connected: ${address}`);
         try {
           const userData = await getForger(address);
           if (userData) {
-            setCurrentUser(userData);
+            setUserInfo(userData);
             console.log("User info fetched successfully:", userData);
           } else {
             console.log("No user info available. Proceeding without user info.");
@@ -79,11 +80,17 @@ const TheForge = () => {
         }
       } else {
         setCurrentAccount("");
-        setCurrentUser(null);
+        setUserInfo(null);
       }
-    };  
+    };
     handleWalletConnect();
   }, [address]);
+
+  useEffect(() => {
+    if (userInfo) {
+      setIsWelcomeModalVisible(true);
+    }
+  }, [userInfo]);
 
   const mohData = [
     { title: "COMMON", id: 1, price: "0.5 BNB", description: "Common Medal, forged in the fires of battle, honors the unwavering courage and steadfast determination of XdRiP warriors. This emblem recognizes those who consistently face adversity with resilience and commitment, playing a foundational role within the XdRiP community. Bearing this medal signifies a warrior’s dedication to the cause and their readiness to uphold the strength and integrity of our ranks in every challenge they encounter.", revenueAccess: "10%", xdripBonus: "2%", medalVideo: videos.common, ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url, inventory: { forged: 0, available: 10000, }, },
@@ -148,7 +155,7 @@ const TheForge = () => {
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
-  
+
   const handleArrowClick = (direction) => {
     controls.stop();
 
@@ -166,16 +173,16 @@ const TheForge = () => {
     });
   };
   const handleCardClick = (index) => {
-    controls.stop();  
+    controls.stop();
     const targetRotation = -rotationStep * index;
     setCurrentRotation(targetRotation);
-  
+
     controls.start({
       rotateY: targetRotation,
       transition: { duration: 1, ease: "easeInOut" },
     });
   };
-  
+
   useEffect(() => {
     const fetchBNBPrice = async () => {
       try {
@@ -296,30 +303,30 @@ const TheForge = () => {
 
   const handleUserInfoSubmit = async (info) => {
     if (!address) {
-        console.error("Wallet address is not available.");
-        return;
+      console.error("Wallet address is not available.");
+      return;
     }
     try {
-        const dateOfJoin = new Date();
-        await addForger(address, info.email, info.name, info.agreed, dateOfJoin);
-        setUserInfo({ ...info, dateOfJoin });
-        console.log("Forger info collected and saved:", { ...info, dateOfJoin });
+      const dateOfJoin = new Date();
+      await addForger(address, info.email, info.name, info.agreed, dateOfJoin);
+      setUserInfo({ ...info, dateOfJoin });
+      console.log("Forger info collected and saved:", { ...info, dateOfJoin });
     } catch (error) {
-        console.error("Error adding forger:", error);
-        toast.error("Failed to save your information. Please try again.");
-    }
-};
-
-  
-/*
-  const handleForgeClick = (medalType, ipfsHash, revenueAccess, xdripBonus) => {
-    if (!userInfo) {
-      setIsUserInfoModalOpen(true);
-    } else {
-      forge(medalType, ipfsHash, revenueAccess, xdripBonus);
+      console.error("Error adding forger:", error);
+      toast.error("Failed to save your information. Please try again.");
     }
   };
-  */
+
+
+  /*
+    const handleForgeClick = (medalType, ipfsHash, revenueAccess, xdripBonus) => {
+      if (!userInfo) {
+        setIsUserInfoModalOpen(true);
+      } else {
+        forge(medalType, ipfsHash, revenueAccess, xdripBonus);
+      }
+    };
+    */
 
   const handleForgeClick = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
     if (!address) {
@@ -328,14 +335,14 @@ const TheForge = () => {
       connectLocalWallet();
       return;
     }
-  
+
     if (!userInfo) {
       setIsUserInfoModalOpen(true); // Open user info modal if required
     } else {
       forge(medalType, ipfsHash, revenueAccess, xdripBonus);
     }
   };
-  
+
 
 
   const forge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
@@ -853,14 +860,14 @@ const TheForge = () => {
         </div>
         {selectedMedal && (
           <DotDetailsModal
-          medal={selectedMedal}
-          onClose={() => setSelectedMedal(null)}
-          forge={forge}
-          userInfo={userInfo} 
-          isUserInfoModalOpen={isUserInfoModalOpen}
-          setIsUserInfoModalOpen={setIsUserInfoModalOpen}
-        />
-        
+            medal={selectedMedal}
+            onClose={() => setSelectedMedal(null)}
+            forge={forge}
+            userInfo={userInfo}
+            isUserInfoModalOpen={isUserInfoModalOpen}
+            setIsUserInfoModalOpen={setIsUserInfoModalOpen}
+          />
+
         )}
         {isModalOpen && (
           <WalkthroughModal
@@ -881,6 +888,25 @@ const TheForge = () => {
               <div className={Style.modal_buttons}>
                 <button onClick={confirmForge} className={Style.confirm_button}>Confirm</button>
                 <button onClick={() => setIsConfirmationModalVisible(false)} className={Style.cancel_button}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+        {isWelcomeModalVisible && (
+          <div className={Style.welcome_modal}>
+            <div className={Style.welcome_modal_content}>
+              <h2>Welcome, {userInfo?.name || "User"}!</h2>
+              <p>We're glad to have you at the Forge. Let’s create something extraordinary!</p>
+              <div className={Style.modal_buttons}>
+                <Button
+                  btnName="Close"
+                  onClick={() => setIsWelcomeModalVisible(false)}
+                  classStyle={Style.close_button}
+                  fontSize="1rem"
+                  isActive={false}
+                  title="Close Welcome Modal"
+                  icon=""
+                />
               </div>
             </div>
           </div>
