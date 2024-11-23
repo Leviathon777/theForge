@@ -1,9 +1,9 @@
 {
-    "address": "0x713901DfaAb4735DA5EeF6eb7682746108a42B4A",
+    "address": "0x1C9c1957FEa6Dfba6A68979EE478C8A4ba2FB840",
     "abi": [
         {
             "inputs": [],
-            "name": "ERC721EnumerableForbiddenBatchMint",
+            "name": "ERC721EnumerableForbiddenBatchforge",
             "type": "error"
         },
         {
@@ -203,7 +203,7 @@
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "owner",
+                    "name": "padrone",
                     "type": "address"
                 },
                 {
@@ -219,7 +219,7 @@
                     "type": "string"
                 }
             ],
-            "name": "CommonMinted",
+            "name": "Commonforged",
             "type": "event"
         },
         {
@@ -228,7 +228,7 @@
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "owner",
+                    "name": "padrone",
                     "type": "address"
                 },
                 {
@@ -247,7 +247,7 @@
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "owner",
+                    "name": "padrone",
                     "type": "address"
                 },
                 {
@@ -263,7 +263,7 @@
                     "type": "string"
                 }
             ],
-            "name": "EpicMinted",
+            "name": "Epicforged",
             "type": "event"
         },
         {
@@ -272,7 +272,7 @@
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "owner",
+                    "name": "padrone",
                     "type": "address"
                 },
                 {
@@ -288,32 +288,7 @@
                     "type": "string"
                 }
             ],
-            "name": "EternalMinted",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": false,
-                    "internalType": "string",
-                    "name": "walletType",
-                    "type": "string"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "address",
-                    "name": "wallet",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "amount",
-                    "type": "uint256"
-                }
-            ],
-            "name": "FundsDistributed",
+            "name": "Eternalforged",
             "type": "event"
         },
         {
@@ -322,7 +297,7 @@
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "owner",
+                    "name": "padrone",
                     "type": "address"
                 },
                 {
@@ -338,26 +313,7 @@
                     "type": "string"
                 }
             ],
-            "name": "LegendaryMinted",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "bool",
-                    "name": "isAdded",
-                    "type": "bool"
-                }
-            ],
-            "name": "OwnerUpdated",
+            "name": "Legendaryforged",
             "type": "event"
         },
         {
@@ -385,7 +341,7 @@
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "owner",
+                    "name": "padrone",
                     "type": "address"
                 },
                 {
@@ -401,7 +357,7 @@
                     "type": "string"
                 }
             ],
-            "name": "RareMinted",
+            "name": "Rareforged",
             "type": "event"
         },
         {
@@ -454,7 +410,7 @@
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "owner",
+                    "name": "padrone",
                     "type": "address"
                 },
                 {
@@ -470,7 +426,7 @@
                     "type": "string"
                 }
             ],
-            "name": "UncommonMinted",
+            "name": "Uncommonforged",
             "type": "event"
         },
         {
@@ -499,7 +455,7 @@
                     "type": "string"
                 }
             ],
-            "name": "mintCommon",
+            "name": "forgeCommon",
             "outputs": [],
             "stateMutability": "payable",
             "type": "function"
@@ -512,7 +468,7 @@
                     "type": "string"
                 }
             ],
-            "name": "mintEpic",
+            "name": "forgeEpic",
             "outputs": [],
             "stateMutability": "payable",
             "type": "function"
@@ -525,7 +481,7 @@
                     "type": "string"
                 }
             ],
-            "name": "mintEternal",
+            "name": "forgeEternal",
             "outputs": [],
             "stateMutability": "payable",
             "type": "function"
@@ -538,7 +494,7 @@
                     "type": "string"
                 }
             ],
-            "name": "mintLegendary",
+            "name": "forgeLegendary",
             "outputs": [],
             "stateMutability": "payable",
             "type": "function"
@@ -551,7 +507,7 @@
                     "type": "string"
                 }
             ],
-            "name": "mintRare",
+            "name": "forgeRare",
             "outputs": [],
             "stateMutability": "payable",
             "type": "function"
@@ -564,7 +520,7 @@
                     "type": "string"
                 }
             ],
-            "name": "mintUncommon",
+            "name": "forgeUncommon",
             "outputs": [],
             "stateMutability": "payable",
             "type": "function"
@@ -630,6 +586,24 @@
         {
             "inputs": [
                 {
+                    "internalType": "uint16",
+                    "name": "_padronesPercentage",
+                    "type": "uint16"
+                },
+                {
+                    "internalType": "uint16",
+                    "name": "_operatingCostsPercentage",
+                    "type": "uint16"
+                }
+            ],
+            "name": "setAllocationValue",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
                     "internalType": "address",
                     "name": "operator",
                     "type": "address"
@@ -648,12 +622,90 @@
         {
             "inputs": [
                 {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setCommonPrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
                     "internalType": "string",
                     "name": "newContractURI",
                     "type": "string"
                 }
             ],
             "name": "setContractURI",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setEpicPrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setEternalPrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setLegendaryPrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setRarePrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setUncommonPrice",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
@@ -698,11 +750,11 @@
             "inputs": [
                 {
                     "internalType": "address payable",
-                    "name": "_operatingWallet",
+                    "name": "_operatingTasca",
                     "type": "address"
                 }
             ],
-            "name": "updateDistributionWallets",
+            "name": "updateDistributionTascas",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
@@ -711,7 +763,7 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "newOwner",
+                    "name": "newPadrone",
                     "type": "address"
                 },
                 {
@@ -720,7 +772,7 @@
                     "type": "bool"
                 }
             ],
-            "name": "updateOwner",
+            "name": "updatePadrone",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
@@ -729,27 +781,32 @@
             "inputs": [
                 {
                     "internalType": "address payable",
-                    "name": "_ownerWallet1",
+                    "name": "_padroneTasca1",
                     "type": "address"
                 },
                 {
                     "internalType": "address payable",
-                    "name": "_ownerWallet2",
+                    "name": "_padroneTasca2",
                     "type": "address"
                 },
                 {
                     "internalType": "address payable",
-                    "name": "_ownerWallet3",
+                    "name": "_padroneTasca3",
                     "type": "address"
                 },
                 {
                     "internalType": "address payable",
-                    "name": "_ownerWallet4",
+                    "name": "_padroneTasca4",
                     "type": "address"
                 },
                 {
                     "internalType": "address payable",
-                    "name": "_operatingWallet",
+                    "name": "_operatingTasca",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "initialOwner",
                     "type": "address"
                 }
             ],
@@ -887,11 +944,11 @@
         },
         {
             "inputs": [],
-            "name": "getMintedCounts",
+            "name": "getforgedCounts",
             "outputs": [
                 {
                     "internalType": "uint256",
-                    "name": "commonMinted",
+                    "name": "commonforged",
                     "type": "uint256"
                 },
                 {
@@ -901,7 +958,7 @@
                 },
                 {
                     "internalType": "uint256",
-                    "name": "uncommonMinted",
+                    "name": "uncommonforged",
                     "type": "uint256"
                 },
                 {
@@ -911,7 +968,7 @@
                 },
                 {
                     "internalType": "uint256",
-                    "name": "rareMinted",
+                    "name": "rareforged",
                     "type": "uint256"
                 },
                 {
@@ -921,7 +978,7 @@
                 },
                 {
                     "internalType": "uint256",
-                    "name": "epicMinted",
+                    "name": "epicforged",
                     "type": "uint256"
                 },
                 {
@@ -931,7 +988,7 @@
                 },
                 {
                     "internalType": "uint256",
-                    "name": "legendaryMinted",
+                    "name": "legendaryforged",
                     "type": "uint256"
                 },
                 {
@@ -941,7 +998,7 @@
                 },
                 {
                     "internalType": "uint256",
-                    "name": "eternalMinted",
+                    "name": "eternalforged",
                     "type": "uint256"
                 },
                 {
@@ -1004,7 +1061,7 @@
                     "type": "address"
                 }
             ],
-            "name": "isOwner",
+            "name": "isPadrone",
             "outputs": [
                 {
                     "internalType": "bool",
@@ -1069,7 +1126,7 @@
         },
         {
             "inputs": [],
-            "name": "operatingWallet",
+            "name": "operatingTasca",
             "outputs": [
                 {
                     "internalType": "address payable",
@@ -1114,7 +1171,7 @@
         },
         {
             "inputs": [],
-            "name": "ownersPercentage",
+            "name": "padronesPercentage",
             "outputs": [
                 {
                     "internalType": "uint16",
@@ -1133,7 +1190,7 @@
                     "type": "uint256"
                 }
             ],
-            "name": "ownerWallets",
+            "name": "padroneTascas",
             "outputs": [
                 {
                     "internalType": "address",

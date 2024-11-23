@@ -11,7 +11,7 @@ if (typeof window !== 'undefined') {
   Modal.setAppElement('#__next');
 }
 
-const MedalDetailsModal = React.memo(({ medal, onClose, mint }) => {
+const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, isUserInfoModalOpen, setIsUserInfoModalOpen }) => {
   const mohContractAddress = useMemo(() => mohCA_ABI.address, []);
   const companies = useMemo(() => [
     { name: "XdRiP Digital Management, LLC", url: "https://xdrip.io" },
@@ -43,6 +43,24 @@ const MedalDetailsModal = React.memo(({ medal, onClose, mint }) => {
       .then(() => toast.success("Address copied to clipboard"))
       .catch(() => toast.error("Could not copy text"));
   }, []);
+
+  const handleForgeClick = () => {
+    if (!userInfo) {
+      // Trigger the name and email modal if the user hasn't signed up
+      setIsUserInfoModalOpen(true);
+      toast.info("Please enter your name and email to proceed.");
+      return;
+    }
+  
+    // Proceed with minting if the user is already signed up
+    forge(medal.title, medal.ipfsHash, medal.revenueAccess, medal.xdripBonus);
+  };
+  
+  
+  
+
+
+
 
   return (
     <Modal
@@ -86,7 +104,7 @@ const MedalDetailsModal = React.memo(({ medal, onClose, mint }) => {
             <div className={Style.detailsOverlay}>
               <div className={Style.detailsContent}>
                 <button
-                  onClick={() => mint(medal.title, medal.ipfsHash)}
+                  onClick={handleForgeClick}
                   className={`${Style.forgeButton} ${Style.detailsButtonStyle}`}
                 >
                   Forge
@@ -152,9 +170,19 @@ const MedalDetailsModal = React.memo(({ medal, onClose, mint }) => {
 });
 
 MedalDetailsModal.propTypes = {
-  medal: PropTypes.object.isRequired,
+  medal: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    ipfsHash: PropTypes.string.isRequired,
+    revenueAccess: PropTypes.string.isRequired,
+    xdripBonus: PropTypes.string.isRequired,
+    
+  }).isRequired,
   onClose: PropTypes.func.isRequired,
-  mint: PropTypes.func.isRequired,
+  forge: PropTypes.func.isRequired,
+  userInfo: PropTypes.object, 
+  isUserInfoModalOpen: PropTypes.bool,
+  setIsUserInfoModalOpen: PropTypes.func,
 };
+
 
 export default MedalDetailsModal;

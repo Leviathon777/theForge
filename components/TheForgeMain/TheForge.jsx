@@ -50,7 +50,7 @@ const TheForge = () => {
   const isGuestWallet = wallet?.walletId === "SmartWallet";
   const address = useAddress();
   const signer = useSigner();
-  const [mintedCounts, setMintedCounts] = useState({});
+  const [forgedCounts, setForgedCounts] = useState({});
   const connectLocalWallet = useConnect(localWallet);
   const carouselRef = useRef();
   const cardRefs = useRef([]);
@@ -60,16 +60,17 @@ const TheForge = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
 
   useEffect(() => {
     const handleWalletConnect = async () => {
       if (address) {
         setCurrentAccount(address);
-        console.log(`Wallet connected: ${address}`);        
+        console.log(`Wallet connected: ${address}`);
         try {
           const userData = await getForger(address);
           if (userData) {
-            setCurrentUser(userData);
+            setUserInfo(userData);
             console.log("User info fetched successfully:", userData);
           } else {
             console.log("No user info available. Proceeding without user info.");
@@ -79,11 +80,17 @@ const TheForge = () => {
         }
       } else {
         setCurrentAccount("");
-        setCurrentUser(null);
+        setUserInfo(null);
       }
-    };  
+    };
     handleWalletConnect();
   }, [address]);
+
+  useEffect(() => {
+    if (userInfo) {
+      setIsWelcomeModalVisible(true);
+    }
+  }, [userInfo]);
 
   const mohData = [
     { title: "COMMON", id: 1, price: "0.5 BNB", description: "Common Medal, forged in the fires of battle, honors the unwavering courage and steadfast determination of XdRiP warriors. This emblem recognizes those who consistently face adversity with resilience and commitment, playing a foundational role within the XdRiP community. Bearing this medal signifies a warrior’s dedication to the cause and their readiness to uphold the strength and integrity of our ranks in every challenge they encounter.", revenueAccess: "10%", xdripBonus: "2%", medalVideo: videos.common, ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url, inventory: { forged: 0, available: 10000, }, },
@@ -148,7 +155,7 @@ const TheForge = () => {
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
-  
+
   const handleArrowClick = (direction) => {
     controls.stop();
 
@@ -166,16 +173,16 @@ const TheForge = () => {
     });
   };
   const handleCardClick = (index) => {
-    controls.stop();  
+    controls.stop();
     const targetRotation = -rotationStep * index;
     setCurrentRotation(targetRotation);
-  
+
     controls.start({
       rotateY: targetRotation,
       transition: { duration: 1, ease: "easeInOut" },
     });
   };
-  
+
   useEffect(() => {
     const fetchBNBPrice = async () => {
       try {
@@ -214,52 +221,52 @@ const TheForge = () => {
     };
     fetchBalance();
   }, [signer, address]);
-  const fetchMintedCounts = async () => {
+  const fetchForgedCounts = async () => {
     if (!signer) return;
     try {
       const contract = fetchMohContract(signer);
       const [
-        commonMinted, commonRemaining,
-        uncommonMinted, uncommonRemaining,
-        rareMinted, rareRemaining,
-        epicMinted, epicRemaining,
-        legendaryMinted, legendaryRemaining,
-        eternalMinted, eternalRemaining
-      ] = await contract.getMintedCounts();
+        commonforged, commonRemaining,
+        uncommonforged, uncommonRemaining,
+        rareforged, rareRemaining,
+        epicforged, epicRemaining,
+        legendaryforged, legendaryRemaining,
+        eternalforged, eternalRemaining
+      ] = await contract.getforgedCounts();
       return {
-        COMMON: { forged: commonMinted.toNumber(), available: commonRemaining.toNumber() },
-        UNCOMMON: { forged: uncommonMinted.toNumber(), available: uncommonRemaining.toNumber() },
-        RARE: { forged: rareMinted.toNumber(), available: rareRemaining.toNumber() },
-        EPIC: { forged: epicMinted.toNumber(), available: epicRemaining.toNumber() },
-        LEGENDARY: { forged: legendaryMinted.toNumber(), available: legendaryRemaining.toNumber() },
-        ETERNAL: { forged: eternalMinted.toNumber(), available: eternalRemaining.toNumber() },
+        COMMON: { forged: commonforged.toNumber(), available: commonRemaining.toNumber() },
+        UNCOMMON: { forged: uncommonforged.toNumber(), available: uncommonRemaining.toNumber() },
+        RARE: { forged: rareforged.toNumber(), available: rareRemaining.toNumber() },
+        EPIC: { forged: epicforged.toNumber(), available: epicRemaining.toNumber() },
+        LEGENDARY: { forged: legendaryforged.toNumber(), available: legendaryRemaining.toNumber() },
+        ETERNAL: { forged: eternalforged.toNumber(), available: eternalRemaining.toNumber() },
       };
     } catch (error) {
-      console.error("Error fetching minted counts:", error);
+      console.error("Error fetching forged counts:", error);
       return null;
     }
   };
   useEffect(() => {
-    const loadMintedCounts = async () => {
-      const counts = await fetchMintedCounts();
+    const loadForgedCounts = async () => {
+      const counts = await fetchForgedCounts();
       if (counts) {
-        setMintedCounts(counts);
+        setForgedCounts(counts);
       }
     };
     if (signer) {
-      loadMintedCounts();
+      loadForgedCounts();
     }
   }, [signer]);
   const getInventory = (item) => {
-    if (mintedCounts && mintedCounts[item.title]) {
+    if (forgedCounts && forgedCounts[item.title]) {
       return {
-        forged: mintedCounts[item.title].forged,
-        available: mintedCounts[item.title].available,
+        forged: forgedCounts[item.title].forged,
+        available: forgedCounts[item.title].available,
       };
     }
     return item.inventory;
   };
-  const confirmMint = async () => {
+  const confirmForge = async () => {
     if (!currentMedal) return;
     try {
       if (!signer) {
@@ -270,23 +277,23 @@ const TheForge = () => {
       const ipfsHash = currentMedal.ipfsHash;
       const itemPrice = currentMedal.price.split(" ")[0];
       const price = ethers.utils.parseUnits(itemPrice, "ether");
-      const mintFunction = contract[`mint${currentMedal.title}`];
-      const transaction = await mintFunction(ipfsHash, {
+      const forgeFunction = contract[`forge${currentMedal.title}`];
+      const transaction = await forgeFunction(ipfsHash, {
         value: price,
       });
       const receipt = await transaction.wait();
       if (receipt.status === 1) {
         toast.success("Your Medal Of Honor was forged successfully!");
         await fetchDots();
-        const updatedCounts = await fetchMintedCounts();
+        const updatedCounts = await fetchForgedCounts();
         if (updatedCounts) {
-          setMintedCounts(updatedCounts);
+          setForgedCounts(updatedCounts);
         }
       } else {
         toast.error("Transaction failed. Please try again.");
       }
     } catch (error) {
-      console.error("Minting failed:", error);
+      console.error("Forging failed:", error);
       toast.error("Error while forging Medal.");
     } finally {
       setIsConfirmationModalVisible(false);
@@ -296,37 +303,55 @@ const TheForge = () => {
 
   const handleUserInfoSubmit = async (info) => {
     if (!address) {
-        console.error("Wallet address is not available.");
-        return;
+      console.error("Wallet address is not available.");
+      return;
     }
     try {
-        const dateOfJoin = new Date();
-        await addForger(address, info.email, info.name, info.agreed, dateOfJoin);
-        setUserInfo({ ...info, dateOfJoin });
-        console.log("Forger info collected and saved:", { ...info, dateOfJoin });
+      const dateOfJoin = new Date();
+      await addForger(address, info.email, info.name, info.agreed, dateOfJoin);
+      setUserInfo({ ...info, dateOfJoin });
+      console.log("Forger info collected and saved:", { ...info, dateOfJoin });
     } catch (error) {
-        console.error("Error adding forger:", error);
-        toast.error("Failed to save your information. Please try again.");
-    }
-};
-
-  
-
-  const handleMintClick = (medalType, ipfsHash, revenueAccess, xdripBonus) => {
-    if (!userInfo) {
-      setIsUserInfoModalOpen(true);
-    } else {
-      mint(medalType, ipfsHash, revenueAccess, xdripBonus);
+      console.error("Error adding forger:", error);
+      toast.error("Failed to save your information. Please try again.");
     }
   };
 
-  const mint = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
+
+  /*
+    const handleForgeClick = (medalType, ipfsHash, revenueAccess, xdripBonus) => {
+      if (!userInfo) {
+        setIsUserInfoModalOpen(true);
+      } else {
+        forge(medalType, ipfsHash, revenueAccess, xdripBonus);
+      }
+    };
+    */
+
+  const handleForgeClick = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
+    if (!address) {
+      // Trigger wallet connection when no wallet is connected
+      toast.info("Please connect your wallet to proceed.");
+      connectLocalWallet();
+      return;
+    }
+
+    if (!userInfo) {
+      setIsUserInfoModalOpen(true); // Open user info modal if required
+    } else {
+      forge(medalType, ipfsHash, revenueAccess, xdripBonus);
+    }
+  };
+
+
+
+  const forge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
     if (!userInfo) {
       console.error("User info not provided!");
       return;
     }
     try {
-      console.log("Minting medal of type:", medalType);
+      console.log("Forging medal of type:", medalType);
       if (!signer) {
         toast.error("Signer not available. Please connect your wallet.");
         return;
@@ -349,28 +374,28 @@ const TheForge = () => {
         case "UNCOMMON":
           const ownsCommon = await contract.balanceOf(address);
           if (ownsCommon.toNumber() < 1) {
-            toast.error("You must own a COMMON medal to mint an UNCOMMON medal.");
+            toast.error("You must own a COMMON medal to forge an UNCOMMON medal.");
             return;
           }
           break;
         case "RARE":
           const ownsUncommon = await contract.balanceOf(address);
           if (ownsUncommon.toNumber() < 2) {
-            toast.error("You must own an UNCOMMON medal to mint a RARE medal.");
+            toast.error("You must own an UNCOMMON medal to forge a RARE medal.");
             return;
           }
           break;
         case "EPIC":
           const ownsRare = await contract.balanceOf(address);
           if (ownsRare.toNumber() < 3) {
-            toast.error("You must own a RARE medal to mint an EPIC medal.");
+            toast.error("You must own a RARE medal to forge an EPIC medal.");
             return;
           }
           break;
         case "LEGENDARY":
           const ownsEpic = await contract.balanceOf(address);
           if (ownsEpic.toNumber() < 4) {
-            toast.error("You must own an EPIC medal to mint a LEGENDARY medal.");
+            toast.error("You must own an EPIC medal to forge a LEGENDARY medal.");
             return;
           }
           break;
@@ -381,39 +406,39 @@ const TheForge = () => {
       }
       const itemPrice = mohData.find((item) => item.title === medalType).price.split(" ")[0];
       const price = ethers.utils.parseUnits(itemPrice, "ether");
-      let mintFunction;
+      let forgeFunction;
       switch (medalType) {
         case "COMMON":
-          mintFunction = contract.mintCommon;
+          forgeFunction = contract.forgeCommon;
           break;
         case "UNCOMMON":
-          mintFunction = contract.mintUncommon;
+          forgeFunction = contract.forgeUncommon;
           break;
         case "RARE":
-          mintFunction = contract.mintRare;
+          forgeFunction = contract.forgeRare;
           break;
         case "EPIC":
-          mintFunction = contract.mintEpic;
+          forgeFunction = contract.forgeEpic;
           break;
         case "LEGENDARY":
-          mintFunction = contract.mintLegendary;
+          forgeFunction = contract.forgeLegendary;
           break;
         case "ETERNAL":
-          mintFunction = contract.mintEternal;
+          forgeFunction = contract.forgeEternal;
           break;
         default:
           throw new Error("Invalid medal type");
       }
       let gasLimit;
       try {
-        const estimatedGas = await contract.estimateGas[mintFunction.name](ipfsHash, { value: price });
+        const estimatedGas = await contract.estimateGas[forgeFunction.name](ipfsHash, { value: price });
         gasLimit = estimatedGas.add(ethers.BigNumber.from(10000));
         console.log("Estimated gas:", gasLimit.toString());
       } catch (error) {
         console.error("Gas estimation failed. Falling back ");
         gasLimit = ethers.BigNumber.from(990000);
       }
-      const transaction = await mintFunction(ipfsHash, {
+      const transaction = await forgeFunction(ipfsHash, {
         value: price,
         gasLimit,
       });
@@ -436,7 +461,7 @@ const TheForge = () => {
           status: "Success",
           blockNumber: receipt.blockNumber,
           timestamp: new Date(),
-          action: `Mint ${medalType}`,
+          action: `Forge ${medalType}`,
           from: address,
           to: MohAddress,
           valueBNB: ethers.utils.formatEther(ethers.utils.parseUnits(itemPrice, "ether")),
@@ -451,7 +476,7 @@ const TheForge = () => {
         toast.error("Transaction failed. Please try again.");
       }
     } catch (error) {
-      console.error("Minting failed:", error);
+      console.error("Forging failed:", error);
       if (error.code === 4001) {
         toast.error("You rejected the transaction.");
       } else if (error.data && error.data.message) {
@@ -508,20 +533,20 @@ const TheForge = () => {
 
 
 
-  const fetchMintedCountsForAddress = async (address) => {
+  const fetchForgedCountsForAddress = async (address) => {
     if (!signer) return;
     try {
       const contract = fetchMohContract(signer);
-      const counts = await contract.getMintedCountsForAddress(address);
+      const counts = await contract.getForgedCountsForAddress(address);
       setMedalCount(counts);
     } catch (error) {
-      console.error("Error fetching minted counts for address:", error);
+      console.error("Error fetching forged counts for address:", error);
     }
   };
 
   useEffect(() => {
     if (address) {
-      fetchMintedCountsForAddress(address);
+      fetchForgedCountsForAddress(address);
     }
   }, [address]);
 
@@ -741,7 +766,7 @@ const TheForge = () => {
                             <div className={Style.button_wrapper}>
                               <Button
                                 btnName="FORGE"
-                                onClick={() => handleMintClick(item.title, item.ipfsHash, item.revenueAccess, item.xdripBonus)}
+                                onClick={() => handleForgeClick(item.title, item.ipfsHash, item.revenueAccess, item.xdripBonus)}
                                 classStyle="size1"
                                 fontSize="12px"
                                 padding="0px 0px"
@@ -837,8 +862,12 @@ const TheForge = () => {
           <DotDetailsModal
             medal={selectedMedal}
             onClose={() => setSelectedMedal(null)}
-            mint={mint}
+            forge={forge}
+            userInfo={userInfo}
+            isUserInfoModalOpen={isUserInfoModalOpen}
+            setIsUserInfoModalOpen={setIsUserInfoModalOpen}
           />
+
         )}
         {isModalOpen && (
           <WalkthroughModal
@@ -854,11 +883,30 @@ const TheForge = () => {
         {isConfirmationModalVisible && (
           <div className={Style.confirmation_modal}>
             <div className={Style.confirmation_modal_content}>
-              <h2>Confirm Minting</h2>
-              <p>Are you sure you want to mint the {currentMedal.title} medal for {currentMedal.price}?</p>
+              <h2>Confirm Forging</h2>
+              <p>Are you sure you want to forge the {currentMedal.title} medal for {currentMedal.price}?</p>
               <div className={Style.modal_buttons}>
-                <button onClick={confirmMint} className={Style.confirm_button}>Confirm</button>
+                <button onClick={confirmForge} className={Style.confirm_button}>Confirm</button>
                 <button onClick={() => setIsConfirmationModalVisible(false)} className={Style.cancel_button}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+        {isWelcomeModalVisible && (
+          <div className={Style.welcome_modal}>
+            <div className={Style.welcome_modal_content}>
+              <h2>Welcome, {userInfo?.name || "User"}!</h2>
+              <p>We're glad to have you at the Forge. Let’s create something extraordinary!</p>
+              <div className={Style.modal_buttons}>
+                <Button
+                  btnName="Close"
+                  onClick={() => setIsWelcomeModalVisible(false)}
+                  classStyle={Style.close_button}
+                  fontSize="1rem"
+                  isActive={false}
+                  title="Close Welcome Modal"
+                  icon=""
+                />
               </div>
             </div>
           </div>
