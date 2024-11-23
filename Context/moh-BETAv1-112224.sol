@@ -4150,7 +4150,7 @@ abstract contract ContractMetadata is IContractMetadata {
 
                                                  DESIGNED AND BUILT BY THE XDRIP EXECUTIVE STAFF 
                                                                
-                                                 (c) 2022 All Rights Reserved - XdRiP(tm) 2024                                    
+                                                 (c) 2022 All Rights Reserved - XdRiP(tm) 2025                                    
 
 
  * @title Medals of Honor Elite DOT Collection by XdRiP
@@ -4181,6 +4181,7 @@ abstract contract ContractMetadata is IContractMetadata {
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.28;
+
 
 /* Medals of Honor Smart Contract */
 contract MEDALS_OF_HONOR_by_XdRiP is
@@ -4215,6 +4216,7 @@ contract MEDALS_OF_HONOR_by_XdRiP is
 
     uint16 public padronesPercentage = 70; 
     uint16 public operatingCostsPercentage = 30; 
+    
 
     Counters.Counter private _commonCounter;
     Counters.Counter private _uncommonCounter;
@@ -4282,32 +4284,40 @@ contract MEDALS_OF_HONOR_by_XdRiP is
         uint256 cycleNumber
     );
 
-    constructor(
-        address payable _padroneTasca1,
-        address payable _padroneTasca2,
-        address payable _padroneTasca3,
-        address payable _padroneTasca4,
-        address payable _operatingTasca
-    ) ERC721("Medals of Honor", "MOH") Ownable(msg.sender) {
-        isPadrone[_padroneTasca1] = true;
-        isPadrone[_padroneTasca2] = true;
-        isPadrone[_padroneTasca3] = true;
-        isPadrone[_padroneTasca4] = true;
-        padroneTascas = [
-            _padroneTasca1,
-            _padroneTasca2,
-            _padroneTasca3,
-            _padroneTasca4
-        ];
-        operatingTasca = _operatingTasca;
-    }
+   constructor(
+    address payable _padroneTasca1,
+    address payable _padroneTasca2,
+    address payable _padroneTasca3,
+    address payable _padroneTasca4,
+    address payable _operatingTasca,
+    address initialOwner 
+) ERC721("Medals of Honor", "MOH") Ownable(initialOwner) {
+    isPadrone[_padroneTasca1] = true;
+    isPadrone[_padroneTasca2] = true;
+    isPadrone[_padroneTasca3] = true;
+    isPadrone[_padroneTasca4] = true;
+    padroneTascas = [
+        _padroneTasca1,
+        _padroneTasca2,
+        _padroneTasca3,
+        _padroneTasca4
+    ];
+    operatingTasca = _operatingTasca;
+}
 
     modifier onlyPadrones() {
         require(isPadrone[msg.sender], "Caller is not a padrone");
         _;
     }
 
-    function _distributeFunds() internal nonReentrant {
+    function setAllocationValue(uint16 _padronesPercentage, uint16 _operatingCostsPercentage) public onlyPadrones {
+        require(_padronesPercentage + _operatingCostsPercentage == 100, "Total must be 100");
+        padronesPercentage = _padronesPercentage;
+        operatingCostsPercentage = _operatingCostsPercentage;
+    }
+
+
+    function _allocationProcessing() internal nonReentrant {
         uint256 totalFunds = address(this).balance;
         require(totalFunds > 0, "No funds to distribute");
         uint256 padronesShare = (totalFunds * padronesPercentage) / 100;
@@ -4484,7 +4494,7 @@ contract MEDALS_OF_HONOR_by_XdRiP is
             emit Eternalforged(msg.sender, tokenId, ipfsHash);
         }
 
-        _distributeFunds();
+        _allocationProcessing();
     }
 
     function getforgedCounts()

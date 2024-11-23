@@ -219,20 +219,20 @@ const TheForge = () => {
     try {
       const contract = fetchMohContract(signer);
       const [
-        commonForged, commonRemaining,
-        uncommonForged, uncommonRemaining,
-        rareForged, rareRemaining,
-        epicForged, epicRemaining,
-        legendaryForged, legendaryRemaining,
-        eternalForged, eternalRemaining
-      ] = await contract.getForgedCounts();
+        commonforged, commonRemaining,
+        uncommonforged, uncommonRemaining,
+        rareforged, rareRemaining,
+        epicforged, epicRemaining,
+        legendaryforged, legendaryRemaining,
+        eternalforged, eternalRemaining
+      ] = await contract.getforgedCounts();
       return {
-        COMMON: { forged: commonForged.toNumber(), available: commonRemaining.toNumber() },
-        UNCOMMON: { forged: uncommonForged.toNumber(), available: uncommonRemaining.toNumber() },
-        RARE: { forged: rareForged.toNumber(), available: rareRemaining.toNumber() },
-        EPIC: { forged: epicForged.toNumber(), available: epicRemaining.toNumber() },
-        LEGENDARY: { forged: legendaryForged.toNumber(), available: legendaryRemaining.toNumber() },
-        ETERNAL: { forged: eternalForged.toNumber(), available: eternalRemaining.toNumber() },
+        COMMON: { forged: commonforged.toNumber(), available: commonRemaining.toNumber() },
+        UNCOMMON: { forged: uncommonforged.toNumber(), available: uncommonRemaining.toNumber() },
+        RARE: { forged: rareforged.toNumber(), available: rareRemaining.toNumber() },
+        EPIC: { forged: epicforged.toNumber(), available: epicRemaining.toNumber() },
+        LEGENDARY: { forged: legendaryforged.toNumber(), available: legendaryRemaining.toNumber() },
+        ETERNAL: { forged: eternalforged.toNumber(), available: eternalRemaining.toNumber() },
       };
     } catch (error) {
       console.error("Error fetching forged counts:", error);

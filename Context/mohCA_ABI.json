@@ -1,5 +1,5 @@
 {
-    "address": "0x7Ebf83FF74945c7e1E851696B7279bD1f555D595",
+    "address": "0x1C9c1957FEa6Dfba6A68979EE478C8A4ba2FB840",
     "abi": [
         {
             "inputs": [],
@@ -586,6 +586,24 @@
         {
             "inputs": [
                 {
+                    "internalType": "uint16",
+                    "name": "_padronesPercentage",
+                    "type": "uint16"
+                },
+                {
+                    "internalType": "uint16",
+                    "name": "_operatingCostsPercentage",
+                    "type": "uint16"
+                }
+            ],
+            "name": "setAllocationValue",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
                     "internalType": "address",
                     "name": "operator",
                     "type": "address"
@@ -784,6 +802,11 @@
                 {
                     "internalType": "address payable",
                     "name": "_operatingTasca",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "initialOwner",
                     "type": "address"
                 }
             ],
