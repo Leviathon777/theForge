@@ -25,9 +25,9 @@ interface IERC165 {
     function supportsInterface(bytes4 interfaceId) external view returns (bool);
 }
 
-// File: @openzeppelin/contracts/token/ERC721/IERC721.sol
+// File: @openzeppelin/contracts/dot/ERC721/IERC721.sol
 
-// OpenZeppelin Contracts (last updated v5.1.0) (token/ERC721/IERC721.sol)
+// OpenZeppelin Contracts (last updated v5.1.0) (dot/ERC721/IERC721.sol)
 
 pragma solidity ^0.8.20;
 
@@ -36,55 +36,55 @@ pragma solidity ^0.8.20;
  */
 interface IERC721 is IERC165 {
     /**
-     * @dev Emitted when `tokenId` token is transferred from `from` to `to`.
+     * @dev Emitted when `dotId` dot is transferred from `from` to `to`.
      */
     event Transfer(
         address indexed from,
         address indexed to,
-        uint256 indexed tokenId
+        uint256 indexed dotId
     );
 
     /**
-     * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.
+     * @dev Emitted when `titolare` enables `approved` to manage the `dotId` dot.
      */
     event Approval(
-        address indexed owner,
+        address indexed titolare,
         address indexed approved,
-        uint256 indexed tokenId
+        uint256 indexed dotId
     );
 
     /**
-     * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.
+     * @dev Emitted when `titolare` enables or disables (`approved`) `operator` to manage all of its assets.
      */
     event ApprovalForAll(
-        address indexed owner,
+        address indexed titolare,
         address indexed operator,
         bool approved
     );
 
     /**
-     * @dev Returns the number of tokens in ``owner``'s account.
+     * @dev Returns the number of dots in ``titolare``'s account.
      */
-    function balanceOf(address owner) external view returns (uint256 balance);
+    function balanceOf(address titolare) external view returns (uint256 balance);
 
     /**
-     * @dev Returns the owner of the `tokenId` token.
+     * @dev Returns the titolare of the `dotId` dot.
      *
      * Requirements:
      *
-     * - `tokenId` must exist.
+     * - `dotId` must exist.
      */
-    function ownerOf(uint256 tokenId) external view returns (address owner);
+    function titolareOf(uint256 dotId) external view returns (address titolare);
 
     /**
-     * @dev Safely transfers `tokenId` token from `from` to `to`.
+     * @dev Safely transfers `dotId` dot from `from` to `to`.
      *
      * Requirements:
      *
      * - `from` cannot be the zero address.
      * - `to` cannot be the zero address.
-     * - `tokenId` token must exist and be owned by `from`.
-     * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.
+     * - `dotId` dot must exist and be owned by `from`.
+     * - If the caller is not `from`, it must be approved to move this dot by either {approve} or {setApprovalForAll}.
      * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon
      *   a safe transfer.
      *
@@ -93,20 +93,20 @@ interface IERC721 is IERC165 {
     function safeTransferFrom(
         address from,
         address to,
-        uint256 tokenId,
+        uint256 dotId,
         bytes calldata data
     ) external;
 
     /**
-     * @dev Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients
-     * are aware of the ERC-721 protocol to prevent tokens from being forever locked.
+     * @dev Safely transfers `dotId` dot from `from` to `to`, checking first that contract recipients
+     * are aware of the ERC-721 protocol to prevent dots from being forever locked.
      *
      * Requirements:
      *
      * - `from` cannot be the zero address.
      * - `to` cannot be the zero address.
-     * - `tokenId` token must exist and be owned by `from`.
-     * - If the caller is not `from`, it must have been allowed to move this token by either {approve} or
+     * - `dotId` dot must exist and be owned by `from`.
+     * - If the caller is not `from`, it must have been allowed to move this dot by either {approve} or
      *   {setApprovalForAll}.
      * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon
      *   a safe transfer.
@@ -116,11 +116,11 @@ interface IERC721 is IERC165 {
     function safeTransferFrom(
         address from,
         address to,
-        uint256 tokenId
+        uint256 dotId
     ) external;
 
     /**
-     * @dev Transfers `tokenId` token from `from` to `to`.
+     * @dev Transfers `dotId` dot from `from` to `to`.
      *
      * WARNING: Note that the caller is responsible to confirm that the recipient is capable of receiving ERC-721
      * or else they may be permanently lost. Usage of {safeTransferFrom} prevents loss, though the caller must
@@ -130,35 +130,35 @@ interface IERC721 is IERC165 {
      *
      * - `from` cannot be the zero address.
      * - `to` cannot be the zero address.
-     * - `tokenId` token must be owned by `from`.
-     * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.
+     * - `dotId` dot must be owned by `from`.
+     * - If the caller is not `from`, it must be approved to move this dot by either {approve} or {setApprovalForAll}.
      *
      * Emits a {Transfer} event.
      */
     function transferFrom(
         address from,
         address to,
-        uint256 tokenId
+        uint256 dotId
     ) external;
 
     /**
-     * @dev Gives permission to `to` to transfer `tokenId` token to another account.
-     * The approval is cleared when the token is transferred.
+     * @dev Gives permission to `to` to transfer `dotId` dot to another account.
+     * The approval is cleared when the dot is transferred.
      *
      * Only a single account can be approved at a time, so approving the zero address clears previous approvals.
      *
      * Requirements:
      *
-     * - The caller must own the token or be an approved operator.
-     * - `tokenId` must exist.
+     * - The caller must own the dot or be an approved operator.
+     * - `dotId` must exist.
      *
      * Emits an {Approval} event.
      */
-    function approve(address to, uint256 tokenId) external;
+    function approve(address to, uint256 dotId) external;
 
     /**
      * @dev Approve or remove `operator` as an operator for the caller.
-     * Operators can call {transferFrom} or {safeTransferFrom} for any token owned by the caller.
+     * Operators can call {transferFrom} or {safeTransferFrom} for any dot owned by the caller.
      *
      * Requirements:
      *
@@ -169,72 +169,69 @@ interface IERC721 is IERC165 {
     function setApprovalForAll(address operator, bool approved) external;
 
     /**
-     * @dev Returns the account approved for `tokenId` token.
+     * @dev Returns the account approved for `dotId` dot.
      *
      * Requirements:
      *
-     * - `tokenId` must exist.
+     * - `dotId` must exist.
      */
-    function getApproved(uint256 tokenId)
+    function getApproved(uint256 dotId)
         external
         view
         returns (address operator);
 
     /**
-     * @dev Returns if the `operator` is allowed to manage all of the assets of `owner`.
+     * @dev Returns if the `operator` is allowed to manage all of the assets of `titolare`.
      *
      * See {setApprovalForAll}
      */
-    function isApprovedForAll(address owner, address operator)
+    function isApprovedForAll(address titolare, address operator)
         external
         view
         returns (bool);
 }
 
-// File: @openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol
+// File: @openzeppelin/contracts/dot/ERC721/extensions/IERC721Metadata.sol
 
-// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC721/extensions/IERC721Metadata.sol)
+// OpenZeppelin Contracts (last updated v5.0.0) (dot/ERC721/extensions/IERC721Metadata.sol)
 
 pragma solidity ^0.8.20;
 
-/**
- * @title ERC-721 Non-Fungible Token Standard, optional metadata extension
- * @dev See https://eips.ethereum.org/EIPS/eip-721
- */
+
 interface IERC721Metadata is IERC721 {
     /**
-     * @dev Returns the token collection name.
+     * @dev Returns the dot collection name.
      */
     function name() external view returns (string memory);
 
     /**
-     * @dev Returns the token collection symbol.
+     * @dev Returns the dot collection symbol.
      */
     function symbol() external view returns (string memory);
 
     /**
-     * @dev Returns the Uniform Resource Identifier (URI) for `tokenId` token.
+     * @dev Returns the Uniform Resource Identifier (URI) for `dotId` dot.
      */
-    function tokenURI(uint256 tokenId) external view returns (string memory);
+    function dotURI(uint256 dotId) external view returns (string memory);
 }
 
-// File: @openzeppelin/contracts/token/ERC721/IERC721Receiver.sol
+// File: @openzeppelin/contracts/dot/ERC721/IERC721Receiver.sol
 
-// OpenZeppelin Contracts (last updated v5.1.0) (token/ERC721/IERC721Receiver.sol)
+// OpenZeppelin Contracts (last updated v5.1.0) (dot/ERC721/IERC721Receiver.sol)
 
 pragma solidity ^0.8.20;
 
 /**
- * @title ERC-721 token receiver interface
+ * @title ERC-721 dot receiver interface
  * @dev Interface for any contract that wants to support safeTransfers
  * from ERC-721 asset contracts.
  */
 interface IERC721Receiver {
     /**
-     * @dev Whenever an {IERC721} `tokenId` token is transferred to this contract via {IERC721-safeTransferFrom}
+     * @dev Whenever an {IERC721} `dotId` dot is transferred to this contract via {IERC721-safeTransferFrom}
      * by `operator` from `from`, this function is called.
      *
-     * It must return its Solidity selector to confirm the token transfer.
+     * It must return its Solidity selector to confirm the dot transfer.
      * If any other value is returned or the interface is not implemented by the recipient, the transfer will be
      * reverted.
      *
@@ -243,7 +240,7 @@ interface IERC721Receiver {
     function onERC721Received(
         address operator,
         address from,
-        uint256 tokenId,
+        uint256 dotId,
         bytes calldata data
     ) external returns (bytes4);
 }
@@ -255,12 +252,12 @@ pragma solidity ^0.8.20;
 
 /**
  * @dev Standard ERC-20 Errors
- * Interface of the https://eips.ethereum.org/EIPS/eip-6093[ERC-6093] custom errors for ERC-20 tokens.
+ * Interface of the https://eips.ethereum.org/EIPS/eip-6093[ERC-6093] custom errors for ERC-20 dots.
  */
 interface IERC20Errors {
     /**
      * @dev Indicates an error related to the current `balance` of a `sender`. Used in transfers.
-     * @param sender Address whose tokens are being transferred.
+     * @param sender Address whose dots are being transferred.
      * @param balance Current balance for the interacting account.
      * @param needed Minimum amount required to perform a transfer.
      */
@@ -271,21 +268,21 @@ interface IERC20Errors {
     );
 
     /**
-     * @dev Indicates a failure with the token `sender`. Used in transfers.
-     * @param sender Address whose tokens are being transferred.
+     * @dev Indicates a failure with the dot `sender`. Used in transfers.
+     * @param sender Address whose dots are being transferred.
      */
     error ERC20InvalidSender(address sender);
 
     /**
-     * @dev Indicates a failure with the token `receiver`. Used in transfers.
-     * @param receiver Address to which tokens are being transferred.
+     * @dev Indicates a failure with the dot `receiver`. Used in transfers.
+     * @param receiver Address to which dots are being transferred.
      */
     error ERC20InvalidReceiver(address receiver);
 
     /**
      * @dev Indicates a failure with the `spender`’s `allowance`. Used in transfers.
-     * @param spender Address that may be allowed to operate on tokens without being their owner.
-     * @param allowance Amount of tokens a `spender` is allowed to operate with.
+     * @param spender Address that may be allowed to operate on dots without being their titolare.
+     * @param allowance Amount of dots a `spender` is allowed to operate with.
      * @param needed Minimum amount required to perform a transfer.
      */
     error ERC20InsufficientAllowance(
@@ -295,138 +292,138 @@ interface IERC20Errors {
     );
 
     /**
-     * @dev Indicates a failure with the `approver` of a token to be approved. Used in approvals.
+     * @dev Indicates a failure with the `approver` of a dot to be approved. Used in approvals.
      * @param approver Address initiating an approval operation.
      */
     error ERC20InvalidApprover(address approver);
 
     /**
      * @dev Indicates a failure with the `spender` to be approved. Used in approvals.
-     * @param spender Address that may be allowed to operate on tokens without being their owner.
+     * @param spender Address that may be allowed to operate on dots without being their titolare.
      */
     error ERC20InvalidSpender(address spender);
 }
 
 /**
  * @dev Standard ERC-721 Errors
- * Interface of the https://eips.ethereum.org/EIPS/eip-6093[ERC-6093] custom errors for ERC-721 tokens.
+ * Interface of the https://eips.ethereum.org/EIPS/eip-6093[ERC-6093] custom errors for ERC-721 dots.
  */
 interface IERC721Errors {
     /**
-     * @dev Indicates that an address can't be an owner. For example, `address(0)` is a forbidden owner in ERC-20.
+     * @dev Indicates that an address can't be an titolare. For example, `address(0)` is a forbidden titolare in ERC-20.
      * Used in balance queries.
-     * @param owner Address of the current owner of a token.
+     * @param titolare Address of the current titolare of a dot.
      */
-    error ERC721InvalidOwner(address owner);
+    error ERC721InvalidTitolare(address titolare);
 
     /**
-     * @dev Indicates a `tokenId` whose `owner` is the zero address.
-     * @param tokenId Identifier number of a token.
+     * @dev Indicates a `dotId` whose `titolare` is the zero address.
+     * @param dotId Identifier number of a dot.
      */
-    error ERC721NonexistentToken(uint256 tokenId);
+    error ERC721NonexistentDOT(uint256 dotId);
 
     /**
-     * @dev Indicates an error related to the ownership over a particular token. Used in transfers.
-     * @param sender Address whose tokens are being transferred.
-     * @param tokenId Identifier number of a token.
-     * @param owner Address of the current owner of a token.
+     * @dev Indicates an error related to the titolareship over a particular dot. Used in transfers.
+     * @param sender Address whose dots are being transferred.
+     * @param dotId Identifier number of a dot.
+     * @param titolare Address of the current titolare of a dot.
      */
-    error ERC721IncorrectOwner(address sender, uint256 tokenId, address owner);
+    error ERC721IncorrectTitolare(address sender, uint256 dotId, address titolare);
 
     /**
-     * @dev Indicates a failure with the token `sender`. Used in transfers.
-     * @param sender Address whose tokens are being transferred.
+     * @dev Indicates a failure with the dot `sender`. Used in transfers.
+     * @param sender Address whose dots are being transferred.
      */
     error ERC721InvalidSender(address sender);
 
     /**
-     * @dev Indicates a failure with the token `receiver`. Used in transfers.
-     * @param receiver Address to which tokens are being transferred.
+     * @dev Indicates a failure with the dot `receiver`. Used in transfers.
+     * @param receiver Address to which dots are being transferred.
      */
     error ERC721InvalidReceiver(address receiver);
 
     /**
      * @dev Indicates a failure with the `operator`’s approval. Used in transfers.
-     * @param operator Address that may be allowed to operate on tokens without being their owner.
-     * @param tokenId Identifier number of a token.
+     * @param operator Address that may be allowed to operate on dots without being their titolare.
+     * @param dotId Identifier number of a dot.
      */
-    error ERC721InsufficientApproval(address operator, uint256 tokenId);
+    error ERC721InsufficientApproval(address operator, uint256 dotId);
 
     /**
-     * @dev Indicates a failure with the `approver` of a token to be approved. Used in approvals.
+     * @dev Indicates a failure with the `approver` of a dot to be approved. Used in approvals.
      * @param approver Address initiating an approval operation.
      */
     error ERC721InvalidApprover(address approver);
 
     /**
      * @dev Indicates a failure with the `operator` to be approved. Used in approvals.
-     * @param operator Address that may be allowed to operate on tokens without being their owner.
+     * @param operator Address that may be allowed to operate on dots without being their titolare.
      */
     error ERC721InvalidOperator(address operator);
 }
 
 /**
  * @dev Standard ERC-1155 Errors
- * Interface of the https://eips.ethereum.org/EIPS/eip-6093[ERC-6093] custom errors for ERC-1155 tokens.
+ * Interface of the https://eips.ethereum.org/EIPS/eip-6093[ERC-6093] custom errors for ERC-1155 dots.
  */
 interface IERC1155Errors {
     /**
      * @dev Indicates an error related to the current `balance` of a `sender`. Used in transfers.
-     * @param sender Address whose tokens are being transferred.
+     * @param sender Address whose dots are being transferred.
      * @param balance Current balance for the interacting account.
      * @param needed Minimum amount required to perform a transfer.
-     * @param tokenId Identifier number of a token.
+     * @param dotId Identifier number of a dot.
      */
     error ERC1155InsufficientBalance(
         address sender,
         uint256 balance,
         uint256 needed,
-        uint256 tokenId
+        uint256 dotId
     );
 
     /**
-     * @dev Indicates a failure with the token `sender`. Used in transfers.
-     * @param sender Address whose tokens are being transferred.
+     * @dev Indicates a failure with the dot `sender`. Used in transfers.
+     * @param sender Address whose dots are being transferred.
      */
     error ERC1155InvalidSender(address sender);
 
     /**
-     * @dev Indicates a failure with the token `receiver`. Used in transfers.
-     * @param receiver Address to which tokens are being transferred.
+     * @dev Indicates a failure with the dot `receiver`. Used in transfers.
+     * @param receiver Address to which dots are being transferred.
      */
     error ERC1155InvalidReceiver(address receiver);
 
     /**
      * @dev Indicates a failure with the `operator`’s approval. Used in transfers.
-     * @param operator Address that may be allowed to operate on tokens without being their owner.
-     * @param owner Address of the current owner of a token.
+     * @param operator Address that may be allowed to operate on dots without being their titolare.
+     * @param titolare Address of the current titolare of a dot.
      */
-    error ERC1155MissingApprovalForAll(address operator, address owner);
+    error ERC1155MissingApprovalForAll(address operator, address titolare);
 
     /**
-     * @dev Indicates a failure with the `approver` of a token to be approved. Used in approvals.
+     * @dev Indicates a failure with the `approver` of a dot to be approved. Used in approvals.
      * @param approver Address initiating an approval operation.
      */
     error ERC1155InvalidApprover(address approver);
 
     /**
      * @dev Indicates a failure with the `operator` to be approved. Used in approvals.
-     * @param operator Address that may be allowed to operate on tokens without being their owner.
+     * @param operator Address that may be allowed to operate on dots without being their titolare.
      */
     error ERC1155InvalidOperator(address operator);
 
     /**
      * @dev Indicates an array length mismatch between ids and values in a safeBatchTransferFrom operation.
      * Used in batch transfers.
-     * @param idsLength Length of the array of token identifiers
-     * @param valuesLength Length of the array of token amounts
+     * @param idsLength Length of the array of dot identifiers
+     * @param valuesLength Length of the array of dot amounts
      */
     error ERC1155InvalidArrayLength(uint256 idsLength, uint256 valuesLength);
 }
 
-// File: @openzeppelin/contracts/token/ERC721/utils/ERC721Utils.sol
+// File: @openzeppelin/contracts/dot/ERC721/utils/ERC721Utils.sol
 
-// OpenZeppelin Contracts (last updated v5.1.0) (token/ERC721/utils/ERC721Utils.sol)
+// OpenZeppelin Contracts (last updated v5.1.0) (dot/ERC721/utils/ERC721Utils.sol)
 
 pragma solidity ^0.8.20;
 
@@ -440,7 +437,7 @@ pragma solidity ^0.8.20;
 library ERC721Utils {
     /**
      * @dev Performs an acceptance check for the provided `operator` by calling {IERC721-onERC721Received}
-     * on the `to` address. The `operator` is generally the address that initiated the token transfer (i.e. `msg.sender`).
+     * on the `to` address. The `operator` is generally the address that initiated the dot transfer (i.e. `msg.sender`).
      *
      * The acceptance call is not executed and treated as a no-op if the target address doesn't contain code (i.e. an EOA).
      * Otherwise, the recipient must implement {IERC721Receiver-onERC721Received} and return the acceptance magic value to accept
@@ -450,7 +447,7 @@ library ERC721Utils {
         address operator,
         address from,
         address to,
-        uint256 tokenId,
+        uint256 dotId,
         bytes memory data
     ) internal {
         if (to.code.length > 0) {
@@ -458,12 +455,12 @@ library ERC721Utils {
                 IERC721Receiver(to).onERC721Received(
                     operator,
                     from,
-                    tokenId,
+                    dotId,
                     data
                 )
             returns (bytes4 retval) {
                 if (retval != IERC721Receiver.onERC721Received.selector) {
-                    // Token rejected
+                    // DOT rejected
                     revert IERC721Errors.ERC721InvalidReceiver(to);
                 }
             } catch (bytes memory reason) {
@@ -2752,14 +2749,14 @@ abstract contract ERC165 is IERC165 {
     }
 }
 
-// File: @openzeppelin/contracts/token/ERC721/ERC721.sol
+// File: @openzeppelin/contracts/dot/ERC721/ERC721.sol
 
-// OpenZeppelin Contracts (last updated v5.1.0) (token/ERC721/ERC721.sol)
+// OpenZeppelin Contracts (last updated v5.1.0) (dot/ERC721/ERC721.sol)
 
 pragma solidity ^0.8.20;
 
 /**
- * @dev Implementation of https://eips.ethereum.org/EIPS/eip-721[ERC-721] Non-Fungible Token Standard, including
+ * @dev Implementation of https://eips.ethereum.org/EIPS/eip-721[ERC-721] Non-Fungible DOT Standard, including
  * the Metadata extension, but not including the Enumerable extension, which is available separately as
  * {ERC721Enumerable}.
  */
@@ -2772,22 +2769,22 @@ abstract contract ERC721 is
 {
     using Strings for uint256;
 
-    // Token name
+    // DOT name
     string private _name;
 
-    // Token symbol
+    // DOT symbol
     string private _symbol;
 
-    mapping(uint256 => address) private _owners;
+    mapping(uint256 => address) private _titolares;
 
     mapping(address => uint256) private _balances;
 
-    mapping(uint256 => address) private _tokenApprovals;
+    mapping(uint256 => address) private _dotApprovals;
 
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
     /**
-     * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
+     * @dev Initializes the contract by setting a `name` and a `symbol` to the dot collection.
      */
     constructor(string memory name_, string memory symbol_) {
         _name = name_;
@@ -2813,18 +2810,18 @@ abstract contract ERC721 is
     /**
      * @dev See {IERC721-balanceOf}.
      */
-    function balanceOf(address owner) public view virtual returns (uint256) {
-        if (owner == address(0)) {
-            revert ERC721InvalidOwner(address(0));
+    function balanceOf(address titolare) public view virtual returns (uint256) {
+        if (titolare == address(0)) {
+            revert ERC721InvalidTitolare(address(0));
         }
-        return _balances[owner];
+        return _balances[titolare];
     }
 
     /**
-     * @dev See {IERC721-ownerOf}.
+     * @dev See {IERC721-titolareOf}.
      */
-    function ownerOf(uint256 tokenId) public view virtual returns (address) {
-        return _requireOwned(tokenId);
+    function titolareOf(uint256 dotId) public view virtual returns (address) {
+        return _requireOwned(dotId);
     }
 
     /**
@@ -2842,26 +2839,26 @@ abstract contract ERC721 is
     }
 
     /**
-     * @dev See {IERC721Metadata-tokenURI}.
+     * @dev See {IERC721Metadata-dotURI}.
      */
-    function tokenURI(uint256 tokenId)
+    function dotURI(uint256 dotId)
         public
         view
         virtual
         returns (string memory)
     {
-        _requireOwned(tokenId);
+        _requireOwned(dotId);
 
         string memory baseURI = _baseURI();
         return
             bytes(baseURI).length > 0
-                ? string.concat(baseURI, tokenId.toString())
+                ? string.concat(baseURI, dotId.toString())
                 : "";
     }
 
     /**
-     * @dev Base URI for computing {tokenURI}. If set, the resulting URI for each
-     * token will be the concatenation of the `baseURI` and the `tokenId`. Empty
+     * @dev Base URI for computing {dotURI}. If set, the resulting URI for each
+     * dot will be the concatenation of the `baseURI` and the `dotId`. Empty
      * by default, can be overridden in child contracts.
      */
     function _baseURI() internal view virtual returns (string memory) {
@@ -2871,22 +2868,22 @@ abstract contract ERC721 is
     /**
      * @dev See {IERC721-approve}.
      */
-    function approve(address to, uint256 tokenId) public virtual {
-        _approve(to, tokenId, _msgSender());
+    function approve(address to, uint256 dotId) public virtual {
+        _approve(to, dotId, _msgSender());
     }
 
     /**
      * @dev See {IERC721-getApproved}.
      */
-    function getApproved(uint256 tokenId)
+    function getApproved(uint256 dotId)
         public
         view
         virtual
         returns (address)
     {
-        _requireOwned(tokenId);
+        _requireOwned(dotId);
 
-        return _getApproved(tokenId);
+        return _getApproved(dotId);
     }
 
     /**
@@ -2899,13 +2896,13 @@ abstract contract ERC721 is
     /**
      * @dev See {IERC721-isApprovedForAll}.
      */
-    function isApprovedForAll(address owner, address operator)
+    function isApprovedForAll(address titolare, address operator)
         public
         view
         virtual
         returns (bool)
     {
-        return _operatorApprovals[owner][operator];
+        return _operatorApprovals[titolare][operator];
     }
 
     /**
@@ -2914,16 +2911,16 @@ abstract contract ERC721 is
     function transferFrom(
         address from,
         address to,
-        uint256 tokenId
+        uint256 dotId
     ) public virtual {
         if (to == address(0)) {
             revert ERC721InvalidReceiver(address(0));
         }
-        // Setting an "auth" arguments enables the `_isAuthorized` check which verifies that the token exists
+        // Setting an "auth" arguments enables the `_isAuthorized` check which verifies that the dot exists
         // (from != 0). Therefore, it is not needed to verify that the return value is not 0 here.
-        address previousOwner = _update(to, tokenId, _msgSender());
-        if (previousOwner != from) {
-            revert ERC721IncorrectOwner(from, tokenId, previousOwner);
+        address previousTitolare = _update(to, dotId, _msgSender());
+        if (previousTitolare != from) {
+            revert ERC721IncorrectTitolare(from, dotId, previousTitolare);
         }
     }
 
@@ -2933,9 +2930,9 @@ abstract contract ERC721 is
     function safeTransferFrom(
         address from,
         address to,
-        uint256 tokenId
+        uint256 dotId
     ) public {
-        safeTransferFrom(from, to, tokenId, "");
+        safeTransferFrom(from, to, dotId, "");
     }
 
     /**
@@ -2944,93 +2941,93 @@ abstract contract ERC721 is
     function safeTransferFrom(
         address from,
         address to,
-        uint256 tokenId,
+        uint256 dotId,
         bytes memory data
     ) public virtual {
-        transferFrom(from, to, tokenId);
+        transferFrom(from, to, dotId);
         ERC721Utils.checkOnERC721Received(
             _msgSender(),
             from,
             to,
-            tokenId,
+            dotId,
             data
         );
     }
 
     /**
-     * @dev Returns the owner of the `tokenId`. Does NOT revert if token doesn't exist
+     * @dev Returns the titolare of the `dotId`. Does NOT revert if dot doesn't exist
      *
-     * IMPORTANT: Any overrides to this function that add ownership of tokens not tracked by the
+     * IMPORTANT: Any overrides to this function that add titolareship of dots not tracked by the
      * core ERC-721 logic MUST be matched with the use of {_increaseBalance} to keep balances
-     * consistent with ownership. The invariant to preserve is that for any address `a` the value returned by
-     * `balanceOf(a)` must be equal to the number of tokens such that `_ownerOf(tokenId)` is `a`.
+     * consistent with titolareship. The invariant to preserve is that for any address `a` the value returned by
+     * `balanceOf(a)` must be equal to the number of dots such that `_titolareOf(dotId)` is `a`.
      */
-    function _ownerOf(uint256 tokenId) internal view virtual returns (address) {
-        return _owners[tokenId];
+    function _titolareOf(uint256 dotId) internal view virtual returns (address) {
+        return _titolares[dotId];
     }
 
     /**
-     * @dev Returns the approved address for `tokenId`. Returns 0 if `tokenId` is not forged.
+     * @dev Returns the approved address for `dotId`. Returns 0 if `dotId` is not forged.
      */
-    function _getApproved(uint256 tokenId)
+    function _getApproved(uint256 dotId)
         internal
         view
         virtual
         returns (address)
     {
-        return _tokenApprovals[tokenId];
+        return _dotApprovals[dotId];
     }
 
     /**
-     * @dev Returns whether `spender` is allowed to manage `owner`'s tokens, or `tokenId` in
-     * particular (ignoring whether it is owned by `owner`).
+     * @dev Returns whether `spender` is allowed to manage `titolare`'s dots, or `dotId` in
+     * particular (ignoring whether it is owned by `titolare`).
      *
-     * WARNING: This function assumes that `owner` is the actual owner of `tokenId` and does not verify this
+     * WARNING: This function assumes that `titolare` is the actual titolare of `dotId` and does not verify this
      * assumption.
      */
     function _isAuthorized(
-        address owner,
+        address titolare,
         address spender,
-        uint256 tokenId
+        uint256 dotId
     ) internal view virtual returns (bool) {
         return
             spender != address(0) &&
-            (owner == spender ||
-                isApprovedForAll(owner, spender) ||
-                _getApproved(tokenId) == spender);
+            (titolare == spender ||
+                isApprovedForAll(titolare, spender) ||
+                _getApproved(dotId) == spender);
     }
 
     /**
-     * @dev Checks if `spender` can operate on `tokenId`, assuming the provided `owner` is the actual owner.
+     * @dev Checks if `spender` can operate on `dotId`, assuming the provided `titolare` is the actual titolare.
      * Reverts if:
-     * - `spender` does not have approval from `owner` for `tokenId`.
-     * - `spender` does not have approval to manage all of `owner`'s assets.
+     * - `spender` does not have approval from `titolare` for `dotId`.
+     * - `spender` does not have approval to manage all of `titolare`'s assets.
      *
-     * WARNING: This function assumes that `owner` is the actual owner of `tokenId` and does not verify this
+     * WARNING: This function assumes that `titolare` is the actual titolare of `dotId` and does not verify this
      * assumption.
      */
     function _checkAuthorized(
-        address owner,
+        address titolare,
         address spender,
-        uint256 tokenId
+        uint256 dotId
     ) internal view virtual {
-        if (!_isAuthorized(owner, spender, tokenId)) {
-            if (owner == address(0)) {
-                revert ERC721NonexistentToken(tokenId);
+        if (!_isAuthorized(titolare, spender, dotId)) {
+            if (titolare == address(0)) {
+                revert ERC721NonexistentDOT(dotId);
             } else {
-                revert ERC721InsufficientApproval(spender, tokenId);
+                revert ERC721InsufficientApproval(spender, dotId);
             }
         }
     }
 
     /**
-     * @dev Unsafe write access to the balances, used by extensions that "forge" tokens using an {ownerOf} override.
+     * @dev Unsafe write access to the balances, used by extensions that "forge" dots using an {titolareOf} override.
      *
      * NOTE: the value is limited to type(uint128).max. This protect against _balance overflow. It is unrealistic that
      * a uint256 would ever overflow from increments when these increments are bounded to uint128 values.
      *
      * WARNING: Increasing an account's balance using this function tends to be paired with an override of the
-     * {_ownerOf} function to resolve the ownership of the corresponding tokens so that balances and ownership
+     * {_titolareOf} function to resolve the titolareship of the corresponding dots so that balances and titolareship
      * remain consistent with one another.
      */
     function _increaseBalance(address account, uint128 value) internal virtual {
@@ -3040,11 +3037,11 @@ abstract contract ERC721 is
     }
 
     /**
-     * @dev Transfers `tokenId` from its current owner to `to`, or alternatively forges (or burns) if the current owner
-     * (or `to`) is the zero address. Returns the owner of the `tokenId` before the update.
+     * @dev Transfers `dotId` from its current titolare to `to`, or alternatively forges (or burns) if the current titolare
+     * (or `to`) is the zero address. Returns the titolare of the `dotId` before the update.
      *
      * The `auth` argument is optional. If the value passed is non 0, then this function will check that
-     * `auth` is either the owner of the token, or approved to operate on the token (by the owner).
+     * `auth` is either the titolare of the dot, or approved to operate on the dot (by the titolare).
      *
      * Emits a {Transfer} event.
      *
@@ -3052,20 +3049,20 @@ abstract contract ERC721 is
      */
     function _update(
         address to,
-        uint256 tokenId,
+        uint256 dotId,
         address auth
     ) internal virtual returns (address) {
-        address from = _ownerOf(tokenId);
+        address from = _titolareOf(dotId);
 
         // Perform (optional) operator check
         if (auth != address(0)) {
-            _checkAuthorized(from, auth, tokenId);
+            _checkAuthorized(from, auth, dotId);
         }
 
         // Execute the update
         if (from != address(0)) {
             // Clear approval. No need to re-authorize or emit the Approval event
-            _approve(address(0), tokenId, address(0), false);
+            _approve(address(0), dotId, address(0), false);
 
             unchecked {
                 _balances[from] -= 1;
@@ -3078,47 +3075,47 @@ abstract contract ERC721 is
             }
         }
 
-        _owners[tokenId] = to;
+        _titolares[dotId] = to;
 
-        emit Transfer(from, to, tokenId);
+        emit Transfer(from, to, dotId);
 
         return from;
     }
 
     /**
-     * @dev forges `tokenId` and transfers it to `to`.
+     * @dev forges `dotId` and transfers it to `to`.
      *
      * WARNING: Usage of this method is discouraged, use {_safeforge} whenever possible
      *
      * Requirements:
      *
-     * - `tokenId` must not exist.
+     * - `dotId` must not exist.
      * - `to` cannot be the zero address.
      *
      * Emits a {Transfer} event.
      */
-    function _forge(address to, uint256 tokenId) internal {
+    function _forge(address to, uint256 dotId) internal {
         if (to == address(0)) {
             revert ERC721InvalidReceiver(address(0));
         }
-        address previousOwner = _update(to, tokenId, address(0));
-        if (previousOwner != address(0)) {
+        address previousTitolare = _update(to, dotId, address(0));
+        if (previousTitolare != address(0)) {
             revert ERC721InvalidSender(address(0));
         }
     }
 
     /**
-     * @dev forges `tokenId`, transfers it to `to` and checks for `to` acceptance.
+     * @dev forges `dotId`, transfers it to `to` and checks for `to` acceptance.
      *
      * Requirements:
      *
-     * - `tokenId` must not exist.
+     * - `dotId` must not exist.
      * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.
      *
      * Emits a {Transfer} event.
      */
-    function _safeforge(address to, uint256 tokenId) internal {
-        _safeforge(to, tokenId, "");
+    function _safeforge(address to, uint256 dotId) internal {
+        _safeforge(to, dotId, "");
     }
 
     /**
@@ -3127,77 +3124,77 @@ abstract contract ERC721 is
      */
     function _safeforge(
         address to,
-        uint256 tokenId,
+        uint256 dotId,
         bytes memory data
     ) internal virtual {
-        _forge(to, tokenId);
+        _forge(to, dotId);
         ERC721Utils.checkOnERC721Received(
             _msgSender(),
             address(0),
             to,
-            tokenId,
+            dotId,
             data
         );
     }
 
     /**
-     * @dev Destroys `tokenId`.
-     * The approval is cleared when the token is burned.
-     * This is an internal function that does not check if the sender is authorized to operate on the token.
+     * @dev Destroys `dotId`.
+     * The approval is cleared when the dot is burned.
+     * This is an internal function that does not check if the sender is authorized to operate on the dot.
      *
      * Requirements:
      *
-     * - `tokenId` must exist.
+     * - `dotId` must exist.
      *
      * Emits a {Transfer} event.
      */
-    function _burn(uint256 tokenId) internal {
-        address previousOwner = _update(address(0), tokenId, address(0));
-        if (previousOwner == address(0)) {
-            revert ERC721NonexistentToken(tokenId);
+    function _burn(uint256 dotId) internal {
+        address previousTitolare = _update(address(0), dotId, address(0));
+        if (previousTitolare == address(0)) {
+            revert ERC721NonexistentDOT(dotId);
         }
     }
 
     /**
-     * @dev Transfers `tokenId` from `from` to `to`.
+     * @dev Transfers `dotId` from `from` to `to`.
      *  As opposed to {transferFrom}, this imposes no restrictions on msg.sender.
      *
      * Requirements:
      *
      * - `to` cannot be the zero address.
-     * - `tokenId` token must be owned by `from`.
+     * - `dotId` dot must be owned by `from`.
      *
      * Emits a {Transfer} event.
      */
     function _transfer(
         address from,
         address to,
-        uint256 tokenId
+        uint256 dotId
     ) internal {
         if (to == address(0)) {
             revert ERC721InvalidReceiver(address(0));
         }
-        address previousOwner = _update(to, tokenId, address(0));
-        if (previousOwner == address(0)) {
-            revert ERC721NonexistentToken(tokenId);
-        } else if (previousOwner != from) {
-            revert ERC721IncorrectOwner(from, tokenId, previousOwner);
+        address previousTitolare = _update(to, dotId, address(0));
+        if (previousTitolare == address(0)) {
+            revert ERC721NonexistentDOT(dotId);
+        } else if (previousTitolare != from) {
+            revert ERC721IncorrectTitolare(from, dotId, previousTitolare);
         }
     }
 
     /**
-     * @dev Safely transfers `tokenId` token from `from` to `to`, checking that contract recipients
-     * are aware of the ERC-721 standard to prevent tokens from being forever locked.
+     * @dev Safely transfers `dotId` dot from `from` to `to`, checking that contract recipients
+     * are aware of the ERC-721 standard to prevent dots from being forever locked.
      *
      * `data` is additional data, it has no specified format and it is sent in call to `to`.
      *
      * This internal function is like {safeTransferFrom} in the sense that it invokes
      * {IERC721Receiver-onERC721Received} on the receiver, and can be used to e.g.
-     * implement alternative mechanisms to perform token transfer, such as signature-based.
+     * implement alternative mechanisms to perform dot transfer, such as signature-based.
      *
      * Requirements:
      *
-     * - `tokenId` token must exist and be owned by `from`.
+     * - `dotId` dot must exist and be owned by `from`.
      * - `to` cannot be the zero address.
      * - `from` cannot be the zero address.
      * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.
@@ -3207,9 +3204,9 @@ abstract contract ERC721 is
     function _safeTransfer(
         address from,
         address to,
-        uint256 tokenId
+        uint256 dotId
     ) internal {
-        _safeTransfer(from, to, tokenId, "");
+        _safeTransfer(from, to, dotId, "");
     }
 
     /**
@@ -3219,24 +3216,24 @@ abstract contract ERC721 is
     function _safeTransfer(
         address from,
         address to,
-        uint256 tokenId,
+        uint256 dotId,
         bytes memory data
     ) internal virtual {
-        _transfer(from, to, tokenId);
+        _transfer(from, to, dotId);
         ERC721Utils.checkOnERC721Received(
             _msgSender(),
             from,
             to,
-            tokenId,
+            dotId,
             data
         );
     }
 
     /**
-     * @dev Approve `to` to operate on `tokenId`
+     * @dev Approve `to` to operate on `dotId`
      *
      * The `auth` argument is optional. If the value passed is non 0, then this function will check that `auth` is
-     * either the owner of the token, or approved to operate on all tokens held by this owner.
+     * either the titolare of the dot, or approved to operate on all dots held by this titolare.
      *
      * Emits an {Approval} event.
      *
@@ -3244,10 +3241,10 @@ abstract contract ERC721 is
      */
     function _approve(
         address to,
-        uint256 tokenId,
+        uint256 dotId,
         address auth
     ) internal {
-        _approve(to, tokenId, auth, true);
+        _approve(to, dotId, auth, true);
     }
 
     /**
@@ -3256,33 +3253,33 @@ abstract contract ERC721 is
      */
     function _approve(
         address to,
-        uint256 tokenId,
+        uint256 dotId,
         address auth,
         bool emitEvent
     ) internal virtual {
-        // Avoid reading the owner unless necessary
+        // Avoid reading the titolare unless necessary
         if (emitEvent || auth != address(0)) {
-            address owner = _requireOwned(tokenId);
+            address titolare = _requireOwned(dotId);
 
-            // We do not use _isAuthorized because single-token approvals should not be able to call approve
+            // We do not use _isAuthorized because single-dot approvals should not be able to call approve
             if (
                 auth != address(0) &&
-                owner != auth &&
-                !isApprovedForAll(owner, auth)
+                titolare != auth &&
+                !isApprovedForAll(titolare, auth)
             ) {
                 revert ERC721InvalidApprover(auth);
             }
 
             if (emitEvent) {
-                emit Approval(owner, to, tokenId);
+                emit Approval(titolare, to, dotId);
             }
         }
 
-        _tokenApprovals[tokenId] = to;
+        _dotApprovals[dotId] = to;
     }
 
     /**
-     * @dev Approve `operator` to operate on all of `owner` tokens
+     * @dev Approve `operator` to operate on all of `titolare` dots
      *
      * Requirements:
      * - operator can't be the address zero.
@@ -3290,90 +3287,84 @@ abstract contract ERC721 is
      * Emits an {ApprovalForAll} event.
      */
     function _setApprovalForAll(
-        address owner,
+        address titolare,
         address operator,
         bool approved
     ) internal virtual {
         if (operator == address(0)) {
             revert ERC721InvalidOperator(operator);
         }
-        _operatorApprovals[owner][operator] = approved;
-        emit ApprovalForAll(owner, operator, approved);
+        _operatorApprovals[titolare][operator] = approved;
+        emit ApprovalForAll(titolare, operator, approved);
     }
 
     /**
-     * @dev Reverts if the `tokenId` doesn't have a current owner (it hasn't been forged, or it has been burned).
-     * Returns the owner.
+     * @dev Reverts if the `dotId` doesn't have a current titolare (it hasn't been forged, or it has been burned).
+     * Returns the titolare.
      *
-     * Overrides to ownership logic should be done to {_ownerOf}.
+     * Overrides to titolareship logic should be done to {_titolareOf}.
      */
-    function _requireOwned(uint256 tokenId) internal view returns (address) {
-        address owner = _ownerOf(tokenId);
-        if (owner == address(0)) {
-            revert ERC721NonexistentToken(tokenId);
+    function _requireOwned(uint256 dotId) internal view returns (address) {
+        address titolare = _titolareOf(dotId);
+        if (titolare == address(0)) {
+            revert ERC721NonexistentDOT(dotId);
         }
-        return owner;
+        return titolare;
     }
 }
 
-// File: @openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol
 
-// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC721/extensions/IERC721Enumerable.sol)
 
 pragma solidity ^0.8.20;
 
-/**
- * @title ERC-721 Non-Fungible Token Standard, optional enumeration extension
- * @dev See https://eips.ethereum.org/EIPS/eip-721
- */
 interface IERC721Enumerable is IERC721 {
     /**
-     * @dev Returns the total amount of tokens stored by the contract.
+     * @dev Returns the total amount of dots stored by the contract.
      */
     function totalSupply() external view returns (uint256);
 
     /**
-     * @dev Returns a token ID owned by `owner` at a given `index` of its token list.
-     * Use along with {balanceOf} to enumerate all of ``owner``'s tokens.
+     * @dev Returns a dot ID owned by `titolare` at a given `index` of its dot list.
+     * Use along with {balanceOf} to enumerate all of ``titolare``'s dots.
      */
-    function tokenOfOwnerByIndex(address owner, uint256 index)
+    function dotOfTitolareByIndex(address titolare, uint256 index)
         external
         view
         returns (uint256);
 
     /**
-     * @dev Returns a token ID at a given `index` of all the tokens stored by the contract.
-     * Use along with {totalSupply} to enumerate all tokens.
+     * @dev Returns a dot ID at a given `index` of all the dots stored by the contract.
+     * Use along with {totalSupply} to enumerate all dots.
      */
-    function tokenByIndex(uint256 index) external view returns (uint256);
+    function dotByIndex(uint256 index) external view returns (uint256);
 }
 
-// File: @openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol
+// File: @openzeppelin/contracts/dot/ERC721/extensions/ERC721Enumerable.sol
 
-// OpenZeppelin Contracts (last updated v5.1.0) (token/ERC721/extensions/ERC721Enumerable.sol)
+// OpenZeppelin Contracts (last updated v5.1.0) (dot/ERC721/extensions/ERC721Enumerable.sol)
 
 pragma solidity ^0.8.20;
 
 /**
  * @dev This implements an optional extension of {ERC721} defined in the ERC that adds enumerability
- * of all the token ids in the contract as well as all token ids owned by each account.
+ * of all the dot ids in the contract as well as all dot ids owned by each account.
  *
  * CAUTION: {ERC721} extensions that implement custom `balanceOf` logic, such as {ERC721Consecutive},
  * interfere with enumerability and should not be used together with {ERC721Enumerable}.
  */
 abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
-    mapping(address => mapping(uint256 => uint256)) private _ownedTokens;
-    mapping(uint256 => uint256) private _ownedTokensIndex;
+    mapping(address => mapping(uint256 => uint256)) private _ownedDOTs;
+    mapping(uint256 => uint256) private _ownedDOTsIndex;
 
-    uint256[] private _allTokens;
-    mapping(uint256 => uint256) private _allTokensIndex;
+    uint256[] private _allDOTs;
+    mapping(uint256 => uint256) private _allDOTsIndex;
 
     /**
-     * @dev An `owner`'s token query was out of bounds for `index`.
+     * @dev An `titolare`'s dot query was out of bounds for `index`.
      *
-     * NOTE: The owner being `address(0)` indicates a global out of bounds index.
+     * NOTE: The titolare being `address(0)` indicates a global out of bounds index.
      */
-    error ERC721OutOfBoundsIndex(address owner, uint256 index);
+    error ERC721OutOfBoundsIndex(address titolare, uint256 index);
 
     /**
      * @dev Batch forge is not allowed.
@@ -3396,35 +3387,35 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     }
 
     /**
-     * @dev See {IERC721Enumerable-tokenOfOwnerByIndex}.
+     * @dev See {IERC721Enumerable-dotOfTitolareByIndex}.
      */
-    function tokenOfOwnerByIndex(address owner, uint256 index)
+    function dotOfTitolareByIndex(address titolare, uint256 index)
         public
         view
         virtual
         returns (uint256)
     {
-        if (index >= balanceOf(owner)) {
-            revert ERC721OutOfBoundsIndex(owner, index);
+        if (index >= balanceOf(titolare)) {
+            revert ERC721OutOfBoundsIndex(titolare, index);
         }
-        return _ownedTokens[owner][index];
+        return _ownedDOTs[titolare][index];
     }
 
     /**
      * @dev See {IERC721Enumerable-totalSupply}.
      */
     function totalSupply() public view virtual returns (uint256) {
-        return _allTokens.length;
+        return _allDOTs.length;
     }
 
     /**
-     * @dev See {IERC721Enumerable-tokenByIndex}.
+     * @dev See {IERC721Enumerable-dotByIndex}.
      */
-    function tokenByIndex(uint256 index) public view virtual returns (uint256) {
+    function dotByIndex(uint256 index) public view virtual returns (uint256) {
         if (index >= totalSupply()) {
             revert ERC721OutOfBoundsIndex(address(0), index);
         }
-        return _allTokens[index];
+        return _allDOTs[index];
     }
 
     /**
@@ -3432,106 +3423,106 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
      */
     function _update(
         address to,
-        uint256 tokenId,
+        uint256 dotId,
         address auth
     ) internal virtual override returns (address) {
-        address previousOwner = super._update(to, tokenId, auth);
+        address previousTitolare = super._update(to, dotId, auth);
 
-        if (previousOwner == address(0)) {
-            _addTokenToAllTokensEnumeration(tokenId);
-        } else if (previousOwner != to) {
-            _removeTokenFromOwnerEnumeration(previousOwner, tokenId);
+        if (previousTitolare == address(0)) {
+            _addDOTToAllDOTsEnumeration(dotId);
+        } else if (previousTitolare != to) {
+            _removeDOTFromTitolareEnumeration(previousTitolare, dotId);
         }
         if (to == address(0)) {
-            _removeTokenFromAllTokensEnumeration(tokenId);
-        } else if (previousOwner != to) {
-            _addTokenToOwnerEnumeration(to, tokenId);
+            _removeDOTFromAllDOTsEnumeration(dotId);
+        } else if (previousTitolare != to) {
+            _addDOTToTitolareEnumeration(to, dotId);
         }
 
-        return previousOwner;
+        return previousTitolare;
     }
 
     /**
-     * @dev Private function to add a token to this extension's ownership-tracking data structures.
-     * @param to address representing the new owner of the given token ID
-     * @param tokenId uint256 ID of the token to be added to the tokens list of the given address
+     * @dev Private function to add a dot to this extension's titolareship-tracking data structures.
+     * @param to address representing the new titolare of the given dot ID
+     * @param dotId uint256 ID of the dot to be added to the dots list of the given address
      */
-    function _addTokenToOwnerEnumeration(address to, uint256 tokenId) private {
+    function _addDOTToTitolareEnumeration(address to, uint256 dotId) private {
         uint256 length = balanceOf(to) - 1;
-        _ownedTokens[to][length] = tokenId;
-        _ownedTokensIndex[tokenId] = length;
+        _ownedDOTs[to][length] = dotId;
+        _ownedDOTsIndex[dotId] = length;
     }
 
     /**
-     * @dev Private function to add a token to this extension's token tracking data structures.
-     * @param tokenId uint256 ID of the token to be added to the tokens list
+     * @dev Private function to add a dot to this extension's dot tracking data structures.
+     * @param dotId uint256 ID of the dot to be added to the dots list
      */
-    function _addTokenToAllTokensEnumeration(uint256 tokenId) private {
-        _allTokensIndex[tokenId] = _allTokens.length;
-        _allTokens.push(tokenId);
+    function _addDOTToAllDOTsEnumeration(uint256 dotId) private {
+        _allDOTsIndex[dotId] = _allDOTs.length;
+        _allDOTs.push(dotId);
     }
 
     /**
-     * @dev Private function to remove a token from this extension's ownership-tracking data structures. Note that
-     * while the token is not assigned a new owner, the `_ownedTokensIndex` mapping is _not_ updated: this allows for
+     * @dev Private function to remove a dot from this extension's titolareship-tracking data structures. Note that
+     * while the dot is not assigned a new titolare, the `_ownedDOTsIndex` mapping is _not_ updated: this allows for
      * gas optimizations e.g. when performing a transfer operation (avoiding double writes).
-     * This has O(1) time complexity, but alters the order of the _ownedTokens array.
-     * @param from address representing the previous owner of the given token ID
-     * @param tokenId uint256 ID of the token to be removed from the tokens list of the given address
+     * This has O(1) time complexity, but alters the order of the _ownedDOTs array.
+     * @param from address representing the previous titolare of the given dot ID
+     * @param dotId uint256 ID of the dot to be removed from the dots list of the given address
      */
-    function _removeTokenFromOwnerEnumeration(address from, uint256 tokenId)
+    function _removeDOTFromTitolareEnumeration(address from, uint256 dotId)
         private
     {
-        // To prevent a gap in from's tokens array, we store the last token in the index of the token to delete, and
+        // To prevent a gap in from's dots array, we store the last dot in the index of the dot to delete, and
         // then delete the last slot (swap and pop).
 
-        uint256 lastTokenIndex = balanceOf(from);
-        uint256 tokenIndex = _ownedTokensIndex[tokenId];
+        uint256 lastDOTIndex = balanceOf(from);
+        uint256 dotIndex = _ownedDOTsIndex[dotId];
 
-        mapping(uint256 => uint256) storage _ownedTokensByOwner = _ownedTokens[
+        mapping(uint256 => uint256) storage _ownedDOTsByTitolare = _ownedDOTs[
             from
         ];
 
-        // When the token to delete is the last token, the swap operation is unnecessary
-        if (tokenIndex != lastTokenIndex) {
-            uint256 lastTokenId = _ownedTokensByOwner[lastTokenIndex];
+        // When the dot to delete is the last dot, the swap operation is unnecessary
+        if (dotIndex != lastDOTIndex) {
+            uint256 lastDOTId = _ownedDOTsByTitolare[lastDOTIndex];
 
-            _ownedTokensByOwner[tokenIndex] = lastTokenId; // Move the last token to the slot of the to-delete token
-            _ownedTokensIndex[lastTokenId] = tokenIndex; // Update the moved token's index
+            _ownedDOTsByTitolare[dotIndex] = lastDOTId; // Move the last dot to the slot of the to-delete dot
+            _ownedDOTsIndex[lastDOTId] = dotIndex; // Update the moved dot's index
         }
 
         // This also deletes the contents at the last position of the array
-        delete _ownedTokensIndex[tokenId];
-        delete _ownedTokensByOwner[lastTokenIndex];
+        delete _ownedDOTsIndex[dotId];
+        delete _ownedDOTsByTitolare[lastDOTIndex];
     }
 
     /**
-     * @dev Private function to remove a token from this extension's token tracking data structures.
-     * This has O(1) time complexity, but alters the order of the _allTokens array.
-     * @param tokenId uint256 ID of the token to be removed from the tokens list
+     * @dev Private function to remove a dot from this extension's dot tracking data structures.
+     * This has O(1) time complexity, but alters the order of the _allDOTs array.
+     * @param dotId uint256 ID of the dot to be removed from the dots list
      */
-    function _removeTokenFromAllTokensEnumeration(uint256 tokenId) private {
-        // To prevent a gap in the tokens array, we store the last token in the index of the token to delete, and
+    function _removeDOTFromAllDOTsEnumeration(uint256 dotId) private {
+        // To prevent a gap in the dots array, we store the last dot in the index of the dot to delete, and
         // then delete the last slot (swap and pop).
 
-        uint256 lastTokenIndex = _allTokens.length - 1;
-        uint256 tokenIndex = _allTokensIndex[tokenId];
+        uint256 lastDOTIndex = _allDOTs.length - 1;
+        uint256 dotIndex = _allDOTsIndex[dotId];
 
-        // When the token to delete is the last token, the swap operation is unnecessary. However, since this occurs so
-        // rarely (when the last forged token is burnt) that we still do the swap here to avoid the gas cost of adding
-        // an 'if' statement (like in _removeTokenFromOwnerEnumeration)
-        uint256 lastTokenId = _allTokens[lastTokenIndex];
+        // When the dot to delete is the last dot, the swap operation is unnecessary. However, since this occurs so
+        // rarely (when the last forged dot is burnt) that we still do the swap here to avoid the gas cost of adding
+        // an 'if' statement (like in _removeDOTFromTitolareEnumeration)
+        uint256 lastDOTId = _allDOTs[lastDOTIndex];
 
-        _allTokens[tokenIndex] = lastTokenId; // Move the last token to the slot of the to-delete token
-        _allTokensIndex[lastTokenId] = tokenIndex; // Update the moved token's index
+        _allDOTs[dotIndex] = lastDOTId; // Move the last dot to the slot of the to-delete dot
+        _allDOTsIndex[lastDOTId] = dotIndex; // Update the moved dot's index
 
         // This also deletes the contents at the last position of the array
-        delete _allTokensIndex[tokenId];
-        _allTokens.pop();
+        delete _allDOTsIndex[dotId];
+        _allDOTs.pop();
     }
 
     /**
-     * See {ERC721-_increaseBalance}. We need that to account tokens that were forged in batch
+     * See {ERC721-_increaseBalance}. We need that to account dots that were forged in batch
      */
     function _increaseBalance(address account, uint128 amount)
         internal
@@ -3881,18 +3872,18 @@ pragma solidity ^0.8.20;
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
- * there is an account (an owner) that can be granted exclusive access to
+ * there is an account (an titolare) that can be granted exclusive access to
  * specific functions.
  *
- * The initial owner is set to the address provided by the deployer. This can
- * later be changed with {transferOwnership}.
+ * The initial titolare is set to the address provided by the deployer. This can
+ * later be changed with {transferTitolareship}.
  *
  * This module is used through inheritance. It will make available the modifier
- * `onlyOwner`, which can be applied to your functions to restrict their use to
- * the owner.
+ * `onlyTitolare`, which can be applied to your functions to restrict their use to
+ * the titolare.
  */
 abstract contract Ownable is Context {
-    address private _owner;
+    address private _titolare;
 
     /**
      * @dev The caller account is not authorized to perform an operation.
@@ -3900,79 +3891,79 @@ abstract contract Ownable is Context {
     error OwnableUnauthorizedAccount(address account);
 
     /**
-     * @dev The owner is not a valid owner account. (eg. `address(0)`)
+     * @dev The titolare is not a valid titolare account. (eg. `address(0)`)
      */
-    error OwnableInvalidOwner(address owner);
+    error OwnableInvalidTitolare(address titolare);
 
-    event OwnershipTransferred(
-        address indexed previousOwner,
-        address indexed newOwner
+    event TitolareshipTransferred(
+        address indexed previousTitolare,
+        address indexed newTitolare
     );
 
     /**
-     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.
+     * @dev Initializes the contract setting the address provided by the deployer as the initial titolare.
      */
-    constructor(address initialOwner) {
-        if (initialOwner == address(0)) {
-            revert OwnableInvalidOwner(address(0));
+    constructor(address initialTitolare) {
+        if (initialTitolare == address(0)) {
+            revert OwnableInvalidTitolare(address(0));
         }
-        _transferOwnership(initialOwner);
+        _transferTitolareship(initialTitolare);
     }
 
     /**
-     * @dev Throws if called by any account other than the owner.
+     * @dev Throws if called by any account other than the titolare.
      */
-    modifier onlyOwner() {
-        _checkOwner();
+    modifier onlyTitolare() {
+        _checkTitolare();
         _;
     }
 
     /**
-     * @dev Returns the address of the current owner.
+     * @dev Returns the address of the current titolare.
      */
-    function owner() public view virtual returns (address) {
-        return _owner;
+    function titolare() public view virtual returns (address) {
+        return _titolare;
     }
 
     /**
-     * @dev Throws if the sender is not the owner.
+     * @dev Throws if the sender is not the titolare.
      */
-    function _checkOwner() internal view virtual {
-        if (owner() != _msgSender()) {
+    function _checkTitolare() internal view virtual {
+        if (titolare() != _msgSender()) {
             revert OwnableUnauthorizedAccount(_msgSender());
         }
     }
 
     /**
-     * @dev Leaves the contract without owner. It will not be possible to call
-     * `onlyOwner` functions. Can only be called by the current owner.
+     * @dev Leaves the contract without titolare. It will not be possible to call
+     * `onlyTitolare` functions. Can only be called by the current titolare.
      *
-     * NOTE: Renouncing ownership will leave the contract without an owner,
-     * thereby disabling any functionality that is only available to the owner.
+     * NOTE: Renouncing titolareship will leave the contract without an titolare,
+     * thereby disabling any functionality that is only available to the titolare.
      */
-    function renounceOwnership() public virtual onlyOwner {
-        _transferOwnership(address(0));
+    function renounceTitolareship() public virtual onlyTitolare {
+        _transferTitolareship(address(0));
     }
 
     /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     * Can only be called by the current owner.
+     * @dev Transfers titolareship of the contract to a new account (`newTitolare`).
+     * Can only be called by the current titolare.
      */
-    function transferOwnership(address newOwner) public virtual onlyOwner {
-        if (newOwner == address(0)) {
-            revert OwnableInvalidOwner(address(0));
+    function transferTitolareship(address newTitolare) public virtual onlyTitolare {
+        if (newTitolare == address(0)) {
+            revert OwnableInvalidTitolare(address(0));
         }
-        _transferOwnership(newOwner);
+        _transferTitolareship(newTitolare);
     }
 
     /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
+     * @dev Transfers titolareship of the contract to a new account (`newTitolare`).
      * Internal function without access restriction.
      */
-    function _transferOwnership(address newOwner) internal virtual {
-        address oldOwner = _owner;
-        _owner = newOwner;
-        emit OwnershipTransferred(oldOwner, newOwner);
+    function _transferTitolareship(address newTitolare) internal virtual {
+        address oldTitolare = _titolare;
+        _titolare = newTitolare;
+        emit TitolareshipTransferred(oldTitolare, newTitolare);
     }
 }
 
@@ -4154,7 +4145,7 @@ abstract contract ContractMetadata is IContractMetadata {
 
 
  * @title Medals of Honor Elite DOT Collection by XdRiP
- * @notice This smart contract facilitates the forgeing and management of the XdRiP "Medals Of Honor" digital ownership tokens (DOTs),
+ * @notice This smart contract facilitates the forgeing and management of the XdRiP "Medals Of Honor" digital titolareship dots (DOTs),
  * an exclusive multi-tiered collection intended for investors participating in XdRiP, XECHO, and XMarket initiatives, under the XdRiP Digital Management, LLC umbrella.
  *
  * @dev Operating on the Binance Smart Chain (BSC) network, this contract interacts with external wallets and decentralized applications (dApps).
@@ -4224,8 +4215,8 @@ contract MEDALS_OF_HONOR_by_XdRiP is
     mapping(address => mapping(uint256 => bool)) private _ownsLegendaryPerCycle;
     mapping(address => bool) private _ownsEternal;
     mapping(address => uint256) private _userCycles;
-    mapping(uint256 => string) private _tokenURIs;
-    mapping(uint256 => string) private _tokenIPFSHashes;
+    mapping(uint256 => string) private _dotURIs;
+    mapping(uint256 => string) private _dotIPFSHashes;
     mapping(address => mapping(uint256 => uint256)) private _lastforgeTimestamp;
     mapping(address => bool) public isPadrone;
 
@@ -4236,32 +4227,32 @@ contract MEDALS_OF_HONOR_by_XdRiP is
 
     event Commonforged(
         address indexed padrone,
-        uint256 tokenId,
+        uint256 dotId,
         string ipfsHash
     );
     event Uncommonforged(
         address indexed padrone,
-        uint256 tokenId,
+        uint256 dotId,
         string ipfsHash
     );
     event Rareforged(
         address indexed padrone, 
-        uint256 tokenId, 
+        uint256 dotId, 
         string ipfsHash
     );
     event Epicforged(
         address indexed padrone, 
-        uint256 tokenId, 
+        uint256 dotId, 
         string ipfsHash
     );
     event Legendaryforged(
         address indexed padrone,
-        uint256 tokenId,
+        uint256 dotId,
         string ipfsHash
     );
     event Eternalforged(
         address indexed padrone,
-        uint256 tokenId,
+        uint256 dotId,
         string ipfsHash
     );
     event CycleCompleted(
@@ -4275,8 +4266,8 @@ contract MEDALS_OF_HONOR_by_XdRiP is
     address payable _padroneTasca3,
     address payable _padroneTasca4,
     address payable _operatingTasca,
-    address initialOwner 
-) ERC721("Medals of Honor", "MOH") Ownable(initialOwner) {
+    address initialTitolare 
+) ERC721("Medals of Honor", "MOH") Ownable(initialTitolare) {
     isPadrone[_padroneTasca1] = true;
     isPadrone[_padroneTasca2] = true;
     isPadrone[_padroneTasca3] = true;
@@ -4330,8 +4321,8 @@ contract MEDALS_OF_HONOR_by_XdRiP is
         }
     }
 
-    function _exists(uint256 tokenId) internal view virtual returns (bool) {
-        return _ownerOf(tokenId) != address(0);
+    function _exists(uint256 dotId) internal view virtual returns (bool) {
+        return _titolareOf(dotId) != address(0);
     }
 
     function forgeCommon(string memory ipfsHash) public payable {
@@ -4362,7 +4353,7 @@ contract MEDALS_OF_HONOR_by_XdRiP is
         uint256 price;
         uint256 supply;
         Counters.Counter storage counter;
-        uint256 tokenId;
+        uint256 dotId;
         uint256 startingId;
         uint256 currentCycle = _userCycles[msg.sender];
 
@@ -4440,28 +4431,28 @@ contract MEDALS_OF_HONOR_by_XdRiP is
         require(msg.value >= price, "INSUFFICIENT_BNB");
         require(counter.current() < supply, "SUPPLY_EMPTY");
 
-        tokenId = counter.current() + startingId;
-        _forge(msg.sender, tokenId);
-        _tokenIPFSHashes[tokenId] = ipfsHash;
+        dotId = counter.current() + startingId;
+        _forge(msg.sender, dotId);
+        _dotIPFSHashes[dotId] = ipfsHash;
         counter.increment();
         _lastforgeTimestamp[msg.sender][tier] = block.timestamp;
-        _setTokenURI(tokenId, ipfsHash);
+        _setDOTURI(dotId, ipfsHash);
 
         if (tier == 1) {
             _ownsCommonPerCycle[msg.sender][currentCycle] = true;
-            emit Commonforged(msg.sender, tokenId, ipfsHash);
+            emit Commonforged(msg.sender, dotId, ipfsHash);
         } else if (tier == 2) {
             _ownsUncommonPerCycle[msg.sender][currentCycle] = true;
-            emit Uncommonforged(msg.sender, tokenId, ipfsHash);
+            emit Uncommonforged(msg.sender, dotId, ipfsHash);
         } else if (tier == 3) {
             _ownsRarePerCycle[msg.sender][currentCycle] = true;
-            emit Rareforged(msg.sender, tokenId, ipfsHash);
+            emit Rareforged(msg.sender, dotId, ipfsHash);
         } else if (tier == 4) {
             _ownsEpicPerCycle[msg.sender][currentCycle] = true;
-            emit Epicforged(msg.sender, tokenId, ipfsHash);
+            emit Epicforged(msg.sender, dotId, ipfsHash);
         } else if (tier == 5) {
             _ownsLegendaryPerCycle[msg.sender][currentCycle] = true;
-            emit Legendaryforged(msg.sender, tokenId, ipfsHash);
+            emit Legendaryforged(msg.sender, dotId, ipfsHash);
             if (
                 _ownsCommonPerCycle[msg.sender][currentCycle] &&
                 _ownsUncommonPerCycle[msg.sender][currentCycle] &&
@@ -4474,7 +4465,7 @@ contract MEDALS_OF_HONOR_by_XdRiP is
             }
         } else if (tier == 6) {
             _ownsEternal[msg.sender] = true;
-            emit Eternalforged(msg.sender, tokenId, ipfsHash);
+            emit Eternalforged(msg.sender, dotId, ipfsHash);
         }
 
         _allocationProcessing();
@@ -4517,18 +4508,18 @@ contract MEDALS_OF_HONOR_by_XdRiP is
         eternalRemaining = eternalSupply - eternalforged;
     }
 
-    function _setTokenURI(uint256 tokenId, string memory _tokenURI)
+    function _setDOTURI(uint256 dotId, string memory _dotURI)
         internal
         virtual
     {
         require(
-            _exists(tokenId),
-            "ERC721URIStorage: URI set for nonexistent token"
+            _exists(dotId),
+            "ERC721URIStorage: URI set for nonexistent dot"
         );
-        _tokenURIs[tokenId] = _tokenURI;
+        _dotURIs[dotId] = _dotURI;
     }
 
-    function tokenURI(uint256 tokenId)
+    function dotURI(uint256 dotId)
         public
         view
         virtual
@@ -4536,13 +4527,13 @@ contract MEDALS_OF_HONOR_by_XdRiP is
         returns (string memory)
     {
         require(
-            _exists(tokenId),
-            "ERC721Metadata: URI query for nonexistent token"
+            _exists(dotId),
+            "ERC721Metadata: URI query for nonexistent dot"
         );
-        return _tokenURIs[tokenId];
+        return _dotURIs[dotId];
     }
 
-    function setContractURI(string memory newContractURI) public onlyOwner {
+    function setContractURI(string memory newContractURI) public onlyTitolare {
         _contractURI = newContractURI;
     }
 
@@ -4550,13 +4541,13 @@ contract MEDALS_OF_HONOR_by_XdRiP is
         return _contractURI;
     }
 
-    function getTokenIPFSHash(uint256 tokenId)
+    function getDOTIPFSHash(uint256 dotId)
         public
         view
         returns (string memory)
     {
-        require(_exists(tokenId), "NO_SUCH_DOT");
-        return _tokenIPFSHashes[tokenId];
+        require(_exists(dotId), "NO_SUCH_DOT");
+        return _dotIPFSHashes[dotId];
     }
 
     function setCommonPrice(uint256 price) public onlyPadrones {

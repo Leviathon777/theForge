@@ -3,6 +3,7 @@ import Style from "./Button.module.css";
 import Image from "next/image";
 
 const Button = ({
+  id,
   btnName,
   onClick,
   icon,
@@ -15,7 +16,7 @@ const Button = ({
   paddingRight = "0",
   paddingLeft = "0",
   padding = "0px 0px",
-   title = "",
+  title = "",
 }) => {
   const playClickSound = () => {
     const audio = new Audio("../../sounds/button_click_2_-30dB.mp3");
@@ -26,18 +27,19 @@ const Button = ({
   const handleButtonClick = (e) => {
     e.preventDefault();
     if (onClick) {
-      onClick(e); 
+      onClick(e);
     }
     playClickSound();
     if (setIsActive) {
       setIsActive(true);
     }
   };
-  
+
 
   return (
     <div className={`${Style.box} ${isActive ? Style.active : ""}`}>
       <button
+        id={id}
         className={`btn ${classStyle} ${isActive ? "active" : ""}`}
         style={{ fontSize }}
         onClick={handleButtonClick}

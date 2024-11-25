@@ -6,43 +6,91 @@ import { firestore, db } from "./config";
 /************************************************************************************
                    ADD NEW FORGER TO FIREBASE AND SEND EMAIL
 ************************************************************************************/
-export const addForger = async (walletAddress, email, name, agreed, dateOfJoin) => {
+export const addForger = async (
+  walletAddress,
+  email,
+  name,
+  agreed,
+  dateOfJoin,
+  kycStatus = 'pending',
+  refId = null,         
+  kycSubmittedAt = null,
+  kycApprovedAt = null
+) => {
   const firestore = getFirestore();
-  const forgerRef = collection(firestore, "forgers");  
+  const forgerRef = collection(firestore, "forgers");
   const mailRef = collection(firestore, "mail");
-
   try {
-      const forgerDocData = {
-          walletAddress,
-          email,
-          name,
-          agreed,
-          dateOfJoin
-      };
-      await setDoc(doc(forgerRef, walletAddress), forgerDocData);
-      console.log("Forger created successfully:", forgerDocData);
+    const forgerDocData = {
+      walletAddress,
+      email,
+      name,
+      agreed,
+      dateOfJoin,
+      kycStatus,
+      refId, 
+      kycSubmittedAt,
+      kycApprovedAt,
+    };
 
-      const emailDocData = {
-          to: [email],
-          message: {
-              subject: "Welcome to The Forge!",
-              text: `Hi ${name},\n\nWelcome to The Forge! Your journey has begun.`,
-              html: `
-                <p>Hi <strong>${name}</strong>,</p>
-                <p>Welcome to <strong>The Forge</strong>! We're thrilled to have you on this journey.</p>
-                <p>Start forging your legacy today.</p>
-                <p>Best regards,</p>
-                <p><strong>The XDRIP Digital Management Team</strong></p>
-              `,
-          },
-      };
-      await addDoc(mailRef, emailDocData);
-      console.log("Welcome email queued successfully:", emailDocData);
+    await setDoc(doc(forgerRef, walletAddress), forgerDocData);
+    console.log("Forger created successfully:", forgerDocData);
+    const emailDocData = {
+      to: [email],
+      message: {
+        subject: "Welcome to The Forge!",
+        text: `Hi ${name},\n\nWelcome to The Forge! Your journey has begun.`,
+        html: `
+          <p>Hi <strong>${name}</strong>,</p>
+          <p>Welcome to <strong>The Forge</strong>! We're thrilled to have you on this journey.</p>
+          <p>Start forging your legacy today.</p>
+          <p>Best regards,</p>
+          <p><strong>The XDRIP Digital Management Team</strong></p>
+        `,
+      },
+    };
+    await addDoc(mailRef, emailDocData);
+    console.log("Welcome email queued successfully:", emailDocData);
   } catch (error) {
-      console.error("Error adding forger or sending email:", error.message);
-      throw error;
+    console.error("Error adding forger or sending email:", error.message);
+    throw error;
   }
 };
+
+/************************************************************************************
+                        UPDATING THE KYC STATUS OF THE USER 
+*************************************************************************************/
+export const updateUserStatusInFirebase = async (email, status, refId = null, kycApprovedAt = null) => {
+  const firestore = getFirestore();
+  const userRef = collection(firestore, "forgers");
+
+  try {
+    const userQuery = query(userRef, where("email", "==", email));
+    const userSnapshot = await getDocs(userQuery);
+
+    if (!userSnapshot.empty) {
+      const userDoc = userSnapshot.docs[0];
+      const userDocRef = doc(firestore, "forgers", userDoc.id);
+
+      const updateData = {
+        kycStatus: status,
+      };
+
+      if (refId) updateData.refId = refId;
+      if (kycApprovedAt) updateData.kycApprovedAt = kycApprovedAt;
+
+      await updateDoc(userDocRef, updateData);
+
+      console.log(`User with email ${email} status updated to ${status}`);
+    } else {
+      console.log(`No user found with email ${email}`);
+    }
+  } catch (error) {
+    console.error(`Error updating user status for email ${email}:`, error.message);
+    throw error;
+  }
+};
+
 
 /************************************************************************************
                         GET USER INFO WHEN WALLET CONNECTS
@@ -66,6 +114,7 @@ export const getForger = async (walletAddress) => {
       throw error;
     }
   };
+
 
 /************************************************************************************
                   LOGGING MEDAL PURCHASE AND RAMP PROGRESSION
