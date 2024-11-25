@@ -1,0 +1,67 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 1000px;
+    line-height: 1.6;
+    color: #636363;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+  
+  .walkthrough {
+
+    margin-bottom: 40px;
+    max-width: 800px;
+  }
+  
+  .container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .walkthrough h2 {
+    font-size: 1.5rem;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .walkthrough p,
+  .walkthrough ul,
+  .walkthrough ol {
+    margin-bottom: 15px;
+  }
+  
+  .walkthrough ul,
+  .walkthrough ol {
+    padding-left: 20px;
+  }
+  
+  .walkthrough ul li,
+  .walkthrough ol li {
+    margin-bottom: 10px;
+  }
+  
+  /* Verification section */
+  .verification {
+    text-align: center;
+  }
+  
+  .verification h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+  
+  .kycButton {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+
+
+  }
+
+  

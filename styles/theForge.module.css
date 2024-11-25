@@ -272,11 +272,44 @@
   font-size: 1.75rem;
 }
 
+.dedicationContainer {
+  background: var(--background-gradient-dark);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.144); 
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); 
+  justify-content: center;
+  color: var(--color-light);
+  font-family: Georgia, "Times New Roman", Times, serif;
+  line-height: 1.6;
+}
+
+.dedicationTitle {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: var(--color-light); /* Adjust to match background */
+  font-weight: bold;
+}
+
+.dedicationParagraph {
+  text-align: justify;
+  text-indent: 2em;
+  margin-bottom: 1em;
+  color: var(--color-light); /* Ensure readability on darker background */
+}
+
+.dedicationSignature {
+  text-align: right;
+  font-style: italic;
+  color: var(--color-light); /* Match the font color */
+  margin-top: 20px;
+}
+
+
 .dedicationText { 
   max-width: 95%;
   padding-bottom: 0rem;
-  margin-bottom: 0rem;
-  
+  margin-bottom: 0rem;  
 }
 
 .dedicationParagraph{
@@ -515,9 +548,10 @@
     border-bottom-left-radius: 0rem;
   }
 
-  .dedicationTitle{
+  .dedicationTitle {
+    text-align: center;
     font-size: 1rem;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0rem;
   }
 
   
@@ -529,7 +563,7 @@
   .dedicationSignature,
   .dedicationParagraph{
     font-size: .5rem;
-    line-height: 1.1;
+    line-height: 1;
     margin-bottom: 0.5rem;
   }
 
@@ -662,9 +696,9 @@
     font-size: 1.5rem;
   }
 
-  .dedicationTitle{
+  .dedicationTitle {
+    text-align: center;
     font-size: 1rem;
-    margin-bottom: 0.25rem;
   }
 
   
@@ -774,38 +808,7 @@
 }
 
 
-.dedicationContainer {
-  background: var(--background-gradient-dark);
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.144); 
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); 
-  justify-content: center;
-  color: var(--color-light);
-  font-family: Georgia, "Times New Roman", Times, serif;
-  line-height: 1.6;
-}
 
-.dedicationTitle {
-  text-align: center;
-  font-size: 1.8em;
-  margin-bottom: 20px;
-  color: var(--color-light); /* Adjust to match background */
-  font-weight: bold;
-}
-
-.dedicationParagraph {
-  text-align: justify;
-  text-indent: 2em;
-  margin-bottom: 1em;
-  color: var(--color-light); /* Ensure readability on darker background */
-}
-
-.dedicationSignature {
-  text-align: right;
-  font-style: italic;
-  color: var(--color-light); /* Match the font color */
-  margin-top: 20px;
-}
 
 
 
