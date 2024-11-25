@@ -362,8 +362,7 @@ const TheForgePage = () => {
         {
           title: "Unlocks XDRIP Holder Bonus", description: [
             "Must hold atleast (2.5%) XDRIP token supply.",
-            "15% revenue share bonus.",
-            "Priority seating at company events."
+            "15% revenue share bonus."
           ]
         },]
     },

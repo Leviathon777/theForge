@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
+import { useRouter } from 'next/router';
 import { motion, useAnimation } from "framer-motion";
 import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
@@ -37,6 +38,7 @@ const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddre
 
 
 const TheForge = () => {
+  const router = useRouter();
   const [selectedMedal, setSelectedMedal] = useState(null);
   const [bnbBalance, setBnbBalance] = useState(null);
   const [bnbToUsd, setBnbToUsd] = useState(null);
@@ -60,16 +62,19 @@ const TheForge = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
+  const [isKYCReminderVisible, setIsKYCReminderVisible] = useState(false);
+  const [medalToForge, setMedalToForge] = useState(null);
 
   useEffect(() => {
     const handleWalletConnect = async () => {
       if (address) {
         setCurrentAccount(address);
-        console.log(`Wallet connected: ${address}`);        
+        console.log(`Wallet connected: ${address}`);
         try {
           const userData = await getForger(address);
           if (userData) {
-            setCurrentUser(userData);
+            setUserInfo(userData);
             console.log("User info fetched successfully:", userData);
           } else {
             console.log("No user info available. Proceeding without user info.");
@@ -79,11 +84,17 @@ const TheForge = () => {
         }
       } else {
         setCurrentAccount("");
-        setCurrentUser(null);
+        setUserInfo(null);
       }
-    };  
+    };
     handleWalletConnect();
   }, [address]);
+
+  useEffect(() => {
+    if (userInfo) {
+      setIsWelcomeModalVisible(true);
+    }
+  }, [userInfo]);
 
   const mohData = [
     { title: "COMMON", id: 1, price: "0.5 BNB", description: "Common Medal, forged in the fires of battle, honors the unwavering courage and steadfast determination of XdRiP warriors. This emblem recognizes those who consistently face adversity with resilience and commitment, playing a foundational role within the XdRiP community. Bearing this medal signifies a warrior’s dedication to the cause and their readiness to uphold the strength and integrity of our ranks in every challenge they encounter.", revenueAccess: "10%", xdripBonus: "2%", medalVideo: videos.common, ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url, inventory: { forged: 0, available: 10000, }, },
@@ -148,7 +159,7 @@ const TheForge = () => {
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
-  
+
   const handleArrowClick = (direction) => {
     controls.stop();
 
@@ -166,16 +177,16 @@ const TheForge = () => {
     });
   };
   const handleCardClick = (index) => {
-    controls.stop();  
+    controls.stop();
     const targetRotation = -rotationStep * index;
     setCurrentRotation(targetRotation);
-  
+
     controls.start({
       rotateY: targetRotation,
       transition: { duration: 1, ease: "easeInOut" },
     });
   };
-  
+
   useEffect(() => {
     const fetchBNBPrice = async () => {
       try {
@@ -262,6 +273,10 @@ const TheForge = () => {
   const confirmForge = async () => {
     if (!currentMedal) return;
     try {
+      if (currentMedal.title === "ETERNAL" && userInfo?.kycStatus !== "approved") {
+        toast.error("KYC approval is required to forge the Eternal Medal. Please complete your KYC verification.");
+        return;
+      }
       if (!signer) {
         toast.error("Signer not available. Please connect your wallet.");
         return;
@@ -294,48 +309,63 @@ const TheForge = () => {
     }
   };
 
+
   const handleUserInfoSubmit = async (info) => {
     if (!address) {
-        console.error("Wallet address is not available.");
-        return;
+      console.error("Wallet address is not available.");
+      return;
     }
     try {
-        const dateOfJoin = new Date();
-        await addForger(address, info.email, info.name, info.agreed, dateOfJoin);
-        setUserInfo({ ...info, dateOfJoin });
-        console.log("Forger info collected and saved:", { ...info, dateOfJoin });
+      const dateOfJoin = new Date();
+      await addForger(address, info.email, info.name, info.agreed, dateOfJoin);
+      setUserInfo({ ...info, dateOfJoin });
+      console.log("Forger info collected and saved:", { ...info, dateOfJoin });
     } catch (error) {
-        console.error("Error adding forger:", error);
-        toast.error("Failed to save your information. Please try again.");
-    }
-};
-
-  
-/*
-  const handleForgeClick = (medalType, ipfsHash, revenueAccess, xdripBonus) => {
-    if (!userInfo) {
-      setIsUserInfoModalOpen(true);
-    } else {
-      forge(medalType, ipfsHash, revenueAccess, xdripBonus);
+      console.error("Error adding forger:", error);
+      toast.error("Failed to save your information. Please try again.");
     }
   };
-  */
 
   const handleForgeClick = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
     if (!address) {
-      // Trigger wallet connection when no wallet is connected
       toast.info("Please connect your wallet to proceed.");
       connectLocalWallet();
       return;
     }
-  
     if (!userInfo) {
-      setIsUserInfoModalOpen(true); // Open user info modal if required
-    } else {
-      forge(medalType, ipfsHash, revenueAccess, xdripBonus);
+      setIsUserInfoModalOpen(true);
+      return;
     }
+    if (medalType === "ETERNAL" && userInfo.kycStatus !== "approved") {
+      toast.error("KYC approval is required to forge the Eternal Medal. Please complete your KYC verification.");
+      return;
+    }
+    if (medalType !== "ETERNAL" && userInfo.kycStatus !== "approved") {
+      setMedalToForge({ medalType, ipfsHash, revenueAccess, xdripBonus });
+      setIsKYCReminderVisible(true);
+      return;
+    }
+    forge(medalType, ipfsHash, revenueAccess, xdripBonus);
   };
-  
+
+  const renderKYCMessage = () => {
+    if (!userInfo) {
+      return "Please connect your wallet and provide user information to proceed.";
+    }
+    if (userInfo.kycStatus === "approved") {
+      return "KYC approved! You can forge any medal, including the Eternal Medal.";
+    }
+    if (userInfo.kycStatus === "rejected") {
+      return "Your KYC application was rejected. Please contact support for assistance.";
+    }
+    if (userInfo.kycStatus === "inReview") {
+      return "Your KYC application is under review. Please wait for approval before forging the Eternal Medal.";
+    }
+    return "KYC is optional for most medals but required for the Eternal Medal.";
+  };
+
+
+
 
 
   const forge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
@@ -554,6 +584,17 @@ const TheForge = () => {
         <div className={Style.forge_button_upper}>
           <h1 className={Style.lore_text}>MEDALS OF HONOR VAULT</h1>
           <div className={Style.forge_button_wrapper}>
+
+            <Button
+              btnName="KYC Verification"
+              onClick={() => router.push('/kycPage')}
+              fontSize="inherit"
+              paddingLeft="0"
+              paddingRight="0"
+              isActive={false}
+              className={Style.kycButton}
+            />
+
             <Button
               btnName="WALLET TUTORIALS"
               onClick={() => setIsModalOpen(true)}
@@ -563,6 +604,19 @@ const TheForge = () => {
               paddingRight="0"
               isActive={false}
             />
+
+            {address && (
+              <div className={Style.balances}>
+                <Button
+                  btnName={`XDRIP Balance: ${xdripBalance !== null ? `${xdripBalance} XDRIP` : "Loading..."}`}
+                  onClick={() => window.open('https://poocoin.app/tokens/0x905a46de6f99b6efc5fa062ab398153048e121ea', '_blank')}
+                  fontSize="inherit"
+                  paddingLeft="0"
+                  paddingRight="0"
+                  isActive={false}
+                />
+              </div>
+            )}
 
             <ConnectWallet
               btnTitle="OPEN THE VAULT"
@@ -696,20 +750,9 @@ const TheForge = () => {
               }}
 
             />
-          </div>
 
-          {address && (
-            <div className={Style.balances}>
-              <Button
-                btnName={`XDRIP Balance: ${xdripBalance !== null ? `${xdripBalance} XDRIP` : "Loading..."}`}
-                onClick={() => window.open('https://poocoin.app/tokens/0x905a46de6f99b6efc5fa062ab398153048e121ea', '_blank')}
-                fontSize="inherit"
-                paddingLeft="0"
-                paddingRight="0"
-                isActive={false}
-              />
-            </div>
-          )}
+
+          </div>
         </div>
         <div className={Style.carousel}>
           <div className={Style.carousel_wrapper}>
@@ -765,10 +808,10 @@ const TheForge = () => {
                                 padding="0px 0px"
                                 isActive={false}
                                 setIsActive={() => { }}
-                                title="Forge Medal"
-                                imageWidth={50}
-                                imageHeight={50}
-                                icon=""
+                                title={item.title === "ETERNAL" && userInfo?.kycStatus !== "approved"
+                                  ? "KYC approval required to forge this medal."
+                                  : "Forge Medal"}
+                                disabled={item.title === "ETERNAL" && userInfo?.kycStatus !== "approved"}
                               />
                               <div className={Style.card_right_bottom_bidding_box_timer_item_box}>
                                 <small className={Style.card_right_bottom_bidding_box_timer_item_small}>
@@ -853,14 +896,14 @@ const TheForge = () => {
         </div>
         {selectedMedal && (
           <DotDetailsModal
-          medal={selectedMedal}
-          onClose={() => setSelectedMedal(null)}
-          forge={forge}
-          userInfo={userInfo} 
-          isUserInfoModalOpen={isUserInfoModalOpen}
-          setIsUserInfoModalOpen={setIsUserInfoModalOpen}
-        />
-        
+            medal={selectedMedal}
+            onClose={() => setSelectedMedal(null)}
+            forge={forge}
+            userInfo={userInfo}
+            isUserInfoModalOpen={isUserInfoModalOpen}
+            setIsUserInfoModalOpen={setIsUserInfoModalOpen}
+          />
+
         )}
         {isModalOpen && (
           <WalkthroughModal
@@ -881,6 +924,65 @@ const TheForge = () => {
               <div className={Style.modal_buttons}>
                 <button onClick={confirmForge} className={Style.confirm_button}>Confirm</button>
                 <button onClick={() => setIsConfirmationModalVisible(false)} className={Style.cancel_button}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+        {isWelcomeModalVisible && (
+          <div className={Style.welcome_modal}>
+            <div className={Style.welcome_modal_content}>
+              <h2>Welcome, {userInfo?.name || "User"}!</h2>
+              <p>We're glad to have you at the Forge. Let’s create something extraordinary!</p>
+              <p>{renderKYCMessage()}</p>
+              <div className={Style.modal_buttons}>
+                <Button
+                  btnName="Close"
+                  onClick={() => setIsWelcomeModalVisible(false)}
+                  classStyle={Style.close_button}
+                  fontSize="1rem"
+                  isActive={false}
+                  title="Close Welcome Modal"
+                  icon=""
+                />
+              </div>
+            </div>
+          </div>
+        )}
+        {isKYCReminderVisible && (
+          <div className={Style.kyc_reminder_modal}>
+            <div className={Style.kyc_reminder_content}>
+              <h2>KYC Reminder</h2>
+              <p>
+                KYC is not required to forge this medal, but we strongly recommend completing your KYC for added security and access to exclusive features.
+              </p>
+              <p>Would you like to proceed without KYC?</p>
+              <div className={Style.modal_buttons}>
+                <button
+                  onClick={() => {
+                    if (medalToForge) {
+                      forge(
+                        medalToForge.medalType,
+                        medalToForge.ipfsHash,
+                        medalToForge.revenueAccess,
+                        medalToForge.xdripBonus
+                      );
+                    }
+                    setIsKYCReminderVisible(false);
+                    setMedalToForge(null);
+                  }}
+                  className={Style.confirm_button}
+                >
+                  Proceed
+                </button>
+                <button
+                  onClick={() => {
+                    setIsKYCReminderVisible(false);
+                    setMedalToForge(null);
+                  }}
+                  className={Style.cancel_button}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
