@@ -590,44 +590,48 @@ const TheForge = () => {
 
 
 // yep thought itd be fun to cycle button names... 
-    const buttonTitles = [
-      "Forge Your Destiny",
-      "Claim Your Honor",
-      "Rise as a Legend",
-      "Embrace the Call of Valor",  
-      "Step into Glory",
-      "Unlock Your Legacy",
-      "Ascend to Greatness",
-      "Prove Your Worth",
-      "Earn the Mark of Valor",
-      "Walk the Path of Heroes",
-      "Seal Your Fate in Honor",
-      "Stand Among the Worthy",
-      "Awaken the Spirit of Valor",
-      "Claim the Crown of Glory",
-      "Take Your Place in Legend",
-      "Forge the Path to Immortality",
-      "Rise to the Challenge",
-      "Answer the Hero's Call",
-      "Honor the Warrior’s Code",
-    ];
-  
-    useEffect(() => {
-    const cycleTitles = () => {
-      setRandomTitle((prevTitle) => {
-        const currentIndex = buttonTitles.indexOf(prevTitle);
-        const nextIndex = (currentIndex + 1) % buttonTitles.length;
-        return buttonTitles[nextIndex];
-      });
-    };
-  
-    const interval = setInterval(cycleTitles, 30000); 
-    return () => clearInterval(interval);
-  }, []);
-  
+const buttonTitles = [
+  "Forge Your Destiny",
+  "Claim Your Honor",
+  "Rise as a Legend",
+  "Embrace the Call of Valor",  
+  "Step into Glory",
+  "Unlock Your Legacy",
+  "Ascend to Greatness",
+  "Prove Your Worth",
+  "Earn the Mark of Valor",
+  "Walk the Path of Heroes",
+  "Seal Your Fate in Honor",
+  "Stand Among the Worthy",
+  "Awaken the Spirit of Valor",
+  "Claim the Crown of Glory",
+  "Take Your Place in Legend",
+  "Forge the Path to Immortality",
+  "Rise to the Challenge",
+  "Answer the Hero's Call",
+  "Honor the Warrior’s Code",
+];
 
-//const randomTitle = buttonTitles[Math.floor(Math.random() * buttonTitles.length)];
-const [randomTitle, setRandomTitle] = useState(buttonTitles[0]);
+// Randomly pick an initial title from the list
+const getRandomTitle = () => {
+  return buttonTitles[Math.floor(Math.random() * buttonTitles.length)];
+};
+
+const [randomTitle, setRandomTitle] = useState(getRandomTitle());
+
+useEffect(() => {
+  const cycleTitles = () => {
+    setRandomTitle((prevTitle) => {
+      const currentIndex = buttonTitles.indexOf(prevTitle);
+      const nextIndex = (currentIndex + 1) % buttonTitles.length;
+      return buttonTitles[nextIndex];
+    });
+  };
+
+  const interval = setInterval(cycleTitles, 30000); 
+  return () => clearInterval(interval);
+}, []);
+
 
 
   return (
