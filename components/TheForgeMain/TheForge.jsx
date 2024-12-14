@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from 'next/router';
 import { motion, useAnimation } from "framer-motion";
 import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import {
   ConnectWallet,
   darkTheme,
@@ -27,6 +29,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
 import { getForger, addForger, logMedalPurchase, sendReceiptEmail, trackDetailedTransaction } from "../../firebase/forgeServices";
+
+
+
 const MohAddress = mohCA_ABI.address;
 const MohABI = mohCA_ABI.abi;
 const fetchMohContract = (signerOrProvider) =>
@@ -109,9 +114,11 @@ const TheForge = () => {
   const fetchXDRIPBalance = async () => {
     try {
       const balance = await XdRiPContract.methods.balanceOf(address).call();
-      console.log("Raw balance (in Wei):", balance);
-      const formattedBalance = balance / (10 ** 9);
-      const finalDisplayBalance = parseFloat(formattedBalance).toFixed(0);
+      console.log("Raw balance:", balance); 
+      const balanceString = balance.toString();
+      const formattedBalance = web3.utils.fromWei(balanceString, 'gwei');
+      const finalDisplayBalance = parseFloat(formattedBalance).toFixed(0); 
+  
       console.log("Displayed XDRIP balance:", finalDisplayBalance);
       setXdripBalance(finalDisplayBalance);
     } catch (error) {
@@ -119,11 +126,15 @@ const TheForge = () => {
       setXdripBalance("Error fetching balance");
     }
   };
+  
+
   useEffect(() => {
     if (address) {
       fetchXDRIPBalance();
     }
   }, [address]);
+
+  
   const lens = 500;
   const rotationStep = 360 / mohData.length;
   const [currentRotation, setCurrentRotation] = useState(0);
@@ -144,6 +155,7 @@ const TheForge = () => {
     });
     return () => controls.stop();
   }, [controls]);
+
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => handleArrowClick("right"),
     onSwipedRight: () => handleArrowClick("left"),
@@ -397,35 +409,35 @@ const TheForge = () => {
         case "UNCOMMON":
           const ownsCommon = await contract.balanceOf(address);
           if (ownsCommon.toNumber() < 1) {
-            toast.error("You must own a COMMON medal to forge an UNCOMMON medal.");
+            toast.error("You must own a COMMON medal to forge an UNCOMMON");
             return;
           }
           break;
         case "RARE":
           const ownsUncommon = await contract.balanceOf(address);
           if (ownsUncommon.toNumber() < 2) {
-            toast.error("You must own an UNCOMMON medal to forge a RARE medal.");
+            toast.error("You must own an UNCOMMON medal to forge a RARE");
             return;
           }
           break;
         case "EPIC":
           const ownsRare = await contract.balanceOf(address);
           if (ownsRare.toNumber() < 3) {
-            toast.error("You must own a RARE medal to forge an EPIC medal.");
+            toast.error("You must own a RARE medal to forge an EPIC");
             return;
           }
           break;
         case "LEGENDARY":
           const ownsEpic = await contract.balanceOf(address);
           if (ownsEpic.toNumber() < 4) {
-            toast.error("You must own an EPIC medal to forge a LEGENDARY medal.");
+            toast.error("You must own an EPIC medal to forge a LEGENDARY");
             return;
           }
           break;
         case "ETERNAL":
           break;
         default:
-          throw new Error("Invalid medal type");
+          throw new Error("Invalid Medal");
       }
       const itemPrice = mohData.find((item) => item.title === medalType).price.split(" ")[0];
       const price = ethers.utils.parseUnits(itemPrice, "ether");
@@ -512,6 +524,9 @@ const TheForge = () => {
       }
     }
   };
+
+
+  
   const [showArrows, setShowArrows] = useState(true);
   useEffect(() => {
     const updateArrowsVisibility = () => {
@@ -574,8 +589,45 @@ const TheForge = () => {
   }, [address]);
 
 
+// yep thought itd be fun to cycle button names... 
+    const buttonTitles = [
+      "Forge Your Destiny",
+      "Claim Your Honor",
+      "Rise as a Legend",
+      "Embrace the Call of Valor",  
+      "Step into Glory",
+      "Unlock Your Legacy",
+      "Ascend to Greatness",
+      "Prove Your Worth",
+      "Earn the Mark of Valor",
+      "Walk the Path of Heroes",
+      "Seal Your Fate in Honor",
+      "Stand Among the Worthy",
+      "Awaken the Spirit of Valor",
+      "Claim the Crown of Glory",
+      "Take Your Place in Legend",
+      "Forge the Path to Immortality",
+      "Rise to the Challenge",
+      "Answer the Hero's Call",
+      "Honor the Warrior’s Code",
+    ];
+  
+    useEffect(() => {
+    const cycleTitles = () => {
+      setRandomTitle((prevTitle) => {
+        const currentIndex = buttonTitles.indexOf(prevTitle);
+        const nextIndex = (currentIndex + 1) % buttonTitles.length;
+        return buttonTitles[nextIndex];
+      });
+    };
+  
+    const interval = setInterval(cycleTitles, 30000); 
+    return () => clearInterval(interval);
+  }, []);
+  
 
-
+//const randomTitle = buttonTitles[Math.floor(Math.random() * buttonTitles.length)];
+const [randomTitle, setRandomTitle] = useState(buttonTitles[0]);
 
 
   return (
@@ -608,7 +660,7 @@ const TheForge = () => {
             {address && (
               <div className={Style.balances}>
                 <Button
-                  btnName={`XDRIP Balance: ${xdripBalance !== null ? `${xdripBalance} XDRIP` : "Loading..."}`}
+                  btnName={`XDRIP Balance: ${xdripBalance !== null ? `${xdripBalance}` : "Loading..."}`}
                   onClick={() => window.open('https://poocoin.app/tokens/0x905a46de6f99b6efc5fa062ab398153048e121ea', '_blank')}
                   fontSize="inherit"
                   paddingLeft="0"
@@ -619,7 +671,8 @@ const TheForge = () => {
             )}
 
             <ConnectWallet
-              btnTitle="OPEN THE VAULT"
+            
+            btnTitle={randomTitle}
               style={{
                 background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
                 color: 'white',
@@ -633,7 +686,8 @@ const TheForge = () => {
                 cursor: 'pointer',
                 textAlign: 'center',
                 textTransform: 'uppercase',
-                fontSize: '20px',
+                padding: '6px',
+                fontSize: '16px',
                 textShadow: '0px 0px 2px black',
                 backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
                 display: 'flex',
@@ -733,9 +787,10 @@ const TheForge = () => {
                 },
               })}
 
-              modalSize={"wide"}
+              modalSize={"compact"}
               switchToActiveChain={true}
-              termsOfServiceUrl="/components/Legal/TermsOfService.jsx"
+              titleIconUrl={"/img/mohwalletmodal.png"}
+               termsOfServiceUrl="/components/Legal/TermsOfService.jsx"
               privacyPolicyUrl="/components/Legal/UserAgreement.jsx"
               ThirdwebBranding={false}
               welcomeScreen={{
@@ -987,10 +1042,8 @@ const TheForge = () => {
             </div>
           </div>
         )}
-        <ToastContainer
-          position={toast.POSITION.TOP_CENTER}
-          className={Style.toast_container_center}
-        />
+  
+
 
       </div>
     </div>

@@ -46,7 +46,7 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, isUserI
 
   const handleForgeClick = () => {
     if (!userInfo) {
-      // Trigger the name and email modal if the user hasn't signed up
+      
       setIsUserInfoModalOpen(true);
       toast.info("Please enter your name and email to proceed.");
       return;
@@ -164,7 +164,7 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, isUserI
       <div className={Style.fixedForgeButtonContainer}>
       </div>
 
-      <ToastContainer position="top-center" />
+      
     </Modal>
   );
 });

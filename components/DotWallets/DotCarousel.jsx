@@ -1,3 +1,4 @@
+// DotCarousel.jsx
 
 import React, { useState, useMemo, useCallback } from 'react';
 import Image from "next/image";
@@ -7,7 +8,6 @@ import mohCA_ABI from "../../Context/mohCA_ABI.json";
 import { useSwipeable } from 'react-swipeable';
 import videos from "../../public/videos/index.js";
 
-// Mapping medal titles to local video paths
 const videoPaths = {
   "COMMON MEDAL OF HONOR": videos.common,
   "UNCOMMON MEDAL OF HONOR": videos.uncommon,
@@ -17,23 +17,11 @@ const videoPaths = {
   "ETERNAL MEDAL OF HONOR": videos.eternals,
 };
 
-/*
-const videoPathsHR = {
-  "COMMON MEDAL OF HONOR": videos.COMMONHR,  
-  "UNCOMMON MEDAL OF HONOR": videos.UNCOMMONHR,
-  "RARE MEDAL OF HONOR": videos.RAREHR,
-  "EPIC MEDAL OF HONOR": videos.EPICHR,
-  "LEGENDARY MEDAL OF HONOR": videos.LEGENDARYHR,
-  "ETERNAL MEDAL OF HONOR": videos.ETERNALSHR,
-};
-*/
-
-
-
 const Carousel = ({ medals = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedMedal, setSelectedMedal] = useState(null);
 
+  // empties
   const medalPlaceholders = useMemo(() => [
     { title: "COMMON MEDAL OF HONOR" },
     { title: "UNCOMMON MEDAL OF HONOR" },
@@ -43,11 +31,12 @@ const Carousel = ({ medals = [] }) => {
   ], []);
 
   const handleMedalDetails = useCallback((medal) => {
-    const videoPath = videoPaths[medal.metadata.name] || ""; 
-    console.log(`Loading video for ${medal.metadata.name}: ${videoPath}`); 
+    console.log('handleMedalDetails called with medal:', medal);
+    const videoPath = videoPaths[medal.metadata.name] || "";
+    console.log(`Loading video for ${medal.metadata.name}: ${videoPath}`);
 
     const formattedMedal = {
-      id: medal.tokenId,
+      id: medal.tokenId.toString(), // Corrected access and converted to string
       medalVideo: videoPath,
       title: medal.metadata?.name || medal.title,
       description: medal.metadata?.description || "NO DATA AVAILABLE",
@@ -56,23 +45,27 @@ const Carousel = ({ medals = [] }) => {
       contractAddress: mohCA_ABI.address,
       isPlaceholder: medal.isPlaceholder
     };
+    console.log('Formatted Medal:', formattedMedal);
     setSelectedMedal(formattedMedal);
   }, []);
 
+  // Helper to determine if a URL is an image
   const isImage = useCallback((url) => {
     const extensions = ["jpg", "jpeg", "png", "gif", "webp"];
-    const match = url.match(/\.([a-z]+)(?:[?#]|$)/i);
+    const match = url?.match(/\.([a-z]+)(?:[?#]|$)/i);
     return extensions.includes(match && match[1]);
   }, []);
 
+  // Handlers for navigating the carousel
   const nextVideo = useCallback(() => {
-    setCurrentIndex((currentIndex + 1) % 5);
-  }, [currentIndex]);
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % 5);
+  }, []);
 
   const prevVideo = useCallback(() => {
-    setCurrentIndex((currentIndex - 1 + 5) % 5);
-  }, [currentIndex]);
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + 5) % 5);
+  }, []);
 
+  // Prepare the items to be displayed in the carousel
   const displayedItems = useMemo(() => medalPlaceholders.map((placeholder) => {
     const matchingMedal = medals.find(medal => medal.metadata?.name === placeholder.title);
     return matchingMedal
@@ -80,6 +73,7 @@ const Carousel = ({ medals = [] }) => {
       : { ...placeholder, isPlaceholder: true, id: `placeholder-${placeholder.title}` };
   }), [medals, medalPlaceholders]);
 
+  // Swipe handlers for mobile interactions
   const swipeHandlers = useSwipeable({
     onSwipedLeft: prevVideo,
     onSwipedRight: nextVideo,
@@ -87,6 +81,7 @@ const Carousel = ({ medals = [] }) => {
     trackMouse: true,
   });
 
+  // Styles for the video player
   const videoStyles = useMemo(() => ({
     width: "100%",
     height: "325px",
@@ -96,6 +91,7 @@ const Carousel = ({ medals = [] }) => {
 
   return (
     <div className={styles.carousel} {...swipeHandlers}>
+      {/* Left Arrow Button */}
       <div className={`${styles.arrowButton} ${styles.leftArrow}`}>
         <Button
           btnName="⟵"
@@ -106,8 +102,11 @@ const Carousel = ({ medals = [] }) => {
           icon=""
         />
       </div>
+
+      {/* Carousel Cards */}
       <div className={styles.cards}>
         {displayedItems.map((item, index) => {
+          console.log(`Medal Metadata for item ${index}:`, item.metadata);
           const position = (index - currentIndex + 5) % 5;
           const cardClass = `${styles.card} ${styles[`position${position}`]}`;
           const videoSrc = videoPaths[item.metadata?.name] || "";
@@ -143,7 +142,7 @@ const Carousel = ({ medals = [] }) => {
               {!item.isPlaceholder && (
                 <div onClick={() => handleMedalDetails(item)} className={styles.lower_card}>
                   <small className={styles.token_id}>{item.title || item.metadata.name}</small>
-                  <small className={styles.token_id}>ID: {item.tokenId}</small>
+                  <small className={styles.token_id}>ID: {item.tokenId.toString()}</small> 
                   <small className={styles.dots}>. . .</small>
                 </div>
               )}
@@ -151,6 +150,8 @@ const Carousel = ({ medals = [] }) => {
           );
         })}
       </div>
+
+      {/* Right Arrow Button */}
       <div className={`${styles.arrowButton} ${styles.rightArrow}`}>
         <Button
           btnName="⟶"
@@ -161,6 +162,8 @@ const Carousel = ({ medals = [] }) => {
           icon=""
         />
       </div>
+
+      {/* Details Modal for Selected Medal */}
       {selectedMedal && (
         <DotDetailsModal medal={selectedMedal} onClose={() => setSelectedMedal(null)} />
       )}
