@@ -12,10 +12,21 @@ import WalkthroughModal from "./EntryPage/WalkthroughModal";
 import OwnerOps from "./OwnerOps/OwnerOps";
 import DotCarousel from "./DotWallets/DotCarousel";
 import RampDetails from "./DotWallets/RampDetails";
-import CheckoutModal from "./TheForgeMain/CheckoutModal";
+import InvestorProfileModal from "./TheForgeMain/InvestorProfileModal";
+import FlipBook from "./FlipBook/FlipBook";
+import TransakButton from "./Transak/TransakButton";
+import TransakMOH from "./Transak/TransakMOH";
+import Xoast from "./Xoast/Xoast";
+
+
+
 
 export {
-  CheckoutModal,
+  TransakMOH,
+  Xoast,
+  TransakButton,
+  FlipBook,
+  InvestorProfileModal,
   OwnerOps,
   RampDetails,
   DotCarousel,

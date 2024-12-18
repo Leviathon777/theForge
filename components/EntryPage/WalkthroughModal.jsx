@@ -3,85 +3,68 @@ import styles from './WalkthroughModal.module.css';
 import { Button } from '../componentsindex';
 import Modal from "react-modal";
 
-const WalkthroughModal = ({ isOpen, onRequestClose }) => {
+const WalkthroughModal = ({ isOpen, onRequestClose, isEternalTier = false }) => {
     const [step, setStep] = useState(1);
     const [hasWallet, setHasWallet] = useState(null);
+    const [profileCreated, setProfileCreated] = useState(false);
+    const [kycCompleted, setKycCompleted] = useState(false);
 
     useEffect(() => {
         if (!isOpen) {
             setStep(1);
             setHasWallet(null);
+            setProfileCreated(false);
+            setKycCompleted(false);
         }
     }, [isOpen]);
 
     const walletUserSteps = useMemo(() => [
-        'Step 1: Click the "OPEN THE VAULT" button. This will initiate a connection prompt from your wallet provider, such as MetaMask or WalletConnect, asking you to authorize a connection with THE FORGE.',
-
-        'Step 2: Approve the connection request in your wallet. Check your wallet app or extension for a notification, typically stating the site’s name and asking for your approval to connect. Confirm the connection to proceed. **Note**: Always double-check the website address to ensure you are connecting to a trusted site to avoid phishing scams.',
-
-        'Step 3: Check your wallet connection and view your balance. Once your wallet is connected, you should see your wallet address displayed on the site, along with your current balance. Make sure your balance is sufficient to cover the forging process, including any necessary gas fees (transaction fees required to complete transactions on the blockchain).',
-
-        'Step 4: Switch networks if necessary. **Important**: Some sites require your wallet to be on a specific blockchain network (e.g., Ethereum Mainnet or Binance Smart Chain). If prompted, follow the instructions to switch to the required network in your wallet. You can verify the network by checking the network name at the top of your wallet app or extension.',
-
-        'Step 5: Click the "FORGE" button to begin the forging process for your DOTs. This will trigger a transaction prompt in your wallet, which requires your approval to proceed. **Tip**: Review all transaction details carefully, including gas fees, to ensure accuracy and avoid excessive fees.',
-
-        'Step 6: Approve the forging transaction in your wallet. Once you click "FORGE," your wallet will open a transaction window. Review the transaction summary, including the forging cost and estimated gas fees. Confirm the transaction in your wallet to initiate the forging process. **Note**: Gas fees fluctuate, and during peak usage, fees may be higher than expected. Ensure your wallet balance covers both the forging amount and gas fees to avoid transaction failures.',
-
-        'Step 7: Wait for the transaction to process. Blockchain transactions may take some time, depending on network congestion. You can track the transaction status within your wallet’s activity feed or through a block explorer link that may appear after submitting the transaction. **Tip**: If the transaction is pending for a long time, avoid resubmitting immediately, as this could increase gas costs unnecessarily. Allow time for the blockchain to confirm it.',
-
-        'Step 8: View your newly forged DOTs. After a successful transaction, your DOTs should appear in "Your Medals Display Case" on the site or directly within your connected wallet. You may need to refresh your wallet or add the specific DOT token if it doesn’t appear automatically. **Tip**: Most wallets have an option to "Add Custom Token" where you can manually add new assets using the token’s contract address if it doesn’t show up immediately.',
-
-        'Step 9: Log out if finished. For security, it’s recommended to disconnect from sites when you’re done. You can disconnect from THE FORGE within your wallet’s settings or by using the "Disconnect" button if available on the site.'
+        'Step 1: Connect your wallet by clicking the "OPEN THE VAULT" button. This will prompt your wallet provider (e.g., MetaMask) to request a connection.',
+        'Step 2: Approve the connection request in your wallet.',
+        'Step 3: Verify your wallet connection and ensure you are on the correct blockchain network (e.g., Binance Smart Chain).',
+        'Step 4: Create your investor profile to track purchases and streamline the onboarding process. Fill in the required details and save your profile.',
+        'Step 5: Complete the KYC verification process (mandatory for purchasing Eternal tier). This step validates your identity and ensures regulatory compliance.',
+        'Step 6: Proceed to purchase your D.O.Ts by clicking "FORGE."',
     ], []);
-
-
+    
     const newUserSteps = useMemo(() => [
-        'Step 1: Click the "OPEN THE VAULT" button. This will start the wallet setup process through Thirdweb’s onboarding, making it easy to create a secure wallet.',
-
-        'Step 2: Select your preferred sign-in option, such as entering an email address or using a social login (e.g., Google). This step allows Thirdweb to create a secure wallet for you without requiring an additional app. **Note**: Your email or social login will act as a recovery option, so use an account you can access long-term.',
-
-        'Step 3: **Save your recovery phrase securely**. Thirdweb will generate a unique recovery phrase (sometimes called a "seed phrase" or "backup phrase"). This phrase is your key to recovering your wallet if you lose access. **Warning**: Do not share this phrase with anyone, and avoid storing it online (e.g., in a cloud document). Write it down and store it in a safe place. Losing this phrase means you could lose access to your wallet and funds.',
-
-        'Step 4: Add funds to your wallet. If you need to add funds, use crypto on-ramp services like MoonPay or Wyre (often integrated into wallet providers) to purchase cryptocurrency using a credit/debit card or bank transfer. **Tip**: Be aware of processing times and fees for on-ramp services, and ensure you select the appropriate currency and blockchain network (e.g., BNB on Binance Smart Chain) as needed.',
-
-        'Step 5: Familiarize yourself with wallet security practices. Before proceeding, review key wallet security tips, such as setting up two-factor authentication (2FA) if available, avoiding suspicious sites, and recognizing phishing attempts.',
-
-        'Step 6: Check your wallet balance to confirm that your funds are available. Some wallets may take a few minutes to reflect newly deposited funds. You can refresh your wallet balance if needed to see your available funds.',
-
-        'Step 7: Switch to the appropriate blockchain network if prompted. Many crypto sites, including THE FORGE, may require specific networks, like Ethereum or Binance Smart Chain. Follow the prompts to switch networks if necessary; this ensures your transaction will process correctly.',
-
-        'Step 8: Click "FORGE" to begin creating your DOTs. This step will prompt your wallet to display a transaction summary with details on the forging cost and gas fees. **Note**: Review all transaction details carefully to ensure accuracy.',
-
-        'Step 9: Approve the transaction in your wallet. Confirm the transaction in your wallet app, being mindful of the gas fees, which are necessary to complete transactions on the blockchain. **Reminder**: Only approve transactions you initiated to avoid scams.',
-
-        'Step 10: Wait for the forging transaction to complete. Blockchain transactions may take a few seconds to several minutes, depending on network traffic. **Tip**: You can monitor the transaction’s progress in your wallet’s activity feed or via a block explorer link (such as Etherscan or BSCScan).',
-
-        'Step 11: View your DOTs in "Your Medals Display Case" or in your wallet. Once confirmed, your newly forged DOTs should appear in both the display case on the site and in your wallet. **Note**: If they don’t appear automatically in your wallet, you may need to add the DOT token manually using the token’s contract address.',
-
-        'Step 12: Log out of THE FORGE once finished. For optimal security, disconnect from the site within your wallet settings after completing your session. This minimizes any risk of unauthorized access to your wallet.'
+        'Step 1: Choose your preferred wallet creation method.',
+        'Option 1: Download and set up MetaMask. Go to metamask.io, download the browser extension or mobile app, and follow the prompts to create your wallet. Make sure to securely save your recovery phrase.',
+        'Option 2: Create a wallet through Thirdweb. Use your email address or social login to quickly set up a wallet. A JSON file will be generated containing the necessary data for importing your wallet and will prompt you to save it to your local machine.',
+        'Step 2: If you decide on using Thirdweb, we highly recommend importing your created local wallet information to MetaMask for better accessibility and security. To do this, open MetaMask, select "Import Wallet," and upload the JSON file provided during the Thirdweb wallet creation process.',
+        'Step 3: Add funds to your wallet. Use the integrated on-ramp services or transfer funds from an existing wallet.',
+        ...walletUserSteps.slice(3), // Reuse steps for wallet users from step 4 onward
     ], []);
-
+    
 
     const steps = hasWallet ? walletUserSteps : newUserSteps;
 
+    const handleKycProcess = () => {
+        // Mock KYC completion logic
+        setKycCompleted(true);
+        alert('KYC process completed successfully!');
+    };
     const renderSteps = useMemo(() => {
         if (hasWallet === null) {
             return (
                 <>
-                    <h3 className={styles.stepsText}>Do you already have a DeFi wallet?</h3>
-                    <div className={styles.buttonContainer}>
-                        <Button
-                            btnName="Yes, I have a wallet"
+                    <h2 className={styles.mainTitle}>Get Started with The Forge</h2>
+                    <p className={styles.subtitle}>Do you already have a DeFi wallet?</p>
+                    <div className={styles.optionsContainer}>
+                        <button
                             onClick={() => setHasWallet(true)}
-                            className={styles.actionButton}
-                            isActive={false}
-                        />
-                        <Button
-                            btnName="No, I need a wallet"
+                            className={`${styles.optionCard} ${styles.walletOption}`}
+                        >
+                            <h3>Yes, I have a Wallet</h3>
+                            <p>Connect your existing DeFi wallet (e.g., MetaMask, Trust Wallet).</p>
+                        </button>
+                        <button
                             onClick={() => setHasWallet(false)}
-                            className={styles.actionButton}
-                            isActive={false}
-                        />
+                            className={`${styles.optionCard} ${styles.walletOption}`}
+                        >
+                            <h3>No, I Need a Wallet</h3>
+                            <p>Set up a wallet quickly using MetaMask or our local wallet solution.</p>
+                        </button>
                     </div>
                 </>
             );
@@ -89,46 +72,88 @@ const WalkthroughModal = ({ isOpen, onRequestClose }) => {
 
         return (
             <>
-                <h2 className={styles.title}>{hasWallet ? "Wallet User Walkthrough" : "New User Walkthrough"}</h2>
-                <div className={styles.stepsContainer}>
-                    <p className={styles.stepsText}>               
-                        {steps[step - 1].split('. ').map((line, index) => (
-                            <span className={styles.stepNumber} key={`step-${step}-line-${index}`}>
-                                {line}.
-                                <br />
-                            </span>
-                        ))}
+                <h2 className={styles.stepTitle}>
+                    {(() => {
+                        if (hasWallet === null) {
+                            return "Get Started with The Forge";
+                        } else if (!hasWallet) {
+                            if (step === 1) return "Wallet Setup Options";
+                            if (step === 2) return "Setting Up Your Wallet";
+                            if (step === 3) return "Continuing With ThirdWeb";
+                            if (step === 4) return "Upload Local Wallet To Metamask";
+                            if (step === 5) return "Funding Your Wallet";
+                            if (step === 6) return "Creating Your Profile";
+                            if (step === 7) return "Completing KYC (Optional)";
+                            if (step === 8) return "Continue To The Forge";
+                        } else if (hasWallet) {
+                            if (step === 1) return "Connecting Your Wallet";
+                            if (step === 2) return "Approving Connection";
+                            if (step === 3) return "Always Verify";
+                            if (step === 4) return "Creating Your Profile";
+                            if (step === 5) return "KYC (Optional)";
+                            if (step === 6) return "Continue To The Forge";
+                        }
+                        return `Purchasing Step ${step}`; 
+                    })()}
+                </h2>
+
+                <div className={styles.stepCard}>
+
+                    <p className={styles.stepDescription}>
+                        {steps[step - 1].split(":").slice(1).join(":").trim()}
                     </p>
-                    <div className={styles.buttonContainer}>
-                        {step > 1 && (
-                            <Button
-                                btnName="Back"
-                                onClick={() => setStep(step - 1)}
-                                className={styles.actionButton}
-                                isActive={false}
-                            />
-                        )}
-                        {step < steps.length && (
-                            <Button
-                                btnName="Next"
-                                onClick={() => setStep(step + 1)}
-                                className={styles.actionButton}
-                                isActive={false}
-                            />
-                        )}
-                        {step === steps.length && (
-                            <Button
-                                btnName="Close Walkthrough"
-                                onClick={onRequestClose}
-                                className={styles.actionButton}
-                                isActive={false}
-                            />
-                        )}
-                    </div>
+                    {step === 2 && !hasWallet && (
+                        <div className={styles.optionsLayout}>
+                            <div className={styles.optionSection}>
+                                <h4>Option 1: MetaMask</h4>
+                                <p>Download MetaMask from <a href="https://metamask.io" target="_blank" rel="noreferrer">MetaMask.io</a> and follow their step-by-step guide to create a wallet.</p>
+                            </div>
+                            <div className={styles.optionSection}>
+                                <h4>Option 2: Thirdweb Local Wallet</h4>
+                                <p>Create a wallet instantly using your email or social login. A recovery file (JSON) will be provided to import into MetaMask later.</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <div className={styles.buttonContainer}>
+                    {step === 1 ? (
+                        <Button
+                            btnName="Back to Wallet Options"
+                            onClick={() => setHasWallet(null)}
+                            fontSize="inherit"
+                            className={styles.actionButton}
+                        />
+                    ) : (
+                        <Button
+                            btnName="Back"
+                            onClick={() => setStep(step - 1)}
+                            fontSize="inherit"
+                            className={styles.actionButton}
+                        />
+                    )}
+                    {step < steps.length && (
+                        <Button
+                            btnName="Next"
+                            fontSize="inherit"
+                            onClick={() => setStep(step + 1)}
+                            className={styles.actionButton}
+                        />
+                    )}
+                    {step === steps.length && (
+                        <Button
+                            btnName="Finish Walkthrough"
+                            fontSize="inherit"
+                            onClick={onRequestClose}
+                            className={styles.finishButton}
+                        />
+                    )}
                 </div>
             </>
         );
     }, [hasWallet, step, steps, onRequestClose]);
+
+
 
     if (!isOpen) return null;
 
@@ -145,12 +170,14 @@ const WalkthroughModal = ({ isOpen, onRequestClose }) => {
                 <Button
                     btnName="X"
                     onClick={onRequestClose}
-                    className={styles.closeButton}
                     fontSize="10px"
+                    className={styles.closeButton}
                     isActive={false}
                 />
             </div>
-            {renderSteps}
+            <div className={styles.closeSteps}>
+                {renderSteps}
+            </div>
         </Modal>
     );
 };
