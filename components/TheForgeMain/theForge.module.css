@@ -6,6 +6,14 @@
   height: auto;
   padding: 0rem 0rem;
 }
+
+.buttonFlex {
+  display: flex;
+  gap: 1rem; 
+  justify-content: center;
+  margin-top: 1rem;
+}
+
 .welcome_modal {
   position: fixed;
   top: 0;
@@ -37,9 +45,155 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 9999;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+  z-index: 10001;
+  transition: color 0.2s ease-in-out;
+}
+
+.transakButton:disabled,
+.kycButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background: #333; 
+}
+
+/* Dropdown Container */
+.dropdownContainer {
+  display: flex;  
+  position: relative;
+  padding: .25rem;
+}
+
+/* Dropdown Toggle Button */
+.dropdownToggle {
+  background: -webkit-linear-gradient(145deg, #0d0d0d, #1a1a1a);
+  background: linear-gradient(145deg, #0d0d0d, #1a1a1a);
+  color: white;
+  border: 2px solid #1c1c1c;
+  border-radius: 12px;
+  -webkit-box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7);
+  box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7);
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--font-primary);
+  text-transform: uppercase;
+  font-size: 16px;
+  -webkit-text-shadow: 0px 0px 2px black;
+  text-shadow: 0px 0px 2px black;
+  background-image: -webkit-linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5));
+  background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 240px; 
+  padding: 0px 0px;
+  z-index: 1; 
+}
+
+.dropdownToggle:hover {  
+    color: lightgray;
+    -webkit-transform: translateY(-3px);
+    transform: translateY(-3px);
+    -webkit-transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out;
+    -webkit-text-shadow: 4px 4px 6px rgba(0, 0, 0, 8);
+    text-shadow: 4px 4px 6px rgba(0, 0, 0, 8);
+}
+
+/* Dropdown Menu */
+.dropdownMenu {
+  position: absolute;
+  top: 90%;
+  right: .75rem;
+  width: 90%;
+  background-image: -webkit-linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5));
+  background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5));
+  border: 1px solid #333;
+  border-top: none;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Dropdown Menu Item */
+.dropdownMenuItem {
+  color: white;
+  padding: 10px 20px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.3s ease;
+}
+
+.dropdownMenuItem:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: lightgray;
+  -webkit-transform: translateY(-3px);
+  transform: translateY(-3px);
+  -webkit-transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
+  -webkit-text-shadow: 4px 4px 6px rgba(0, 0, 0, 8);
+  text-shadow: 4px 4px 6px rgba(0, 0, 0, 8);
+}
+
+/* Disabled State */
+.disabled {
+  color: grey;
+  cursor: not-allowed;
+}
+
+
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.438); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
   z-index: 1000;
 }
 
+
+.modalContent {
+  position: relative;
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 10px;
+  background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
+  box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  color: white;
+  max-width: 600px;
+  width: 90%;
+}
+
+
+body.modalOpen {
+  overflow: hidden;
+}
 
 .the_forge_wrapper {
   display: flex;

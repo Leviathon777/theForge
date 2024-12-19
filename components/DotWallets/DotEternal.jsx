@@ -6,20 +6,16 @@ import mohCA_ABI from "../../Context/mohCA_ABI.json";
 import { useSwipeable } from "react-swipeable";
 import videos from "../../public/videos/index.js";
 
-// Video path for Eternal Medal
 const videoPath = { "ETERNAL MEDAL OF HONOR": videos.eternals };
 
 const Eternal = ({ medals = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedMedal, setSelectedMedal] = useState(null);
-
-  // Filter only the Eternal Medal
   const eternalMedals = useMemo(
     () => medals.filter((medal) => medal.metadata?.name === "ETERNAL MEDAL OF HONOR"),
     [medals]
   );
 
-  // Placeholder for when Eternal Medal is not forged
   const placeholder = useMemo(
     () => ({
       id: "placeholder-eternal",

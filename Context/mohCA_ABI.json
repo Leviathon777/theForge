@@ -1,5 +1,5 @@
 {
-    "address": "0x1C9c1957FEa6Dfba6A68979EE478C8A4ba2FB840",
+    "address": "0x25464dF285405E6de12Fea4eb8916E5032E0FC6D",
     "abi": [
         {
             "inputs": [],
@@ -750,37 +750,6 @@
             "inputs": [
                 {
                     "internalType": "address payable",
-                    "name": "_operatingTasca",
-                    "type": "address"
-                }
-            ],
-            "name": "updateDistributionTascas",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "newPadrone",
-                    "type": "address"
-                },
-                {
-                    "internalType": "bool",
-                    "name": "add",
-                    "type": "bool"
-                }
-            ],
-            "name": "updatePadrone",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address payable",
                     "name": "_padroneTasca1",
                     "type": "address"
                 },
@@ -812,6 +781,37 @@
             ],
             "stateMutability": "nonpayable",
             "type": "constructor"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address payable",
+                    "name": "_operatingTasca",
+                    "type": "address"
+                }
+            ],
+            "name": "updateDistributionTascas",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "newPadrone",
+                    "type": "address"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "add",
+                    "type": "bool"
+                }
+            ],
+            "name": "updatePadrone",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
         },
         {
             "inputs": [
@@ -1254,6 +1254,19 @@
                     "internalType": "string",
                     "name": "",
                     "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "titolare",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
                 }
             ],
             "stateMutability": "view",

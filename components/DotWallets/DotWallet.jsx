@@ -1,3 +1,5 @@
+// DotWallet.jsx
+
 import React, { useContext, useEffect, useState, useMemo, useCallback } from "react";
 import Style from "./DotWallet.module.css";
 import DotCarousel from "./DotCarousel.jsx";
@@ -5,7 +7,7 @@ import Eternal from "./DotEternal.jsx";
 import { MyDotDataContext } from '../../Context/MyDotDataContext.js';
 import { VideoPlayer, DotDetailsModal, RampDetails } from "../componentsindex.js";
 import videos from "../../public/videos/index.js";
-import mohAddress from "../../Context/mohCA_ABI.json"
+import mohCA_ABI from "../../Context/mohCA_ABI.json";
 
 const videoPaths = {
   "COMMON MEDAL OF HONOR": videos.common,
@@ -23,8 +25,6 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
   const [eternalMedal, setEternalMedal] = useState(null);
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false);
   const [infoModalData, setInfoModalData] = useState({});
-
-
 
   const organizeMedalsByRarity = (medals) => {
     const orderedRarity = [
@@ -61,44 +61,10 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
     return { ramps, eternal };
   };
 
-  const organizeMedalsByRarityORG = (medals) => {
-    const orderedRarity = [
-      "COMMON MEDAL OF HONOR",
-      "UNCOMMON MEDAL OF HONOR",
-      "RARE MEDAL OF HONOR",
-      "EPIC MEDAL OF HONOR",
-      "LEGENDARY MEDAL OF HONOR",
-    ];
-    const ramps = {};
-    let currentRamp = [];
-    let rampNumber = 1;
-    let eternal = null;
-
-    medals.forEach((medal) => {
-      if (medal.metadata.name === "ETERNAL MEDAL OF HONOR") {
-        eternal = medal;
-      } else if (orderedRarity.includes(medal.metadata.name)) {
-        currentRamp.push(medal);
-
-        if (currentRamp.length === 5) {
-          const rampKey = `ramp${rampNumber}`;
-          ramps[rampKey] = currentRamp;
-          currentRamp = [];
-          rampNumber++;
-        }
-      }
-    });
-
-    if (currentRamp.length > 0) {
-      ramps[`ramp${rampNumber}`] = currentRamp;
-    }
-
-    return { ramps, eternal };
-  };
 
   useEffect(() => {
     console.log("Dots data:", dots);
-    if (dots && dots.length > 0) {
+    if (address && dots && dots.length > 0) {
       const { ramps: organizedRamps, eternal } = organizeMedalsByRarity(dots);
       setRamps(organizedRamps);
       setEternalMedal(eternal);
@@ -115,7 +81,8 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
       setRamps(placeholderRamps);
       setEternalMedal(null);
     }
-  }, [dots]);
+  }, [dots, address]);
+
 
   const handleRampInfo = (rampKey) => {
     const medals = ramps[rampKey];
@@ -127,7 +94,7 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
       console.warn(`No real medals found for ramp key: ${rampKey}`);
       return;
     }
-    const walletAddress = (address);
+    const walletAddress = address;
     const baseCost = 0.5;
 
     const rampData = {
@@ -143,7 +110,7 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
         const medalCost =
           name === "ETERNAL MEDAL OF HONOR" ? 200 : baseCost + index * 0.5;
         return {
-          id: medal?.tokenId || `unknown-${index}`,
+          id: medal?.tokenId.toString() || `unknown-${index}`, // Corrected access and converted to string
           name: name,
           cost: `${medalCost} BNB`,
           rewardIncome: rewardIncomeTotal
@@ -153,8 +120,6 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
             medal?.metadata?.attributes?.find(
               (attr) => attr.trait_type === "CREATORS"
             )?.value || "Unknown Creators",
-          /* description: medal?.metadata?.description || "No description available",
-           animationUrl: medal?.metadata?.animation_url || "No animation available",*/
           externalUrl: medal?.metadata?.external_url || "No external URL provided",
           xdripRewards: "50 XdRiP",
           revenueShare: "20%",
@@ -173,17 +138,18 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
     }
   }, [infoModalData]);
 
-
-
+  
   const handleEternalInfo = () => {
+    if (!eternalMedal) return;
+
     const walletAddress = address;
     const eternalData = {
       numberOfMedals: 1,
-      totalValueInBNB: 200, 
+      totalValueInBNB: 200,
       walletAddress,
       medals: [
         {
-          id: eternalMedal.tokenId || "unknown",
+          id: eternalMedal.tokenId.toString() || "unknown", // Corrected access and converted to string
           name: eternalMedal.metadata.name || "ETERNAL MEDAL OF HONOR",
           cost: "200 BNB",
           rewardIncome: rewardIncomeTotal ? `${rewardIncomeTotal} BNB` : "N/A",
@@ -212,24 +178,27 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
     borderRadius: "40px",
   }), []);
 
-
   return (
     <div className={Style.dot_wallet}>
       <div className={Style.dot_wallet}>
         {Object.keys(ramps).map((rampKey, index) => (
           ramps[rampKey] && ramps[rampKey].length > 0 && (
             <div key={rampKey} className={Style.dot_wallet}>
-              <h2
+              <div
                 onClick={() => handleRampInfo(rampKey)}
                 style={{ cursor: "pointer" }}
               >
-                MEDALS OF HONOR RAMP {index + 1}
-              </h2>
+                <h2>MEDALS OF HONOR RAMP {index + 1}</h2>
+                {ramps[rampKey].some(medal => !medal.isPlaceholder) && (
+                  <p style={{ fontSize: "16px", color: "#fff", margin: "5px 0 0", textAlign: "center" }}>
+                    Click for details
+                  </p>
+                )}
+              </div>
               <DotCarousel medals={ramps[rampKey]} />
             </div>
           )
         ))}
-
       </div>
 
       <div className={Style.eternal_dot_card}>
@@ -243,18 +212,15 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
         <Eternal medals={eternalMedal ? [eternalMedal] : []} />
 
         <div>
-
         </div>
       </div>
 
-      {/* Ramp Details Modal */}
       <RampDetails
         isVisible={isInfoModalVisible}
         onClose={() => setIsInfoModalVisible(false)}
         infoModalData={infoModalData}
       />
 
-      {/* Selected Medal Modal */}
       {selectedMedal && (
         <DotDetailsModal
           medal={selectedMedal}
@@ -263,8 +229,6 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
       )}
     </div>
   );
-
 };
 
 export default React.memo(DotWallet);
-

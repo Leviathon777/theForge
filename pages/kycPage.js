@@ -1,113 +1,173 @@
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import snsWebSdk from '@sumsub/websdk';
 import styles from '../styles/KYCPage.module.css';
-import { Button } from '../components/componentsindex';
+import { Button, InvestorProfileModal } from "../components/componentsindex";
+import { useRouter } from 'next/router';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const KYCPage = () => {
-  const refId = `user-${Date.now()}`;
+  const [accessToken, setAccessToken] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [kycStarted, setKycStarted] = useState(false);
+  const [isInvestorProfileModalOpen, setIsInvestorProfileModalOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState(null); 
+  const router = useRouter();
+  const { address, name, email, phoneNumber, kycStatus } = router.query;
 
-  const loadBlockpassWidget = () => {
-    const blockpass = new window.BlockpassKYCConnect('the_forge__medals_of_honor_c231b', {
-      refId: refId,
-      elementId: 'blockpass-kyc-connect',
-      mainColor: '000000',
-    });
 
-    blockpass.startKYCConnect();
+  useEffect(() => {
+    if (name && email) {
+      setUserInfo({
+        name,
+        email,
+        phoneNumber: phoneNumber || '',
+        kycStatus: kycStatus || 'not_started',
+      });
+    }
+  }, [name, email, phoneNumber, kycStatus]);
 
-    blockpass.on('KYCConnectSuccess', () => {
-      alert('KYC process completed successfully!');
-    });
+  const fetchAccessToken = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/get-sumsub-token');
+      if (!response.ok) throw new Error(`Failed to fetch access token. Status: ${response.status}`);
+      const data = await response.json();
+      setAccessToken(data.token);
+    } catch (error) {
+      console.error('Error fetching access token:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const initializeKYCWidget = () => {
+    if (accessToken) {
+      snsWebSdk
+        .init(accessToken, () => fetch('/api/get-sumsub-token').then((res) => res.json()).then((data) => data.token))
+        .withConf({ lang: 'en' })
+        .on('onError', (error) => console.error('WebSDK Error:', error))
+        .onMessage((type, payload) => console.log('WebSDK Message:', type, payload))
+        .build()
+        .launch('#sumsub-websdk-container');
+    }
+  };
+
+  const handleBeginKYC = () => {
+    if (!address) {
+      toast.info("Please connect your wallet to proceed.");
+      return;
+    }
+    if (!userInfo) {
+      setIsInvestorProfileModalOpen(true);
+      return;
+    }
+    setKycStarted(true);
+    if (!accessToken) {
+      fetchAccessToken();
+    }
   };
 
   useEffect(() => {
-    if (window.BlockpassKYCConnect) {
-      loadBlockpassWidget();
-    } else {
-      console.error('Blockpass script not loaded!');
+    if (accessToken && kycStarted) {
+      initializeKYCWidget();
     }
-  }, []);
+  }, [accessToken, kycStarted]);
+
+  const handleUserInfoSubmit = (profile) => {
+    if (profile.name && profile.email) {
+      setUserInfo(profile); // Update userInfo with valid data
+      setIsInvestorProfileModalOpen(false); // Close modal after submission
+    } else {
+      console.error("Incomplete profile submission.");
+    }
+  };
 
   return (
-    <div className={styles.container}>
-        <h1>XDRIP Digital Management KYC Verification</h1>
-      <section className={styles.walkthrough}>      
-        <p>
-          At <strong>XDRIP Digital Management</strong>, your privacy and security are our top priorities. 
-          Our **Know Your Customer (KYC)** process is designed to ensure a safe, secure, and compliant environment 
-          while maintaining the decentralized ethos of blockchain technology. 
-          This process allows us to offer you added trust and security without compromising your autonomy.
-        </p>
+    <div className={styles.wrapper}>
+      <div className={styles.container}>
+        <h1>Sumsub KYC Verification</h1>
+        <section className={styles.walkthrough}>
+          <p>
+            At <strong>XDRIP Digital Management</strong>, your privacy and security are our top priorities. We use Sumsub's
+            advanced KYC (Know Your Customer) solution to provide a secure, user-friendly identity verification process.
+          </p>
 
-        <h2>Why Complete KYC?</h2>
-        <ul>
-          <li>
-            <strong>Enhanced Security:</strong> Verifying your identity adds an extra layer of protection 
-            for your assets and transactions, helping prevent fraud or misuse of funds.
-          </li>
-          <li>
-            <strong>Access to Special Features:</strong> While KYC is optional for tiers 
-            such as <em>Common, Uncommon, Rare, Epic, and Legendary</em>, it is <strong>mandatory</strong> 
-            for acquiring the **Eternal Medal**, which provides unparalleled benefits and access to exclusive opportunities.
-          </li>
-          <li>
-            <strong>Future-Proof Compliance:</strong> As global regulations surrounding decentralized finance evolve, 
-            completing KYC ensures you remain ahead of any potential legal requirements, protecting your rights and investments.
-          </li>
-          <li>
-            <strong>Community Trust:</strong> Participating in KYC helps create a trusted and reliable community of users, 
-            reinforcing our collective commitment to security and transparency.
-          </li>
-        </ul>
+          <h2>What is KYC and Why Is It Important?</h2>
+          <ul>
+            <li>
+              <strong>Identity Verification:</strong> KYC helps us ensure the authenticity of users and protects against fraud.
+            </li>
+            <li>
+              <strong>Regulatory Compliance:</strong> Completing KYC ensures we comply with global financial regulations.
+            </li>
+            <li>
+              <strong>Access to Exclusive Features:</strong> KYC is mandatory for certain features, such as acquiring the "Eternal Medal."
+            </li>
+            <li>
+              <strong>Enhanced Account Security:</strong> Verified users benefit from an additional layer of protection for their accounts and transactions.
+            </li>
+          </ul>
 
-        <h2>How KYC Complements Decentralization</h2>
-        <p>
-          While we believe in the core principles of decentralization, the KYC process is a strategic measure to 
-          navigate the changing legal landscape and ensure the longevity of our ecosystem. For most tiers, 
-          completing KYC remains a personal choice, giving you the freedom to decide how you engage with The Forge.
-        </p>
-        <p>
-          For the **Eternal Medal**, which provides a gateway to exclusive rewards and governance privileges, KYC is required 
-          to meet legal obligations and offer the highest level of security and accountability.
-        </p>
+          <h2>How Does the KYC Process Work?</h2>
+          <ol>
+            <li>
+              Click <strong>"Begin Your KYC Submission"</strong> below to start the process.
+            </li>
+            <li>
+              Provide your personal details (e.g., name, date of birth) and upload your government-issued ID.
+            </li>
+            <li>
+              Follow the instructions to take a selfie for identity verification.
+            </li>
+            <li>
+              Sumsub will process your data securely, and you’ll receive updates on your application via email.
+            </li>
+          </ol>
 
-        <h2>What to Expect During the KYC Process</h2>
-        <ol>
-          <li>
-            Click the <strong>"Verify with Blockpass"</strong> button below to begin the process.
-          </li>
-          <li>
-            Provide your details, such as your name, date of birth, and valid identification documents (e.g., passport or driver’s license).
-          </li>
-          <li>
-            Upload a clear, valid image of your identification document and a recent selfie.
-          </li>
-          <li>
-            Blockpass will securely process and review your information. You’ll receive updates on your status via email.
-          </li>
-        </ol>
-        <p>
-          Our streamlined process ensures your data is handled securely and privately. Blockpass adheres to stringent data protection standards, 
-          and your information will only be used for verification purposes.
-        </p>
-      </section>
+          <h2>Privacy and Data Security</h2>
+          <p>
+            Sumsub adheres to strict data protection standards. Your information will be used solely for verification purposes and kept private
+            in accordance with GDPR and other global privacy regulations.
+          </p>
+        </section>
+        <div className={styles.button_wrapper}>
+          <Button
+            btnName="Return To The Forge"
+            onClick={() => router.push('/theForgePage')}
+            className={styles.kycButton}
+            fontSize="inherit"
+          />
 
-      <section className={styles.verification}>
-        <h2>Get Started with KYC</h2>
-        <p>
-          Ready to unlock enhanced security and exclusive rewards? Begin your KYC process today to ensure you’re fully equipped for 
-          the opportunities The Forge has to offer.
-        </p>
-        <Button
-          id="blockpass-kyc-connect"
-          btnName="Verify with Blockpass"
-          onClick={loadBlockpassWidget}
-          classStyle="kycButton"
-          fontSize="1.5rem"
-          paddingLeft="default"
-          paddingRight="default"
-          isActive={false}
-        />
-      </section>
+          {!kycStarted ? (
+            <Button
+              btnName="Begin Your KYC Submission"
+              onClick={handleBeginKYC}
+              className={styles.kycButton}
+              fontSize="inherit"
+            />
+          ) : loading ? (
+            <p>Loading KYC widget...</p>
+          ) : (
+            <div
+              id="sumsub-websdk-container"
+              style={{
+                width: '100%',
+                maxWidth: '800px',
+                minHeight: '600px',
+                margin: '0 auto',
+              }}
+            ></div>
+          )}
+        </div>
+        {isInvestorProfileModalOpen && (
+          <InvestorProfileModal
+            isOpen={isInvestorProfileModalOpen}
+            onClose={() => setIsInvestorProfileModalOpen(false)}
+            onSubmit={handleUserInfoSubmit}
+          />
+        )}
+      </div>
     </div>
   );
 };
