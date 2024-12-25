@@ -118,388 +118,30 @@
   padding: 0rem 6rem 6rem 6rem;
 }
 
-/* FLIP BOOK MAIN CONTENT CSS CODE BASIC AND MEDIA QUERYS */
-.page_inner,
-.pageWrapper {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  padding: 0rem;
-  margin: 0rem;
-}
-
-.flipbookwrapper{
-  padding: 3rem;
-  width: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  
-}
-
-.flipBook {
-  display: flex;
-  flex-direction: column;
-  width: 550px;
-  height: 733px;
-  margin: 0 auto;
-  padding: 20px;
-  justify-content: center;
-  align-items: center;  
-  
-}
-
-.flipBookMobile {
-  display: flex;
-  flex-direction: column;
-  width: 75%;
-  height: 75%;
-  margin: 0 auto;
-  padding: 20px;
-  justify-content: center;
-  align-items: center;
-
-}
-
-.flipBookClosed {
-  transform: translateX(-25%);
-  transition: transform 1s ease;
-}
-
-.flipBookOpen {
-  transform: translateX(0);
-  transition: transform 1s ease; 
-}
-
-/* CSS for the front cover page */
-.cover {
-  background: rgb(0, 0, 0);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  border-bottom: .1rem solid rgba(78, 78, 78, 0.411);
-  border-top: .1rem solid rgba(78, 78, 78, 0.411);
-  border-right: .1rem solid rgba(78, 78, 78, 0.411);
-  border-bottom-right-radius: 1rem;
-  border-top-right-radius: 1rem;
-  cursor: pointer;
-}
-
-.cover .pageWrapper {
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-}
-
-.cover .page_inner {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  padding: 0rem 0rem 0rem 0rem;
-}
-
-.cover .imagePage {
-  width: 500px;
-  height: 733px;
-  object-fit: cover;
-  margin: 0rem 0rem 0rem 0rem;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.hideTitle {
-  display: none;
-}
-
-.cover .page_inner_image {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-}
-
-.cover .pageContent_title {
-  font-size: 2.75rem;
-  padding-top: 1.5rem;
-  text-align: center;
-}
-
-/* CSS for the front dedication page */
-.dedicationContent {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: var(--background-gradient-dark);
-  border-top-left-radius: 1rem;
-  border-bottom-left-radius: 1rem;
-  cursor: pointer;
-}
-
-.dedicationContainer{
-  display: flex;
-  flex-direction: column;
-  background: var(--background-gradient-light);
-  background: var(--background-gradient-light);
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.144);
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-  padding: .75rem;
-  padding-bottom: 0.25rem;
-  width: 100%;
-  height: 100%;
-}
-
-.dedicationTop,
-.dedicationBottom {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  
-}
-
-.pageContent_title {
-  font-size: 1.75rem;
-}
-
-.dedicationContainer {
-  background: var(--background-gradient-dark);
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.144); 
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); 
-  justify-content: center;
-  color: var(--color-light);
-  font-family: Georgia, "Times New Roman", Times, serif;
-  line-height: 1.6;
-}
-
-.dedicationTitle {
-  text-align: center;
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-  color: var(--color-light); /* Adjust to match background */
-  font-weight: bold;
-}
-
-.dedicationParagraph {
-  text-align: justify;
-  text-indent: 2em;
-  margin-bottom: 1em;
-  color: var(--color-light); /* Ensure readability on darker background */
-}
-
-.dedicationSignature {
-  text-align: right;
-  font-style: italic;
-  color: var(--color-light); /* Match the font color */
-  margin-top: 20px;
-}
-
-
-.dedicationText { 
-  max-width: 95%;
-  padding-bottom: 0rem;
-  margin-bottom: 0rem;  
-}
-
-.dedicationParagraph{
-  font-size: .9rem;
-  line-height: 1.1;
-}
-
-/* CSS for the table of contents page */
-.contents_page {
-  background: var(--background-gradient-dark);
-  padding: 20px;
-  border-bottom-right-radius: 1rem;
-  border-top-right-radius: 1rem;
-  cursor: pointer;
-}
-
-.contents_page .page_inner {
-  width: 95%;
-}
-
-.contents_page .pageWrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: var(--background-gradient-light);
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.144);
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.contents_page h1 {
-  text-align: center;
-  font-size: 3rem;
-  margin-bottom: 20px;
-}
-
-.contentsList {
-  list-style: none;
-  padding: 0;
-}
-
-.contentsList li {
-  padding: 8px 0;
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  justify-content: space-between;
-}
-
-.contentTitle {
-  flex: 1;
-  text-align: left;
-  font-size: .9rem;
-}
-
-/* RIGHT PAGE CSS CODE REVERSED PAGE NAMES */
-.page_right {
-  cursor: pointer;
-  background: var(--background-gradient-dark);
-  border-top-right-radius: 1rem;
-  border-bottom-right-radius: 1rem;
-  border: 0.2rem solid var(--color-border);
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-  padding: 20px;
-}
-
-.page_right .pageWrapper {
-  background: var(--background-gradient-light);
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.144);
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.page_right .page_inner {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  align-items: center;
-}
-
-.page_right .page_lower .pageContent_title {
-  font-size: 2.25rem;
-}
-
-.page_right .page_inner .benefits {
-  display: flex;
-  flex-direction: column;
-  width: 90%;
-  margin: 1rem 0rem 0rem 0rem;
-}
-
-.benefit_description {
-  padding-bottom: 0rem;
-  margin-bottom: 0.2rem;
-  color: #6d6d6d;
-}
-
-.page_right .page_inner .benefits li {
-  list-style: disc;
-  font-size: .9rem;
-  padding: 0rem 0rem 0rem 0rem;
-  margin: 0px;
-}
-
-.page_right .page_inner .benefits li strong {
-  display: block;
-  font-weight: bold;
-  margin: .5rem 0rem .25rem 0rem;
-  text-decoration: underline;
-}
-
-.page_right .pageWrapper .pageNumber {
-  font-size: .9rem;
-  text-align: right;
-  padding: 0px 6px 4px 0px;
-  color: #6d6d6d;
-}
-
-/* CSS for Page Right with Benefits */
-.page_left {
-  cursor: pointer;
-  background: var(--background-gradient-dark);
-  border-top-left-radius: 1rem;
-  border-bottom-left-radius: 1rem;
-  border: 0.2rem solid var(--color-border);
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-  padding: 20px;
-}
-
-.page_left img {
-  border-radius: 40px;
-  border: 0.369rem solid var(--color-border);
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-  padding: .5rem;
-}
-
-.page_left .page_lower {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: auto;
-  padding: 1rem;
-  justify-content: center;
-  align-items: center;
-}
-
-.page_left .pageContent_title {
-  font-size: 3rem;
-}
-
-.page_left .page_lower p {
-  padding: 0rem;
-  margin: 0rem;
-}
-
-.page_left .pageNumber {
-  font-size: .9rem;
-  text-align: left;
-  padding-left: 8px;
-  color: #6d6d6d;
-}
-
-
-
-
-
 
 /* Extra Small Devices (Phones, 0px - 599px) */
 @media (max-width: 599px) {
   .theForge {
-    padding: 1rem;
-    background-attachment: fixed;
-    -webkit-background-attachment: fixed;
+    padding: 0rem;
   }
 
   .theForge_content,
   .first_component,
   .second_component,
   .third_component,
-  .fourth_component,
   .fifth_component {
-    width: 100%;
-    padding: .25rem;
+    padding: .5rem;
     flex-direction: column;
     align-items: center;
   }
 
+  
+  .fourth_component{
+    padding: 0rem;
+    width: 100%;
+  }
   .first_component h1 {
     font-size: 3rem;
-    text-align: center;
   }
 
   .component_title_text {
@@ -622,7 +264,7 @@
   .page_right .page_inner .benefits {
     display: flex;
     flex-direction: column;
-    width: 85%;
+    width: 85%;    
     margin: 0.1rem 0rem 0rem 0rem;
   }
 
@@ -643,12 +285,15 @@
     background: transparent;
     padding: 0rem;
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     
   }
+
+
 }
 
 /* Small Devices (Tablets, 600px - 899px) */
@@ -657,6 +302,11 @@
     padding: 1rem;
     background-attachment: fixed;
     -webkit-background-attachment: fixed;
+  }
+
+  .flipBook {
+    height: calc(75vh);
+    max-height: 600px;
   }
 
   .first_component h1 {
@@ -781,7 +431,6 @@
   .flipbookwrapper{
     background: transparent;
     padding: 0rem;
-    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -799,6 +448,11 @@
   .component_title_text {
     font-size: 3.5rem;
     text-align: center;
+  }
+
+  .flipBook {
+    height: calc(80vh);
+    max-height: 733px;
   }
 
   .loreText {

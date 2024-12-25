@@ -5,7 +5,6 @@ import { motion, useAnimation } from "framer-motion";
 import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import {
   ConnectWallet,
   darkTheme,
@@ -19,7 +18,7 @@ import { MyDotDataContext } from "../../Context/MyDotDataContext.js";
 import Style from "./theForge.module.css";
 import moreStyles from "../Button/Button.module.css";
 import videos from "../../public/videos/index.js";
-import { Button, VideoPlayer, DotDetailsModal, WalkthroughModal, CheckoutModal } from "../componentsindex.js";
+import { Button, VideoPlayer, DotDetailsModal, WalkthroughModal, InvestorProfileModal, TransakButton, TransakMOH } from "../componentsindex.js";
 import { ethers } from "ethers";
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
 import ipfsHashes from "../../Context/ipfsHashes.js";
@@ -29,7 +28,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
 import { getForger, addForger, logMedalPurchase, sendReceiptEmail, trackDetailedTransaction } from "../../firebase/forgeServices";
-
+import { useXoast } from "../Xoast/Xoast";
 
 
 const MohAddress = mohCA_ABI.address;
@@ -38,23 +37,22 @@ const fetchMohContract = (signerOrProvider) =>
   new ethers.Contract(MohAddress, MohABI, signerOrProvider);
 const XdRiPContractAddress = xdripCA_ABI.address;
 const XdRiPContractABI = xdripCA_ABI.abi;
-const web3 = new Web3("https://bsc-dataseed.binance.org/");
+const web3 = new Web3("https://bsc-dataseed1.binance.org/");
 const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
 
 
 const TheForge = () => {
   const router = useRouter();
-  const [selectedMedal, setSelectedMedal] = useState(null);
+  const [selectedMedalForForge, setSelectedMedalForForge] = useState(null);
+  const [selectedMedalDetails, setSelectedMedalDetails] = useState(null);
   const [bnbBalance, setBnbBalance] = useState(null);
   const [bnbToUsd, setBnbToUsd] = useState(null);
-  const [rewardStatus, setRewardStatus] = useState(null);
   const [xdripBalance, setXdripBalance] = useState(null);
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] = useState(false);
-  const { dots, fetchDots } = useContext(MyDotDataContext);
+  const { fetchDots } = useContext(MyDotDataContext);
   const [isBNBPrice, setIsBNBPrice] = useState(true);
   const [currentMedal, setCurrentMedal] = useState(null);
   const wallet = useWallet();
-  const isGuestWallet = wallet?.walletId === "SmartWallet";
   const address = useAddress();
   const signer = useSigner();
   const [forgedCounts, setForgedCounts] = useState({});
@@ -64,12 +62,37 @@ const TheForge = () => {
   const controls = useAnimation();
   const [currentAccount, setCurrentAccount] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
+  const [isInvestorProfileModalOpen, setIsInvestorProfileModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
   const [isKYCReminderVisible, setIsKYCReminderVisible] = useState(false);
   const [medalToForge, setMedalToForge] = useState(null);
+  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [isTransakActive, setIsTransakActive] = useState(false);
+  const [medalCount, setMedalCount] = useState(0);
+  const [modalStep, setModalStep] = useState("kycPrompt");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
+
+  const closeDropdown = () => {
+    setIsDropdownOpen(false);
+  };
+
+  const handleOutsideClick = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      closeDropdown();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
   useEffect(() => {
     const handleWalletConnect = async () => {
@@ -78,14 +101,17 @@ const TheForge = () => {
         console.log(`Wallet connected: ${address}`);
         try {
           const userData = await getForger(address);
-          if (userData) {
+          if (userData && userData.name && userData.email) {
             setUserInfo(userData);
+            setIsWelcomeModalVisible(true)
             console.log("User info fetched successfully:", userData);
           } else {
-            console.log("No user info available. Proceeding without user info.");
+            console.log("Incomplete or missing user info. Prompting for profile creation.");
+            setIsInvestorProfileModalOpen(true);
           }
         } catch (error) {
           console.error("Error fetching user info:", error);
+          setIsInvestorProfileModalOpen(true);
         }
       } else {
         setCurrentAccount("");
@@ -95,11 +121,21 @@ const TheForge = () => {
     handleWalletConnect();
   }, [address]);
 
-  useEffect(() => {
-    if (userInfo) {
-      setIsWelcomeModalVisible(true);
+  const renderKYCMessage = () => {
+    if (!userInfo) {
+      return "Please connect your wallet and provide user information to proceed.";
     }
-  }, [userInfo]);
+    if (userInfo.kycStatus === "approved") {
+      return "KYC approved! You can forge any medal, including the Eternal Medal.";
+    }
+    if (userInfo.kycStatus === "rejected") {
+      return "Your KYC application was rejected. Please contact support for assistance.";
+    }
+    if (userInfo.kycStatus === "inReview") {
+      return "Your KYC application is under review. Please wait for approval before forging the Eternal Medal.";
+    }
+    return "KYC is optional for most medals but required for the Eternal Medal.";
+  };
 
   const mohData = [
     { title: "COMMON", id: 1, price: "0.5 BNB", description: "Common Medal, forged in the fires of battle, honors the unwavering courage and steadfast determination of XdRiP warriors. This emblem recognizes those who consistently face adversity with resilience and commitment, playing a foundational role within the XdRiP community. Bearing this medal signifies a warrior’s dedication to the cause and their readiness to uphold the strength and integrity of our ranks in every challenge they encounter.", revenueAccess: "10%", xdripBonus: "2%", medalVideo: videos.common, ipfsHash: ipfsHashes.find((hash) => hash.title === "COMMON").url, inventory: { forged: 0, available: 10000, }, },
@@ -111,22 +147,22 @@ const TheForge = () => {
   const togglePrice = () => {
     setIsBNBPrice(!isBNBPrice);
   };
+
   const fetchXDRIPBalance = async () => {
     try {
       const balance = await XdRiPContract.methods.balanceOf(address).call();
-      console.log("Raw balance:", balance); 
+      console.log("Raw balance:", balance);
       const balanceString = balance.toString();
       const formattedBalance = web3.utils.fromWei(balanceString, 'gwei');
-      const finalDisplayBalance = parseFloat(formattedBalance).toFixed(0); 
-  
+      const finalDisplayBalance = parseFloat(formattedBalance).toFixed(0);
+
       console.log("Displayed XDRIP balance:", finalDisplayBalance);
       setXdripBalance(finalDisplayBalance);
     } catch (error) {
       console.error("Error retrieving XDRIP balance:", error);
-      setXdripBalance("Error fetching balance");
+      setXdripBalance("0");
     }
   };
-  
 
   useEffect(() => {
     if (address) {
@@ -134,7 +170,7 @@ const TheForge = () => {
     }
   }, [address]);
 
-  
+
   const lens = 500;
   const rotationStep = 360 / mohData.length;
   const [currentRotation, setCurrentRotation] = useState(0);
@@ -144,6 +180,7 @@ const TheForge = () => {
       card.style.transform = `rotateY(${angle}deg) translateZ(${lens}px)`;
     });
   }, [mohData.length]);
+
   useEffect(() => {
     controls.start({
       rotateY: [0, 360],
@@ -174,25 +211,21 @@ const TheForge = () => {
 
   const handleArrowClick = (direction) => {
     controls.stop();
-
     const remainder = currentRotation % rotationStep;
     const closestRotationAdjustment = remainder > rotationStep / 2 ? rotationStep - remainder : -remainder;
-
     const delta = direction === "right" ? -rotationStep : rotationStep;
     const targetRotation = currentRotation + closestRotationAdjustment + delta;
-
-
     setCurrentRotation(targetRotation);
     controls.start({
       rotateY: targetRotation,
       transition: { duration: 1, ease: "easeInOut" },
     });
   };
+
   const handleCardClick = (index) => {
     controls.stop();
     const targetRotation = -rotationStep * index;
     setCurrentRotation(targetRotation);
-
     controls.start({
       rotateY: targetRotation,
       transition: { duration: 1, ease: "easeInOut" },
@@ -214,9 +247,11 @@ const TheForge = () => {
     const interval = setInterval(fetchBNBPrice, 60000);
     return () => clearInterval(interval);
   }, []);
+
   const handleMedalDetails = (medal) => {
-    setSelectedMedal(medal);
+    setSelectedMedalDetails(medal);
   };
+
   useEffect(() => {
     const fetchBalance = async () => {
       if (signer && address) {
@@ -237,6 +272,7 @@ const TheForge = () => {
     };
     fetchBalance();
   }, [signer, address]);
+
   const fetchForgedCounts = async () => {
     if (!signer) return;
     try {
@@ -262,6 +298,19 @@ const TheForge = () => {
       return null;
     }
   };
+
+  useEffect(() => {
+    if (isPaymentModalVisible || isTransakActive || selectedMedalDetails) {
+      document.body.classList.add("modalOpen");
+    } else {
+      document.body.classList.remove("modalOpen");
+    }
+
+    return () => {
+      document.body.classList.remove("modalOpen");
+    };
+  }, [isPaymentModalVisible, isTransakActive, selectedMedalDetails]);
+
   useEffect(() => {
     const loadForgedCounts = async () => {
       const counts = await fetchForgedCounts();
@@ -273,6 +322,7 @@ const TheForge = () => {
       loadForgedCounts();
     }
   }, [signer]);
+
   const getInventory = (item) => {
     if (forgedCounts && forgedCounts[item.title]) {
       return {
@@ -282,6 +332,7 @@ const TheForge = () => {
     }
     return item.inventory;
   };
+
   const confirmForge = async () => {
     if (!currentMedal) return;
     try {
@@ -321,65 +372,73 @@ const TheForge = () => {
     }
   };
 
-
   const handleUserInfoSubmit = async (info) => {
+    console.log("Submitted Info:", info);
+  
     if (!address) {
       console.error("Wallet address is not available.");
+      toast.error("Please connect your wallet.");
       return;
     }
+  
     try {
-      const dateOfJoin = new Date();
-      await addForger(address, info.email, info.name, info.agreed, dateOfJoin);
-      setUserInfo({ ...info, dateOfJoin });
-      console.log("Forger info collected and saved:", { ...info, dateOfJoin });
+      const dateOfJoin = new Date().toISOString();
+      console.log("Forger Info Being Passed:", {
+        agreed: info.agreed,
+        dateOfJoin,
+        email: info.email,
+        kycStatus: "pending",
+        kycSubmittedAt: null,
+        kycApprovedAt: null,
+        name: info.name,
+        refId: null,
+        walletAddress: address,
+      });
+  
+      await addForger(
+        info.agreed,
+        dateOfJoin,
+        info.email,
+        "pending",
+        null,
+        null,
+        info.name,
+        null,
+        address
+      );
+  
+      console.log("Forger successfully added to Firestore.");
+      toast.success("Your profile has been successfully created!");
+  
+      // Fetch the forger info to verify
+      const userInfo = await getForger(address);
+      console.log("Fetched Forger Info:", userInfo);
+  
+      setIsWelcomeModalVisible(true);
+      console.log("Welcome modal opened.");
     } catch (error) {
-      console.error("Error adding forger:", error);
+      console.error("Error adding forger:", error.message);
       toast.error("Failed to save your information. Please try again.");
     }
   };
+  
 
-  const handleForgeClick = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
+  const handleCryptoForge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
+    console.log("handleCryptoForge called with:", { medalType, ipfsHash, revenueAccess, xdripBonus });  
     if (!address) {
       toast.info("Please connect your wallet to proceed.");
       connectLocalWallet();
-      return;
+      return Promise.reject("No wallet connected.");
     }
-    if (!userInfo) {
-      setIsUserInfoModalOpen(true);
-      return;
-    }
-    if (medalType === "ETERNAL" && userInfo.kycStatus !== "approved") {
+    if (medalType === "ETERNAL" && userInfo?.kycStatus !== "approved") {
       toast.error("KYC approval is required to forge the Eternal Medal. Please complete your KYC verification.");
-      return;
+      console.error("KYC not approved for ETERNAL medal.");
+      return Promise.reject("KYC not approved for ETERNAL medal.");
     }
-    if (medalType !== "ETERNAL" && userInfo.kycStatus !== "approved") {
-      setMedalToForge({ medalType, ipfsHash, revenueAccess, xdripBonus });
-      setIsKYCReminderVisible(true);
-      return;
-    }
-    forge(medalType, ipfsHash, revenueAccess, xdripBonus);
+    console.log("KYC check passed. Proceeding to forge:", medalType);
+    return forge(medalType, ipfsHash, revenueAccess, xdripBonus);
   };
-
-  const renderKYCMessage = () => {
-    if (!userInfo) {
-      return "Please connect your wallet and provide user information to proceed.";
-    }
-    if (userInfo.kycStatus === "approved") {
-      return "KYC approved! You can forge any medal, including the Eternal Medal.";
-    }
-    if (userInfo.kycStatus === "rejected") {
-      return "Your KYC application was rejected. Please contact support for assistance.";
-    }
-    if (userInfo.kycStatus === "inReview") {
-      return "Your KYC application is under review. Please wait for approval before forging the Eternal Medal.";
-    }
-    return "KYC is optional for most medals but required for the Eternal Medal.";
-  };
-
-
-
-
-
+  
   const forge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
     if (!userInfo) {
       console.error("User info not provided!");
@@ -481,8 +540,7 @@ const TheForge = () => {
       const receipt = await transaction.wait();
       console.log("Transaction Confirmed:", receipt);
       if (receipt.status === 1) {
-        toast.success("Your Medal Of Honor was forged successfully!");
-        await fetchDots();
+        toast.success("Your Medal Of Honor was forged successfully!");        
         await logMedalPurchase(address, medalType, itemPrice, transaction.hash, revenueAccess, xdripBonus);
         await sendReceiptEmail(
           userInfo.email,
@@ -505,8 +563,8 @@ const TheForge = () => {
           revenuePrecent: revenueAccess,
           xdripBonusPercent: xdripBonus,
         };
-
         await trackDetailedTransaction(address, medalType, transactionData);
+        await fetchDots();
       } else {
         toast.error("Transaction failed. Please try again.");
       }
@@ -525,8 +583,6 @@ const TheForge = () => {
     }
   };
 
-
-  
   const [showArrows, setShowArrows] = useState(true);
   useEffect(() => {
     const updateArrowsVisibility = () => {
@@ -543,9 +599,6 @@ const TheForge = () => {
     };
   }, []);
 
-
-
-  const [medalCount, setMedalCount] = useState(0);
   const fetchMedalCount = async (userAddress) => {
     if (!signer) return;
     try {
@@ -558,8 +611,6 @@ const TheForge = () => {
     }
   };
 
-
-
   useEffect(() => {
     if (address) {
       setCurrentAccount(address);
@@ -568,8 +619,6 @@ const TheForge = () => {
       setCurrentAccount("");
     }
   }, [address]);
-
-
 
   const fetchForgedCountsForAddress = async (address) => {
     if (!signer) return;
@@ -588,51 +637,114 @@ const TheForge = () => {
     }
   }, [address]);
 
+  const buttonTitles = [
+    "Forge Your Destiny",
+    "Claim Your Honor",
+    "Rise as a Legend",
+    "Embrace the Call of Valor",
+    "Step into Glory",
+    "Unlock Your Legacy",
+    "Ascend to Greatness",
+    "Prove Your Worth",
+    "Earn the Mark of Valor",
+    "Walk the Path of Heroes",
+    "Seal Your Fate in Honor",
+    "Stand Among the Worthy",
+    "Awaken the Spirit of Valor",
+    "Claim the Crown of Glory",
+    "Take Your Place in Legend",
+    "Forge the Path to Immortality",
+    "Rise to the Challenge",
+    "Answer the Hero's Call",
+    "Honor the Warrior’s Code",
+  ];
 
-// yep thought itd be fun to cycle button names... 
-const buttonTitles = [
-  "Forge Your Destiny",
-  "Claim Your Honor",
-  "Rise as a Legend",
-  "Embrace the Call of Valor",  
-  "Step into Glory",
-  "Unlock Your Legacy",
-  "Ascend to Greatness",
-  "Prove Your Worth",
-  "Earn the Mark of Valor",
-  "Walk the Path of Heroes",
-  "Seal Your Fate in Honor",
-  "Stand Among the Worthy",
-  "Awaken the Spirit of Valor",
-  "Claim the Crown of Glory",
-  "Take Your Place in Legend",
-  "Forge the Path to Immortality",
-  "Rise to the Challenge",
-  "Answer the Hero's Call",
-  "Honor the Warrior’s Code",
-];
 
-// Randomly pick an initial title from the list
-const getRandomTitle = () => {
-  return buttonTitles[Math.floor(Math.random() * buttonTitles.length)];
-};
-
-const [randomTitle, setRandomTitle] = useState(getRandomTitle());
-
-useEffect(() => {
-  const cycleTitles = () => {
-    setRandomTitle((prevTitle) => {
-      const currentIndex = buttonTitles.indexOf(prevTitle);
-      const nextIndex = (currentIndex + 1) % buttonTitles.length;
-      return buttonTitles[nextIndex];
-    });
+  const getRandomTitle = () => {
+    return buttonTitles[Math.floor(Math.random() * buttonTitles.length)];
   };
 
-  const interval = setInterval(cycleTitles, 30000); 
-  return () => clearInterval(interval);
-}, []);
+  const [randomTitle, setRandomTitle] = useState(getRandomTitle());
 
+  useEffect(() => {
+    const cycleTitles = () => {
+      setRandomTitle((prevTitle) => {
+        const currentIndex = buttonTitles.indexOf(prevTitle);
+        const nextIndex = (currentIndex + 1) % buttonTitles.length;
+        return buttonTitles[nextIndex];
+      });
+    };
 
+    const interval = setInterval(cycleTitles, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleForgeClick = (medal) => {
+    console.log("Medal selected for forging:", medal);
+    console.log("Current userInfo:", userInfo);
+  
+    if (!address) {
+      toast.info("Please connect your wallet to proceed.");
+      return;
+    }
+    if (!userInfo) {
+      toast.info("Please complete your Investor Profile before forging.");
+      setIsInvestorProfileModalOpen(true);
+      return;
+    }
+    // Always reset modalStep to "kycPrompt" when the modal opens
+    setModalStep("kycPrompt");
+  
+    if (userInfo.kycStatus !== "approved") {
+      console.log("KYC is not approved, showing KYC options...");
+      setMedalToForge(medal);
+      setIsKYCReminderVisible(true);
+    }
+    setSelectedMedalForForge(medal);
+    setIsPaymentModalVisible(true);
+  };
+  
+  const proceedWithCrypto = async () => {
+    console.log("Proceed with Crypto clicked.");
+    console.log("Current selectedMedalForForge:", selectedMedalForForge);  
+    if (!selectedMedalForForge) {
+      toast("No medal selected. Please try again.");
+      console.error("Error: No medal selected. selectedMedalForForge is null or undefined.");
+      return;
+    }  
+    setPaymentMethod("crypto");
+    console.log("Payment method set to crypto.");  
+    console.log("Medal details being passed to handleCryptoForge:", {
+      title: selectedMedalForForge.title,
+      ipfsHash: selectedMedalForForge.ipfsHash,
+      revenueAccess: selectedMedalForForge.revenueAccess,
+      xdripBonus: selectedMedalForForge.xdripBonus,
+    });  
+    try {
+      await handleCryptoForge(
+        selectedMedalForForge.title,
+        selectedMedalForForge.ipfsHash,
+        selectedMedalForForge.revenueAccess,
+        selectedMedalForForge.xdripBonus
+      );  
+      console.log("handleCryptoForge executed successfully.");
+      setIsPaymentModalVisible(false); 
+      console.log("Payment modal closed.");
+    } catch (error) {
+      console.error("Error during forging process:", error);
+      toast.error("Failed to process the forge request. Please try again.");
+    }
+  };  
+
+  const proceedWithTransak = () => {
+    if (!selectedMedalForForge) {
+      toast("No medal selected. Please try again.");
+      return;
+    }
+    setPaymentMethod("transak");
+    setIsPaymentModalVisible(false);
+    
+  };
 
   return (
     <div className={Style.the_forge}>
@@ -641,42 +753,78 @@ useEffect(() => {
           <h1 className={Style.lore_text}>MEDALS OF HONOR VAULT</h1>
           <div className={Style.forge_button_wrapper}>
 
-            <Button
-              btnName="KYC Verification"
-              onClick={() => router.push('/kycPage')}
-              fontSize="inherit"
-              paddingLeft="0"
-              paddingRight="0"
-              isActive={false}
-              className={Style.kycButton}
-            />
+        {/* Dropdown Wrapper */}
+        <div ref={dropdownRef} className={Style.dropdownContainer}>
+          {/* Dropdown Button */}
+          <div
+            className={Style.dropdownToggle}
+            onClick={toggleDropdown}
+          >
+            VAULT ACTIONS
+          </div>
 
-            <Button
-              btnName="WALLET TUTORIALS"
-              onClick={() => setIsModalOpen(true)}
-              className={Style.openWalkthroughButton}
-              fontSize="inherit"
-              paddingLeft="0"
-              paddingRight="0"
-              isActive={false}
-            />
-
-            {address && (
-              <div className={Style.balances}>
-                <Button
-                  btnName={`XDRIP Balance: ${xdripBalance !== null ? `${xdripBalance}` : "Loading..."}`}
-                  onClick={() => window.open('https://poocoin.app/tokens/0x905a46de6f99b6efc5fa062ab398153048e121ea', '_blank')}
-                  fontSize="inherit"
-                  paddingLeft="0"
-                  paddingRight="0"
-                  isActive={false}
-                />
+          {/* Dropdown Menu */}
+          {isDropdownOpen && (
+            <div className={Style.dropdownMenu}>
+              {/* HOW TO INVEST WITH XDRIP */}
+              <div
+                className={Style.dropdownMenuItem}
+                onClick={() => {
+                  setIsModalOpen(true);
+                  closeDropdown();
+                }}
+              >
+                HOW TO INVEST WITH XDRIP
               </div>
-            )}
+
+              {/* KYC Verification */}
+              <div
+                className={`${Style.dropdownMenuItem}`}
+                onClick={() => {
+                  if (address && userInfo) {
+                    router.push({
+                      pathname: "/kycPage",
+                      query: {
+                        address,
+                        name: userInfo.name,
+                        email: userInfo.email,
+                        phoneNumber: userInfo.phoneNumber || "",
+                        kycStatus: userInfo.kycStatus || "not_started",
+                      },
+                    });
+                  } else {
+                    router.push("/kycPage");
+                  }
+                  closeDropdown();
+                }}
+              >
+                KYC VERIFICATION
+              </div>
+
+              {/* Transak Button */}
+              <TransakButton
+                user={userInfo}
+                walletAddress={address}
+                onShowInvestorProfile={() => {
+                  setIsInvestorProfileModalOpen(true);
+                  closeDropdown();
+                }}
+                onSuccess={(data) => {
+                  console.log("Transak payment successful:", data);
+                  closeDropdown();
+                }}
+                onError={(error) => {
+                  console.error("Transak payment failed:", error);
+                  closeDropdown();
+                }}
+                className={Style.dropdownMenuItem}
+              />
+            </div>
+          )}
+        </div>
 
             <ConnectWallet
-            
-            btnTitle={randomTitle}
+              btnTitle={randomTitle}
               style={{
                 background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
                 color: 'white',
@@ -684,19 +832,20 @@ useEffect(() => {
                 borderRadius: '12px',
                 boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
                 transition: 'all 0.3s ease',
-                padding: '0',
-                width: '240px',
-                height: '52px',
                 cursor: 'pointer',
                 textAlign: 'center',
                 textTransform: 'uppercase',
-                padding: '6px',
                 fontSize: '16px',
                 textShadow: '0px 0px 2px black',
-                backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
+                backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5))',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                width: 'auto',
+                height: 'auto',
+                margin: '0.25rem',
+                padding: '10px 20px',
+                zIndex: 1,
               }}
 
               detailsBtn={() => {
@@ -713,13 +862,13 @@ useEffect(() => {
                         borderRadius: '12px',
                         boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
                         transition: 'all 0.3s ease',
-                        padding: '0',
-                        width: '240px',
-                        height: '52px',
+                        padding: '10px, 20px',
+                        width: 'auto',
+                        height: '42px',
                         cursor: 'pointer',
                         textAlign: 'center',
                         textTransform: 'uppercase',
-                        fontSize: '20px',
+                        fontSize: '16px',
                         textShadow: '0px 0px 2px black',
                         backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
                         display: 'flex',
@@ -728,16 +877,16 @@ useEffect(() => {
                       }}
                     >
                       <div>
-                        <p style={{ fontSize: "small", color: "lightgray", marginTop: "14px", marginLeft: "20px" }}>
+                        <p style={{ fontSize: "small", color: "lightgray", marginTop: "14px", marginLeft: "20px", padding: '4px 0px 0px 0px', }}>
                           {`${medalCount} Medals Found`}
                         </p>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <p
                             style={{
                               fontSize: "medium",
-                              marginBottom: "4px",
-                              marginTop: "0",
-                              maxWidth: "160px",
+                              marginBottom: "2px",
+                              marginTop: "1px",
+                              maxWidth: "auto",
                               overflow: "hidden",
                               textOverflow: "ellipsis",
                               whiteSpace: "nowrap",
@@ -750,7 +899,8 @@ useEffect(() => {
                           style={{
                             color: "white",
                             fontSize: "10px",
-                            marginTop: "-10px",
+                            marginTop: "-14px",
+                            padding: '0px 0px 2px 0px',
                             marginLeft: "18px",
                           }}
                         >
@@ -758,7 +908,6 @@ useEffect(() => {
                             " . . . . " +
                             currentAccount.slice(-4)}
                         </p>
-
                       </div>
                       <div
                         style={{
@@ -766,18 +915,15 @@ useEffect(() => {
                           display: "flex",
                           alignItems: "center",
                           paddingLeft: "5px",
-                          marginBottom: "10px",
+                          marginBottom: "0px",
                         }}
                       >
-
                         <Image
                           src="/img/mohwallet-logo.png"
                           alt="MOH"
                           width="30"
                           height="30"
                         />
-
-
                       </div>
                     </div>
                   </button>
@@ -790,11 +936,10 @@ useEffect(() => {
                   modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
                 },
               })}
-
               modalSize={"compact"}
               switchToActiveChain={true}
               titleIconUrl={"/img/mohwalletmodal.png"}
-               termsOfServiceUrl="/components/Legal/TermsOfService.jsx"
+              termsOfServiceUrl="/components/Legal/TermsOfService.jsx"
               privacyPolicyUrl="/components/Legal/UserAgreement.jsx"
               ThirdwebBranding={false}
               welcomeScreen={{
@@ -805,12 +950,8 @@ useEffect(() => {
                   width: 420,
                   height: 420,
                 },
-
               }}
-
             />
-
-
           </div>
         </div>
         <div className={Style.carousel}>
@@ -861,7 +1002,7 @@ useEffect(() => {
                             <div className={Style.button_wrapper}>
                               <Button
                                 btnName="FORGE"
-                                onClick={() => handleForgeClick(item.title, item.ipfsHash, item.revenueAccess, item.xdripBonus)}
+                                onClick={() => handleForgeClick(item)}
                                 classStyle="size1"
                                 fontSize="12px"
                                 padding="0px 0px"
@@ -953,30 +1094,29 @@ useEffect(() => {
             </div>
           </div>
         </div>
-        {selectedMedal && (
-          <DotDetailsModal
-            medal={selectedMedal}
-            onClose={() => setSelectedMedal(null)}
-            forge={forge}
-            userInfo={userInfo}
-            isUserInfoModalOpen={isUserInfoModalOpen}
-            setIsUserInfoModalOpen={setIsUserInfoModalOpen}
-          />
 
-        )}
         {isModalOpen && (
-          <WalkthroughModal
-            isOpen={isModalOpen}
-            onRequestClose={() => setIsModalOpen(false)}
-          />
+          <div className={Style.modalOverlay} onClick={(e) => e.target === e.currentTarget && setIsModalOpen(false)}>
+            <WalkthroughModal
+              isOpen={isModalOpen}
+              onRequestClose={() => setIsModalOpen(false)}
+            />
+          </div>
         )}
-        <CheckoutModal
-          isOpen={isUserInfoModalOpen}
-          onClose={() => setIsUserInfoModalOpen(false)}
-          onSubmit={handleUserInfoSubmit}
-        />
+
+        {isInvestorProfileModalOpen && (
+          <div className={Style.modalOverlay} onClick={(e) => e.target === e.currentTarget && setIsInvestorProfileModalOpen(false)}>
+            <InvestorProfileModal
+              isOpen={isInvestorProfileModalOpen}
+              walletAddress={address}
+              onClose={() => setIsInvestorProfileModalOpen(false)}
+              onSubmit={handleUserInfoSubmit}
+            />
+          </div>
+        )}
+
         {isConfirmationModalVisible && (
-          <div className={Style.confirmation_modal}>
+          <div className={Style.confirmation_modal} onClick={(e) => e.target === e.currentTarget && setIsConfirmationModalVisible(false)}>
             <div className={Style.confirmation_modal_content}>
               <h2>Confirm Forging</h2>
               <p>Are you sure you want to forge the {currentMedal.title} medal for {currentMedal.price}?</p>
@@ -987,8 +1127,9 @@ useEffect(() => {
             </div>
           </div>
         )}
+
         {isWelcomeModalVisible && (
-          <div className={Style.welcome_modal}>
+          <div className={Style.welcome_modal} onClick={(e) => e.target === e.currentTarget && setIsWelcomeModalVisible(false)}>
             <div className={Style.welcome_modal_content}>
               <h2>Welcome, {userInfo?.name || "User"}!</h2>
               <p>We're glad to have you at the Forge. Let’s create something extraordinary!</p>
@@ -998,7 +1139,7 @@ useEffect(() => {
                   btnName="Close"
                   onClick={() => setIsWelcomeModalVisible(false)}
                   classStyle={Style.close_button}
-                  fontSize="1rem"
+                  fontSize="inherit"
                   isActive={false}
                   title="Close Welcome Modal"
                   icon=""
@@ -1007,48 +1148,125 @@ useEffect(() => {
             </div>
           </div>
         )}
-        {isKYCReminderVisible && (
-          <div className={Style.kyc_reminder_modal}>
-            <div className={Style.kyc_reminder_content}>
-              <h2>KYC Reminder</h2>
-              <p>
-                KYC is not required to forge this medal, but we strongly recommend completing your KYC for added security and access to exclusive features.
-              </p>
-              <p>Would you like to proceed without KYC?</p>
-              <div className={Style.modal_buttons}>
-                <button
-                  onClick={() => {
-                    if (medalToForge) {
-                      forge(
-                        medalToForge.medalType,
-                        medalToForge.ipfsHash,
-                        medalToForge.revenueAccess,
-                        medalToForge.xdripBonus
-                      );
-                    }
-                    setIsKYCReminderVisible(false);
-                    setMedalToForge(null);
-                  }}
-                  className={Style.confirm_button}
-                >
-                  Proceed
-                </button>
-                <button
-                  onClick={() => {
-                    setIsKYCReminderVisible(false);
-                    setMedalToForge(null);
-                  }}
-                  className={Style.cancel_button}
-                >
-                  Cancel
-                </button>
-              </div>
+
+        {isPaymentModalVisible && (
+          <div className={Style.modalOverlay} onClick={(e) => e.target === e.currentTarget && setIsPaymentModalVisible(false)}>
+            <div className={Style.modalContent}>
+              <button className={Style.closeButton} onClick={() => setIsPaymentModalVisible(false)}>
+                &times;
+              </button>
+
+              {/* KYC Prompt */}
+              {modalStep === "kycPrompt" && (
+                <>
+                  {console.log("KYC Prompt Step Opened. Medal:", selectedMedalForForge, "UserInfo:", userInfo)}
+                  {selectedMedalForForge?.title === "ETERNAL" ? (
+                    <div className={Style.kycReminder}>
+                      <h3>KYC Required</h3>
+                      <p>
+                        KYC approval is mandatory to forge the <strong>ETERNAL</strong> medal. Please complete your KYC verification to proceed.
+                      </p>
+                      <div className={Style.buttonFlex}>
+                        <Button
+                          btnName="Go to KYC Page"
+                          onClick={() => {
+                            console.log("Redirecting to KYC page...");
+                            router.push({
+                              pathname: '/kycPage',
+                              query: { address, name: userInfo?.name || '', email: userInfo?.email || '' },
+                            });
+                            setIsPaymentModalVisible(false);
+                          }}
+                          fontSize="inherit"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className={Style.kycReminder}>
+                      <h3>KYC Optional</h3>
+                      <p>
+                        KYC is optional for this medal but recommended for added security. Would you like to proceed without KYC?
+                      </p>
+                      <div className={Style.buttonFlex}>
+                        <Button
+                          btnName="Proceed Without KYC"
+                          onClick={() => {
+                            console.log("User chose to proceed without KYC. Medal:", selectedMedalForForge);
+                            setModalStep("paymentOptions");
+                          }}
+                          fontSize="inherit"
+                        />
+                        <Button
+                          btnName="Go to KYC Page"
+                          onClick={() => {
+                            console.log("Redirecting to KYC page...");
+                            router.push({
+                              pathname: '/kycPage',
+                              query: { address, name: userInfo?.name || '', email: userInfo?.email || '' },
+                            });
+                            setIsPaymentModalVisible(false);
+                          }}
+                          fontSize="inherit"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+              {modalStep === "paymentOptions" && (
+                <>
+                  {console.log("Payment Options Step Opened. Medal:", selectedMedalForForge, "UserInfo:", userInfo)}
+                  <h2>Select Payment Method</h2>
+                  <p>How would you like to pay for the {selectedMedalForForge?.title} medal?</p>
+                  <div className={Style.buttonFlex}>
+                    <Button
+                      btnName="Pay with Crypto"
+                      onClick={() => {
+                        console.log("User chose Pay with Crypto. Medal:", selectedMedalForForge);
+                        proceedWithCrypto(selectedMedalForForge);
+                      }}
+                      fontSize="inherit"
+                    />
+                    <Button
+                      btnName="Back"
+                      onClick={() => {
+                        console.log("User clicked Back to KYC prompt.");
+                        setModalStep("kycPrompt");
+                      }}
+                      fontSize="inherit"
+                    />
+                    <Button
+                      btnName="Pay with Transak"
+                      onClick={() => {
+                        console.log("User chose Pay with Transak. Medal:", selectedMedalForForge);
+                        proceedWithTransak(selectedMedalForForge);
+                      }}
+                      fontSize="inherit"
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
-  
 
+        {isTransakActive && (
+          <div className={Style.modalOverlay} onClick={(e) => e.target === e.currentTarget && setIsTransakActive(false)}>
+          </div>
+        )}
 
+        {selectedMedalDetails && (
+          <div className={Style.modalOverlay} onClick={(e) => e.target === e.currentTarget && setSelectedMedalDetails(null)}>
+            <DotDetailsModal
+              medal={selectedMedalDetails}
+              onClose={() => setSelectedMedalDetails(null)}
+              forge={forge}
+              userInfo={userInfo}
+              isUserInfoModalOpen={isInvestorProfileModalOpen}
+              setIsUserInfoModalOpen={setIsInvestorProfileModalOpen}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

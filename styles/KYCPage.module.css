@@ -1,22 +1,48 @@
+
+.wrapper{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 4rem;
+}
+
 .container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
-    max-width: 1000px;
+    max-width: 50%;
     line-height: 1.6;
     color: #636363;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+    padding: 5px 5px 20px 20px;
+    background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
+    box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+ 
+    z-index: 1050;
+  }
+
+  #sumsub-websdk-container {
+    width: 100%;
+    max-width: 800px;
+    min-height: 600px;
+    margin: 0 auto;
   }
   
+  @media (max-width: 768px) {
+    #sumsub-websdk-container {
+      max-width: 100%;
+      min-height: 500px;
+    }
+  }
+  
+  
   .walkthrough {
-
     margin-bottom: 40px;
-    max-width: 800px;
+    max-width: 90%;
   }
   
   .container h1 {
@@ -56,12 +82,56 @@
     margin-bottom: 20px;
   }
   
-  .kycButton {
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 1.2rem;
-
-
+  .button_wrapper{
+    display: flex;
+    gap: 4rem;
   }
+
+
+@media (max-width: 768px) {
+  .container {
+      max-width: 95%;
+  }
+
+  .walkthrough {
+      max-width: 90%;
+  }
+
+  .container h1 {
+      font-size: 2rem;
+  }
+
+  .walkthrough h2 {
+      font-size: 1.4rem;
+  }
+
+  .kycButton {
+      font-size: 1rem;
+      padding: 10px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+      max-width: 95%;
+  }
+
+  .walkthrough {
+      max-width: 95%;
+  }
+
+  .container h1 {
+      font-size: 1.8rem;
+  }
+
+  .walkthrough h2 {
+      font-size: 1.2rem;
+  }
+
+  .kycButton {
+      font-size: 0.9rem;
+      padding: 8px 15px;
+  }
+}
 
   
