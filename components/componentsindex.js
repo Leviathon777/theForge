@@ -8,20 +8,33 @@ import DotDetailsModal from "./DotDetails/DotDetailsModal";
 import CheckForRewards from "./TheForgeMain/CheckForRewards";
 import TermsOfService from "./Legal/TermsOfService";
 import UserAgreement from "./Legal/UserAgreement";
+import PrivacyPolicy from "./Legal/PrivacyPolicy";
 import WalkthroughModal from "./EntryPage/WalkthroughModal";
 import OwnerOps from "./OwnerOps/OwnerOps";
 import DotCarousel from "./DotWallets/DotCarousel";
 import RampDetails from "./DotWallets/RampDetails";
-import CheckoutModal from "./TheForgeMain/CheckoutModal";
+import InvestorProfileModal from "./TheForgeMain/InvestorProfileModal";
+import FlipBook from "./FlipBook/FlipBook";
+import TransakButton from "./Transak/TransakButton";
+import TransakMOH from "./Transak/TransakMOH";
+import Xoast from "./Xoast/Xoast";
+
+
+
 
 export {
-  CheckoutModal,
+  TransakMOH,
+  Xoast,
+  TransakButton,
+  FlipBook,
+  InvestorProfileModal,
   OwnerOps,
   RampDetails,
   DotCarousel,
   WalkthroughModal,  
   TermsOfService,
   UserAgreement,
+  PrivacyPolicy,
   CheckForRewards,
   DotDetailsModal,
   SocialButtons,

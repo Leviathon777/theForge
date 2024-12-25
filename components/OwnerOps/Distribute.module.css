@@ -1,0 +1,188 @@
+/* DistributeRevShare.module.css */
+
+/* Container Styling */
+.container {
+    width: 90%; /* Increased width for better visibility on larger screens */
+    max-width: 800px; /* Prevents the container from becoming too wide */
+    padding: 20px;
+    background-color: #1e1e1e;
+    color: #fff;
+    box-sizing: border-box;
+    margin: 40px auto; /* Centers the container horizontally with top margin */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Adds space between direct children */
+}
+
+/* Back Button Styling */
+.backButton {
+    align-self: flex-start; /* Aligns the button to the start of the container */
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.backButton:hover {
+    background-color: #c82333;
+}
+
+/* Heading Styling */
+.heading {
+    font-size: 2.5rem;
+    text-align: left; /* Aligns text to the left for better readability */
+    margin-bottom: 10px;
+}
+
+/* Status Message Styling */
+.status {
+    font-size: 1rem;
+    text-align: left; /* Aligns text to the left */
+    color: #c9c9c9;
+}
+
+/* Button Section Styling */
+.buttonSection {
+    display: flex;
+    justify-content: flex-start; /* Aligns buttons to the left */
+    align-items: center;
+    gap: 10px; /* Space between buttons */
+}
+
+/* Primary Button Styling */
+.button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+/* Input Group Styling */
+.inputGroup {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between input and button */
+}
+
+/* Input Field Styling */
+.input {
+    padding: 8px 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 250px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.input::placeholder {
+    color: #ccc;
+}
+
+/* Small Button Styling */
+.buttonSmall {
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.buttonSmall:hover {
+    background-color: #218838;
+}
+
+/* Table Container Styling */
+.tableContainer {
+    overflow-x: auto;
+}
+
+/* Table Styling */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.th, .td {
+    border: 1px solid #ccc;
+    padding: 12px 15px;
+}
+
+.th {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Copyable Address Styling */
+.copyableAddress {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.copyableAddress:hover {
+    color: #ffc107;
+}
+
+/* Distribute Button Styling */
+.distributeButton {
+    padding: 12px 25px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.distributeButton:hover {
+    background-color: #218838;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .container {
+        width: 95%; /* Slightly wider on smaller screens */
+        padding: 15px;
+    }
+
+    .buttonSection {
+        flex-direction: column; /* Stacks buttons vertically */
+        align-items: flex-start;
+    }
+
+    .inputGroup {
+        flex-direction: column; /* Stacks input and button vertically */
+        align-items: flex-start;
+    }
+
+    .input {
+        width: 100%; /* Makes input full width on smaller screens */
+        max-width: 300px;
+    }
+
+    .table {
+        font-size: 0.9rem;
+    }
+
+    .backButton {
+        padding: 8px 16px; /* Slightly smaller on mobile */
+    }
+}

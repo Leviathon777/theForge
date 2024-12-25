@@ -4291,12 +4291,12 @@ contract MEDALS_OF_HONOR_by_XdRiP is
 }
 
     modifier onlyPadrones() {
-        require(isPadrone[msg.sender], "Not allowed not padrone");
+        require(isPadrone[msg.sender], "Caller is not a padrone");
         _;
     }
 
     function setAllocationValue(uint16 _padronesPercentage, uint16 _operatingCostsPercentage) public onlyPadrones {
-        require(_padronesPercentage + _operatingCostsPercentage == 100, "Must total 100%");
+        require(_padronesPercentage + _operatingCostsPercentage == 100, "Total must be 100");
         padronesPercentage = _padronesPercentage;
         operatingCostsPercentage = _operatingCostsPercentage;
     }
@@ -4612,4 +4612,14 @@ contract MEDALS_OF_HONOR_by_XdRiP is
     {
         operatingTasca = _operatingTasca;
     }
+    
+    function titolare() public view returns (address) {
+    return owner();
 }
+
+
+
+
+}
+
+

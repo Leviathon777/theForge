@@ -731,7 +731,6 @@ const MyApp = ({ Component, pageProps }) => {
   };
 
   const handleDecline = () => setIsModalVisible(false);
-
   
   useEffect(() => {
     // Service Worker Registration
@@ -778,8 +777,6 @@ const MyApp = ({ Component, pageProps }) => {
   };
 
 
-
-
   return (
     <>
       <Head>
@@ -796,12 +793,6 @@ const MyApp = ({ Component, pageProps }) => {
         <meta
           name="description"
           content="The Medals of Honor Collection by XdRiP Digital Management, LLC"
-
-
-          
-          
-        
-
 
         />
       </Head>
@@ -841,20 +832,22 @@ const MyApp = ({ Component, pageProps }) => {
         <ThirdwebProvider
           activeChain={ChainId.BinanceSmartChainTestnet}
           clientId={process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
-          autoConnect={false}
+          //autoConnect={false}
           modalConfig={{
             disableBuyButton: true,
           }}
 
           supportedWallets={[
             inAppWallet(),
-            metamaskWallet(),
+            metamaskWallet({ recommended: true }),
             trustWallet(),
             walletConnect(),
+            localWallet(),
+            
           ]}
         >
+
           {!hasEntered ? (
-            
             <EntryPage
               onEnter={() => setHasEntered(true)}
               isModalVisible={isModalVisible}
@@ -864,6 +857,8 @@ const MyApp = ({ Component, pageProps }) => {
             />            
           ) : (
             <>
+
+            {/*
               {isModalVisible && (
                 <div className="welcomeMessageOverlay">
                   <div className="welcomeMessageContent">
@@ -878,6 +873,7 @@ const MyApp = ({ Component, pageProps }) => {
                   </div>
                 </div>
               )}
+            */}
 
 <ToastContainer
   position="top-center"
