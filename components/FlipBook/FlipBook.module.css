@@ -115,8 +115,8 @@
     border-radius: 1rem;
     border: 1px solid rgba(255, 255, 255, 0.144);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    padding: 0.5rem;
-    padding-bottom: 0.25rem;
+    padding: 0.75rem;
+    padding-bottom: 0rem;
     width: 100%;
     height: auto;
 }
@@ -193,17 +193,21 @@
 .contents_page h1 {
     text-align: center;
     font-size: 3rem;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 
 .contentsList {
     list-style: none;
-    padding: 0;
+    padding: 0rem;
 }
 
 .contentsList li {
-    padding: 8px 0;
-    border-bottom: 1px solid #ddd;
+    margin-bottom: 0.5px;
+    padding: 4px 15px 4px 15px;
+    background: var(--background-gradient-light);
+    border-radius: .5rem;
+    border: 1px solid rgba(255, 255, 255, 0.144);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
     display: flex;
     justify-content: space-between;
 }
@@ -283,9 +287,9 @@
 }
 
 .page_right .pageWrapper .page_inner .bottomPageNumber {
-    position: absolute; 
-    bottom: 22px; 
-    right: 28px; 
+    position: absolute;
+    bottom: 22px;
+    right: 28px;
     font-size: 0.9rem;
     color: #6d6d6d;
     text-align: right;
@@ -303,14 +307,14 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%; 
+    height: 100%;
     width: 100%;
 }
 
 .page_left .pageWrapper {
     background: var(--background-gradient-light);
     border-radius: 1rem;
-    height: 100%; 
+    height: 100%;
     width: 100%;
     border: 1px solid rgba(255, 255, 255, 0.144);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
@@ -318,15 +322,15 @@
 
 
 .page_left .page_inner_image {
-    position: relative; 
+    position: relative;
 }
 
 .page_left .page_inner_image::after {
     content: "";
     position: absolute;
     bottom: 0;
-    left: 10%; 
-    width: 80%; 
+    left: 10%;
+    width: 80%;
     border-bottom: 1px solid rgba(255, 255, 255, 0.144);
 }
 
@@ -360,13 +364,150 @@
 }
 
 .page_left .pageWrapper .bottomPageNumber {
-    position: absolute; 
+    position: absolute;
     font-size: .9rem;
-    bottom: 22px; 
-    left: 28px; 
-    text-align: left;   
+    bottom: 22px;
+    left: 28px;
+    text-align: left;
     color: #6d6d6d;
 }
+
+
+.disclaimerContainer,
+.proposalContainer {
+    padding: 0px;
+    text-align: left;
+}
+
+
+.disclaimerTop,
+.proposalTop {
+    padding: 0rem;
+    margin: 0rem;
+}
+
+
+.rightDisclaimerContainer,
+.rightProposalContainer {
+    padding: 15px;
+    text-align: left;
+}
+
+
+.proposalTitle {
+    text-align: center;
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #ffffff;
+}
+
+.disclaimerSubTitle,
+.proposalSubTitle {
+    text-align: center;
+    font-size: 1rem;
+    line-height: 1.2;
+    font-weight: bold;
+    margin-bottom: 0px;
+    color: #ffffff;
+}
+
+.proposalLabel {
+    font-size: .85rem;
+    font-weight: bold;
+    text-decoration: underline;
+    text-shadow: none;
+    margin-bottom: 0px;
+    color: var(--color-light);
+}
+
+.disclaimerPages,
+.proposalPages {
+    margin-top: 20px;
+}
+
+
+.disclaimerPage,
+.rightDisclaimerPage,
+.rightProposalPage,
+.proposalPage {
+    background: var(--background-gradient-light);
+    border-radius: 1rem;
+    height: 100%;
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.144);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    padding: .5rem;
+    margin-bottom: 10px;
+}
+
+.proposalParagraph {
+    text-indent: 1rem;
+    font-size: .9rem;
+    line-height: 1.3;
+    margin-bottom: 0px;
+    text-shadow: none;
+    color: #6d6d6d;
+}
+
+.disclaimerTitle {
+    text-align: center;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #ffffff;
+}
+
+.disclaimerLeader {
+    text-indent: 1rem;
+    font-size: .93rem;
+    line-height: 1.2;
+    margin-bottom: 0px;
+    text-shadow: none;
+    color: #6d6d6d;
+}
+
+.disclaimerParagraph {
+    text-indent: 1rem;
+    font-size: .75rem;
+    line-height: 1.3;
+    margin-bottom: 0px;
+    text-shadow: none;
+    color: #6d6d6d;
+}
+
+.disclaimerLabel {
+    font-size: .7rem;
+    font-weight: bold;
+    text-decoration: underline;
+    text-shadow: none;
+    margin-bottom: 0px;
+    color: var(--color-light);
+}
+
+/* FlipBook.module.css */
+.backPage {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.backPageImage {
+    display: flex;
+    margin-top: .5rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    border-radius: 1rem;
+    opacity: 20%;
+}
+
 
 .navigationControls {
     display: flex;
@@ -486,11 +627,11 @@
     }
 
     .page_right .pageWrapper .page_inner .bottomPageNumber,
-    .page_left .pageWrapper .bottomPageNumber {      
+    .page_left .pageWrapper .bottomPageNumber {
         font-size: .75rem;
-        bottom: 16px; 
-        right: 20px; 
-        text-align: right;         
+        bottom: 16px;
+        right: 20px;
+        text-align: right;
     }
 
     .page_right .benefits li {
@@ -500,6 +641,131 @@
     .page_right .benefits .benefit_description {
         font-size: 0.6rem;
         line-height: 1.3;
+    }
+
+    .proposalTitle {
+        text-align: center;
+        font-size: .9rem;
+        line-height: 1;
+        font-weight: bold;
+        margin: 5px;
+        color: #ffffff;
+    }
+
+    .proposalSubTitle {
+        text-align: center;
+        font-size: .75rem;
+        line-height: 1;
+        font-weight: bold;
+        margin-bottom: 0px;
+        color: #ffffff;
+    }
+
+    .proposalLabel {
+        font-size: .6rem;
+        margin-bottom: 0px;
+    }
+
+    .rightProposalContainer {
+        padding: 5px;
+        text-align: left;
+    }
+
+    .proposalPages {
+        margin-top: 10px;
+        padding: .22rem;
+    }
+
+    .disclaimerPages {
+    margin-top: 10px;
+}
+
+    .disclaimerPage,
+    .rightDisclaimerPage,
+    .rightProposalPage,
+    .proposalPage {
+        padding: .25rem;
+        margin-bottom: 2.5px;
+        border-radius: .35rem;
+    }
+
+
+    .proposalParagraph {
+        text-indent: .5rem;
+        font-size: .6rem;
+        line-height: 1.1;
+        margin-bottom: 0px;
+        text-shadow: none;
+        color: #6d6d6d;
+    }
+
+    .proposalContainer ul {
+        list-style: disc;
+        margin-left: 20px;
+    }
+
+    .proposalContainer li {
+        margin-bottom: 8px;
+        font-size: 1rem;
+        color: #ffffff;
+    }
+
+    .disclaimerTitle {
+        text-align: center;
+        font-size: .8rem;
+        line-height: 1;
+        font-weight: bold;
+        margin-bottom: 1px;
+        color: #ffffff;
+    }
+
+    .disclaimerLeader {
+        text-indent: .5rem;
+        font-size: .6rem;
+        line-height: 1.1;
+
+    }
+
+    .disclaimerParagraph {
+        text-indent: .5rem;
+        font-size: .52rem;
+        line-height: 1.2;
+    }
+
+    .disclaimerLabel {
+        font-size: .55rem;
+        font-weight: bold;
+        text-decoration: underline;
+        text-shadow: none;
+        margin-bottom: 0px;
+        color: var(--color-light);
+    }
+
+    .disclaimerTop {
+        padding: 0rem;
+        margin: 0rem;
+    }
+
+    /* FlipBook.module.css */
+    .backPage {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .backPageImage {
+        display: flex;
+        margin-top: .5rem;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        border-radius: 1rem;
+        opacity: 20%;
     }
 }
 
@@ -536,7 +802,7 @@
     .dedicationContainer {
         width: 100%;
         height: auto;
-    }    
+    }
 
     .dedicationParagraph {
         font-size: 0.6rem;
@@ -560,20 +826,23 @@
     }
 
     .contents_page h1 {
-        font-size: 1.25rem;
+        font-size: 1rem;
         padding: 0rem;
         margin: 0rem;
     }
 
     .contentsList .pageNumber,
     .contentsList .contentTitle {
-        font-size: 0.75rem;
+        font-size: 0.65rem;
     }
 
     .contentsList li {
-        padding: 4.5px 0;
-    }
+        margin-bottom: 0.5px;
+        padding: 2px 8px 2px 8px;
+        background: var(--background-gradient-light);
+        border-radius: .25rem;
 
+    }
     .page_left {
         padding: 10px;
     }
@@ -589,34 +858,34 @@
     }
 
     .page_right .pageWrapper .page_inner .bottomPageNumber,
-    .page_left .pageWrapper .bottomPageNumber {      
+    .page_left .pageWrapper .bottomPageNumber {
         font-size: .75rem;
-        bottom: 16px; 
-        right: 20px; 
-        text-align: right;         
+        bottom: 16px;
+        right: 20px;
+        text-align: right;
     }
 
     .page_right {
         padding: 10px;
     }
-        
+
     .page_right .page_lower .pageContent_title {
         font-size: 1rem;
     }
-    
+
     .page_right .page_inner .benefits {
         width: 90%;
         height: 100%;
         margin: 0.5rem 0rem 0rem 0rem;
     }
-    
+
     .page_right .page_inner .benefits .benefit_description {
         margin-bottom: 0rem;
         font-size: .66rem;
         padding: 0rem;
         line-height: 1.5;
     }
-    
+
     .page_right .page_inner .benefits li {
         list-style: disc;
         font-size: .7rem;
@@ -628,7 +897,129 @@
         padding: 0rem;
         margin: 0rem;
     }
-    
 
+    .proposalTitle {
+        text-align: center;
+        font-size: .9rem;
+        line-height: 1;
+        font-weight: bold;
+        margin: 5px;
+        color: #ffffff;
+    }
+
+    .proposalSubTitle {
+        text-align: center;
+        font-size: .75rem;
+        line-height: 1;
+        font-weight: bold;
+        margin-bottom: 0px;
+        color: #ffffff;
+    }
+
+    .proposalLabel {
+        font-size: .6rem;
+        margin-bottom: 0px;
+    }
+
+    .rightProposalContainer {
+        padding: 5px;
+        text-align: left;
+    }
+
+    .proposalPages {
+        margin-top: 10px;
+        padding: .22rem;
+    }
+
+    .disclaimerPages {
+    margin-top: 10px;
 }
 
+    .disclaimerPage,
+    .rightDisclaimerPage,
+    .rightProposalPage,
+    .proposalPage {
+        padding: .25rem;
+        margin-bottom: 2.5px;
+        border-radius: .35rem;
+    }
+
+
+    .proposalParagraph {
+        text-indent: .5rem;
+        font-size: .6rem;
+        line-height: 1.1;
+        margin-bottom: 0px;
+        text-shadow: none;
+        color: #6d6d6d;
+    }
+
+    .proposalContainer ul {
+        list-style: disc;
+        margin-left: 20px;
+    }
+
+    .proposalContainer li {
+        margin-bottom: 8px;
+        font-size: 1rem;
+        color: #ffffff;
+    }
+
+    .disclaimerTitle {
+        text-align: center;
+        font-size: .8rem;
+        line-height: 1;
+        font-weight: bold;
+        margin-bottom: 1px;
+        color: #ffffff;
+    }
+
+    .disclaimerLeader {
+        text-indent: .5rem;
+        font-size: .6rem;
+        line-height: 1.1;
+
+    }
+
+    .disclaimerParagraph {
+        text-indent: .5rem;
+        font-size: .52rem;
+        line-height: 1.2;
+    }
+
+    .disclaimerLabel {
+        font-size: .55rem;
+        font-weight: bold;
+        text-decoration: underline;
+        text-shadow: none;
+        margin-bottom: 0px;
+        color: var(--color-light);
+    }
+
+    .disclaimerTop {
+        padding: 0rem;
+        margin: 0rem;
+    }
+
+    /* FlipBook.module.css */
+    .backPage {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .backPageImage {
+        display: flex;
+        margin-top: .5rem;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        border-radius: 1rem;
+        opacity: 20%;
+    }
+}

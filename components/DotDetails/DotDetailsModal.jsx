@@ -51,8 +51,6 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, isUserI
       toast.info("Please enter your name and email to proceed.");
       return;
     }
-  
-    // Proceed with minting if the user is already signed up
     forge(medal.title, medal.ipfsHash, medal.revenueAccess, medal.xdripBonus);
   };
   

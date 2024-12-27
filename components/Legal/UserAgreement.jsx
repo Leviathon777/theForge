@@ -128,8 +128,8 @@ const UserAgreement = ({ isOpen, onRequestClose }) => (
       <h3>12. Dispute Resolution</h3>
       <p>
         If you have a dispute regarding your use of the platform, please contact
-        us at [Insert Contact Email]. Disputes will be governed by the laws of
-        [Insert Jurisdiction].
+        us at [contact@moh.xdrip.io]. Disputes will be governed by the laws of
+        [COLORADO, USA].
       </p>
     </div>
     <button onClick={onRequestClose} className={Style.closeButton}>
