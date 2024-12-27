@@ -545,7 +545,7 @@ const DistributeRevShare = () => {
         >
           <thead>
             <tr>
-              <th style={{ border: "1px solid #ccc", padding: "8px", textAlign: "left" }}>
+                <th style={{ border: "1px solid #ccc", padding: "8px", textAlign: "left" }}>
                 Holder Address
               </th>
               <th style={{ border: "1px solid #ccc", padding: "8px", textAlign: "center" }}>
@@ -586,13 +586,13 @@ const DistributeRevShare = () => {
 export default DistributeRevShare;
 */
 
-// src/components/OwnerOps/DistributeRevShare.jsx
-// src/components/OwnerOps/DistributeRevShare.jsx
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import distributeCA_ABI from "../../Context/distributeCA_ABI.json";
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
+import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
 import styles from "./Distribute.module.css"; // Import the CSS module
+import Web3 from "web3";
 
 const DistributeRevShare = ({ onBack }) => {
   const [holdersInfo, setHoldersInfo] = useState([]);
@@ -603,8 +603,13 @@ const DistributeRevShare = ({ onBack }) => {
   const [newPercentage, setNewPercentage] = useState("");
   const [distributeContract, setDistributeContract] = useState(null);
   const [mohContract, setMohContract] = useState(null);
+  const [xdripBalance, setXdripBalance] = useState(null);
 
-  // Initialize Contracts
+  const XdRiPContractAddress = xdripCA_ABI.address;
+  const XdRiPContractABI = xdripCA_ABI.abi;
+  const web3 = new Web3("https://bsc-dataseed1.binance.org/");
+  const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
+
   useEffect(() => {
     const initializeContracts = async () => {
       try {
@@ -618,27 +623,17 @@ const DistributeRevShare = ({ onBack }) => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
 
-        // Initialize MOH Contract
-        const mohInstance = new ethers.Contract(
-          mohCA_ABI.address,
-          mohCA_ABI.abi,
-          signer
-        );
+        const mohInstance = new ethers.Contract(mohCA_ABI.address, mohCA_ABI.abi, signer);
         setMohContract(mohInstance);
 
-        // Initialize Distribution Contract
-        const distributeInstance = new ethers.Contract(
-          distributeCA_ABI.address,
-          distributeCA_ABI.abi,
-          signer
-        );
+        const distributeInstance = new ethers.Contract(distributeCA_ABI.address, distributeCA_ABI.abi, signer);
         setDistributeContract(distributeInstance);
 
-        // Fetch initial contract balance
+        const xdripInstance = new ethers.Contract(xdripCA_ABI.address, xdripCA_ABI.abi, signer);
+
         const balance = await provider.getBalance(distributeCA_ABI.address);
         setContractBalance(ethers.utils.formatEther(balance));
 
-        // Fetch current distribution percentage
         const currentPercentage = await distributeInstance.distributionPercentage();
         setDistributePercentage(currentPercentage.toNumber());
 
@@ -652,57 +647,192 @@ const DistributeRevShare = ({ onBack }) => {
     initializeContracts();
   }, []);
 
-  // Fetch Holders
+  const fetchXDRIPBalance = async (address) => {
+    try {
+      const balance = await XdRiPContract.methods.balanceOf(address).call();
+      const formattedBalance = web3.utils.fromWei(balance, "gwei");
+      return parseFloat(formattedBalance);
+    } catch (error) {
+      console.error("Error retrieving XDRIP balance:", error);
+      return 0;
+    }
+  };
+
+  const fetchContractBalance = async () => {
+    if (!distributeContract) return;
+    try {
+      const balance = await distributeContract.provider.getBalance(distributeCA_ABI.address);
+      setContractBalance(ethers.utils.formatEther(balance));
+    } catch (error) {
+      console.error("Error fetching balance:", error);
+      setStatus("Error fetching balance.");
+    }
+  };
+
   const fetchHoldersInfo = async () => {
     if (!mohContract) {
       setStatus("MOH contract not loaded.");
       return;
     }
-
+  
     try {
       setStatus("Fetching Medal holders...");
       const holderMap = {};
+  
+      const DOTWeights = {
+        COMMON: 10,
+        UNCOMMON: 25,
+        RARE: 45,
+        EPIC: 70,
+        LEGENDARY: 110,
+      };
+  
+      const medalOrder = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY"];
+  
       const tokenRanges = [
-        { start: 1, end: 10000, weight: 1, name: "Common" },
-        { start: 10001, end: 15000, weight: 2, name: "Uncommon" },
-        { start: 15001, end: 17500, weight: 3, name: "Rare" },
-        { start: 17501, end: 18500, weight: 4, name: "Epic" },
-        { start: 18501, end: 20000, weight: 5, name: "Legendary" },
+        { start: 1, end: 10000, weight: DOTWeights.COMMON, name: "COMMON" },
+        { start: 10001, end: 15000, weight: DOTWeights.UNCOMMON, name: "UNCOMMON" },
+        { start: 15001, end: 17500, weight: DOTWeights.RARE, name: "RARE" },
+        { start: 17501, end: 18500, weight: DOTWeights.EPIC, name: "EPIC" },
+        { start: 18501, end: 20000, weight: DOTWeights.LEGENDARY, name: "LEGENDARY" },
       ];
-
+  
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  
+      // Fetch holders and medals
       for (const range of tokenRanges) {
         for (let tokenId = range.start; tokenId <= range.end; tokenId++) {
           try {
             const owner = await mohContract.ownerOf(tokenId);
             if (owner) {
               if (!holderMap[owner]) {
-                holderMap[owner] = { weight: range.weight, medals: [] };
-              } else if (range.weight > holderMap[owner].weight) {
-                holderMap[owner].weight = range.weight;
+                holderMap[owner] = { medals: [] };
               }
               holderMap[owner].medals.push({ tokenId, name: range.name });
             }
           } catch (error) {
             console.warn(`Token ID ${tokenId} not found: ${error.message}`);
-            break; // Stop further queries in this range if a gap is found
+            break; 
           }
         }
+        await delay(100); 
       }
-
-      const holders = Object.entries(holderMap).map(([address, data]) => ({
-        address,
-        weight: data.weight,
-        medals: data.medals,
-      }));
-      setHoldersInfo(holders);
-      setStatus("Medal holders and medal details fetched successfully.");
+  
+      const holders = Object.entries(holderMap).map(([address, data]) => {
+  
+        let totalWeight = 0;
+        const tierCounts = medalOrder.reduce((counts, tier) => {
+          counts[tier] = 0;
+          return counts;
+        }, {});
+  
+        data.medals.forEach((medal) => {
+          if (tierCounts[medal.name] !== undefined) {
+            tierCounts[medal.name]++;
+          }
+        });
+  
+        const fullRamps = Math.min(...medalOrder.map((tier) => tierCounts[tier]));
+        totalWeight += fullRamps * DOTWeights["LEGENDARY"]; // Add weight for full ramps
+  
+        const remainingMedals = medalOrder.filter((tier) => tierCounts[tier] > fullRamps);
+        if (remainingMedals.length > 0) {
+          const highestRemainingTier = remainingMedals[remainingMedals.length - 1];
+          totalWeight += DOTWeights[highestRemainingTier];
+        }
+  
+        console.log(`Address: ${address}, Tier Counts:`, tierCounts);
+        console.log(`Address: ${address}, Full Ramps: ${fullRamps}, Total Weight: ${totalWeight}`);
+  
+        return {
+          address,
+          weight: totalWeight,
+          medals: data.medals, // Pass medals for display
+        };
+      });
+  
+      /* based on full wallet regardles */
+      const updatedHolders = [];
+      for (const holder of holders) {
+        const xdripBalance = await fetchXDRIPBalance(holder.address);
+  
+        // revshare bonus based on XdRiP balance as percentage of total supply
+        // add a revbonus percent of their current distribution
+        const xdripPercentage = (xdripBalance / 1e9) * 100; // 1B is the total supply of XdRiP
+        let revshareBonus = 0;
+  
+        if (xdripPercentage >= 1.48) {
+            revshareBonus = 15; 
+          } else if (xdripPercentage >= 1.25) {
+            revshareBonus = 10; 
+          } else if (xdripPercentage >= 1) {
+            revshareBonus = 7; 
+          } else if (xdripPercentage >= 0.75) {
+            revshareBonus = 5; 
+          } else if (xdripPercentage >= 0.5) {
+            revshareBonus = 2; 
+          } else {
+            revshareBonus = 0; 
+          }
+  
+        
+        const finalWeight = holder.weight > 0 ? holder.weight + holder.weight * (revshareBonus / 100) : 0;
+  
+        updatedHolders.push({
+          ...holder,
+          xdripBalance,
+          revshareBonus,
+          finalWeight,
+        });
+      }
+      
+      setHoldersInfo(updatedHolders);
+      setStatus("Medal holders, weights, and XdRiP balances fetched successfully.");
     } catch (error) {
       console.error("Error fetching Medal holders:", error);
       setStatus("Error fetching Medal holders.");
     }
   };
 
-  // Distribute Revenue
+
+      /* // based on orig docs 
+      const updatedHolders = [];
+      for (const holder of holders) {
+          const xdripBalance = await fetchXDRIPBalance(holder.address);
+          const xdripPercentage = (xdripBalance / 1e9) * 100;
+          const ownedTiers = holder.medals.map((medal) => medal.name);
+          const highestOwnedTier = Math.max(
+              ...ownedTiers.map((tier) => medalOrder.indexOf(tier))
+          );
+
+          let revshareBonus = 0;
+
+          // Check bonus eligibility based on highest owned tier and XdRiP percentage
+          if (highestOwnedTier >= medalOrder.indexOf("LEGENDARY") && xdripPercentage >= 1.48) {
+              revshareBonus = 15; // 1.48% with LEGENDARY or higher
+          } else if (highestOwnedTier >= medalOrder.indexOf("EPIC") && xdripPercentage >= 1.25) {
+              revshareBonus = 10; // 1.25% with EPIC or higher
+          } else if (highestOwnedTier >= medalOrder.indexOf("RARE") && xdripPercentage >= 1) {
+              revshareBonus = 7; // 1% with RARE or higher
+          } else if (highestOwnedTier >= medalOrder.indexOf("UNCOMMON") && xdripPercentage >= 0.75) {
+              revshareBonus = 5; // 0.75% with UNCOMMON or higher
+          } else if (highestOwnedTier >= medalOrder.indexOf("COMMON") && xdripPercentage >= 0.5) {
+              revshareBonus = 2; // 0.5% with COMMON or higher
+          }
+
+          // Apply the XdRiP bonus to the total weight
+          const finalWeight = holder.weight > 0 ? holder.weight + holder.weight * (revshareBonus / 100) : 0;
+
+          updatedHolders.push({
+              ...holder,
+              xdripBalance,
+              revshareBonus,
+              finalWeight,
+          });
+      }
+
+  */
+
   const distributeRevenue = async () => {
     if (!distributeContract) {
       setStatus("Distribution contract not loaded.");
@@ -721,7 +851,6 @@ const DistributeRevShare = ({ onBack }) => {
     }
   };
 
-  // Update Distribution Percentage
   const updateDistributionPercentage = async () => {
     if (!distributeContract) {
       setStatus("Distribution contract not loaded.");
@@ -747,7 +876,6 @@ const DistributeRevShare = ({ onBack }) => {
     }
   };
 
-  // Deposit Funds
   const handleDepositFunds = async () => {
     if (!distributeContract) {
       setStatus("Distribution contract not loaded.");
@@ -778,32 +906,20 @@ const DistributeRevShare = ({ onBack }) => {
     return `${start}...${end}`;
   };
 
-
   return (
     <div className={styles.container}>
-      
-
-      {/* Heading */}
       <h2 className={styles.heading}>Revenue Distribution</h2>
-
-      {/* Status Message */}
       <p className={styles.status}>{status}</p>
 
-      {/* Action Buttons */}
       <div className={styles.buttonSection}>
         <button onClick={fetchHoldersInfo} className={styles.button}>
           Fetch Medal Holders
         </button>
-        <button
-          onClick={distributeRevenue}
-          disabled={!holdersInfo.length}
-          className={styles.button}
-        >
+        <button onClick={distributeRevenue} disabled={!holdersInfo.length} className={styles.button}>
           Distribute Revenue
         </button>
       </div>
 
-      {/* Deposit Funds Section */}
       <div className={styles.inputGroup}>
         <input
           type="text"
@@ -817,7 +933,11 @@ const DistributeRevShare = ({ onBack }) => {
         </button>
       </div>
 
-      {/* Update Distribution Percentage Section */}
+      <div className={styles.infoSection}>
+        <p><strong>Available Balance:</strong> {contractBalance} BNB</p>
+        <p><strong>Current Distribution Percentage:</strong> {distributePercentage}%</p>
+      </div>
+
       <div className={styles.inputGroup}>
         <input
           type="number"
@@ -831,24 +951,10 @@ const DistributeRevShare = ({ onBack }) => {
         </button>
       </div>
 
-      {/* Contract Balance and Distribution Percentage Display */}
-      <div className={styles.infoSection}>
-        <p>
-          <strong>Available Balance:</strong> {contractBalance} BNB
-        </p>
-        <p>
-          <strong>Current Distribution Percentage:</strong> {distributePercentage}%
-        </p>
-      </div>
-{/* Back Button */}
-      <button
-        onClick={onBack}
-        className={styles.backButton}
-        aria-label="Back to Owner Operations"
-      >
+      <button onClick={onBack} className={styles.backButton} aria-label="Back to Owner Operations">
         &larr; Back
       </button>
-      {/* Holders Information Table */}
+
       {holdersInfo.length > 0 && (
         <div className={styles.tableContainer}>
           <table className={styles.table}>
@@ -857,21 +963,17 @@ const DistributeRevShare = ({ onBack }) => {
                 <th className={styles.th}>Holder Address</th>
                 <th className={styles.th}>Weight</th>
                 <th className={styles.th}>Medals Owned</th>
+                <th className={styles.th}>XdRiP Balance</th>
+                <th className={styles.th}>Revshare Bonus</th>
               </tr>
             </thead>
             <tbody>
               {holdersInfo.map((holder, index) => (
                 <tr key={index} className={styles.tr}>
                   <td className={styles.td}>
-        <span
-          className={styles.copyableAddress}
-          data-fulladdress={holder.address} // For tooltip
-        >
-          {shortenAddress(holder.address)}
-        </span>
-      </td>
-
-                  <td className={styles.td}>{holder.weight}</td>
+                    <span className={styles.copyableAddress}>{shortenAddress(holder.address)}</span>
+                  </td>
+                  <td className={styles.td}>{holder.finalWeight}</td>
                   <td className={styles.td}>
                     {holder.medals.map((medal, i) => (
                       <div key={i} style={{ marginBottom: "4px" }}>
@@ -879,6 +981,8 @@ const DistributeRevShare = ({ onBack }) => {
                       </div>
                     ))}
                   </td>
+                  <td className={styles.td}>{holder.xdripBalance}</td>
+                  <td className={styles.td}>{holder.revshareBonus}%</td>
                 </tr>
               ))}
             </tbody>

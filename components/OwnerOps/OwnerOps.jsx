@@ -781,7 +781,7 @@ import {
   useSigner,
 } from "@thirdweb-dev/react";
 import DistributeRevShare from "./DistributeToHolders"; 
-import {Reports} from "./Reports"
+import Reports from "./Reports"; 
 import mohCA_ABI from "../../Context/mohCA_ABI.json"; 
 import styles from "./OwnerOps.module.css"; 
 
@@ -792,6 +792,15 @@ const OwnerOps = () => {
   const address = useAddress();
   const signer = useSigner();
   const [status, setStatus] = useState("");
+  const [padrones, setPadrones] = useState([]); 
+  const [newPadrone, setNewPadrone] = useState("");
+  const [activeAccordion, setActiveAccordion] = useState(null);
+  const [showDistributePage, setShowDistributePage] = useState(false);
+  const [newOperatingTasca, setNewOperatingTasca] = useState("");
+  const [showReports, setShowReports] = useState(false);
+ 
+ const handleCloseReports = () => setShowReports(false);
+
   const [contractInfo, setContractInfo] = useState({
     owner: "Fetching...",
     padronesPercentage: "80%", 
@@ -815,12 +824,8 @@ const OwnerOps = () => {
     legendary: "",
     eternal: "",
   });
-  const [padrones, setPadrones] = useState([]); 
-  const [newPadrone, setNewPadrone] = useState("");
-  const [activeAccordion, setActiveAccordion] = useState(null);
-  const [showDistributePage, setShowDistributePage] = useState(false);
-  const [newOperatingTasca, setNewOperatingTasca] = useState("");
-  const [showReports, setShowReports] = useState(false);
+  
+  
 
   const mohContract = signer
     ? new ethers.Contract(
@@ -1372,7 +1377,7 @@ const OwnerOps = () => {
               </div>
             </div>
           ) : showReports ? (
-            <Reports />
+            <Reports onClose={handleCloseReports} />
           ) : (
             <DistributeRevShare onBack={handleBackToOps} />
           )}

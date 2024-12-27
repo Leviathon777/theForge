@@ -1,66 +1,69 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
+import { useAddress, useSigner } from "@thirdweb-dev/react";
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
 import distributeCA_ABI from "../../Context/distributeCA_ABI.json";
-import styles from "./Reports.module.css"; // Import the CSS module
-import { useAddress, useSigner } from "@thirdweb-dev/react";
+import styles from "./Reports.module.css";
 
-const Reports = () => {
+const Reports = ({ onClose }) => {
   const address = useAddress();
   const signer = useSigner();
+
   const [ownerOpsReport, setOwnerOpsReport] = useState(null);
   const [distributeRevReport, setDistributeRevReport] = useState([]);
+  const [holdersInfo, setHoldersInfo] = useState([]);
   const [status, setStatus] = useState("");
   const [dateRange, setDateRange] = useState({
-    start: new Date().toISOString().split("T")[0], // Format YYYY-MM-DD
+    start: new Date().toISOString().split("T")[0],
     end: new Date().toISOString().split("T")[0],
   });
 
-  const mohContract = signer
-    ? new ethers.Contract(
+  const [mohContract, setMohContract] = useState(null);
+  const [distributeContract, setDistributeContract] = useState(null);
+
+  useEffect(() => {
+    if (signer) {
+      const mohInstance = new ethers.Contract(
         mohCA_ABI.address,
         mohCA_ABI.abi,
         signer
-      )
-    : null;
-
-  const distributeContract = signer
-    ? new ethers.Contract(
+      );
+      const distributeInstance = new ethers.Contract(
         distributeCA_ABI.address,
         distributeCA_ABI.abi,
         signer
-      )
-    : null;
-
-  useEffect(() => {
-    if (mohContract) {
-      generateOwnerOpsReport();
+      );
+      setMohContract(mohInstance);
+      setDistributeContract(distributeInstance);
+      setStatus("Contracts initialized successfully.");
+    } else {
+      setStatus("Waiting for signer...");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mohContract, signer]);
+  }, [signer]);
 
   const generateOwnerOpsReport = async () => {
+    if (!mohContract) {
+      setStatus("MOH contract not loaded. Connect your wallet.");
+      return;
+    }
+
     try {
       setStatus("Generating Owner Operations Report...");
-      const owner = await mohContract.titolare();
+      const [
+        owner,
+        padronesPercentage,
+        operatingCostsPercentage,
+        operatingTasca,
+        totalTokensMinted,
+      ] = await Promise.all([
+        mohContract.titolare(),
+        mohContract.padronesPercentage(),
+        mohContract.operatingCostsPercentage(),
+        mohContract.operatingTasca(),
+        mohContract.totalSupply(),
+      ]);
+
       const balance = await signer.getBalance();
-      const padronesPercentage = await mohContract.padronesPercentage();
-      const operatingCostsPercentage = await mohContract.operatingCostsPercentage();
-      const operatingTasca = await mohContract.operatingTasca();
-
-      // Fetch sales based on forged counts
-      const forgedCounts = await mohContract.getforgedCounts();
-      const prices = await fetchPrices();
-
-      // Calculate sales in BNB
-      const sales = {
-        common: parseFloat(ethers.utils.formatEther(forgedCounts.common)) * parseFloat(prices.common),
-        uncommon: parseFloat(ethers.utils.formatEther(forgedCounts.uncommon)) * parseFloat(prices.uncommon),
-        rare: parseFloat(ethers.utils.formatEther(forgedCounts.rare)) * parseFloat(prices.rare),
-        epic: parseFloat(ethers.utils.formatEther(forgedCounts.epic)) * parseFloat(prices.epic),
-        legendary: parseFloat(ethers.utils.formatEther(forgedCounts.legendary)) * parseFloat(prices.legendary),
-        eternal: parseFloat(ethers.utils.formatEther(forgedCounts.eternal)) * parseFloat(prices.eternal),
-      };
 
       setOwnerOpsReport({
         owner,
@@ -68,8 +71,9 @@ const Reports = () => {
         padronesPercentage: `${padronesPercentage}%`,
         operatingCostsPercentage: `${operatingCostsPercentage}%`,
         operatingTasca,
-        sales,
+        totalTokensMinted: totalTokensMinted.toString(),
       });
+
       setStatus("Owner Operations Report generated successfully.");
     } catch (error) {
       console.error("Error generating OwnerOps report:", error);
@@ -77,82 +81,67 @@ const Reports = () => {
     }
   };
 
-  const fetchPrices = async () => {
-    try {
-      const [
-        common,
-        uncommon,
-        rare,
-        epic,
-        legendary,
-        eternal,
-      ] = await Promise.all([
-        mohContract.commonPrice(),
-        mohContract.uncommonPrice(),
-        mohContract.rarePrice(),
-        mohContract.epicPrice(),
-        mohContract.legendaryPrice(),
-        mohContract.eternalPrice(),
-      ]);
-      return {
-        common: ethers.utils.formatEther(common),
-        uncommon: ethers.utils.formatEther(uncommon),
-        rare: ethers.utils.formatEther(rare),
-        epic: ethers.utils.formatEther(epic),
-        legendary: ethers.utils.formatEther(legendary),
-        eternal: ethers.utils.formatEther(eternal),
-      };
-    } catch (error) {
-      console.error("Error fetching prices:", error);
-      return {};
-    }
-  };
+  const fetchHoldersInfo = async () => {
+    if (!mohContract) return;
 
-  const handleDateChange = (e) => {
-    setDateRange({
-      ...dateRange,
-      [e.target.name]: e.target.value,
-    });
+    try {
+      setStatus("Fetching Holders Information...");
+      const holders = [];
+      const totalSupply = await mohContract.totalSupply();
+
+      for (let tokenId = 1; tokenId <= totalSupply; tokenId++) {
+        const owner = await mohContract.ownerOf(tokenId);
+        holders.push(owner);
+      }
+
+      const holderCounts = holders.reduce((acc, holder) => {
+        acc[holder] = (acc[holder] || 0) + 1;
+        return acc;
+      }, {});
+
+      const holdersData = Object.entries(holderCounts).map(([address, count]) => ({
+        address,
+        count,
+      }));
+
+      setHoldersInfo(holdersData);
+      setStatus("Holders Information fetched successfully.");
+    } catch (error) {
+      console.error("Error fetching holders info:", error);
+      setStatus("Error fetching Holders Information.");
+    }
   };
 
   const generateDistributeRevReport = async () => {
     if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
+      setStatus("Distribution contract not loaded. Connect your wallet.");
       return;
     }
 
     try {
       setStatus("Generating Distributor Revenue Report...");
-      const { start, end } = dateRange;
-
-      // Convert dates to timestamps
-      const startTimestamp = Math.floor(new Date(start).getTime() / 1000);
-      const endTimestamp = Math.floor(new Date(end).getTime() / 1000);
-
-      // Assuming the distributeContract has an event for RevenueDistribution with timestamp
-      // This implementation might vary based on the actual contract events
       const filter = distributeContract.filters.RevenueDistributed();
       const events = await distributeContract.queryFilter(filter);
 
-      // Filter events based on the date range
-      const filteredEvents = events.filter(async (event) => {
-        const block = await distributeContract.provider.getBlock(event.blockNumber);
-        return block.timestamp >= startTimestamp && block.timestamp <= endTimestamp;
-      });
+      const { start, end } = dateRange;
+      const startTimestamp = Math.floor(new Date(start).getTime() / 1000);
+      const endTimestamp = Math.floor(new Date(end).getTime() / 1000);
 
-      const report = await Promise.all(
-        filteredEvents.map(async (event) => {
-          const { args, blockNumber } = event;
-          const block = await distributeContract.provider.getBlock(blockNumber);
-          return {
-            to: args.to,
-            amount: ethers.utils.formatEther(args.amount),
-            date: new Date(block.timestamp * 1000).toLocaleDateString(),
-          };
+      const filteredEvents = await Promise.all(
+        events.map(async (event) => {
+          const block = await distributeContract.provider.getBlock(event.blockNumber);
+          if (block.timestamp >= startTimestamp && block.timestamp <= endTimestamp) {
+            return {
+              to: event.args.to,
+              amount: ethers.utils.formatEther(event.args.amount),
+              date: new Date(block.timestamp * 1000).toLocaleDateString(),
+            };
+          }
+          return null;
         })
-      );
+      ).then((results) => results.filter((event) => event !== null));
 
-      setDistributeRevReport(report);
+      setDistributeRevReport(filteredEvents);
       setStatus("Distributor Revenue Report generated successfully.");
     } catch (error) {
       console.error("Error generating Distributor Revenue Report:", error);
@@ -162,9 +151,7 @@ const Reports = () => {
 
   const shortenAddress = (address) => {
     if (!address) return "";
-    const start = address.substring(0, 6);
-    const end = address.substring(address.length - 4);
-    return `${start}...${end}`;
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
 
   return (
@@ -172,40 +159,15 @@ const Reports = () => {
       <h2 className={styles.heading}>Reports</h2>
       <p className={styles.status}>{status}</p>
 
-      {/* Owner Operations Report */}
       <div className={styles.reportSection}>
         <h3>Owner Operations Report</h3>
         {ownerOpsReport ? (
-          <div className={styles.reportContent}>
-            <p>
-              <strong>Owner Address:</strong>{" "}
-              <span className={styles.copyableAddress}>
-                {shortenAddress(ownerOpsReport.owner)}
-              </span>
-            </p>
-            <p>
-              <strong>Contract Balance:</strong> {ownerOpsReport.balance} BNB
-            </p>
-            <p>
-              <strong>Padrones Percentage:</strong> {ownerOpsReport.padronesPercentage}
-            </p>
-            <p>
-              <strong>Operating Costs Percentage:</strong> {ownerOpsReport.operatingCostsPercentage}
-            </p>
-            <p>
-              <strong>Operating Wallet:</strong>{" "}
-              <span className={styles.copyableAddress}>
-                {shortenAddress(ownerOpsReport.operatingTasca)}
-              </span>
-            </p>
-            <h4>Sales Based on Forged Counts:</h4>
-            <ul>
-              {Object.entries(ownerOpsReport.sales).map(([tier, amount]) => (
-                <li key={tier}>
-                  <strong>{tier.charAt(0).toUpperCase() + tier.slice(1)}:</strong> {amount} BNB
-                </li>
-              ))}
-            </ul>
+          <div>
+            <p><strong>Owner Address:</strong> {shortenAddress(ownerOpsReport.owner)}</p>
+            <p><strong>Contract Balance:</strong> {ownerOpsReport.balance} BNB</p>
+            <p><strong>Total Tokens Minted:</strong> {ownerOpsReport.totalTokensMinted}</p>
+            <p><strong>Padrones Percentage:</strong> {ownerOpsReport.padronesPercentage}</p>
+            <p><strong>Operating Costs Percentage:</strong> {ownerOpsReport.operatingCostsPercentage}</p>
           </div>
         ) : (
           <button onClick={generateOwnerOpsReport} className={styles.button}>
@@ -214,30 +176,34 @@ const Reports = () => {
         )}
       </div>
 
-      {/* Distributor Revenue Report */}
+      <div className={styles.reportSection}>
+        <h3>Holders Information</h3>
+        <button onClick={fetchHoldersInfo} className={styles.button}>
+          Fetch Holders Information
+        </button>
+        {holdersInfo.length > 0 && (
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Address</th>
+                <th>Tokens Held</th>
+              </tr>
+            </thead>
+            <tbody>
+              {holdersInfo.map((holder, index) => (
+                <tr key={index}>
+                  <td>{shortenAddress(holder.address)}</td>
+                  <td>{holder.count}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
       <div className={styles.reportSection}>
         <h3>Distributor Revenue Report</h3>
-        <div className={styles.dateFilter}>
-          <label>
-            Start Date:
-            <input
-              type="date"
-              name="start"
-              value={dateRange.start}
-              onChange={handleDateChange}
-              className={styles.input}
-            />
-          </label>
-          <label>
-            End Date:
-            <input
-              type="date"
-              name="end"
-              value={dateRange.end}
-              onChange={handleDateChange}
-              className={styles.input}
-            />
-          </label>
+        <div>
           <button onClick={generateDistributeRevReport} className={styles.button}>
             Generate Distributor Revenue Report
           </button>
@@ -263,6 +229,10 @@ const Reports = () => {
           </table>
         )}
       </div>
+
+      <button onClick={onClose} className={styles.button}>
+        Close
+      </button>
     </div>
   );
 };

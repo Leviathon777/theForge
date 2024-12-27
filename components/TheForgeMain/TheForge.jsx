@@ -360,6 +360,7 @@ const TheForge = () => {
         if (updatedCounts) {
           setForgedCounts(updatedCounts);
         }
+        await fetchMedalCount(address);
       } else {
         toast.error("Transaction failed. Please try again.");
       }
@@ -374,13 +375,13 @@ const TheForge = () => {
 
   const handleUserInfoSubmit = async (info) => {
     console.log("Submitted Info:", info);
-  
+
     if (!address) {
       console.error("Wallet address is not available.");
       toast.error("Please connect your wallet.");
       return;
     }
-  
+
     try {
       const dateOfJoin = new Date().toISOString();
       console.log("Forger Info Being Passed:", {
@@ -394,7 +395,7 @@ const TheForge = () => {
         refId: null,
         walletAddress: address,
       });
-  
+
       await addForger(
         info.agreed,
         dateOfJoin,
@@ -406,14 +407,14 @@ const TheForge = () => {
         null,
         address
       );
-  
+
       console.log("Forger successfully added to Firestore.");
       toast.success("Your profile has been successfully created!");
-  
+
       // Fetch the forger info to verify
       const userInfo = await getForger(address);
       console.log("Fetched Forger Info:", userInfo);
-  
+
       setIsWelcomeModalVisible(true);
       console.log("Welcome modal opened.");
     } catch (error) {
@@ -421,10 +422,10 @@ const TheForge = () => {
       toast.error("Failed to save your information. Please try again.");
     }
   };
-  
+
 
   const handleCryptoForge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
-    console.log("handleCryptoForge called with:", { medalType, ipfsHash, revenueAccess, xdripBonus });  
+    console.log("handleCryptoForge called with:", { medalType, ipfsHash, revenueAccess, xdripBonus });
     if (!address) {
       toast.info("Please connect your wallet to proceed.");
       connectLocalWallet();
@@ -438,7 +439,7 @@ const TheForge = () => {
     console.log("KYC check passed. Proceeding to forge:", medalType);
     return forge(medalType, ipfsHash, revenueAccess, xdripBonus);
   };
-  
+
   const forge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
     if (!userInfo) {
       console.error("User info not provided!");
@@ -540,7 +541,7 @@ const TheForge = () => {
       const receipt = await transaction.wait();
       console.log("Transaction Confirmed:", receipt);
       if (receipt.status === 1) {
-        toast.success("Your Medal Of Honor was forged successfully!");        
+        toast.success("Your Medal Of Honor was forged successfully!");
         await logMedalPurchase(address, medalType, itemPrice, transaction.hash, revenueAccess, xdripBonus);
         await sendReceiptEmail(
           userInfo.email,
@@ -599,17 +600,19 @@ const TheForge = () => {
     };
   }, []);
 
-  const fetchMedalCount = async (userAddress) => {
-    if (!signer) return;
-    try {
-      const contract = fetchMohContract(signer);
-      const count = await contract.balanceOf(userAddress);
-      setMedalCount(count.toNumber());
-    } catch (error) {
-      console.error("Error fetching medal count:", error);
-      setMedalCount(0);
-    }
-  };
+  // Remove fetchForgedCountsForAddress if it's redundant
+const fetchMedalCount = async (userAddress) => {
+  if (!signer || !userAddress) return;
+  try {
+    const contract = fetchMohContract(signer);
+    const count = await contract.balanceOf(userAddress);
+    setMedalCount(count.toNumber());
+  } catch (error) {
+    console.error("Error fetching medal count:", error);
+    setMedalCount(0);
+  }
+};
+
 
   useEffect(() => {
     if (address) {
@@ -682,7 +685,7 @@ const TheForge = () => {
   const handleForgeClick = (medal) => {
     console.log("Medal selected for forging:", medal);
     console.log("Current userInfo:", userInfo);
-  
+
     if (!address) {
       toast.info("Please connect your wallet to proceed.");
       return;
@@ -694,7 +697,7 @@ const TheForge = () => {
     }
     // Always reset modalStep to "kycPrompt" when the modal opens
     setModalStep("kycPrompt");
-  
+
     if (userInfo.kycStatus !== "approved") {
       console.log("KYC is not approved, showing KYC options...");
       setMedalToForge(medal);
@@ -703,38 +706,38 @@ const TheForge = () => {
     setSelectedMedalForForge(medal);
     setIsPaymentModalVisible(true);
   };
-  
+
   const proceedWithCrypto = async () => {
     console.log("Proceed with Crypto clicked.");
-    console.log("Current selectedMedalForForge:", selectedMedalForForge);  
+    console.log("Current selectedMedalForForge:", selectedMedalForForge);
     if (!selectedMedalForForge) {
       toast("No medal selected. Please try again.");
       console.error("Error: No medal selected. selectedMedalForForge is null or undefined.");
       return;
-    }  
+    }
     setPaymentMethod("crypto");
-    console.log("Payment method set to crypto.");  
+    console.log("Payment method set to crypto.");
     console.log("Medal details being passed to handleCryptoForge:", {
       title: selectedMedalForForge.title,
       ipfsHash: selectedMedalForForge.ipfsHash,
       revenueAccess: selectedMedalForForge.revenueAccess,
       xdripBonus: selectedMedalForForge.xdripBonus,
-    });  
+    });
     try {
       await handleCryptoForge(
         selectedMedalForForge.title,
         selectedMedalForForge.ipfsHash,
         selectedMedalForForge.revenueAccess,
         selectedMedalForForge.xdripBonus
-      );  
+      );
       console.log("handleCryptoForge executed successfully.");
-      setIsPaymentModalVisible(false); 
+      setIsPaymentModalVisible(false);
       console.log("Payment modal closed.");
     } catch (error) {
       console.error("Error during forging process:", error);
       toast.error("Failed to process the forge request. Please try again.");
     }
-  };  
+  };
 
   const proceedWithTransak = () => {
     if (!selectedMedalForForge) {
@@ -743,7 +746,7 @@ const TheForge = () => {
     }
     setPaymentMethod("transak");
     setIsPaymentModalVisible(false);
-    
+
   };
 
   return (
@@ -753,207 +756,216 @@ const TheForge = () => {
           <h1 className={Style.lore_text}>MEDALS OF HONOR VAULT</h1>
           <div className={Style.forge_button_wrapper}>
 
-        {/* Dropdown Wrapper */}
-        <div ref={dropdownRef} className={Style.dropdownContainer}>
-          {/* Dropdown Button */}
-          <div
-            className={Style.dropdownToggle}
-            onClick={toggleDropdown}
-          >
-            VAULT ACTIONS
-          </div>
-
-          {/* Dropdown Menu */}
-          {isDropdownOpen && (
-            <div className={Style.dropdownMenu}>
-              {/* HOW TO INVEST WITH XDRIP */}
+            {/* Dropdown Wrapper */}
+            <div ref={dropdownRef} className={Style.dropdownContainer}>
+              {/* Dropdown Button */}
               <div
-                className={Style.dropdownMenuItem}
-                onClick={() => {
-                  setIsModalOpen(true);
-                  closeDropdown();
-                }}
+                className={Style.dropdownToggle}
+                onClick={toggleDropdown}
               >
-                HOW TO INVEST WITH XDRIP
+                VAULT ACTIONS
               </div>
 
-              {/* KYC Verification */}
-              <div
-                className={`${Style.dropdownMenuItem}`}
-                onClick={() => {
-                  if (address && userInfo) {
-                    router.push({
-                      pathname: "/kycPage",
-                      query: {
-                        address,
-                        name: userInfo.name,
-                        email: userInfo.email,
-                        phoneNumber: userInfo.phoneNumber || "",
-                        kycStatus: userInfo.kycStatus || "not_started",
-                      },
-                    });
-                  } else {
-                    router.push("/kycPage");
-                  }
-                  closeDropdown();
-                }}
-              >
-                KYC VERIFICATION
-              </div>
-
-              {/* Transak Button */}
-              <TransakButton
-                user={userInfo}
-                walletAddress={address}
-                onShowInvestorProfile={() => {
-                  setIsInvestorProfileModalOpen(true);
-                  closeDropdown();
-                }}
-                onSuccess={(data) => {
-                  console.log("Transak payment successful:", data);
-                  closeDropdown();
-                }}
-                onError={(error) => {
-                  console.error("Transak payment failed:", error);
-                  closeDropdown();
-                }}
-                className={Style.dropdownMenuItem}
-              />
-            </div>
-          )}
-        </div>
-
-            <ConnectWallet
-              btnTitle={randomTitle}
-              style={{
-                background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
-                color: 'white',
-                border: '2px solid #1c1c1c',
-                borderRadius: '12px',
-                boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer',
-                textAlign: 'center',
-                textTransform: 'uppercase',
-                fontSize: '16px',
-                textShadow: '0px 0px 2px black',
-                backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 'auto',
-                height: 'auto',
-                margin: '0.25rem',
-                padding: '10px 20px',
-                zIndex: 1,
-              }}
-
-              detailsBtn={() => {
-                return (
-                  <button
-                    className={Style.genericInfoBox}
-                    style={{ backgroundColor: "transparent" }}
+              {/* Dropdown Menu */}
+              {isDropdownOpen && (
+                <div className={Style.dropdownMenu}>
+                  {/* HOW TO INVEST WITH XDRIP */}
+                  <div
+                    className={Style.dropdownMenuItem}
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      closeDropdown();
+                    }}
                   >
-                    <div
-                      style={{
-                        background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
-                        color: 'white',
-                        border: '2px solid #1c1c1c',
-                        borderRadius: '12px',
-                        boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
-                        transition: 'all 0.3s ease',
-                        padding: '10px, 20px',
-                        width: 'auto',
-                        height: '42px',
-                        cursor: 'pointer',
-                        textAlign: 'center',
-                        textTransform: 'uppercase',
-                        fontSize: '16px',
-                        textShadow: '0px 0px 2px black',
-                        backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
+                    HOW TO INVEST WITH XDRIP
+                  </div>
+
+                  {/* KYC Verification */}
+                  <div
+                    className={`${Style.dropdownMenuItem}`}
+                    onClick={() => {
+                      if (address && userInfo) {
+                        router.push({
+                          pathname: "/kycPage",
+                          query: {
+                            address,
+                            name: userInfo.name,
+                            email: userInfo.email,
+                            phoneNumber: userInfo.phoneNumber || "",
+                            kycStatus: userInfo.kycStatus || "not_started",
+                          },
+                        });
+                      } else {
+                        router.push("/kycPage");
+                      }
+                      closeDropdown();
+                    }}
+                  >
+                    KYC VERIFICATION
+                  </div>
+
+                  {/* Transak Button */}
+                  <TransakButton
+                    user={userInfo}
+                    walletAddress={address}
+                    onShowInvestorProfile={() => {
+                      setIsInvestorProfileModalOpen(true);
+                      closeDropdown();
+                    }}
+                    onSuccess={(data) => {
+                      console.log("Transak payment successful:", data);
+                      closeDropdown();
+                    }}
+                    onError={(error) => {
+                      console.error("Transak payment failed:", error);
+                      closeDropdown();
+                    }}
+                    className={Style.dropdownMenuItem}
+                  />
+                </div>
+              )}
+            </div>
+
+            <div
+              onMouseEnter={() => setRandomTitle(getRandomTitle())}
+              title={randomTitle}
+              style={{ display: 'inline-block' }}
+            >
+
+
+              <ConnectWallet
+                btnTitle={"Connect Wallet"}
+                style={{
+                  background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
+                  color: 'white',
+                  border: '2px solid #1c1c1c',
+                  borderRadius: '12px',
+                  boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  textTransform: 'uppercase',
+                  fontSize: '16px',
+                  textShadow: '0px 0px 2px black',
+                  backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 'auto',
+                  height: 'auto',
+                  margin: '0.25rem',
+                  padding: '10px 20px',
+                  zIndex: 1,
+                }}
+
+                detailsBtn={() => {
+                  return (
+                    <button
+                      className={Style.genericInfoBox}
+                      style={{ backgroundColor: "transparent" }}
                     >
-                      <div>
-                        <p style={{ fontSize: "small", color: "lightgray", marginTop: "14px", marginLeft: "20px", padding: '4px 0px 0px 0px', }}>
-                          {`${medalCount} Medals Found`}
-                        </p>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <p
-                            style={{
-                              fontSize: "medium",
-                              marginBottom: "2px",
-                              marginTop: "1px",
-                              maxWidth: "auto",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                              color: "white",
-                            }}
-                          >
-                          </p>
-                        </div>
-                        <p
-                          style={{
-                            color: "white",
-                            fontSize: "10px",
-                            marginTop: "-14px",
-                            padding: '0px 0px 2px 0px',
-                            marginLeft: "18px",
-                          }}
-                        >
-                          {currentAccount.slice(0, 4) +
-                            " . . . . " +
-                            currentAccount.slice(-4)}
-                        </p>
-                      </div>
                       <div
                         style={{
-                          marginLeft: "10px",
-                          display: "flex",
-                          alignItems: "center",
-                          paddingLeft: "5px",
-                          marginBottom: "0px",
+                          background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
+                          color: 'white',
+                          border: '2px solid #1c1c1c',
+                          borderRadius: '12px',
+                          boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
+                          transition: 'all 0.3s ease',
+                          padding: '10px, 20px',
+                          width: 'auto',
+                          height: '42px',
+                          cursor: 'pointer',
+                          textAlign: 'center',
+                          textTransform: 'uppercase',
+                          fontSize: '16px',
+                          textShadow: '0px 0px 2px black',
+                          backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
                         }}
                       >
-                        <Image
-                          src="/img/mohwallet-logo.png"
-                          alt="MOH"
-                          width="30"
-                          height="30"
-                        />
+                        <div>
+                          <p style={{ fontSize: "small", color: "lightgray", marginTop: "14px", marginLeft: "20px", padding: '4px 0px 0px 0px', }}>
+                            {`${medalCount} Medals Found`}
+                          </p>
+                          <div style={{ display: "flex", alignItems: "center" }}>
+                            <p
+                              style={{
+                                fontSize: "medium",
+                                marginBottom: "2px",
+                                marginTop: "1px",
+                                maxWidth: "auto",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                                color: "white",
+                              }}
+                            >
+                            </p>
+                          </div>
+                          <p
+                            style={{
+                              color: "white",
+                              fontSize: "10px",
+                              marginTop: "-14px",
+                              padding: '0px 0px 2px 0px',
+                              marginLeft: "18px",
+                            }}
+                          >
+                            {currentAccount.slice(0, 4) +
+                              " . . . . " +
+                              currentAccount.slice(-4)}
+                          </p>
+                        </div>
+                        <div
+                          style={{
+                            marginLeft: "10px",
+                            display: "flex",
+                            alignItems: "center",
+                            paddingLeft: "5px",
+                            marginBottom: "0px",
+                          }}
+                        >
+                          <Image
+                            src="/img/mohwallet-logo.png"
+                            alt="MOH"
+                            width="30"
+                            height="30"
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </button>
-                );
-              }}
-              className={`${moreStyles.btn}`}
-              modalTitle="ACCESS  OPTIONS"
-              theme={darkTheme({
-                colors: {
-                  modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
-                },
-              })}
-              modalSize={"compact"}
-              switchToActiveChain={true}
-              titleIconUrl={"/img/mohwalletmodal.png"}
-              termsOfServiceUrl="/components/Legal/TermsOfService.jsx"
-              privacyPolicyUrl="/components/Legal/UserAgreement.jsx"
-              ThirdwebBranding={false}
-              welcomeScreen={{
-                title: " ",
-                subtitle: " ",
-                img: {
-                  src: "/img/mohwalletmodal.png",
-                  width: 420,
-                  height: 420,
-                },
-              }}
-            />
+                    </button>
+                  );
+                }}
+                className={`${moreStyles.btn}`}
+                modalTitle="ACCESS  OPTIONS"
+                theme={darkTheme({
+                  colors: {
+                    modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
+                  },
+                })}
+                modalSize={"compact"}
+                switchToActiveChain={true}
+                titleIconUrl={"/img/mohwalletmodal.png"}
+                termsOfServiceUrl="/components/Legal/TermsOfService.jsx"
+                privacyPolicyUrl="/components/Legal/UserAgreement.jsx"
+                ThirdwebBranding={false}
+                welcomeScreen={{
+                  title: " ",
+                  subtitle: " ",
+                  img: {
+                    src: "/img/mohwalletmodal.png", //only shows in "wide" size mode
+                    width: 420,
+                    height: 420,
+                  },
+                }}
+              />
+            </div>
           </div>
         </div>
+
         <div className={Style.carousel}>
           <div className={Style.carousel_wrapper}>
             <motion.div
@@ -1255,15 +1267,19 @@ const TheForge = () => {
           </div>
         )}
 
-        {selectedMedalDetails && (
-          <div className={Style.modalOverlay} onClick={(e) => e.target === e.currentTarget && setSelectedMedalDetails(null)}>
+{selectedMedalDetails && (
+          <div 
+            className={Style.modalOverlay} 
+            onClick={(e) => e.target === e.currentTarget && setSelectedMedalDetails(null)}
+          >
             <DotDetailsModal
               medal={selectedMedalDetails}
               onClose={() => setSelectedMedalDetails(null)}
-              forge={forge}
-              userInfo={userInfo}
+              forge={forge} // Ensure that the forge function is passed correctly
+              userInfo={userInfo} // Pass userInfo if available
               isUserInfoModalOpen={isInvestorProfileModalOpen}
               setIsUserInfoModalOpen={setIsInvestorProfileModalOpen}
+              showForgeButton={true} // Show Forge button
             />
           </div>
         )}
