@@ -28,7 +28,6 @@
 }
 
 .welcome_modal_content {
-  background: #1a1a1a;
   padding: 20px;
   border-radius: 10px;
   background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
@@ -168,7 +167,6 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.438); 
   display: flex;
   align-items: center;
   justify-content: center;

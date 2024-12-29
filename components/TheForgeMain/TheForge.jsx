@@ -747,11 +747,12 @@ const TheForge = () => {
     if (!selectedMedalForForge) {
       toast("No medal selected. Please try again.");
       return;
-    }
+    }    
+    toast("TRANSAK Seamless Payment Feature Coming Soon! Please Use The TRANSAK Fiat To Cryptro Option In The Vault Actions");     
     setPaymentMethod("transak");
     setIsPaymentModalVisible(false);
-
   };
+  
 
 
   return (

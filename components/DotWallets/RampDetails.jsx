@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import Style from "./RampDetails.module.css";
 import Modal from "react-modal";
 
 if (typeof window !== 'undefined') {
-    Modal.setAppElement('#__next');
-  }
+  Modal.setAppElement('#__next');
+}
 
 const RampDetails = ({ isVisible, onClose, infoModalData }) => {
+  useEffect(() => {
+    if (infoModalData) {
+      console.log("Info Modal Data:", infoModalData);
+    }
+  }, [infoModalData]);
+
   if (!isVisible || !infoModalData || !infoModalData.medals) {
     return null;
   }
@@ -99,6 +105,7 @@ const RampDetails = ({ isVisible, onClose, infoModalData }) => {
     </Modal>
   );
 };
+
 RampDetails.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,

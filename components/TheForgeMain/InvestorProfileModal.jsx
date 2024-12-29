@@ -16,6 +16,11 @@ const InvestorProfileModal = ({ isOpen, onClose, onSubmit, walletAddress }) => {
 
     const isFormComplete = name && email && agreed && walletAddress;
 
+    const truncateAddress = (address) => {
+        if (!address) return "";
+        return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+    };
+
     const validateForm = () => {
         const newErrors = {};
         if (!name.trim()) newErrors.name = "Full Name is required.";
@@ -66,7 +71,7 @@ const InvestorProfileModal = ({ isOpen, onClose, onSubmit, walletAddress }) => {
         <>
             <div className={Style.modalOverlay}>
                 <div className={Style.modalContent}>
-                    <h2>Set Up Your Investor Profile</h2>
+                    <h2> Open An Investor Profile</h2>
                     <p className={Style.notice}>
                         Completing your investor profile is essential to ensure a secure and seamless experience:
                         <ul>
@@ -79,11 +84,14 @@ const InvestorProfileModal = ({ isOpen, onClose, onSubmit, walletAddress }) => {
                     {/* Wallet Address Display */}
                     <div className={Style.walletDisplay}>
                         {walletAddress ? (
-                            <p><strong>Connected Wallet:</strong> {walletAddress}</p>
+                            <p title={walletAddress}>
+                                <strong>Connected Wallet:</strong> {truncateAddress(walletAddress)}
+                            </p>
                         ) : (
                             <p className={Style.errorMsg}>Wallet not connected. Please connect your wallet.</p>
                         )}
                     </div>
+
 
                     <input
                         type="text"
@@ -147,7 +155,7 @@ const InvestorProfileModal = ({ isOpen, onClose, onSubmit, walletAddress }) => {
                                 onClick={() => setIsUserAgreementModalOpen(true)}
                             >
                                 User Agreement
-                            </button>.
+                            </button>
                         </label>
                     </div>
 
