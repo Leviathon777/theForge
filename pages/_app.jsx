@@ -14,7 +14,7 @@ import Head from "next/head";
 import Cookies from "js-cookie";
 import { MOHProvider } from "../Context/MOHProviderContext";
 import "../styles/globals.css";
-import { EntryPage } from "../components/componentsindex";
+import { EntryPage, MobileModal } from "../components/componentsindex";
 import { ChainId } from "@thirdweb-dev/sdk";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -204,17 +204,40 @@ const MyApp = ({ Component, pageProps }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [splashVideo, setSplashVideo] = useState("/videos/splash.mp4");
   const [hasEntered, setHasEntered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isPwaModalVisible, setIsPwaModalVisible] = useState(false);
 
+ 
   useEffect(() => {
-    const mobileVideo = "/videos/splashmobile.mp4";
-    const pcVideo = "/videos/splashpc.mp4";
-    setSplashVideo(window.innerWidth <= 768 ? mobileVideo : pcVideo);
+    const detectMobile = () => {
+      const mobile = window.innerWidth <= 768;
+      console.log("Window width:", window.innerWidth); // Debug
+      console.log("Is Mobile:", mobile); // Debug
+      setIsMobile(mobile);
+      setSplashVideo(mobile ? "/videos/splashmobile.mp4" : "/videos/splashpc.mp4");
+    };
+  
+    detectMobile();
+    window.addEventListener("resize", detectMobile);
+  
+    return () => window.removeEventListener("resize", detectMobile);
   }, []);
-
+  
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 3000);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      if (isMobile) {
+        setIsPwaModalVisible(true);
+      }
+    }, 3000);
+  
     return () => clearTimeout(timer);
-  }, []);
+  }, [isMobile]);
+  
+  const handleDismissPwaModal = () => {
+    setIsPwaModalVisible(false);
+  }; 
+  
 
   useEffect(() => {
     if (!isLoading && !Cookies.get("acceptedCookies")) {
@@ -343,14 +366,14 @@ const MyApp = ({ Component, pageProps }) => {
 
           ]}
         >
-
-          {!hasEntered ? (
+          {!hasEntered && isPwaModalVisible && isMobile ? (
+            <MobileModal onDismiss={handleDismissPwaModal} />
+          ) : !hasEntered ? (
             <EntryPage
-              onEnter={() => setHasEntered(true)}
-              isModalVisible={isModalVisible}
-              handleAccept={handleAccept}
-              handleDecline={handleDecline}
-
+            onEnter={() => setHasEntered(true)}
+            isModalVisible={isModalVisible}
+            handleAccept={handleAccept}
+            handleDecline={handleDecline}
             />
           ) : (
             <>

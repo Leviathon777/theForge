@@ -762,68 +762,7 @@ const TheForge = () => {
           <h1 className={Style.lore_text}>MEDALS OF HONOR VAULT</h1>
           <div className={Style.forge_button_wrapper}>
 
-            <div ref={dropdownRef} className={Style.dropdownContainer}>
-              <div
-                className={Style.dropdownToggle}
-                onClick={toggleDropdown}
-              >
-                VAULT ACTIONS
-              </div>         
-              {isDropdownOpen && (
-                <div className={Style.dropdownMenu}>
-                  <div
-                    className={Style.dropdownMenuItem}
-                    onClick={() => {
-                      setIsModalOpen(true);
-                      closeDropdown();
-                    }}
-                  >
-                    HOW TO INVEST WITH XDRIP
-                  </div>
-                  <div
-                    className={`${Style.dropdownMenuItem}`}
-                    onClick={() => {
-                      if (address && userInfo) {
-                        router.push({
-                          pathname: "/kycPage",
-                          query: {
-                            address,
-                            name: userInfo.name,
-                            email: userInfo.email,
-                            phoneNumber: userInfo.phoneNumber || "",
-                            kycStatus: userInfo.kycStatus || "not_started",
-                          },
-                        });
-                      } else {
-                        router.push("/kycPage");
-                      }
-                      closeDropdown();
-                    }}
-                  >
-                    KYC VERIFICATION
-                  </div>
-
-                  {/* Transak Button */}
-                  <TransakButton
-                    user={userInfo}
-                    walletAddress={address}
-                    onShowInvestorProfile={() => {
-                      setIsInvestorProfileModalOpen(true);
-                      closeDropdown();
-                    }}
-                    onSuccess={(data) => {
-                      console.log("Transak payment successful:", data);
-                      closeDropdown();
-                    }}
-                    onError={(error) => {
-                      console.error("Transak payment failed:", error);
-                      closeDropdown();
-                    }}
-                    className={Style.dropdownMenuItem}
-                  />
-                </div>
-              )}
-            </div>
+         
 
             <div
               onMouseEnter={() => setRandomTitle(getRandomTitle())}
@@ -961,6 +900,69 @@ const TheForge = () => {
                   },
                 }}
               />
+            </div>
+
+            <div ref={dropdownRef} className={Style.dropdownContainer}>
+              <div
+                className={Style.dropdownToggle}
+                onClick={toggleDropdown}
+              >
+                VAULT ACTIONS
+              </div>         
+              {isDropdownOpen && (
+                <div className={Style.dropdownMenu}>
+                  <div
+                    className={Style.dropdownMenuItem}
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      closeDropdown();
+                    }}
+                  >
+                    HOW TO INVEST WITH XDRIP
+                  </div>
+                  <div
+                    className={`${Style.dropdownMenuItem}`}
+                    onClick={() => {
+                      if (address && userInfo) {
+                        router.push({
+                          pathname: "/kycPage",
+                          query: {
+                            address,
+                            name: userInfo.name,
+                            email: userInfo.email,
+                            phoneNumber: userInfo.phoneNumber || "",
+                            kycStatus: userInfo.kycStatus || "not_started",
+                          },
+                        });
+                      } else {
+                        router.push("/kycPage");
+                      }
+                      closeDropdown();
+                    }}
+                  >
+                    KYC VERIFICATION
+                  </div>
+
+                  {/* Transak Button */}
+                  <TransakButton
+                    user={userInfo}
+                    walletAddress={address}
+                    onShowInvestorProfile={() => {
+                      setIsInvestorProfileModalOpen(true);
+                      closeDropdown();
+                    }}
+                    onSuccess={(data) => {
+                      console.log("Transak payment successful:", data);
+                      closeDropdown();
+                    }}
+                    onError={(error) => {
+                      console.error("Transak payment failed:", error);
+                      closeDropdown();
+                    }}
+                    className={Style.dropdownMenuItem}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
