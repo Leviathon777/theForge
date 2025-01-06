@@ -1,0 +1,177 @@
+.container {
+  padding: 4rem 0rem 0rem 0rem;
+  margin: 0 auto;
+  width: 100%;
+  background: url("../public/img/background.png") no-repeat center center fixed;
+  background-size: cover;
+  overflow-x: hidden;
+  background-color: rgba(0, 0, 0, 0.4);
+  background-blend-mode: darken;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 3.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.walletAddress {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+
+.cardsWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.cardsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  width: 90%;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.card {
+  flex: 1 1 calc(25% - 20px);
+  /* Four cards in a row with gaps */
+  background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
+  box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cardTitle {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+}
+
+.card p {
+  font-size: 1rem;
+  margin: 5px 0;
+}
+
+
+.glowingDivider {
+  height: 2px;
+  margin: 30px 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, #333 50%, rgba(0, 0, 0, 0) 100%);
+}
+
+.thirdComponent {
+  text-align: center;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.componentTitle {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.walletInfoWrapper{
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.walletInfoContainer {
+  display: flex;
+  width: 90%;
+  max-width: 500px;
+  justify-content: center;
+  align-items: center;
+  margin: 0rem 0rem 2rem 0rem;
+}
+
+.walletInfoItem {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.walletInfoLabel {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.walletInfoValue {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .walletInfoContainer {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  
+  .theForge_content,
+  .first_component,
+  .second_component,
+  .third_component,
+  .fifth_component {
+    padding: .5rem;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    flex: 1 1 calc(100% - 20px); /* One card per row */
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .walletAddress {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .walletInfoContainer {
+    flex-direction: column;
+    padding: 0 15px;
+  }
+
+  
+  .theForge_content,
+  .first_component,
+  .second_component,
+  .third_component,
+  .fifth_component {
+    padding: .5rem;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .walletInfoLabel,
+  .walletInfoValue {
+    font-size: 12px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}

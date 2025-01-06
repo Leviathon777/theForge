@@ -1,0 +1,526 @@
+.container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: url("../public/img/background.png") no-repeat center center fixed;
+    background-size: cover;
+    overflow-x: hidden;
+    background-color: rgba(0, 0, 0, 0.4);
+    background-blend-mode: darken;
+}
+
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 3.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.splitContainer {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    max-width: 1200px;
+    overflow: hidden;
+    gap: 2rem;
+}
+
+.left,
+.right {
+    flex: 1;
+    padding: 20px;
+}
+
+.left {
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
+    box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    text-align: justify;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    border-radius: 10px;
+    background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
+    box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    color: white;
+    text-align: justify;
+}
+
+
+
+.groupedFields {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+}
+
+.nameFields {
+    display: grid;
+    grid-template-columns: 2.25fr .50fr 2.25fr 1.5fr;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.inputField {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #121212;
+    color: #fff;
+    box-sizing: border-box;
+}
+
+.inputError {
+    width: 100%;
+    padding: 0.75rem;
+    box-sizing: border-box;
+    border: 1px solid red;
+    border-radius: 5px;
+    background-color: #ffe6e6;
+}
+
+.middleInitial {
+    padding: 0.5rem;
+    font-size: 1rem;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 60px;
+}
+
+.surnameDropdown {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.singleField {
+    margin-bottom: 1rem;
+}
+
+.singleField input,
+.singleField textarea {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.phoneInput {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+
+
+.errorMsg {
+    color: #ff1900;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+
+.nameFields input {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.textAreaField {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 80px;
+    resize: vertical;
+}
+
+.addressSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.phoneField {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.walletDisplay {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.phoneInput {
+    background-color: #121212;
+
+}
+
+.territorySelect {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #121212;
+    color: #fff;
+}
+
+
+
+
+.cityStateZip {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.stateDropdown {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #121212;
+    color: #fff;
+}
+
+.checkboxWrapper {
+    margin: 0rem 0;
+    text-align: center;
+}
+
+.checkboxWrapper label {
+    font-size: 16px;
+    padding-left: .25rem;
+}
+
+.buttonGroup {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 20px;
+}
+
+.dateOfBirthWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dateOfBirthSection {
+    display: flex;
+    flex-direction: column;
+}
+
+.territorySection {
+    margin-bottom: 1rem;
+}
+
+.territoryLabel {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.territoryOptions {
+    display: flex;
+    gap: 1rem;
+    font-size: 1rem;
+}
+
+.linkButton {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font-size: 14px;
+    color: #0056b3;
+    z-index: 5000;
+}
+
+.linkButton:hover {
+    color: #0071eb;
+}
+
+.notice {
+    font-size: 1rem;
+    line-height: 1.5;
+    text-align: left;
+    background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
+    box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+    padding: 25px;
+    border-radius: 8px;
+    z-index: 5000;
+}
+
+.notice ul {
+    margin: 1rem;
+    padding-left: 20px;
+}
+
+.notice li {
+    margin-bottom: 10px;
+    list-style-type: disc;
+}
+
+.popupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    /* Dark background for alert */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 6000;
+    /* Ensure it appears above all other modals */
+}
+
+.inlineInputField {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    margin-left: 10px;
+    border-radius: 0;
+    font-size: 14px;
+    width: 150px;
+    outline: none;
+    padding: 0rem 0rem 0.2rem 0rem ;
+  }
+  
+  .inlineInputField:focus {
+    border-bottom: 1px solid #000;
+  }
+  
+  .territoryOption input[type="radio"] {
+    margin-right: 6px; 
+  }
+
+  
+.popupContent {
+    background: #1a1a1a;
+    color: #f5f5f5;
+    padding: 25px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 12px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
+    text-align: center;
+    animation: slideDown 0.3s ease-in-out;
+}
+
+.popupContent h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #fd0000;
+}
+
+.popupContent p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.popupButtons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.okButton {
+    background-color: #28a745;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.okButton:hover {
+    background-color: #218838;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* General Mobile Styles */
+@media (max-width: 768px) {
+    .container {
+        position: relative;
+        padding: 10px;
+        justify-content: flex-start;
+        align-items: stretch;
+        overflow-y: auto; 
+        height: 100%;
+    }
+
+    .title {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        text-align: center;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    }
+
+    .splitContainer {
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+        height: auto; 
+    }
+
+    .left, .right {
+        width: 100%;
+        padding: 15px;
+        box-shadow: none;
+        background: rgba(50, 50, 50, 0.85);
+    }
+
+    .left, .right, .modalWrapper {
+        overflow-y: auto; 
+    }
+
+    .notice {
+        font-size: 0.9rem;
+        padding: 15px;
+        line-height: 1.4;
+    }
+
+    .groupedFields {
+        margin-bottom: 1rem;
+    }
+
+    .nameFields {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .inputField,
+    .middleInitial,
+    .surnameDropdown {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
+
+    .phoneInput {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .checkboxWrapper {
+        margin-top: 1rem;
+        text-align: left;
+    }
+
+    .checkboxWrapper label {
+        font-size: 0.8rem;
+    }
+
+    .buttonGroup {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .territoryOptions {
+        gap: 0.5rem;
+    }
+
+    .territoryLabel {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .cityStateZip {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .dateOfBirthWrapper {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .popupContent {
+        width: 95%;
+        max-width: 350px;
+        padding: 15px;
+        border-radius: 10px;
+        overflow-y: auto; 
+         
+    }
+
+    .popupContent h3 {
+        font-size: 1.25rem;
+        margin-bottom: 10px;
+    }
+
+    .popupContent p {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .okButton {
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+
+    .linkButton {
+        font-size: 0.8rem;
+        padding: 0;
+    }
+
+    .button {
+        position: sticky;
+        bottom: 10px;
+    }
+}
+

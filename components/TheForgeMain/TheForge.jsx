@@ -18,7 +18,7 @@ import { MyDotDataContext } from "../../Context/MyDotDataContext.js";
 import Style from "./theForge.module.css";
 import moreStyles from "../Button/Button.module.css";
 import videos from "../../public/videos/index.js";
-import { Button, VideoPlayer, DotDetailsModal, WalkthroughModal, InvestorProfileModal, TransakButton, TransakMOH, LoaderMOH } from "../componentsindex.js";
+import { Button, VideoPlayer, DotDetailsModal, WalkthroughModal, TransakButton, TransakMOH, LoaderMOH } from "../componentsindex.js";
 import { ethers } from "ethers";
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
 import ipfsHashes from "../../Context/ipfsHashes.js";
@@ -41,12 +41,8 @@ const web3 = new Web3("https://bsc-dataseed1.binance.org/");
 const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
 
 
-
-
-// ChatWidget Component goes below imports above main component
 const ChatWidget = () => {
   useEffect(() => {
-    // Prevent multiple script loads
     const existingScript = document.querySelector(`script[src="https://app.chatsy.ai/resources/script.js?cb=1736020701266"]`);
     if (!existingScript) {
       const script = document.createElement('script');
@@ -64,33 +60,19 @@ const ChatWidget = () => {
           },
         })
       );
-
-      // Optional: Handle script load and error events
       script.onload = () => {
         console.log('Chat script loaded successfully');
       };
-
       script.onerror = () => {
         console.error('Failed to load the chat script');
       };
-
       document.body.appendChild(script);
     }
-
-    // Cleanup if necessary
     return () => {
-      // Optionally, remove the script when the component unmounts
-      // const script = document.querySelector(`script[src="https://app.chatsy.ai/resources/script.js?cb=1736020701266"]`);
-      // if (script) document.body.removeChild(script);
     };
   }, []);
-
-  return null; // This component does not render anything
+  return null;
 };
-
-
-
-
 
 
 const TheForge = () => {
@@ -114,7 +96,7 @@ const TheForge = () => {
   const controls = useAnimation();
   const [currentAccount, setCurrentAccount] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isInvestorProfileModalOpen, setIsInvestorProfileModalOpen] = useState(false);
+  const [isReminderPopupVisible, setIsReminderPopupVisible] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
   const [isKYCReminderVisible, setIsKYCReminderVisible] = useState(false);
@@ -154,17 +136,37 @@ const TheForge = () => {
         console.log(`Wallet connected: ${address}`);
         try {
           const userData = await getForger(address);
-          if (userData && userData.name && userData.email) {
+          if (userData && userData.fullName && userData.email) {
             setUserInfo(userData);
-            setIsWelcomeModalVisible(true)
-            console.log("User info fetched successfully:", userData);
+            const hasShownWelcome = localStorage.getItem("hasShownWelcome");
+            if (!hasShownWelcome) {
+              setIsWelcomeModalVisible(true);
+              localStorage.setItem("hasShownWelcome", "true");
+            }
+            // Fetch the latest XDRIP balance
+            const fetchedBalance = await fetchXDRIPBalance();
+            if (userData.drip?.dripCount !== fetchedBalance) {
+              console.log(
+                `Updating profile: XDRIP balance changed from ${userData.drip?.dripCount} to ${fetchedBalance}`
+              );
+              const dripPercent = ((fetchedBalance / 1_000_000_000) * 100).toFixed(2);
+              const updatedUserData = {
+                ...userData,
+                drip: {
+                  dripCount: fetchedBalance,
+                  dripPercent: `${dripPercent}%`,
+                  DateLastLogged: new Date().toISOString(),
+                },
+              };
+              await updateForger(updatedUserData);
+              console.log("Profile updated successfully.");
+            }
           } else {
-            console.log("Incomplete or missing user info. Prompting for profile creation.");
-            setIsInvestorProfileModalOpen(true);
+            setIsReminderPopupVisible(true);
           }
         } catch (error) {
-          console.error("Error fetching user info:", error);
-          setIsInvestorProfileModalOpen(true);
+          console.error("Error fetching user info or XDRIP balance:", error);
+          setIsReminderPopupVisible(true);
         }
       } else {
         setCurrentAccount("");
@@ -173,6 +175,39 @@ const TheForge = () => {
     };
     handleWalletConnect();
   }, [address]);
+
+
+  const fetchXDRIPBalance = async () => {
+    try {
+      const balance = await XdRiPContract.methods.balanceOf(address).call();
+      console.log("Raw balance:", balance);
+      const balanceString = balance.toString();
+      const formattedBalance = web3.utils.fromWei(balanceString, 'gwei');
+      const finalDisplayBalance = parseFloat(formattedBalance).toFixed(0);
+
+      console.log("Displayed XDRIP balance:", finalDisplayBalance);
+      setXdripBalance(finalDisplayBalance);
+    } catch (error) {
+      console.error("Error retrieving XDRIP balance:", error);
+      setXdripBalance("0");
+    }
+  };
+
+  useEffect(() => {
+    if (address) {
+      fetchXDRIPBalance();
+    }
+  }, [address]);
+
+  const handleProfileRedirect = () => {
+    router.push({
+      pathname: "/InvestorProfile",
+      query: {
+        address,
+        xdripBalance,
+      },
+    });
+  };
 
   const renderKYCMessage = () => {
     if (!userInfo) {
@@ -200,29 +235,6 @@ const TheForge = () => {
   const togglePrice = () => {
     setIsBNBPrice(!isBNBPrice);
   };
-
-  const fetchXDRIPBalance = async () => {
-    try {
-      const balance = await XdRiPContract.methods.balanceOf(address).call();
-      console.log("Raw balance:", balance);
-      const balanceString = balance.toString();
-      const formattedBalance = web3.utils.fromWei(balanceString, 'gwei');
-      const finalDisplayBalance = parseFloat(formattedBalance).toFixed(0);
-
-      console.log("Displayed XDRIP balance:", finalDisplayBalance);
-      setXdripBalance(finalDisplayBalance);
-    } catch (error) {
-      console.error("Error retrieving XDRIP balance:", error);
-      setXdripBalance("0");
-    }
-  };
-
-  useEffect(() => {
-    if (address) {
-      fetchXDRIPBalance();
-    }
-  }, [address]);
-
 
   const lens = 500;
   const rotationStep = 360 / mohData.length;
@@ -741,19 +753,15 @@ const TheForge = () => {
   const handleForgeClick = (medal) => {
     console.log("Medal selected for forging:", medal);
     console.log("Current userInfo:", userInfo);
-
     if (!address) {
       toast.info("Please connect your wallet to proceed.");
       return;
     }
     if (!userInfo) {
-      toast.info("Please complete your Investor Profile before forging.");
-      setIsInvestorProfileModalOpen(true);
+      setIsReminderPopupVisible(true);
       return;
     }
-    // Always reset modalStep to "kycPrompt" when the modal opens
     setModalStep("kycPrompt");
-
     if (userInfo.kycStatus !== "approved") {
       console.log("KYC is not approved, showing KYC options...");
       setMedalToForge(medal);
@@ -762,6 +770,7 @@ const TheForge = () => {
     setSelectedMedalForForge(medal);
     setIsPaymentModalVisible(true);
   };
+
 
   const proceedWithCrypto = async () => {
     console.log("Proceed with Crypto clicked.");
@@ -799,55 +808,32 @@ const TheForge = () => {
     if (!selectedMedalForForge) {
       toast("No medal selected. Please try again.");
       return;
-    }    
-    toast("TRANSAK Seamless Payment Feature Coming Soon! Please Use The TRANSAK Fiat To Cryptro Option In The Vault Actions");     
+    }
+    toast("TRANSAK Seamless Payment Feature Coming Soon! Please Use The TRANSAK Fiat To Cryptro Option In The Vault Actions");
     setPaymentMethod("transak");
     setIsPaymentModalVisible(false);
   };
-  
+
 
   const triggerEasterEgg = () => {
     const url = `${window.location.origin}/misc/ChessEgg.html`;
     const options = "width=1024,height=768";
-
-    // Play epic sound effect
-    const audio = new Audio("/sounds/epic-sound.mp3"); 
+    const audio = new Audio("/sounds/epic-sound.mp3");
     audio.play().catch((error) => console.error("Failed to play sound:", error));
-
-    // Show toast message
     toast.success("🎉 You found a secret! Opening the vault...", {
-      autoClose: 3000, 
+      autoClose: 3000,
     });
 
-    
     setTimeout(() => {
       const chessGameWindow = window.open(url, "ChessGameWindow", options);
-
       if (!chessGameWindow) {
         console.error("Popup blocked! Please allow popups for this website.");
         toast.error("Popup blocked! Please allow popups to access the secret.");
       } else {
         chessGameWindow.focus();
       }
-    }, 3000); 
+    }, 3000);
   };
-
-  /*
-  useEffect(() => {
-    const handleKeyDownOrg = (e) => {
-      if (e.ctrlKey && e.key === 'Enter') {
-        console.log("Easter Egg Triggered via Ctrl + Enter!");
-        toast.info("🎉 Unlocking the Chess Game...");
-        triggerEasterEgg();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDownOrg);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDownOrg);
-    };
-  }, []);
-  */
 
   useEffect(() => {
     let typed = '';
@@ -856,7 +842,7 @@ const TheForge = () => {
 
     const handleKeyDown = (e) => {
       const key = e.key.toLowerCase();
-      if (key.length === 1 && /^[a-z]$/.test(key)) { 
+      if (key.length === 1 && /^[a-z]$/.test(key)) {
         typed += key;
         if (typed.length > maxLength) {
           typed = typed.slice(typed.length - maxLength);
@@ -882,32 +868,23 @@ const TheForge = () => {
 
   return (
     <div className={Style.the_forge}>
-
-<ChatWidget />
-
+      <ChatWidget />
       <div className={Style.the_forge_wrapper}>
         <div className={Style.forge_button_upper}>
-        <h1 className={Style.lore_text}>
+          <h1 className={Style.lore_text}>
             MEDALS OF HONOR{' '}
             <span
-            
               className={Style.lore_text}
             >
               <h1>VAULT</h1>
             </span>
           </h1>
-
           <div className={Style.forge_button_wrapper}>
-
-         
-
             <div
               onMouseEnter={() => setRandomTitle(getRandomTitle())}
               title={randomTitle}
               style={{ display: 'inline-block' }}
             >
-
-
               <ConnectWallet
                 btnTitle={"Connect Wallet"}
                 style={{
@@ -932,7 +909,6 @@ const TheForge = () => {
                   padding: '10px 20px',
                   zIndex: 1,
                 }}
-
                 detailsBtn={() => {
                   return (
                     <button
@@ -1031,7 +1007,7 @@ const TheForge = () => {
                   title: " ",
                   subtitle: " ",
                   img: {
-                    src: "/img/mohwalletmodal.png", //only shows in "wide" size mode
+                    src: "/img/mohwalletmodal.png",
                     width: 420,
                     height: 420,
                   },
@@ -1045,7 +1021,7 @@ const TheForge = () => {
                 onClick={toggleDropdown}
               >
                 VAULT ACTIONS
-              </div>         
+              </div>
               {isDropdownOpen && (
                 <div className={Style.dropdownMenu}>
                   <div
@@ -1058,14 +1034,41 @@ const TheForge = () => {
                     HOW TO INVEST WITH XDRIP
                   </div>
                   <div
+                    className={Style.dropdownMenuItem}
+                    onClick={async () => {
+                      if (!address) {
+                        toast.info("To access investor areas, please connect your wallet.");
+                        return;
+                      }
+
+                      if (userInfo) {
+                        router.push({
+                          pathname: "/InvestorWallet",
+                          query: {
+                            address,
+                            userInfo: JSON.stringify(userInfo), 
+                          },
+                        });
+                      } else {
+                        router.push({
+                          pathname: "/InvestorProfile",
+                          query: { address, xdripBalance },
+                        });
+                      }
+                    }}
+                  >
+                    {address && userInfo ? "INVESTOR WALLET" : "INVESTOR PROFILE"}
+                  </div>
+
+                  <div
                     className={`${Style.dropdownMenuItem}`}
                     onClick={() => {
-                      if (address && userInfo) {
+                      if (address) {
                         router.push({
                           pathname: "/kycPage",
                           query: {
                             address,
-                            name: userInfo.name,
+                            name: userInfo.fullName,
                             email: userInfo.email,
                             phoneNumber: userInfo.phoneNumber || "",
                             kycStatus: userInfo.kycStatus || "not_started",
@@ -1085,7 +1088,7 @@ const TheForge = () => {
                     user={userInfo}
                     walletAddress={address}
                     onShowInvestorProfile={() => {
-                      setIsInvestorProfileModalOpen(true);
+                      setIsReminderPopupVisible(true);
                       closeDropdown();
                     }}
                     onSuccess={(data) => {
@@ -1254,17 +1257,6 @@ const TheForge = () => {
           </div>
         )}
 
-        {isInvestorProfileModalOpen && (
-          <div className={Style.modalOverlay} onClick={(e) => e.target === e.currentTarget && setIsInvestorProfileModalOpen(false)}>
-            <InvestorProfileModal
-              isOpen={isInvestorProfileModalOpen}
-              walletAddress={address}
-              onClose={() => setIsInvestorProfileModalOpen(false)}
-              onSubmit={handleUserInfoSubmit}
-            />
-          </div>
-        )}
-
         {isConfirmationModalVisible && (
           <div className={Style.confirmation_modal} onClick={(e) => e.target === e.currentTarget && setIsConfirmationModalVisible(false)}>
             <div className={Style.confirmation_modal_content}>
@@ -1281,7 +1273,7 @@ const TheForge = () => {
         {isWelcomeModalVisible && (
           <div className={Style.welcome_modal} onClick={(e) => e.target === e.currentTarget && setIsWelcomeModalVisible(false)}>
             <div className={Style.welcome_modal_content}>
-              <h2>Welcome, {userInfo?.name || "User"}!</h2>
+              <h2>Welcome, {userInfo?.fullName || "User"}!</h2>
               <p>We're glad to have you at the Forge. Let’s create something extraordinary!</p>
               <p>{renderKYCMessage()}</p>
               <div className={Style.modal_buttons}>
@@ -1323,7 +1315,7 @@ const TheForge = () => {
                             console.log("Redirecting to KYC page...");
                             router.push({
                               pathname: '/kycPage',
-                              query: { address, name: userInfo?.name || '', email: userInfo?.email || '' },
+                              query: { address, name: userInfo?.fullName || '', email: userInfo?.email || '' },
                             });
                             setIsPaymentModalVisible(false);
                           }}
@@ -1352,7 +1344,7 @@ const TheForge = () => {
                             console.log("Redirecting to KYC page...");
                             router.push({
                               pathname: '/kycPage',
-                              query: { address, name: userInfo?.name || '', email: userInfo?.email || '' },
+                              query: { address, name: userInfo?.fullName || '', email: userInfo?.email || '' },
                             });
                             setIsPaymentModalVisible(false);
                           }}
@@ -1400,6 +1392,32 @@ const TheForge = () => {
           </div>
         )}
 
+        {isReminderPopupVisible && (
+          <div className={Style.popupOverlay}>
+            <div className={Style.popupContent}>
+              <h3>Complete Your Profile</h3>
+              <p>
+                To fully access the investing features of The Forge, please complete your investor profile.
+              </p>
+              <p>
+                You will be able to return to this at a later date, but your profile will need to be completed before investing with XDRIP Digital Management.
+              </p>
+              <div className={Style.popupButtons}>
+                <Button
+                  btnName="Create Profile"
+                  onClick={handleProfileRedirect}
+                  fontSize="inherit"
+                />
+                <Button
+                  btnName="Later"
+                  onClick={() => setIsReminderPopupVisible(false)}
+                  fontSize="inherit"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {isTransakActive && (
           <div className={Style.modalOverlay} onClick={(e) => e.target === e.currentTarget && setIsTransakActive(false)}>
           </div>
@@ -1415,8 +1433,8 @@ const TheForge = () => {
               onClose={() => setSelectedMedalDetails(null)}
               forge={forge} // Ensure that the forge function is passed correctly
               userInfo={userInfo} // Pass userInfo if available
-              isUserInfoModalOpen={isInvestorProfileModalOpen}
-              setIsUserInfoModalOpen={setIsInvestorProfileModalOpen}
+              isUserInfoModalOpen={isReminderPopupVisible}
+              setIsUserInfoModalOpen={setIsReminderPopupVisible}
               showForgeButton={true} // Show Forge button
             />
           </div>

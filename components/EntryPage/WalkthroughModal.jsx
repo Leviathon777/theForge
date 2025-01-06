@@ -3,47 +3,54 @@ import styles from './WalkthroughModal.module.css';
 import { Button } from '../componentsindex';
 import Modal from "react-modal";
 
-const WalkthroughModal = ({ isOpen, onRequestClose, isEternalTier = false }) => {
+const WalkthroughModal = ({ isOpen, onRequestClose = false }) => {
     const [step, setStep] = useState(1);
     const [hasWallet, setHasWallet] = useState(null);
-    const [profileCreated, setProfileCreated] = useState(false);
-    const [kycCompleted, setKycCompleted] = useState(false);
 
     useEffect(() => {
         if (!isOpen) {
             setStep(1);
             setHasWallet(null);
-            setProfileCreated(false);
-            setKycCompleted(false);
         }
     }, [isOpen]);
 
     const walletUserSteps = useMemo(() => [
-        'Step 1: Connect your wallet by clicking the "OPEN THE VAULT" button. This will prompt your wallet provider (e.g., MetaMask) to request a connection.',
-        'Step 2: Approve the connection request in your wallet.',
-        'Step 3: Verify your wallet connection and ensure you are on the correct blockchain network (e.g., Binance Smart Chain).',
-        'Step 4: Create your investor profile to track purchases and streamline the onboarding process. Fill in the required details and save your profile.',
-        'Step 5: Complete the KYC verification process (mandatory for purchasing Eternal tier). This step validates your identity and ensures regulatory compliance.',
-        'Step 6: Proceed to purchase your D.O.Ts by clicking "FORGE."',
+        'Step 1: Connect your wallet by clicking on the "CONNECT WALLET" button. This will open the THIRDWEB wallet selection modal. Here you will select your wallet provider (e.g., MetaMask). This will send a request to your wallet to connect to THE FORGE site to continue your investment path.',
+        'Step 2: A window will open prompting you to approve this connection, as well as a request to approve the connection utilizing THE FORGE Vault Access Token. This token allows continued access without these prompts for a period of 24 hours (1 day).',
+        'Step 3: Once your wallet is connected to THE FORGE, we suggest you verify your wallet connection to the correct blockchain network (Binance Smart Chain).',
+        'Step 4: If you are a new investor to THE FORGE, you will be prompted to create your investor profile. This allows XDRIP Digital Management to track, secure, and properly document purchases, streamlining the investing process. Fill in the required details and save your profile.',
+        'Step 5: After completing your investor profile, you will then be prompted to complete the KYC verification process. The KYC process can also be found in the dropdown VAULT ACTIONS in the FORGE area. This process is not yet mandatory to begin the investing process but is required for investing as an ETERNAL. This step validates your identity and ensures regulatory compliance across the globe. It is an important step that provides a deeper level of security and compliance.',
+        'Step 6: If you have proceeded with the KYC process, please allow the allotted time for SUMSUB (our KYC provider) to complete and approve your KYC before attempting to invest as an ETERNAL.',
+        'Step 7: Once your investor profile is complete and you are ready to invest via THE FORGE platform, your next step will be ensuring you have the proper funds to complete your investment.',
+        'Step 8: First, verify the MEDAL OF HONOR tier you are targeting to forge. Ensure you have the necessary BNB to invest in that medal tier. If you do not, there are a few options available.',
+        'Step 9: You may transfer funds from a CEX like Coinbase or Binance. Alternatively, you can on-ramp fiat to crypto directly on THE FORGE via TRANSAK on and off-ramp solutions.',
+        'Step 10: TRANSAK allows you to purchase crypto directly through your bank account, credit card, debit card, or other options that may be available in your region. Note that TRANSAK will require a KYC process to use their services. To expedite the process, we have incorporated the same KYC group used by TRANSAK, enabling cross-platform acceptance of the KYC to eliminate multiple application points.',
+        'Step 11: Once you have funded your wallet with the proper amount of BNB, you can then return to THE FORGE and begin the investing process with XDRIP Digital Management. Inside The Forge you choose the tier of MEDAL OF HONOR you are forging. Follow the wallet prompts to finalize your investment.',
+        'Step 12: Once your investment has been finalized you will receive an email with a receipt and welcome letter. You now will be able to view your MEDALS OF HONOR inside THE FORGE and view the benefits that accompany your investment.',
     ], []);
-    
+
     const newUserSteps = useMemo(() => [
-        'Step 1: Choose your preferred wallet creation method.',
-        'Option 1: Download and set up MetaMask. Go to metamask.io, download the browser extension or mobile app, and follow the prompts to create your wallet. Make sure to securely save your recovery phrase.',
-        'Option 2: Create a wallet through Thirdweb. Use your email address or social login to quickly set up a wallet. A JSON file will be generated containing the necessary data for importing your wallet and will prompt you to save it to your local machine.',
-        'Step 2: If you decide on using Thirdweb, we highly recommend importing your created local wallet information to MetaMask for better accessibility and security. To do this, open MetaMask, select "Import Wallet," and upload the JSON file provided during the Thirdweb wallet creation process.',
-        'Step 3: Add funds to your wallet. Use the integrated on-ramp services or transfer funds from an existing wallet.',
-        ...walletUserSteps.slice(3), // Reuse steps for wallet users from step 4 onward
+        'Step 1: There are many options available to create a new wallet or begin your journey with self-custody digital wallets. We are here to simplify and streamline this process with a couple of XDRIP’s personally trusted avenues.',
+        'Step 2: The most recommended route is through the MetaMask extension or mobile app. If using a PC (highly suggested), navigate to metamask.io and follow the instructions to install the browser extension. If on mobile, you can find this app in the Apple or Google stores. Once installed, follow the directions to create a new wallet. Make sure to securely save your recovery phrase in a safe location accessible only to you. This is your access number to your bank account on the blockchain.',
+        'Step 3: The second route is less time-consuming but not recommended for long-term use. Inside our THIRDWEB wallet connection, you may choose either email or guest. For a guest option, a JSON file will be generated containing the necessary data for importing your wallet and will prompt you to save it to your local machine.',
+        'Step 4: If you decide to use Thirdweb, we highly recommend importing your locally created wallet information to MetaMask for better accessibility and security. To do this, open MetaMask, select "Import Wallet," and upload the JSON file provided during the Thirdweb wallet creation process.',
+        'Step 5: A window will open prompting you to approve this connection, as well as a request to approve the connection utilizing THE FORGE Vault Access Token. This token allows continued access without these prompts for a period of 24 hours (1 day).',
+        'Step 6: Once your wallet is connected to THE FORGE, we suggest you verify your wallet connection to the correct blockchain network (Binance Smart Chain).',
+        'Step 7: If you are a new investor to THE FORGE, you will be prompted to create your investor profile. This allows XDRIP Digital Management to track, secure, and properly document purchases, streamlining the investing process. Fill in the required details and save your profile.',
+        'Step 8: After completing your investor profile, you will then be prompted to complete the KYC verification process. The KYC process can also be found in the dropdown VAULT ACTIONS in the FORGE area. This process is not yet mandatory to begin the investing process but is required for investing as an ETERNAL. This step validates your identity and ensures regulatory compliance across the globe. It is an important step that provides a deeper level of security and compliance.',
+        'Step 9: If you have proceeded with the KYC process, please allow the allotted time for SUMSUB (our KYC provider) to complete and approve your KYC before attempting to invest as an ETERNAL.',
+        'Step 10: Once your investor profile is complete and you are ready to invest via THE FORGE platform, your next step will be ensuring you have the proper funds to complete your investment.',
+        'Step 11: First, verify the MEDAL OF HONOR tier you are targeting to forge. Ensure you have the necessary BNB to invest in that medal tier. If you do not, there are a few options available.',
+        'Step 12: You may transfer funds from a CEX like Coinbase or Binance. Alternatively, you can on-ramp fiat to crypto directly on THE FORGE via TRANSAK on and off-ramp solutions.',
+        'Step 13: TRANSAK allows you to purchase crypto directly through your bank account, credit card, debit card, or other options that may be available in your region. Note that TRANSAK will require a KYC process to use their services. To expedite the process, we have incorporated the same KYC group used by TRANSAK, enabling cross-platform acceptance of the KYC to eliminate multiple application points.',
+        'Step 14: Once you have funded your wallet with the proper amount of BNB, you can then return to THE FORGE and begin the investing process with XDRIP Digital Management. Inside The Forge you choose the tier of MEDAL OF HONOR you are forging. Follow the wallet prompts to finalize your investment.',
+        'Step 15: Once your investment has been finalized you will receive an email with a receipt and welcome letter. You now will be able to view your MEDALS OF HONOR inside THE FORGE and view the benefits that accompany your investment',
     ], []);
-    
+
+
 
     const steps = hasWallet ? walletUserSteps : newUserSteps;
 
-    const handleKycProcess = () => {
-        // Mock KYC completion logic
-        setKycCompleted(true);
-        alert('KYC process completed successfully!');
-    };
     const renderSteps = useMemo(() => {
         if (hasWallet === null) {
             return (
@@ -76,44 +83,50 @@ const WalkthroughModal = ({ isOpen, onRequestClose, isEternalTier = false }) => 
                     {(() => {
                         if (hasWallet === null) {
                             return "Get Started with The Forge";
-                        } else if (!hasWallet) {
-                            if (step === 1) return "Wallet Setup Options";
-                            if (step === 2) return "Setting Up Your Wallet";
-                            if (step === 3) return "Continuing With ThirdWeb";
-                            if (step === 4) return "Upload Local Wallet To Metamask";
-                            if (step === 5) return "Funding Your Wallet";
-                            if (step === 6) return "Creating Your Profile";
-                            if (step === 7) return "Completing KYC (Optional)";
-                            if (step === 8) return "Continue To The Forge";
                         } else if (hasWallet) {
-                            if (step === 1) return "Connecting Your Wallet";
-                            if (step === 2) return "Approving Connection";
-                            if (step === 3) return "Always Verify";
-                            if (step === 4) return "Creating Your Profile";
-                            if (step === 5) return "KYC (Optional)";
-                            if (step === 6) return "Continue To The Forge";
+                            switch (step) {
+                                case 1: return "Connect Your Wallet";
+                                case 2: return "Approve Wallet Connection & V.A.T";
+                                case 3: return "Verify Blockchain Network (BSC)";
+                                case 4: return "Create Your Investor Profile";
+                                case 5: return "Complete KYC Verification (Optional)";
+                                case 6: return "Await KYC Approval";
+                                case 7: return "Prepare Funds for Investment";
+                                case 8: return "Select Medal of Honor Tier";
+                                case 9: return "Transfer Funds via CEX or On-Ramp";
+                                case 10: return "Purchase Crypto via TRANSAK";
+                                case 11: return "Begin Your Investment Path";
+                                case 12: return "Viewing Your Investments";
+                                default: return `Step ${step}: Unspecified`;
+                            }
+                        } else if (!hasWallet) {
+                            switch (step) {
+                                case 1: return "Choose a Wallet Setup Option";
+                                case 2: return "Set Up MetaMask Extension or Mobile App";
+                                case 3: return "Use Thirdweb Wallet (Email/Guest)";
+                                case 4: return "Import Wallet Data to MetaMask (Optional)";
+                                case 5: return "Approve Wallet Connection & VAT";
+                                case 6: return "Verify Blockchain Network (BSC)";
+                                case 7: return "Create Your Investor Profile";
+                                case 8: return "Complete KYC Verification (Optional)";
+                                case 9: return "Await KYC Approval";
+                                case 10: return "Prepare Funds for Investment";
+                                case 11: return "Select Medal of Honor Tier";
+                                case 12: return "Transfer Funds via CEX or On-Ramp";
+                                case 13: return "Purchase Crypto via TRANSAK";
+                                case 14: return "Begin Your Investment Path";
+                                case 15: return "Viewing Your Investments";
+                                default: return `Step ${step}: Unspecified`;
+                            }
                         }
-                        return `Purchasing Step ${step}`; 
+                        return `Purchasing Step ${step}`;
                     })()}
                 </h2>
 
                 <div className={styles.stepCard}>
-
                     <p className={styles.stepDescription}>
                         {steps[step - 1].split(":").slice(1).join(":").trim()}
                     </p>
-                    {step === 2 && !hasWallet && (
-                        <div className={styles.optionsLayout}>
-                            <div className={styles.optionSection}>
-                                <h4>Option 1: MetaMask</h4>
-                                <p>Download MetaMask from <a href="https://metamask.io" target="_blank" rel="noreferrer">MetaMask.io</a> and follow their step-by-step guide to create a wallet.</p>
-                            </div>
-                            <div className={styles.optionSection}>
-                                <h4>Option 2: Thirdweb Local Wallet</h4>
-                                <p>Create a wallet instantly using your email or social login. A recovery file (JSON) will be provided to import into MetaMask later.</p>
-                            </div>
-                        </div>
-                    )}
                 </div>
 
                 <div className={styles.buttonContainer}>

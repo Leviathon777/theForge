@@ -8,6 +8,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   overflow-y: auto;
   max-height: 80vh;
+
 }
 
 .modalOverlay {
@@ -20,12 +21,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000;
+  
 }
 
 .modalWrapper {
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  padding: 10px;
   color: white;
 }
 
@@ -86,6 +86,55 @@
 .closeButton:hover {
   background-color: #555;
 }
+
+.disabledButton {
+  background-color: grey;
+  border-color: grey;
+  cursor: not-allowed;
+}
+
+/* Checkbox container styles */
+.checkboxLabel {
+  display: flex;
+  font-size: .9rem;
+  
+}
+
+
+.checkbox {
+  margin-right: 10px; 
+
+}
+
+.modalFooter {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ccc;
+}
+
+.footerTitle {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+}
+
+.footerLinks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footerLink {
+  font-size: 0.9rem;
+  color: #007BFF;
+  text-decoration: none;
+}
+
+.footerLink:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}
+
 
 @media (max-width: 768px) {
   .modal {

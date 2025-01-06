@@ -211,8 +211,6 @@ const MyApp = ({ Component, pageProps }) => {
   useEffect(() => {
     const detectMobile = () => {
       const mobile = window.innerWidth <= 768;
-      console.log("Window width:", window.innerWidth); // Debug
-      console.log("Is Mobile:", mobile); // Debug
       setIsMobile(mobile);
       setSplashVideo(mobile ? "/videos/splashmobile.mp4" : "/videos/splashpc.mp4");
     };

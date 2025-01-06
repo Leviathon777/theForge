@@ -74,7 +74,6 @@ const TransakButton = ({ user, walletAddress, onShowInvestorProfile }) => {
       return;
     }
     if (!user?.email) {
-      toast.info("Please complete your Investor Profile to continue.");
       onShowInvestorProfile && onShowInvestorProfile();
       return;
     }
@@ -87,7 +86,7 @@ const TransakButton = ({ user, walletAddress, onShowInvestorProfile }) => {
       className={`${Style.dropdownMenuItem} ${isActive ? Style.active : ""}`}
       onClick={handleButtonClick}
     >
-      <span className={Style.transakButtonLabel}>TRADFI TO DEFI</span>
+      <span className={Style.transakButtonLabel}>TRANSAK ONRAMP</span>
     </div>
   );
 };

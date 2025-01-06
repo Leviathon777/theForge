@@ -6,19 +6,29 @@ import { firestore, db } from "./config";
 /************************************************************************************
                    ADD NEW FORGER TO FIREBASE AND SEND EMAIL
 ************************************************************************************/
-export const addForger = async (
-  agreed = false,
-  dateOfJoin,
-  email,
-  kycStatus = 'pending',
-  kycSubmittedAt = null,
-  kycApprovedAt = null,
-  name,
-  refId,
-  walletAddress
-) => {
+export const addForger = async (profileData) => {
+  const {
+    agreed = false,
+    dateOfJoin,
+    email,
+    kycStatus = "not yet submitted",
+    kycSubmittedAt = null,
+    kycApprovedAt = null,
+    fullName,
+    walletAddress,
+    phone = null,
+    mailingAddress: { streetAddress, apartment, city, state, zipCode },
+    territory = null,
+    dob = null,
+    ukFCAAgreed = null,
+    drip: { dripHeld, supplyPercent, dateLastLogged },
+  } = profileData;
+
   const firestore = getFirestore();
   const forgerRef = collection(firestore, "forgers");
+  const mailRef = collection(firestore, "mail");
+
+  console.log("Incoming profileData to addForger:", profileData);
 
   // Validate inputs
   if (!walletAddress) {
@@ -29,9 +39,9 @@ export const addForger = async (
     console.error("Error: email is required but was not provided.");
     throw new Error("email cannot be empty.");
   }
-  if (!name) {
-    console.error("Error: name is required but was not provided.");
-    throw new Error("name cannot be empty.");
+  if (!fullName) {
+    console.error("Error: fullName is required but was not provided.");
+    throw new Error("fullName cannot be empty.");
   }
 
   try {
@@ -55,19 +65,31 @@ export const addForger = async (
     const forgerDocData = {
       walletAddress,
       email,
-      name,
+      fullName,
+      phone,
+      territory,
+      mailingAddress: {
+        streetAddress,
+        apartment,
+        city,
+        state,
+        zipCode,
+      },
+      dob,
       agreed,
+      ukFCAAgreed,
       dateOfJoin: dateOfJoin || new Date().toISOString(),
       kycStatus,
-      refId,
       kycSubmittedAt,
       kycApprovedAt,
+      drip: {
+        dripHeld,
+        supplyPercent,
+        dateLastLogged,
+      },
     };
-
     await setDoc(doc(forgerRef, walletAddress), forgerDocData);
     console.log("Forger created successfully:", forgerDocData);
-
-
     const emailHTML = `
     <!DOCTYPE html>
     <html lang="en">
@@ -266,7 +288,7 @@ border-radius: 8px;
         </tr>
         <tr class="email-content-row">
           <td class="email-content-container" align="center" style="padding: 20px; color: #e9dadf;">
-            <h2 class="email-heading">Hi ${name},</h2>
+            <h2 class="email-heading">Hi ${fullName},</h2>
             <p class="email-paragraph">We're thrilled to welcome you to <strong>The Forge</strong> &ndash; your gateway to the exciting world of DeFi investing.</p>
             <p class="email-paragraph">Now that your investors account has been created, feel free to sign in to your account and continue your investing journey. Or, dig deeper into the world of XDRIP Digital Management with the links and images below.</p>
             <a class="email-cta-link" href="https://moh.xdrip.io" style="background-color: #170cce; color: #e8e6e3; padding: 5px 20px; border-radius: 5px; display: inline-block;">Head Back To The Forge</a>
@@ -405,6 +427,41 @@ border-radius: 8px;
     throw error;
   }
 };
+/************************************************************************************
+                                 UPDATING THE USER 
+*************************************************************************************/
+export const updateForger = async (walletAddress, updateData) => {
+  const firestore = getFirestore();
+  const forgerRef = collection(firestore, "forgers");
+
+  console.log("Updating forger profile for wallet address:", walletAddress);
+
+  // Validate inputs
+  if (!walletAddress) {
+    console.error("Error: walletAddress is required but was not provided.");
+    throw new Error("walletAddress cannot be empty.");
+  }
+
+  try {
+    // Reference the user's document in the "forgers" collection
+    const forgerDocRef = doc(forgerRef, walletAddress);
+
+    // Check if the document exists
+    const forgerDoc = await getDoc(forgerDocRef);
+    if (!forgerDoc.exists()) {
+      throw new Error(`User with wallet address ${walletAddress} not found.`);
+    }
+
+    // Update the document with the provided fields
+    await updateDoc(forgerDocRef, updateData);
+
+    console.log(`Forger profile updated successfully for wallet address: ${walletAddress}`);
+    return { success: true, message: "User profile updated successfully." };
+  } catch (error) {
+    console.error("Error updating forger profile:", error.message);
+    throw new Error(`Failed to update user profile: ${error.message}`);
+  }
+};
 
 /************************************************************************************
                         UPDATING THE KYC STATUS OF THE USER 
@@ -520,7 +577,7 @@ export const sendReceiptEmail = async (email, name, medalType, price, transactio
       to: [email],
       message: {
         subject: "Your Medal of Honor Receipt",
-        text: `Hi ${name}, \n\nCongratulations on forging your ${medalType} Medal of Honor. Here are the details: \n\nMedal Type: ${medalType} \nPrice: ${price} BNB\nTransaction ID: ${transactionHash} \n\nThank you for your continued support!\n\nThe Forge Team`,
+        text: `Hi ${name}, \n\nCongratulations on forging your ${medalType} Medal of Honor. Here are the details: \n\nMedal Type: ${medalType} \nPrice: ${price} BNB\n\nThank you for your continued support!\n\nThe Forge Team`,
         html: `
 <!DOCTYPE html>
 <html lang="en">

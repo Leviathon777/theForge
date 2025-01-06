@@ -61,6 +61,48 @@
   transition: color 0.2s ease-in-out;
 }
 
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 6000;
+}
+
+.popupContent {
+  background: #1a1a1a;
+  color: #f5f5f5;
+  padding: 25px;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.popupContent h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+
+.popupContent p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.popupButtons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+
+
 .transakButton:disabled,
 .kycButton:disabled {
     cursor: not-allowed;

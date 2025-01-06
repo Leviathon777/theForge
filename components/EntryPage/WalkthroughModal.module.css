@@ -69,19 +69,37 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-
-
 .stepHeader {
-  font-size: 20px;
-  margin-bottom: 10px;
-  color: #f1f1f1;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #ffffff;
+  text-align: left;
 }
 
 .stepDescription {
   font-size: 16px;
-  line-height: 1.6;
-  color: #ccc;
+  line-height: 1.8; /* Improved line spacing for better flow */
+  color: #cccccc;
+  text-align: justify; /* Aligns the text for a cleaner appearance */
+  word-spacing: 0.05em; /* Slightly more spacing between words */
+  margin-top: 10px;
+  margin-bottom: 0;
 }
+
+.stepDescription span {
+  color: #f39c12; /* Highlight important keywords */
+  font-weight: bold;
+}
+
+/* Adjustments for Mobile */
+@media (max-width: 600px) {
+  .stepDescription {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+}
+
 
 .optionsContainer {
   display: flex;

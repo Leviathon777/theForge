@@ -13,23 +13,22 @@ import WalkthroughModal from "./EntryPage/WalkthroughModal";
 import OwnerOps from "./OwnerOps/OwnerOps";
 import DotCarousel from "./DotWallets/DotCarousel";
 import RampDetails from "./DotWallets/RampDetails";
-import InvestorProfileModal from "./TheForgeMain/InvestorProfileModal";
 import FlipBook from "./FlipBook/FlipBook";
 import TransakButton from "./Transak/TransakButton";
 import TransakMOH from "./Transak/TransakMOH";
 import Xoast from "./Xoast/Xoast";
 import LoaderMOH from "./Loader/LoaderMOH";
 import MobileModal from "./EntryPage/MobileModal";
-
+import UKCompliance from "./Legal/UKCompliance";
 
 export {
+  UKCompliance,
   MobileModal,
   TransakMOH,
   LoaderMOH,
   Xoast,
   TransakButton,
   FlipBook,
-  InvestorProfileModal,
   OwnerOps,
   RampDetails,
   DotCarousel,

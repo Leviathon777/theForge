@@ -1,9 +1,8 @@
 import React from "react";
 import Modal from "react-modal";
-import Style from "./TermsOfService.module.css";
+import Style from "./PrivacyPolicy.module.css";
 
 const PrivacyPolicy = ({ isOpen, onRequestClose }) => (
-    
   <Modal
     isOpen={isOpen}
     onRequestClose={onRequestClose}
@@ -11,97 +10,98 @@ const PrivacyPolicy = ({ isOpen, onRequestClose }) => (
     className={Style.modal}
     overlayClassName={Style.modalOverlay}
   >
-    <div className={Style.modal_wrapper}>
-      <h2>Privacy Policy</h2>
-      <p>
-        Welcome to <strong>The Forge - Medals of Honor</strong>, a platform
-        developed by XDRIP Digital Management LLC. This Privacy Policy outlines
-        how we collect, use, and protect your personal information.
+    <div className={Style.modalWrapper}>
+      <h2 className={Style.modalTitle}>Privacy Policy</h2>
+      <p className={Style.modalIntro}>
+        Welcome to <strong>The Forge - Medals of Honor</strong>, a platform developed by XDRIP Digital Management LLC. This Privacy Policy outlines how we collect, use, and protect your personal information.
       </p>
 
-      <h3>1. Information We Collect</h3>
-      <p>
-        We may collect personal information to provide and improve our services. This
-        includes but is not limited to:
-      </p>
-      <ul>
-        <li>Account information, such as email addresses and wallet addresses.</li>
-        <li>Transaction details, including purchases and interactions with the platform.</li>
-        <li>Communication data to respond to user inquiries and feedback.</li>
-      </ul>
+      <div className={Style.modalSection}>
+        <h3 className={Style.sectionTitle}>1. Information We Collect</h3>
+        <p className={Style.sectionContent}>
+          We may collect personal information to provide and improve our services. This includes but is not limited to:
+        </p>
+        <ul className={Style.sectionList}>
+          <li className={Style.listItem}>Account information, such as email addresses and wallet addresses.</li>
+          <li className={Style.listItem}>Transaction details, including purchases and interactions with the platform.</li>
+          <li className={Style.listItem}>Communication data to respond to user inquiries and feedback.</li>
+        </ul>
+      </div>
 
-      <h3>2. How We Use Your Information</h3>
-      <p>
-        The information we collect is used to:
-      </p>
-      <ul>
-        <li>Provide and improve the platform’s functionality.</li>
-        <li>Facilitate secure transactions and user interactions.</li>
-        <li>Comply with legal and regulatory requirements.</li>
-        <li>Conduct platform analytics to enhance user experience.</li>
-      </ul>
+      <div className={Style.modalSection}>
+        <h3 className={Style.sectionTitle}>2. How We Use Your Information</h3>
+        <p className={Style.sectionContent}>The information we collect is used to:</p>
+        <ul className={Style.sectionList}>
+          <li className={Style.listItem}>Provide and improve the platform’s functionality.</li>
+          <li className={Style.listItem}>Facilitate secure transactions and user interactions.</li>
+          <li className={Style.listItem}>Comply with legal and regulatory requirements.</li>
+          <li className={Style.listItem}>Conduct platform analytics to enhance user experience.</li>
+        </ul>
+      </div>
 
-      <h3>3. Information Sharing</h3>
-      <p>
-        We may share your personal information with trusted third parties for:
-      </p>
-      <ul>
-        <li>Platform operation and management.</li>
-        <li>Legal compliance or in response to lawful requests.</li>
-        <li>Protecting the rights, property, or safety of users or third parties.</li>
-      </ul>
+      <div className={Style.modalSection}>
+        <h3 className={Style.sectionTitle}>3. Information Sharing</h3>
+        <p className={Style.sectionContent}>We may share your personal information with trusted third parties for:</p>
+        <ul className={Style.sectionList}>
+          <li className={Style.listItem}>Platform operation and management.</li>
+          <li className={Style.listItem}>Legal compliance or in response to lawful requests.</li>
+          <li className={Style.listItem}>Protecting the rights, property, or safety of users or third parties.</li>
+        </ul>
+      </div>
 
-      <h3>4. Data Security</h3>
-      <p>
-        We employ industry-standard measures to safeguard your personal information.
-        However, no system can guarantee absolute security, and users are advised to
-        exercise caution.
-      </p>
+      <div className={Style.modalSection}>
+        <h3 className={Style.sectionTitle}>4. Data Security</h3>
+        <p className={Style.sectionContent}>
+          We employ industry-standard measures to safeguard your personal information. However, no system can guarantee absolute security, and users are advised to exercise caution.
+        </p>
+      </div>
 
-      <h3>5. Third-Party Links</h3>
-      <p>
-        Our platform may include links to third-party services not controlled by us.
-        We are not responsible for their privacy practices. Please review the privacy
-        policies of these third-party platforms before sharing personal information.
-      </p>
+      <div className={Style.modalSection}>
+        <h3 className={Style.sectionTitle}>5. Third-Party Links</h3>
+        <p className={Style.sectionContent}>
+          Our platform may include links to third-party services not controlled by us. We are not responsible for their privacy practices. Please review the privacy policies of these third-party platforms before sharing personal information.
+        </p>
+      </div>
 
-      <h3>6. Children's Privacy</h3>
-      <p>
-        Our platform is not intended for individuals under the age of 18. We do not
-        knowingly collect personal information from children. If such information is
-        identified, it will be promptly deleted.
-      </p>
+      <div className={Style.modalSection}>
+        <h3 className={Style.sectionTitle}>6. Children's Privacy</h3>
+        <p className={Style.sectionContent}>
+          Our platform is not intended for individuals under the age of 18. We do not knowingly collect personal information from children. If such information is identified, it will be promptly deleted.
+        </p>
+      </div>
 
-      <h3>7. Your Rights</h3>
-      <p>
-        Users have the right to:
-      </p>
-      <ul>
-        <li>Access and review the personal information we hold.</li>
-        <li>Request corrections or deletions of inaccurate or outdated information.</li>
-        <li>Opt out of certain data collection practices where applicable.</li>
-      </ul>
+      <div className={Style.modalSection}>
+        <h3 className={Style.sectionTitle}>7. Your Rights</h3>
+        <p className={Style.sectionContent}>Users have the right to:</p>
+        <ul className={Style.sectionList}>
+          <li className={Style.listItem}>Access and review the personal information we hold.</li>
+          <li className={Style.listItem}>Request corrections or deletions of inaccurate or outdated information.</li>
+          <li className={Style.listItem}>Opt out of certain data collection practices where applicable.</li>
+        </ul>
+      </div>
 
-      <h3>8. Contact Us</h3>
-      <p>
-        If you have any questions or concerns regarding this Privacy Policy or our
-        data practices, please contact us at <strong>privacy@medalsofhonor.io</strong>.
-      </p>
+      <div className={Style.modalSection}>
+        <h3 className={Style.sectionTitle}>8. Contact Us</h3>
+        <p className={Style.sectionContent}>
+          If you have any questions or concerns regarding this Privacy Policy or our data practices, please contact us at <strong>privacy@medalsofhonor.io</strong>.
+        </p>
+      </div>
 
-      <h3>9. Updates to This Policy</h3>
-      <p>
-        This Privacy Policy may be updated periodically to reflect changes in legal,
-        regulatory, or operational requirements. Users will be notified of significant
-        updates.
-      </p>
+      <div className={Style.modalSection}>
+        <h3 className={Style.sectionTitle}>9. Updates to This Policy</h3>
+        <p className={Style.sectionContent}>
+          This Privacy Policy may be updated periodically to reflect changes in legal, regulatory, or operational requirements. Users will be notified of significant updates.
+        </p>
+      </div>
 
       <div className={Style.lastUpdated}>
-        <p>Last Updated: [Insert Updated Date]</p>
+        <p>Last Updated: 1/5/2025</p>
       </div>
+
+      <button onClick={onRequestClose} className={Style.closeButton}>
+        Close
+      </button>
     </div>
-    <button onClick={onRequestClose} className={Style.closeButton}>
-      Close
-    </button>
   </Modal>
 );
 
