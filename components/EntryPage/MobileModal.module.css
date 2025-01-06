@@ -1,0 +1,80 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(0, 0, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    overflow: hidden;
+    padding: 1rem;
+  }
+  
+  .modalContent {
+    border-radius: 1rem;
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    border-radius: 1rem;
+    background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
+    box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+  }
+  
+  .modalContent h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #4b4b4b;
+  }
+  
+  .modalContent p {
+    font-size: 1rem;
+    color: #555555;
+    line-height: 1.6;
+    margin-bottom: 15px;
+  }
+  
+  .modalContent a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .modalContent a:hover {
+    text-decoration: underline;
+  }
+  
+  .continueButton {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .continueButton:hover {
+    background-color: #0056b3;
+  }
+  
+  @media (max-width: 400px) {
+    .modalContent h2 {
+      font-size: 1.25rem;
+    }
+  
+    .modalContent p {
+      font-size: 0.9rem;
+    }
+  
+    .continueButton {
+      font-size: 0.9rem;
+      padding: 10px 15px;
+    }
+  }

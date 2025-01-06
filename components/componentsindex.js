@@ -18,12 +18,14 @@ import FlipBook from "./FlipBook/FlipBook";
 import TransakButton from "./Transak/TransakButton";
 import TransakMOH from "./Transak/TransakMOH";
 import Xoast from "./Xoast/Xoast";
-
-
+import LoaderMOH from "./Loader/LoaderMOH";
+import MobileModal from "./EntryPage/MobileModal";
 
 
 export {
+  MobileModal,
   TransakMOH,
+  LoaderMOH,
   Xoast,
   TransakButton,
   FlipBook,
@@ -44,3 +46,6 @@ export {
   Button,
   VideoPlayer,
 };
+
+
+

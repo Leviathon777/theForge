@@ -18,7 +18,7 @@ import { MyDotDataContext } from "../../Context/MyDotDataContext.js";
 import Style from "./theForge.module.css";
 import moreStyles from "../Button/Button.module.css";
 import videos from "../../public/videos/index.js";
-import { Button, VideoPlayer, DotDetailsModal, WalkthroughModal, InvestorProfileModal, TransakButton, TransakMOH } from "../componentsindex.js";
+import { Button, VideoPlayer, DotDetailsModal, WalkthroughModal, InvestorProfileModal, TransakButton, TransakMOH, LoaderMOH } from "../componentsindex.js";
 import { ethers } from "ethers";
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
 import ipfsHashes from "../../Context/ipfsHashes.js";
@@ -74,6 +74,7 @@ const TheForge = () => {
   const [modalStep, setModalStep] = useState("kycPrompt");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
@@ -445,6 +446,8 @@ const TheForge = () => {
       console.error("User info not provided!");
       return;
     }
+    setIsPaymentModalVisible(false);
+    setIsLoading(true);
     try {
       console.log("Forging medal of type:", medalType);
       if (!signer) {
@@ -581,6 +584,8 @@ const TheForge = () => {
       } else {
         toast.error("Error while forging Medal.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -600,19 +605,17 @@ const TheForge = () => {
     };
   }, []);
 
-  // Remove fetchForgedCountsForAddress if it's redundant
-const fetchMedalCount = async (userAddress) => {
-  if (!signer || !userAddress) return;
-  try {
-    const contract = fetchMohContract(signer);
-    const count = await contract.balanceOf(userAddress);
-    setMedalCount(count.toNumber());
-  } catch (error) {
-    console.error("Error fetching medal count:", error);
-    setMedalCount(0);
-  }
-};
-
+  const fetchMedalCount = async (userAddress) => {
+    if (!signer) return;
+    try {
+      const contract = fetchMohContract(signer);
+      const count = await contract.balanceOf(userAddress);
+      setMedalCount(count.toNumber());
+    } catch (error) {
+      console.error("Error fetching medal count:", error);
+      setMedalCount(0);
+    }
+  };
 
   useEffect(() => {
     if (address) {
@@ -639,6 +642,7 @@ const fetchMedalCount = async (userAddress) => {
       fetchForgedCountsForAddress(address);
     }
   }, [address]);
+
 
   const buttonTitles = [
     "Forge Your Destiny",
@@ -743,11 +747,13 @@ const fetchMedalCount = async (userAddress) => {
     if (!selectedMedalForForge) {
       toast("No medal selected. Please try again.");
       return;
-    }
+    }    
+    toast("TRANSAK Seamless Payment Feature Coming Soon! Please Use The TRANSAK Fiat To Cryptro Option In The Vault Actions");     
     setPaymentMethod("transak");
     setIsPaymentModalVisible(false);
-
   };
+  
+
 
   return (
     <div className={Style.the_forge}>
@@ -756,75 +762,7 @@ const fetchMedalCount = async (userAddress) => {
           <h1 className={Style.lore_text}>MEDALS OF HONOR VAULT</h1>
           <div className={Style.forge_button_wrapper}>
 
-            {/* Dropdown Wrapper */}
-            <div ref={dropdownRef} className={Style.dropdownContainer}>
-              {/* Dropdown Button */}
-              <div
-                className={Style.dropdownToggle}
-                onClick={toggleDropdown}
-              >
-                VAULT ACTIONS
-              </div>
-
-              {/* Dropdown Menu */}
-              {isDropdownOpen && (
-                <div className={Style.dropdownMenu}>
-                  {/* HOW TO INVEST WITH XDRIP */}
-                  <div
-                    className={Style.dropdownMenuItem}
-                    onClick={() => {
-                      setIsModalOpen(true);
-                      closeDropdown();
-                    }}
-                  >
-                    HOW TO INVEST WITH XDRIP
-                  </div>
-
-                  {/* KYC Verification */}
-                  <div
-                    className={`${Style.dropdownMenuItem}`}
-                    onClick={() => {
-                      if (address && userInfo) {
-                        router.push({
-                          pathname: "/kycPage",
-                          query: {
-                            address,
-                            name: userInfo.name,
-                            email: userInfo.email,
-                            phoneNumber: userInfo.phoneNumber || "",
-                            kycStatus: userInfo.kycStatus || "not_started",
-                          },
-                        });
-                      } else {
-                        router.push("/kycPage");
-                      }
-                      closeDropdown();
-                    }}
-                  >
-                    KYC VERIFICATION
-                  </div>
-
-                  {/* Transak Button */}
-                  <TransakButton
-                    user={userInfo}
-                    walletAddress={address}
-                    onShowInvestorProfile={() => {
-                      setIsInvestorProfileModalOpen(true);
-                      closeDropdown();
-                    }}
-                    onSuccess={(data) => {
-                      console.log("Transak payment successful:", data);
-                      closeDropdown();
-                    }}
-                    onError={(error) => {
-                      console.error("Transak payment failed:", error);
-                      closeDropdown();
-                    }}
-                    className={Style.dropdownMenuItem}
-                  />
-                </div>
-              )}
-            </div>
+         
 
             <div
               onMouseEnter={() => setRandomTitle(getRandomTitle())}
@@ -962,6 +900,69 @@ const fetchMedalCount = async (userAddress) => {
                   },
                 }}
               />
+            </div>
+
+            <div ref={dropdownRef} className={Style.dropdownContainer}>
+              <div
+                className={Style.dropdownToggle}
+                onClick={toggleDropdown}
+              >
+                VAULT ACTIONS
+              </div>         
+              {isDropdownOpen && (
+                <div className={Style.dropdownMenu}>
+                  <div
+                    className={Style.dropdownMenuItem}
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      closeDropdown();
+                    }}
+                  >
+                    HOW TO INVEST WITH XDRIP
+                  </div>
+                  <div
+                    className={`${Style.dropdownMenuItem}`}
+                    onClick={() => {
+                      if (address && userInfo) {
+                        router.push({
+                          pathname: "/kycPage",
+                          query: {
+                            address,
+                            name: userInfo.name,
+                            email: userInfo.email,
+                            phoneNumber: userInfo.phoneNumber || "",
+                            kycStatus: userInfo.kycStatus || "not_started",
+                          },
+                        });
+                      } else {
+                        router.push("/kycPage");
+                      }
+                      closeDropdown();
+                    }}
+                  >
+                    KYC VERIFICATION
+                  </div>
+
+                  {/* Transak Button */}
+                  <TransakButton
+                    user={userInfo}
+                    walletAddress={address}
+                    onShowInvestorProfile={() => {
+                      setIsInvestorProfileModalOpen(true);
+                      closeDropdown();
+                    }}
+                    onSuccess={(data) => {
+                      console.log("Transak payment successful:", data);
+                      closeDropdown();
+                    }}
+                    onError={(error) => {
+                      console.error("Transak payment failed:", error);
+                      closeDropdown();
+                    }}
+                    className={Style.dropdownMenuItem}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1267,9 +1268,9 @@ const fetchMedalCount = async (userAddress) => {
           </div>
         )}
 
-{selectedMedalDetails && (
-          <div 
-            className={Style.modalOverlay} 
+        {selectedMedalDetails && (
+          <div
+            className={Style.modalOverlay}
             onClick={(e) => e.target === e.currentTarget && setSelectedMedalDetails(null)}
           >
             <DotDetailsModal
@@ -1282,6 +1283,12 @@ const fetchMedalCount = async (userAddress) => {
               showForgeButton={true} // Show Forge button
             />
           </div>
+        )}
+        {isLoading && (
+          <LoaderMOH
+            imageSrc={`/img/${selectedMedalForForge?.title?.toLowerCase()}.png`}
+            isVisible={isLoading}
+          />
         )}
       </div>
     </div>

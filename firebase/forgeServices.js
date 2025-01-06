@@ -19,7 +19,8 @@ export const addForger = async (
 ) => {
   const firestore = getFirestore();
   const forgerRef = collection(firestore, "forgers");
-  const mailRef = collection(firestore, "mail");
+
+  // Validate inputs
   if (!walletAddress) {
     console.error("Error: walletAddress is required but was not provided.");
     throw new Error("walletAddress cannot be empty.");
@@ -34,6 +35,23 @@ export const addForger = async (
   }
 
   try {
+    // Check if wallet address already exists
+    const walletQuery = query(forgerRef, where("walletAddress", "==", walletAddress));
+    const walletSnapshot = await getDocs(walletQuery);
+    if (!walletSnapshot.empty) {
+      console.error(`Error: Wallet address ${walletAddress} already exists.`);
+      throw new Error("This wallet address is already registered.");
+    }
+
+    // Check if email already exists
+    const emailQuery = query(forgerRef, where("email", "==", email));
+    const emailSnapshot = await getDocs(emailQuery);
+    if (!emailSnapshot.empty) {
+      console.error(`Error: Email ${email} already exists.`);
+      throw new Error("This email is already registered.");
+    }
+
+    // Proceed to create the forger
     const forgerDocData = {
       walletAddress,
       email,
@@ -45,8 +63,11 @@ export const addForger = async (
       kycSubmittedAt,
       kycApprovedAt,
     };
+
     await setDoc(doc(forgerRef, walletAddress), forgerDocData);
     console.log("Forger created successfully:", forgerDocData);
+
+
     const emailHTML = `
     <!DOCTYPE html>
     <html lang="en">
@@ -507,52 +528,84 @@ export const sendReceiptEmail = async (email, name, medalType, price, transactio
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Receipt Email</title>
+  <style>
+    @media (max-width: 600px) {
+      table {
+        width: 100% !important;
+        font-size: 14px !important;
+      }
+      td {
+        word-break: break-word !important;
+        white-space: normal !important;
+      }
+      .container {
+        padding: 10px !important;
+      }
+      .header {
+        font-size: 24px !important;
+      }
+      .button {
+        font-size: 14px !important;
+        padding: 10px 15px !important;
+      }
+    }
+  </style>
 </head>
-<body style="padding: 0px; margin: 0px;">
-  <div style="width: 100%; background: rgb(43, 40, 40);">
-    <div style="max-width: 600px; margin: 20px auto; padding: 20px; background:rgb(54, 54, 54); border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-      <div style="background-color:rgb(0, 0, 0); color: #ffffff; padding: 20px; text-align: center;">
-        <img src="https://files.elfsightcdn.com/eafe4a4d-3436-495d-b748-5bdce62d911d/3f1b449b-f38b-42d4-bd7c-2d46bcf846b8/MetalsOfHonor.webp" alt="The Forge Logo" style="height: 75px;">
-        <h1 style="margin: 0px 0; font-size: 50px;">Your Receipt:</h1>
-        <h1 style="margin: 0px 0; font-size: 50px;">Medal of Honor</h1>
+<body style="padding: 0; margin: 0; font-family: Arial, sans-serif;">
+  <div style="width: 100%; background-color: rgb(43, 40, 40);">
+    <div class="container" style="max-width: 600px; margin: 20px auto; padding: 20px; background: rgb(54, 54, 54); border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+      <div class="header" style="background-color: rgb(0, 0, 0); color: #ffffff; padding: 20px; text-align: center;">
+        <img src="https://files.elfsightcdn.com/eafe4a4d-3436-495d-b748-5bdce62d911d/3f1b449b-f38b-42d4-bd7c-2d46bcf846b8/MetalsOfHonor.webp" alt="The Forge Logo" style="height: 75px; margin-bottom: 10px;">
+        <h1 style="margin: 0; font-size: 36px;">Your Receipt</h1>
+        <h2 style="margin: 0; font-size: 24px;">Medal of Honor</h2>
       </div>
 
-      <div style="max-width: 600px; margin: 20px auto; padding: 20px; background:rgb(0, 0, 0); border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-        <p style="font-size: 24px; margin-bottom: 10px;">Congratulations, <strong>${name}</strong>!</p>
+      <div style="padding: 20px; background-color: rgb(0, 0, 0); border-radius: 8px; color: #ffffff;">
+        <p style="font-size: 18px;">Congratulations, <strong>${name}</strong>!</p>
         <p>You’ve successfully forged your <strong>${medalType}</strong> Medal of Honor.</p>
 
-        <table style="width: 100%; margin-top: 20px; border-collapse: collapse; font-size: 16px;">
-          <tr>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color:rgb(0, 0, 0);">Medal Type:</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">${medalType}</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color:rgb(0, 0, 0);">Price:</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">${price} BNB</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color:rgb(0, 0, 0);">Transaction ID:</td>
-            <td style="padding: 10px; border: 1px solid #ddd;">
-              ${transactionHash}<br>
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${transactionHash}" alt="QR Code" style="margin-top: 10px;">
-            </td>
-          </tr>
-        </table>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; margin-top: 20px; border-collapse: collapse; font-size: 16px;">
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">Medal Type:</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${medalType}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">Price:</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${price} BNB</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">Transaction ID:</td>
+              <td style="
+                padding: 10px; 
+                border: 1px solid #ddd; 
+                overflow: hidden; 
+                text-overflow: ellipsis; 
+                white-space: nowrap;">
+                <span title="${transactionHash}">${transactionHash}</span>
+                <br>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${transactionHash}" alt="QR Code" style="margin-top: 10px;">
+              </td>
+            </tr>
+          </table>
+        </div>
 
-        <p style="margin-top: 20px; font-size: 16px; color: #555555;">Thank you for supporting <strong>The Forge</strong>. Share your achievement with others and track your medals anytime.</p>
+        <p style="margin-top: 20px; font-size: 14px; color: #bbbbbb;">Thank you for supporting <strong>The Forge</strong>. Share your achievement and track your medals anytime.</p>
 
         <div style="text-align: center; margin-top: 30px;">
-          <a href="https://moh.xdrip.io" style="text-decoration: none; background-color: #170cce; color: #ffffff; padding: 5px 20px; border-radius: 5px; font-size: 16px; display: inline-block;">View Your Dashboard</a>
+          <a href="https://moh.xdrip.io" class="button" style="text-decoration: none; background-color: #170cce; color: #ffffff; padding: 10px 20px; border-radius: 5px; font-size: 16px;">View Your Dashboard</a>
         </div>
       </div>
 
-      <div style="text-align: center; padding: 20px; background:rgb(0, 0, 0); color: #ffffff; font-size: 14px;">
+      <div style="text-align: center; padding: 10px; background-color: rgb(0, 0, 0); color: #ffffff; font-size: 12px;">
         <p style="margin: 0;">&copy; 2024 XDRIP Digital Management LLC | Visit us at <a href="https://xdrip.io" style="color: #170cce; text-decoration: underline;">www.xdrip.io</a></p>
       </div>
     </div>
   </div>
 </body>
 </html>
+
+
         `,
       },
     };

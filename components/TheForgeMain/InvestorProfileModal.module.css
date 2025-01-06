@@ -4,10 +4,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.85);
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.438); 
     z-index: 5000;
   }
   
@@ -22,6 +23,7 @@
   }
   
   .modalContent h2 {
+    font-size: 1.75rem;
     margin-bottom: 20px;
   }
   
@@ -222,18 +224,132 @@
   border-color: #007bff;
 }
 
+/* Tablet (max-width: 768px) */
 @media (max-width: 768px) {
+  .modalContent {
+    width: 80%;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+
+  .modalContent h2 {
+    font-size: 1.5rem;
+  }
+
+  .modalContent input[type="text"],
+  .modalContent input[type="email"] {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+
+  .checkboxWrapper label {
+    font-size: 0.9rem;
+  }
+
+  .modalContent .submitButton,
+  .modalContent .cancelButton {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+  }
+
+  .popupContent {
+    width: 85%;
+    padding: 20px;
+  }
+
+  .popupContent h3 {
+    font-size: 1.3rem;
+  }
+
+  .popupContent p {
+    font-size: 0.9rem;
+  }
+
   .phoneWrapper {
-      flex-direction: column;
-      align-items: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .territorySelect {
-      margin-bottom: 10px;
-      width: 100%;
-  }
-
+  .territorySelect,
   .phoneInput {
-      width: 100%;
+    width: 100%;
+  }
+}
+
+/* Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5000;
+  }
+
+  .modalContent {
+    width: 90%;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+
+  .modalContent h2 {
+    font-size: 1.25rem;
+    margin-bottom: 15px;
+  }
+
+  .modalContent input[type="text"],
+  .modalContent input[type="email"] {
+    font-size: 0.8rem;
+    padding: 6px;
+  }
+
+  .checkboxWrapper label {
+    font-size: 0.8rem;
+  }
+
+  .modalContent .submitButton,
+  .modalContent .cancelButton {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .popupContent {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .popupContent h3 {
+    font-size: 1.1rem;
+  }
+
+  .popupContent p {
+    font-size: 0.85rem;
+  }
+
+  .popupButtons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .okButton {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+  }
+
+  .phoneWrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .territorySelect,
+  .phoneInput {
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 6px;
   }
 }

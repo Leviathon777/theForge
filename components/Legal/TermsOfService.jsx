@@ -88,7 +88,7 @@ const TermsOfService = ({ isOpen, onRequestClose }) => (
 
       <h3>8. Dispute Resolution</h3>
       <p>
-        If you have a dispute, please contact us at [Insert Contact Email]. We
+        If you have a dispute, please contact us at [contact@moh.xdrip.io]. We
         will attempt to resolve disputes amicably.
       </p>
 
