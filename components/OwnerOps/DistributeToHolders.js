@@ -608,13 +608,17 @@ const DistributeRevShare = ({ onBack }) => {
   const XdRiPContractAddress = xdripCA_ABI.address;
   const XdRiPContractABI = xdripCA_ABI.abi;
   const web3 = new Web3("https://bsc-dataseed1.binance.org/");
+  
   const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
 
+
+
+  
   useEffect(() => {
     const initializeContracts = async () => {
       try {
         if (!window.ethereum) {
-          setStatus("Please install MetaMask.");
+          setStatus("Please install a web3 wallet");
           return;
         }
 
@@ -629,7 +633,12 @@ const DistributeRevShare = ({ onBack }) => {
         const distributeInstance = new ethers.Contract(distributeCA_ABI.address, distributeCA_ABI.abi, signer);
         setDistributeContract(distributeInstance);
 
-        const xdripInstance = new ethers.Contract(xdripCA_ABI.address, xdripCA_ABI.abi, signer);
+        const xdripInstance = new ethers.Contract(
+            xdripCA_ABI.address, 
+            xdripCA_ABI.abi, 
+            signer
+          );
+          setXdripContract(xdripInstance);
 
         const balance = await provider.getBalance(distributeCA_ABI.address);
         setContractBalance(ethers.utils.formatEther(balance));
@@ -646,6 +655,7 @@ const DistributeRevShare = ({ onBack }) => {
 
     initializeContracts();
   }, []);
+
 
   const fetchXDRIPBalance = async (address) => {
     try {
@@ -891,7 +901,8 @@ const DistributeRevShare = ({ onBack }) => {
       });
       await tx.wait();
       setDepositAmount("");
-      setStatus("Funds deposited successfully.");
+      setStatus(`${depositAmount} BNB deposited successfully.`);
+
       fetchContractBalance();
     } catch (error) {
       console.error("Error depositing funds:", error);
@@ -906,6 +917,252 @@ const DistributeRevShare = ({ onBack }) => {
     return `${start}...${end}`;
   };
 
+
+
+  const [newMOHContract, setNewMOHContract] = useState(""); // Input for the new MOH contract address
+const [currentMOHContract, setCurrentMOHContract] = useState("Fetching..."); // Display the current MOH contract address
+
+// Fetch the current MOH contract address from the Distribute Contract
+const fetchCurrentMOHContract = async () => {
+  try {
+    if (!distributeContract) {
+      setStatus("Distribute contract not initialized.");
+      return;
+    }
+    const currentAddress = await distributeContract.mohContract(); // Fetch the current MOH contract
+    setCurrentMOHContract(currentAddress);
+  } catch (error) {
+    console.error("Error fetching current MOH contract address:", error);
+    setCurrentMOHContract("Error fetching address");
+  }
+};
+
+// Update MOH contract in the Distribute Contract
+const updateMOHContractInDistribute = async () => {
+  try {
+    if (!ethers.utils.isAddress(newMOHContract)) {
+      setStatus("Invalid Ethereum address.");
+      return;
+    }
+
+    setStatus("Updating MOH contract in the Distribute Contract...");
+    const tx = await distributeContract.updateMOHContract(newMOHContract); // Call the method
+    await tx.wait();
+
+    // Fetch the updated address to update the UI
+    const updatedAddress = await distributeContract.mohContract();
+    setCurrentMOHContract(updatedAddress);
+
+    setStatus("MOH contract updated successfully.");
+    setNewMOHContract(""); // Clear input field
+  } catch (error) {
+    console.error("Error updating MOH contract in the Distribute Contract:", error);
+    setStatus("Failed to update MOH contract. Check permissions.");
+  }
+};
+
+// Fetch current MOH contract address when the component mounts
+useEffect(() => {
+  fetchCurrentMOHContract();
+}, [distributeContract]);
+
+
+
+  const fetchEvents = async () => {
+  if (!distributeContract) {
+    setStatus("Distribute contract not loaded.");
+    return;
+  }
+
+  try {
+    setStatus("Fetching distribution events...");
+
+    // Fetch FundsDistributed events
+    const fundsFilter = distributeContract.filters.FundsDistributed();
+    const fundsEvents = await distributeContract.queryFilter(fundsFilter, 0, "latest");
+    const fundsDistributed = fundsEvents.map((event) => ({
+      totalDistributed: ethers.utils.formatEther(event.args.totalDistributed),
+      blockNumber: event.blockNumber,
+    }));
+
+    // Fetch investorPaid events
+    const investorFilter = distributeContract.filters.investorPaid();
+    const investorEvents = await distributeContract.queryFilter(investorFilter, 0, "latest");
+    const investorPaid = investorEvents.map((event) => ({
+      investor: event.args.investor,
+      amount: ethers.utils.formatEther(event.args.amount),
+      blockNumber: event.blockNumber,
+    }));
+
+    console.log("FundsDistributed:", fundsDistributed);
+    console.log("InvestorPaid:", investorPaid);
+
+    setStatus("Events fetched successfully!");
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    setStatus("Error fetching events. Check console.");
+  }
+};
+
+
+const fetchDistributeEvents = async (startBlock, endBlock, batchSize = 50000) => {
+    const fundsDistributed = [];
+    const investorPaid = [];
+  
+    try {
+      for (let fromBlock = startBlock; fromBlock <= endBlock; fromBlock += batchSize) {
+        const toBlock = Math.min(fromBlock + batchSize - 1, endBlock);
+  
+        console.log(`Fetching events from block ${fromBlock} to ${toBlock}...`);
+  
+        // Create filters explicitly for each event
+        const fundsFilter = {
+          address: distributeContract.address,
+          topics: [distributeContract.interface.getEventTopic("***FundsDistributed")],
+          fromBlock,
+          toBlock,
+        };
+  
+        const investorFilter = {
+          address: distributeContract.address,
+          topics: [distributeContract.interface.getEventTopic("***FundsDeposited")],
+          fromBlock,
+          toBlock,
+        };
+  
+        // Fetch FundsDistributed logs
+        const fundsLogs = await distributeContract.provider.getLogs(fundsFilter);
+        fundsLogs.forEach((log) => {
+          const parsedLog = distributeContract.interface.parseLog(log);
+          fundsDistributed.push({
+            totalDistributed: ethers.utils.formatEther(parsedLog.args.totalDistributed),
+            blockNumber: log.blockNumber,
+            transactionHash: log.transactionHash,
+          });
+        });
+  
+        // Fetch investorPaid logs
+        const investorLogs = await distributeContract.provider.getLogs(investorFilter);
+        investorLogs.forEach((log) => {
+          const parsedLog = distributeContract.interface.parseLog(log);
+          investorPaid.push({
+            investor: parsedLog.args.investor,
+            amount: ethers.utils.formatEther(parsedLog.args.amount),
+            blockNumber: log.blockNumber,
+            transactionHash: log.transactionHash,
+          });
+        });
+  
+        console.log(`Batch from ${fromBlock} to ${toBlock} fetched successfully.`);
+      }
+  
+      return { fundsDistributed, investorPaid };
+    } catch (error) {
+      console.error(`Error fetching events from block ${startBlock} to ${endBlock}:`, error);
+      throw error;
+    }
+  };
+  
+
+
+  const fetchAndDisplayEvents = async () => {
+    if (!distributeContract) {
+      setStatus("Distribute contract not loaded.");
+      return;
+    }
+  
+    try {
+      setStatus("Fetching events...");
+      
+      const startBlock = 46846649; // Replace with your deployment block
+      const latestBlock = await distributeContract.provider.getBlockNumber();
+  
+      // Fetch FundsDistributed events
+      const fundsFilter = distributeContract.filters.FundsDistributed();
+      const fundsEvents = await distributeContract.queryFilter(fundsFilter, startBlock, latestBlock);
+  
+      const fundsDistributed = fundsEvents.map((event) => ({
+        totalDistributed: ethers.utils.formatEther(event.args.totalDistributed.toString()), // Ensure BigNumber conversion
+        blockNumber: event.blockNumber,
+        transactionHash: event.transactionHash,
+      }));
+  
+      // Fetch FundsDeposited events
+      const depositFilter = distributeContract.filters.FundsDeposited();
+      const depositEvents = await distributeContract.queryFilter(depositFilter, startBlock, latestBlock);
+  
+      const fundsDeposited = depositEvents.map((event) => ({
+        depositor: event.args.depositor,
+        amount: ethers.utils.formatEther(event.args.amount.toString()), // Ensure BigNumber conversion
+        blockNumber: event.blockNumber,
+        transactionHash: event.transactionHash,
+      }));
+  
+      // Fetch investorPaid events
+      const investorFilter = distributeContract.filters.investorPaid();
+      const investorEvents = await distributeContract.queryFilter(investorFilter, startBlock, latestBlock);
+  
+      const investorPaid = investorEvents.map((event) => ({
+        investor: event.args.investor,
+        amount: ethers.utils.formatEther(event.args.amount.toString()), // Ensure BigNumber conversion
+        blockNumber: event.blockNumber,
+        transactionHash: event.transactionHash,
+      }));
+  
+      console.log("FundsDistributed Events:", fundsDistributed);
+      console.log("FundsDeposited Events:", fundsDeposited);
+      console.log("InvestorPaid Events:", investorPaid);
+  
+      setFundsDistributedEvents(fundsDistributed);
+      setFundsDepositedEvents(fundsDeposited);
+      setInvestorPaidEvents(investorPaid);
+  
+      setStatus("Events fetched successfully.");
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      setStatus("Error fetching events. Check console.");
+    }
+  };
+  
+  
+  const [fundsDistributedEvents, setFundsDistributedEvents] = useState([]);
+  const [fundsDepositedEvents, setFundsDepositedEvents] = useState([]);
+  const [investorPaidEvents, setInvestorPaidEvents] = useState([]);
+  const [xdripContract2, setXdripContract] = useState(null);
+
+  async function fetchXDRIPTransferEvents() {
+    try {
+      console.log("Fetching XDRIP Transfer events with Web3...");
+  
+      // Use the Web3 contract you created at the top:
+       XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
+  
+      const events = await XdRiPContract.getPastEvents("Transfer", {
+        fromBlock: 0,
+        toBlock: "latest"
+      });
+  
+      if (events.length === 0) {
+        console.log("No Transfer events found for XDRIP.");
+      } else {
+        events.slice(0, 5).forEach((evt, idx) => {
+          console.log(`Transfer event #${idx}`, {
+            from: evt.returnValues.from,
+            to: evt.returnValues.to,
+            amount: evt.returnValues.value,
+            blockNumber: evt.blockNumber,
+            txHash: evt.transactionHash,
+          });
+        });
+        console.log(`Total Transfer events found: ${events.length}`);
+      }
+    } catch (error) {
+      console.error("Error fetching XDRIP Transfer events with Web3:", error);
+    }
+  }
+  
+
+
   return (
     <div className={styles.container}>
       <h2 className={styles.heading}>Revenue Distribution</h2>
@@ -919,6 +1176,11 @@ const DistributeRevShare = ({ onBack }) => {
           Distribute Revenue
         </button>
       </div>
+
+
+<button onClick={fetchXDRIPTransferEvents}>Fetch XDRIP Transfer Events</button>
+
+
 
       <div className={styles.inputGroup}>
         <input
@@ -950,6 +1212,147 @@ const DistributeRevShare = ({ onBack }) => {
           Update Percentage
         </button>
       </div>
+
+
+      <div className={styles.section}>
+  <h2 className={styles.subheading}>Update MOH Contract</h2>
+  <div className={styles.updateMOHContract}>
+    <p>
+      <strong>Current MOH Contract:</strong>{" "}
+      <span
+        className={styles.copyableAddress}
+        onClick={() => copyToClipboard(currentMOHContract)}
+        title={`Click to copy ${currentMOHContract}`}
+      >
+        {shortenAddress(currentMOHContract)}
+      </span>
+    </p>
+    <input
+      type="text"
+      value={newMOHContract}
+      onChange={(e) => setNewMOHContract(e.target.value)}
+      placeholder="Enter new MOH contract address"
+      className={styles.input}
+    />
+    <button
+      onClick={updateMOHContractInDistribute}
+      className={styles.updatePercentagesBtn}
+    >
+      Update MOH Contract
+    </button>
+  </div>
+</div>
+
+
+<button onClick={fetchAndDisplayEvents} className={styles.button}>
+  Fetch Distribution Events
+</button>
+
+
+{fundsDistributedEvents.length > 0 && (
+  <div className={styles.tableContainer}>
+    <h3>FundsDistributed Events</h3>
+    <table className={styles.table}>
+      <thead>
+        <tr>
+          <th>Total Distributed (BNB)</th>
+          <th>Block Number</th>
+          <th>Transaction Hash</th>
+        </tr>
+      </thead>
+      <tbody>
+        {fundsDistributedEvents.map((event, index) => (
+          <tr key={index}>
+            <td>{event.totalDistributed}</td>
+            <td>{event.blockNumber}</td>
+            <td>
+              <a
+                href={`https://testnet.bscscan.com/tx/${event.transactionHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {event.transactionHash.substring(0, 10)}...
+              </a>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
+{fundsDepositedEvents.length > 0 && (
+  <div className={styles.tableContainer}>
+    <h3>FundsDeposited Events</h3>
+    <table className={styles.table}>
+      <thead>
+        <tr>
+          <th>Depositor</th>
+          <th>Amount (BNB)</th>
+          <th>Block Number</th>
+          <th>Transaction Hash</th>
+        </tr>
+      </thead>
+      <tbody>
+        {fundsDepositedEvents.map((event, index) => (
+          <tr key={index}>
+            <td>{shortenAddress(event.depositor)}</td>
+            <td>{event.amount}</td>
+            <td>{event.blockNumber}</td>
+            <td>
+              <a
+                href={`https://testnet.bscscan.com/tx/${event.transactionHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {event.transactionHash.substring(0, 10)}...
+              </a>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
+
+{investorPaidEvents.length > 0 && (
+  <div className={styles.tableContainer}>
+    <h3>InvestorPaid Events</h3>
+    <table className={styles.table}>
+      <thead>
+        <tr>
+          <th>Investor</th>
+          <th>Amount (BNB)</th>
+          <th>Block Number</th>
+          <th>Transaction Hash</th>
+        </tr>
+      </thead>
+      <tbody>
+        {investorPaidEvents.map((event, index) => (
+          <tr key={index}>
+            <td>{event.investor}</td>
+            <td>{event.amount}</td>
+            <td>{event.blockNumber}</td>
+            <td>
+              <a
+                href={`https://testnet.bscscan.com/tx/${event.transactionHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {event.transactionHash.substring(0, 10)}...
+              </a>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
+
+
+
 
       <button onClick={onBack} className={styles.backButton} aria-label="Back to Owner Operations">
         &larr; Back

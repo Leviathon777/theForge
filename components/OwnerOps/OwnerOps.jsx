@@ -773,16 +773,21 @@ export default OwnerOps;
 */
 
 
-import React, { useState, useEffect, useCallback } from "react";
+// Works 
+/*
+
+import React, { useState, useEffect,
+   useCallback, useMemo } from "react";
 import { ethers } from "ethers";
 import {
   useAddress,
   ConnectWallet,
   useSigner,
 } from "@thirdweb-dev/react";
-import DistributeRevShare from "./DistributeToHolders"; 
+import DistributeRevShare from "./DistributeToHolders"; // Ensure correct import
 import Reports from "./Reports"; 
 import mohCA_ABI from "../../Context/mohCA_ABI.json"; 
+import distributeCA_ABI from "../../Context/distributeCA_ABI.json"; 
 import styles from "./OwnerOps.module.css"; 
 
 import { toast, ToastContainer } from "react-toastify";
@@ -798,8 +803,9 @@ const OwnerOps = () => {
   const [showDistributePage, setShowDistributePage] = useState(false);
   const [newOperatingTasca, setNewOperatingTasca] = useState("");
   const [showReports, setShowReports] = useState(false);
- 
- const handleCloseReports = () => setShowReports(false);
+
+  const handleCloseReports = () => setShowReports(false);
+  const handleCloseDistribute = () => setShowDistributePage(false);
 
   const [contractInfo, setContractInfo] = useState({
     owner: "Fetching...",
@@ -825,15 +831,16 @@ const OwnerOps = () => {
     eternal: "",
   });
   
-  
-
-  const mohContract = signer
-    ? new ethers.Contract(
-      mohCA_ABI.address,
-      mohCA_ABI.abi,
-      signer
-    )
-    : null;
+  // Memoize the contract to prevent unnecessary re-creations
+  const mohContract = useMemo(() => {
+    return signer
+      ? new ethers.Contract(
+          mohCA_ABI.address,
+          mohCA_ABI.abi,
+          signer
+        )
+      : null;
+  }, [signer]);
 
   useEffect(() => {
     const fetchContractDetails = async () => {
@@ -869,6 +876,7 @@ const OwnerOps = () => {
       } catch (error) {
         console.error("Error fetching contract details:", error);
         setStatus("Error fetching contract details.");
+        toast.error("Failed to fetch contract details. Check console for more info.");
       }
     };
 
@@ -913,6 +921,7 @@ const OwnerOps = () => {
           }
           padronesList.push(padrone);
         } catch (error) {
+          console.error(`Error fetching padrone at index ${i}:`, error);
           break;
         }
       }
@@ -930,8 +939,11 @@ const OwnerOps = () => {
       };
     };
 
-    fetchContractDetails();
-  }, [mohContract, signer]);
+    if (mohContract && signer) {
+      fetchContractDetails();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mohContract]); // Removed 'signer' from dependencies as mohContract already depends on signer
 
   const shortenAddress = (address) => {
     if (!address) return "";
@@ -944,6 +956,7 @@ const OwnerOps = () => {
     try {
       if (!price || isNaN(price) || Number(price) <= 0) {
         setStatus("Please enter a valid price.");
+        toast.error("Please enter a valid price.");
         return;
       }
 
@@ -953,6 +966,7 @@ const OwnerOps = () => {
       );
       await tx.wait();
       setStatus(`${capitalize(tier)} price updated successfully.`);
+      toast.success(`${capitalize(tier)} price updated successfully.`);
 
       // Refresh prices after update
       const updatedPrices = await fetchPrices();
@@ -960,6 +974,7 @@ const OwnerOps = () => {
     } catch (error) {
       console.error(`Error updating ${tier} price:`, error);
       setStatus(`Error updating ${tier} price.`);
+      toast.error(`Error updating ${tier} price.`);
     }
   };
 
@@ -967,6 +982,7 @@ const OwnerOps = () => {
     try {
       if (!ethers.utils.isAddress(newPadrone)) {
         setStatus("Invalid Ethereum address.");
+        toast.error("Invalid Ethereum address.");
         return;
       }
 
@@ -974,11 +990,13 @@ const OwnerOps = () => {
       const tx = await mohContract.updatePadrone(newPadrone, true);
       await tx.wait();
       setStatus(`Padrone ${newPadrone} added successfully.`);
+      toast.success(`Padrone ${newPadrone} added successfully.`);
       setPadrones([...padrones, newPadrone]);
       setNewPadrone(""); // Clear input
     } catch (error) {
       console.error("Error adding padrone:", error);
       setStatus("Error adding padrone. Ensure you have the required permissions.");
+      toast.error("Error adding padrone. Ensure you have the required permissions.");
     }
   };
 
@@ -986,11 +1004,13 @@ const OwnerOps = () => {
     try {
       if (!ethers.utils.isAddress(newPadrone)) {
         setStatus("Invalid Ethereum address.");
+        toast.error("Invalid Ethereum address.");
         return;
       }
 
       if (!padrones.includes(newPadrone)) {
         setStatus("Address is not a current padrone.");
+        toast.error("Address is not a current padrone.");
         return;
       }
 
@@ -998,23 +1018,26 @@ const OwnerOps = () => {
       const tx = await mohContract.updatePadrone(newPadrone, false);
       await tx.wait();
       setStatus(`Padrone ${newPadrone} removed successfully.`);
+      toast.success(`Padrone ${newPadrone} removed successfully.`);
       setPadrones(padrones.filter((addr) => addr !== newPadrone));
       setNewPadrone(""); // Clear input
     } catch (error) {
       console.error("Error removing padrone:", error);
       setStatus("Error removing padrone. Ensure you have the required permissions.");
+      toast.error("Error removing padrone. Ensure you have the required permissions.");
     }
   };
 
   const toggleAccordion = (section) => {
     setActiveAccordion(activeAccordion === section ? null : section);
   };
+  
   const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
   const copyToClipboard = useCallback((text) => {
     navigator.clipboard
       .writeText(text)
-      .then(() => toast.success("Copied"))
+      .then(() => toast.success("Copied to clipboard!"))
       .catch(() => toast.error("Could not copy text"));
   }, []);
 
@@ -1036,6 +1059,7 @@ const OwnerOps = () => {
         padronesPct + operatingCostsPct !== 100
       ) {
         setStatus("Please enter valid percentages that add up to 100.");
+        toast.error("Percentages must be numbers and add up to 100.");
         return;
       }
 
@@ -1046,6 +1070,7 @@ const OwnerOps = () => {
       );
       await tx.wait();
       setStatus("Allocation percentages updated successfully.");
+      toast.success("Allocation percentages updated successfully.");
       setContractInfo((prevInfo) => ({
         ...prevInfo,
         padronesPercentage: `${padronesPct}%`,
@@ -1057,14 +1082,15 @@ const OwnerOps = () => {
     } catch (error) {
       console.error("Error updating percentages:", error);
       setStatus("Error updating percentages. Ensure you have the required permissions.");
+      toast.error("Error updating percentages. Ensure you have the required permissions.");
     }
   };
 
-  
   const updateOperatingTasca = async () => {
     try {
       if (!ethers.utils.isAddress(newOperatingTasca)) {
         setStatus("Invalid Ethereum address.");
+        toast.error("Invalid Ethereum address.");
         return;
       }
 
@@ -1072,6 +1098,7 @@ const OwnerOps = () => {
       const tx = await mohContract.updateDistributionTascas(newOperatingTasca);
       await tx.wait();
       setStatus("Operating wallet updated successfully.");
+      toast.success("Operating wallet updated successfully.");
       const updatedOperatingTasca = await mohContract.operatingTasca();
       setContractInfo((prevInfo) => ({
         ...prevInfo,
@@ -1082,24 +1109,21 @@ const OwnerOps = () => {
     } catch (error) {
       console.error("Error updating operating wallet:", error);
       setStatus("Error updating operating wallet. Ensure you have the required permissions.");
+      toast.error("Error updating operating wallet. Ensure you have the required permissions.");
     }
   };
 
-  
   const isCurrentUserPadrone = padrones.includes(address);
 
   return (
     <div className={styles.container}>
-      
       
 
       <div className={styles.connectWalletSection}>
         <ConnectWallet className={styles.connectWalletBtn} />
       </div>
 
-      {/*
       <p className={styles.status}>{status}</p>
-      */}
 
       {!address ? (
         <div className={styles.connectWalletPrompt}>
@@ -1107,283 +1131,915 @@ const OwnerOps = () => {
         </div>
       ) : (
         <>
+ 
           <div className={styles.walletInfo}>
             <p>
-              <strong>Connected Wallet: </strong>{" "}
+              <strong>Connected Wallet: </strong>
               <span
                 className={styles.copyableAddress}
                 onClick={() => copyToClipboard(address)}
-                title={`Click to copy ${address}`}
               >
                 {shortenAddress(address)}
               </span>
             </p>
             <p>
-              <strong>Wallet Balance:</strong> {contractBalance} BNB
+              <strong>Contract Balance:</strong> {contractBalance} BNB
             </p>
           </div>
 
-          {!showDistributePage ? (
-            <div className={styles.sectionsContainer}>
-              
-              <div className={styles.section}>
-                <h2 className={styles.subheading}>Contract Details</h2>
-                <p>
-                  <strong>Owner Address:</strong>{" "}
-                  <span
-                    className={styles.copyableAddress}
-                    onClick={() => copyToClipboard(contractInfo.owner)}
-                    title={`Click to copy ${contractInfo.owner}`}
-                  >
-                    {shortenAddress(contractInfo.owner)}
-                  </span>
-                </p>
-                <p>
-                  <strong>Contract Address:</strong>{" "}
-                  <span
-                    className={styles.copyableAddress}
-                    onClick={() => copyToClipboard(mohCA_ABI.address)}
-                    title={`Click to copy ${mohCA_ABI.address}`}
-                  >
-                    {shortenAddress(mohCA_ABI.address)}
-                  </span>
-                </p>
-                <p>
-                  <strong>Padrones Percentage:</strong>{" "}
-                  {contractInfo.padronesPercentage}
-                </p>
-                <p>
-                  <strong>Operating Costs Percentage:</strong>{" "}
-                  {contractInfo.operatingCostsPercentage}%
-                </p>
-                <p>
-                  <strong>Operating Wallet:</strong>{" "}
-                  <span
-                    className={styles.copyableAddress}
-                    onClick={() => copyToClipboard(contractInfo.operatingTasca)}
-                    title={`Click to copy ${contractInfo.operatingTasca}`}
-                  >
-                    {shortenAddress(contractInfo.operatingTasca)}
-                  </span>
-                </p>
-              </div>
+          <div className={styles.sectionsContainer}>
+ 
+            <div className={styles.section}>
+              <h2 className={styles.subheading}>Contract Details</h2>
+              <p>
+                <strong>Owner Address:</strong>{" "}
+                <span
+                  className={styles.copyableAddress}
+                  onClick={() => copyToClipboard(contractInfo.owner)}
+                >
+                  {shortenAddress(contractInfo.owner)}
+                </span>
+              </p>
+              <p>
+                <strong>Contract Address:</strong>{" "}
+                <span
+                  className={styles.copyableAddress}
+                  onClick={() => copyToClipboard(mohCA_ABI.address)}
+                >
+                  {shortenAddress(mohCA_ABI.address)}
+                </span>
+              </p>
+              <p>
+                <strong>Padrones Percentage:</strong>{" "}
+                {contractInfo.padronesPercentage}
+              </p>
+              <p>
+                <strong>Operating Costs Percentage:</strong>{" "}
+                {contractInfo.operatingCostsPercentage}%
+              </p>
+              <p>
+                <strong>Operating Wallet:</strong>{" "}
+                <span
+                  className={styles.copyableAddress}
+                  onClick={() => copyToClipboard(contractInfo.operatingTasca)}
+                >
+                  {shortenAddress(contractInfo.operatingTasca)}
+                </span>
+              </p>
+            </div>
 
-             
-              <div
-                className={styles.section}
-                title={Object.entries(supplyDetails)
-                  .map(([tier, supply]) => {
-                    const [forged] = supply.split("/");
-                    return `${forged} ${capitalize(tier)}`;
-                  })
-                  .join(", ")}
-              >
-                <h2 className={styles.subheading}>Supply Details</h2>
-                {Object.entries(supplyDetails).map(([tier, supply]) => (
-                  <p key={tier}>
-                    <strong>{capitalize(tier)} :</strong> {supply}
-                  </p>
-                ))}
-              </div>
+ 
+            <div
+              className={styles.section}
+              title={Object.entries(supplyDetails)
+                .map(([tier, supply]) => {
+                  const [forged] = supply.split("/");
+                  return `${forged} ${capitalize(tier)}`;
+                })
+                .join(", ")}
+            >
+              <h2 className={styles.subheading}>Supply Details</h2>
+              {Object.entries(supplyDetails).map(([tier, supply]) => (
+                <p key={tier}>
+                  <strong>{capitalize(tier)} :</strong> {supply}
+                </p>
+              ))}
+            </div>
 
-             
-              <div className={styles.section}>
-                <h2 className={styles.subheading}>Manage Autopay</h2>
-                <div className={styles.padronesList}>
-                  <h5>Current Padrone / Owners</h5>
-                  {padrones.length > 0 ? (
-                    <ul className={styles.padroneList}>
-                      {padrones.map((padrone, index) => (
-                        <li key={index} className={styles.padroneItem}>
-                          <span
-                            className={styles.copyableAddress}
-                            onClick={() => copyToClipboard(padrone)}
-                            title={`Click to copy ${padrone}`}
-                          >
-                            {shortenAddress(padrone)}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>No padrones found.</p>
-                  )}
-                </div>
-                <div className={styles.managePadrone}>
-                  <input
-                    type="text"
-                    value={newPadrone}
-                    onChange={(e) => setNewPadrone(e.target.value)}
-                    placeholder="Enter padrone address"
-                    className={styles.input}
-                  />
-                  <div className={styles.padroneActions}>
-                    <button
-                      onClick={addPadrone}
-                      className={styles.buttonAdd}
-                    >
-                      Add Padrone
-                    </button>
-                    <button
-                      onClick={removePadrone}
-                      className={styles.buttonRemove}
-                    >
-                      Remove Padrone
-                    </button>
-                  </div>
-                </div>
+ 
+            <div className={styles.section}>
+              <h2 className={styles.subheading}>Manage Padrones</h2>
+              <div className={styles.padronesList}>
+                <h5>Current Padrones</h5>
+                {padrones.length > 0 ? (
+                  <ul className={styles.padroneList}>
+                    {padrones.map((padrone, index) => (
+                      <li key={index} className={styles.padroneItem}>
+                        <span
+                          className={styles.copyableAddress}
+                          onClick={() => copyToClipboard(padrone)}
+                        >
+                          {shortenAddress(padrone)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No padrones found.</p>
+                )}
               </div>
-
-             <div className={styles.section}>
-                <h2 className={styles.subheading}>Update Allocation Percentages</h2>
-                <div className={styles.allocationForm}>
-                  <div className={styles.inputGroup}>
-                    <label className={styles.label}>
-                      Owner / Padrone (%):
-                      <input
-                        type="number"
-                        value={newPadronesPercentage}
-                        onChange={(e) => setNewPadronesPercentage(e.target.value)}
-                        placeholder="80"
-                        className={styles.input}
-                      />
-                    </label>
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label className={styles.label}>
-                      Operating Costs (%):
-                      <input
-                        type="number"
-                        value={newOperatingCostsPercentage}
-                        onChange={(e) => setNewOperatingCostsPercentage(e.target.value)}
-                        placeholder="20"
-                        className={styles.input}
-                      />
-                    </label>
-                  </div>
-                  <button
-                    onClick={updatePercentages}
-                    className={styles.updatePercentagesBtn}
-                  >
-                    Update Percentages
+              <div className={styles.managePadrone}>
+                <input
+                  type="text"
+                  value={newPadrone}
+                  onChange={(e) => setNewPadrone(e.target.value)}
+                  placeholder="Enter padrone address"
+                  className={styles.input}
+                />
+                <div className={styles.padroneActions}>
+                  <button onClick={addPadrone} className={styles.buttonAdd}>
+                    Add Padrone
+                  </button>
+                  <button onClick={removePadrone} className={styles.buttonRemove}>
+                    Remove Padrone
                   </button>
                 </div>
               </div>
+            </div>
 
-              {isCurrentUserPadrone ? (
-                <div className={styles.section}>
-                  <h2 className={styles.subheading}>Update Operations Wallet</h2>
-                  <p>
-                    <strong>Current:</strong>{" "}
-                    <span
-                      className={styles.copyableAddress}
-                      onClick={() => copyToClipboard(contractInfo.operatingTasca)}
-                      title={`Click to copy ${contractInfo.operatingTasca}`}
-                    >
-                      {shortenAddress(contractInfo.operatingTasca)}
-                    </span>
-                  </p>
-                  <div className={styles.updateOperatingTasca}>
+  
+            <div className={styles.section}>
+              <h2 className={styles.subheading}>Update Allocation Percentages</h2>
+              <div className={styles.allocationForm}>
+                <div className={styles.inputGroup}>
+                  <label className={styles.label}>
+                    Owner / Padrone (%):
                     <input
-                      type="text"
-                      value={newOperatingTasca}
-                      onChange={(e) => setNewOperatingTasca(e.target.value)}
-                      placeholder="Enter new operating wallet address"
+                      type="number"
+                      value={parseFloat(contractInfo.padronesPercentage)}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        if (isNaN(value)) return;
+                        setContractInfo({
+                          ...contractInfo,
+                          padronesPercentage: `${value}%`,
+                        });
+                      }}
+                      placeholder="80"
                       className={styles.input}
-                      style={{ marginBottom: "20px" }}
                     />
-                    <button
-                      onClick={updateOperatingTasca}
-                      className={styles.updatePercentagesBtn}
-                    >
-                      Update Operating Wallet
-                    </button>
-                  </div>
+                  </label>
                 </div>
-              ) : (
-                <div className={styles.section}>
-                  <p>You do not have permission to update the operating wallet.</p>
+                <div className={styles.inputGroup}>
+                  <label className={styles.label}>
+                    Operating Costs (%):
+                    <input
+                      type="number"
+                      value={parseFloat(contractInfo.operatingCostsPercentage)}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        if (isNaN(value)) return;
+                        setContractInfo({
+                          ...contractInfo,
+                          operatingCostsPercentage: `${value}%`,
+                        });
+                      }}
+                      placeholder="20"
+                      className={styles.input}
+                    />
+                  </label>
                 </div>
-              )}
-
-
-
-
-              
-
-              
-              <div className={styles.section}>
-                <h2
-                  className={styles.subheading}
-                  onClick={() => toggleAccordion("pricing")}
-                >
-                  Update Pricing{" "}
-                  <span className={styles.accordionIcon}>
-                    {activeAccordion === "pricing" ? "-" : "+"}
-                  </span>
-                </h2>
-                {activeAccordion === "pricing" && (
-                  <div className={styles.accordionContent}>
-                    {Object.keys(prices).map((tier) => (
-                      <div
-                        key={tier}
-                        className={styles.priceUpdate}
-                      >
-                        <label className={styles.label}>
-                          {capitalize(tier)} Price (BNB):
-                          <input
-                            type="number"
-                            step="0.0001"
-                            value={prices[tier]}
-                            onChange={(e) =>
-                              setPrices({
-                                ...prices,
-                                [tier]: e.target.value,
-                              })
-                            }
-                            className={styles.input}
-                          />
-                        </label>
-                        <button
-                          onClick={() =>
-                            updatePrice(tier, prices[tier])
-                          }
-                          className={styles.button}
-                        >
-                          Update
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className={styles.section}>
-                <h2 className={styles.subheading}>Distribute Revenue Shares</h2>
                 <button
-                  onClick={handleOpenDistributePage}
-                  className={styles.button}
+                  onClick={updatePercentages}
+                  className={styles.updatePercentagesBtn}
                 >
-                  Revenue Share Options
-                </button>
-              </div>
-              <div className={styles.section}>
-                <h2 className={styles.subheading}>Reports</h2>
-                <button
-                  onClick={() => setShowReports(true)}
-                  className={styles.button}
-                >
-                  View Reports
+                  Update Percentages
                 </button>
               </div>
             </div>
-          ) : showReports ? (
-            <Reports onClose={handleCloseReports} />
-          ) : (
-            <DistributeRevShare onBack={handleBackToOps} />
-          )}
+
+  
+            <div className={styles.section}>
+              <h2 className={styles.subheading}>Update Operating Wallet</h2>
+              <p>
+                <strong>Current:</strong>{" "}
+                <span
+                  className={styles.copyableAddress}
+                  onClick={() => copyToClipboard(contractInfo.operatingTasca)}
+                >
+                  {shortenAddress(contractInfo.operatingTasca)}
+                </span>
+              </p>
+              <div className={styles.updateOperatingTasca}>
+                <input
+                  type="text"
+                  value={newOperatingTasca}
+                  onChange={(e) => setNewOperatingTasca(e.target.value)}
+                  placeholder="Enter new operating wallet address"
+                  className={styles.input}
+                  style={{ marginBottom: "20px" }}
+                />
+                <button
+                  onClick={updateOperatingTasca}
+                  className={styles.updatePercentagesBtn}
+                >
+                  Update Operating Wallet
+                </button>
+              </div>
+            </div>
+
+  
+            <div className={styles.section}>
+              <h2
+                className={styles.subheading}
+                onClick={() => toggleAccordion("pricing")}
+              >
+                Update Pricing{" "}
+                <span className={styles.accordionIcon}>
+                  {activeAccordion === "pricing" ? "-" : "+"}
+                </span>
+              </h2>
+              {activeAccordion === "pricing" && (
+                <div className={styles.accordionContent}>
+                  {Object.keys(prices).map((tier) => (
+                    <div key={tier} className={styles.priceUpdate}>
+                      <label className={styles.label}>
+                        {capitalize(tier)} Price (BNB):
+                        <input
+                          type="number"
+                          step="0.0001"
+                          value={prices[tier]}
+                          onChange={(e) =>
+                            setPrices({
+                              ...prices,
+                              [tier]: e.target.value,
+                            })
+                          }
+                          className={styles.input}
+                        />
+                      </label>
+                      <button
+                        onClick={() => updatePrice(tier, prices[tier])}
+                        className={styles.button}
+                      >
+                        Update
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+  
+            <div className={styles.section}>
+              <h2 className={styles.subheading}>Distribute Revenue Shares</h2>
+              <button onClick={() => setShowDistributePage(true)} className={styles.button}>
+                Revenue Share Options
+              </button>
+            </div>
+
+  
+            <div className={styles.section}>
+              <h2 className={styles.subheading}>Reports</h2>
+              <button onClick={() => setShowReports(true)} className={styles.button}>
+                View Reports
+              </button>
+            </div>
+          </div>
+
+  
+          {showReports && <Reports onClose={handleCloseReports} />}
+
+  
+          {showDistributePage && <DistributeRevShare onBack={handleCloseDistribute} />}
         </>
       )}
-      
+    </div>
+  );
+};
+
+export default OwnerOps;
+*/
+
+
+
+
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { ethers } from "ethers";
+import {
+  useAddress,
+  ConnectWallet,
+  useSigner,
+} from "@thirdweb-dev/react";
+import DistributeRevShare from "./DistributeToHolders"; // Ensure correct import
+import Reports from "./Reports"; 
+import mohCA_ABI from "../../Context/mohCA_ABI.json"; 
+import distributeCA_ABI from "../../Context/distributeCA_ABI.json"; 
+import styles from "./OwnerOps.module.css"; 
+
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const OwnerOps = () => {
+  const address = useAddress();
+  const signer = useSigner();
+
+  const [status, setStatus] = useState("");
+
+  const [padrones, setPadrones] = useState([]); 
+  const [newPadrone, setNewPadrone] = useState("");
+  const [activeAccordion, setActiveAccordion] = useState(null);
+  const [showDistributePage, setShowDistributePage] = useState(false);
+  const [newOperatingTasca, setNewOperatingTasca] = useState("");
+  const [showReports, setShowReports] = useState(false);
+
+  const handleCloseReports = () => setShowReports(false);
+  const handleCloseDistribute = () => setShowDistributePage(false);
+
+  const [contractInfo, setContractInfo] = useState({
+    owner: "Fetching...",
+    padronesPercentage: "80%", 
+    operatingCostsPercentage: "20%", 
+    operatingTasca: "Fetching...",
+  });
+  const [contractBalance, setContractBalance] = useState("Fetching...");
+  const [prices, setPrices] = useState({
+    common: "",
+    uncommon: "",
+    rare: "",
+    epic: "",
+    legendary: "",
+    eternal: "",
+  });
+  const [supplyDetails, setSupplyDetails] = useState({
+    common: "",
+    uncommon: "",
+    rare: "",
+    epic: "",
+    legendary: "",
+    eternal: "",
+  });
+
+  // For distributing revenue
+  const [newPadronesPercentage, setNewPadronesPercentage] = useState("");
+  const [newOperatingCostsPercentage, setNewOperatingCostsPercentage] = useState("");
+
+  // Memoize the MOH contract
+  const mohContract = useMemo(() => {
+    return signer
+      ? new ethers.Contract(
+          mohCA_ABI.address,
+          mohCA_ABI.abi,
+          signer
+        )
+      : null;
+  }, [signer]);
+
+  // Unified address click: Ctrl/Command => BscScan, else copy
+  const handleAddressClick = useCallback((e, targetAddress) => {
+    if (e.ctrlKey || e.metaKey) {
+      // open in new tab
+      window.open(`https://testnet.bscscan.com/address/${targetAddress}`, "_blank");
+    } else {
+      copyToClipboard(targetAddress);
+    }
+  }, []);
+
+  // Our existing copyToClipboard, used in handleAddressClick
+  const copyToClipboard = useCallback((text) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => toast.success("Copied to clipboard!"))
+      .catch(() => toast.error("Could not copy text"));
+  }, []);
+
+  useEffect(() => {
+    const fetchContractDetails = async () => {
+      if (!mohContract) {
+        setStatus("Contract not initialized. Connect your wallet.");
+        return;
+      }
+
+      try {
+        setStatus("Connected");
+        const [owner, balance, pricing, supply, operatingTascaAddress] = await Promise.all([
+          mohContract.titolare(),
+          signer.getBalance(),
+          fetchPrices(),
+          mohContract.getforgedCounts(),
+          mohContract.operatingTasca(),
+        ]);
+
+        const padronesList = await fetchPadronesList();
+
+        setContractInfo({
+          owner,
+          padronesPercentage: "80%",
+          operatingCostsPercentage: "20%",
+          operatingTasca: operatingTascaAddress,
+        });
+
+        setContractBalance(ethers.utils.formatEther(balance));
+        setPrices(pricing);
+        setSupplyDetails(formatSupply(supply));
+        setPadrones(padronesList);
+        setStatus("Contract details fetched successfully.");
+      } catch (error) {
+        console.error("Error fetching contract details:", error);
+        setStatus("Error fetching contract details.");
+        toast.error("Failed to fetch contract details. Check console for more info.");
+      }
+    };
+
+    const fetchPrices = async () => {
+      const [
+        common,
+        uncommon,
+        rare,
+        epic,
+        legendary,
+        eternal,
+      ] = await Promise.all([
+        mohContract.commonPrice(),
+        mohContract.uncommonPrice(),
+        mohContract.rarePrice(),
+        mohContract.epicPrice(),
+        mohContract.legendaryPrice(),
+        mohContract.eternalPrice(),
+      ]);
+      return {
+        common: ethers.utils.formatEther(common),
+        uncommon: ethers.utils.formatEther(uncommon),
+        rare: ethers.utils.formatEther(rare),
+        epic: ethers.utils.formatEther(epic),
+        legendary: ethers.utils.formatEther(legendary),
+        eternal: ethers.utils.formatEther(eternal),
+      };
+    };
+
+    const fetchPadronesList = async () => {
+      const padronesList = [];
+      const maxPadrones = 10; 
+      for (let i = 0; i < maxPadrones; i++) {
+        try {
+          const padrone = await mohContract.padroneTascas(i);
+          if (
+            padrone === ethers.constants.AddressZero ||
+            padrone === null ||
+            padrone === undefined
+          ) {
+            break;
+          }
+          padronesList.push(padrone);
+        } catch (error) {
+          console.error(`Error fetching padrone at index ${i}:`, error);
+          break;
+        }
+      }
+      return padronesList;
+    };
+
+    const formatSupply = (supply) => {
+      return {
+        common: `${supply.commonforged}/${supply.commonRemaining}`,
+        uncommon: `${supply.uncommonforged}/${supply.uncommonRemaining}`,
+        rare: `${supply.rareforged}/${supply.rareRemaining}`,
+        epic: `${supply.epicforged}/${supply.epicRemaining}`,
+        legendary: `${supply.legendaryforged}/${supply.legendaryRemaining}`,
+        eternal: `${supply.eternalforged}/${supply.eternalRemaining}`,
+      };
+    };
+
+    if (mohContract && signer) {
+      fetchContractDetails();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mohContract]); 
+
+  const shortenAddress = (addr) => {
+    if (!addr) return "";
+    const start = addr.substring(0, 6);
+    const end = addr.substring(addr.length - 4);
+    return `${start}...${end}`;
+  };
+
+  const updatePrice = async (tier, price) => {
+    try {
+      if (!price || isNaN(price) || Number(price) <= 0) {
+        setStatus("Please enter a valid price.");
+        toast.error("Please enter a valid price.");
+        return;
+      }
+
+      setStatus(`Updating ${tier} price...`);
+      const tx = await mohContract[`set${capitalize(tier)}Price`](
+        ethers.utils.parseEther(price)
+      );
+      await tx.wait();
+      setStatus(`${capitalize(tier)} price updated successfully.`);
+      toast.success(`${capitalize(tier)} price updated successfully.`);
+
+      // Refresh prices after update
+      const updatedPrices = await fetchPrices();
+      setPrices(updatedPrices);
+    } catch (error) {
+      console.error(`Error updating ${tier} price:`, error);
+      setStatus(`Error updating ${tier} price.`);
+      toast.error(`Error updating ${tier} price.`);
+    }
+  };
+
+  const addPadrone = async () => {
+    try {
+      if (!ethers.utils.isAddress(newPadrone)) {
+        setStatus("Invalid Ethereum address.");
+        toast.error("Invalid Ethereum address.");
+        return;
+      }
+
+      setStatus(`Adding padrone ${newPadrone}...`);
+      const tx = await mohContract.updatePadrone(newPadrone, true);
+      await tx.wait();
+      setStatus(`Padrone ${newPadrone} added successfully.`);
+      toast.success(`Padrone ${newPadrone} added successfully.`);
+      setPadrones([...padrones, newPadrone]);
+      setNewPadrone(""); // Clear input
+    } catch (error) {
+      console.error("Error adding padrone:", error);
+      setStatus("Error adding padrone. Ensure you have the required permissions.");
+      toast.error("Error adding padrone. Ensure you have the required permissions.");
+    }
+  };
+
+  const removePadrone = async () => {
+    try {
+      if (!ethers.utils.isAddress(newPadrone)) {
+        setStatus("Invalid Ethereum address.");
+        toast.error("Invalid Ethereum address.");
+        return;
+      }
+
+      if (!padrones.includes(newPadrone)) {
+        setStatus("Address is not a current padrone.");
+        toast.error("Address is not a current padrone.");
+        return;
+      }
+
+      setStatus(`Removing padrone ${newPadrone}...`);
+      const tx = await mohContract.updatePadrone(newPadrone, false);
+      await tx.wait();
+      setStatus(`Padrone ${newPadrone} removed successfully.`);
+      toast.success(`Padrone ${newPadrone} removed successfully.`);
+      setPadrones(padrones.filter((addr) => addr !== newPadrone));
+      setNewPadrone(""); // Clear input
+    } catch (error) {
+      console.error("Error removing padrone:", error);
+      setStatus("Error removing padrone. Ensure you have the required permissions.");
+      toast.error("Error removing padrone. Ensure you have the required permissions.");
+    }
+  };
+
+  const toggleAccordion = (section) => {
+    setActiveAccordion(activeAccordion === section ? null : section);
+  };
+  
+  const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+  const handleOpenDistributePage = () => setShowDistributePage(true);
+  const handleBackToOps = () => setShowDistributePage(false);
+
+  const updatePercentages = async () => {
+    try {
+      const padronesPct = parseInt(newPadronesPercentage);
+      const operatingCostsPct = parseInt(newOperatingCostsPercentage);
+
+      if (
+        isNaN(padronesPct) ||
+        isNaN(operatingCostsPct) ||
+        padronesPct < 0 ||
+        operatingCostsPct < 0 ||
+        padronesPct + operatingCostsPct !== 100
+      ) {
+        setStatus("Please enter valid percentages that add up to 100.");
+        toast.error("Percentages must be numbers and add up to 100.");
+        return;
+      }
+
+      setStatus("Updating allocation percentages...");
+      const tx = await mohContract.setAllocationValue(
+        padronesPct,
+        operatingCostsPct
+      );
+      await tx.wait();
+      setStatus("Allocation percentages updated successfully.");
+      toast.success("Allocation percentages updated successfully.");
+      setContractInfo((prevInfo) => ({
+        ...prevInfo,
+        padronesPercentage: `${padronesPct}%`,
+        operatingCostsPercentage: `${operatingCostsPct}%`,
+      }));
+
+      setNewPadronesPercentage("");
+      setNewOperatingCostsPercentage("");
+    } catch (error) {
+      console.error("Error updating percentages:", error);
+      setStatus("Error updating percentages. Ensure you have the required permissions.");
+      toast.error("Error updating percentages. Ensure you have the required permissions.");
+    }
+  };
+
+  const updateOperatingTasca = async () => {
+    try {
+      if (!ethers.utils.isAddress(newOperatingTasca)) {
+        setStatus("Invalid Ethereum address.");
+        toast.error("Invalid Ethereum address.");
+        return;
+      }
+
+      setStatus("Updating operating wallet...");
+      const tx = await mohContract.updateDistributionTascas(newOperatingTasca);
+      await tx.wait();
+      setStatus("Operating wallet updated successfully.");
+      toast.success("Operating wallet updated successfully.");
+      const updatedOperatingTasca = await mohContract.operatingTasca();
+      setContractInfo((prevInfo) => ({
+        ...prevInfo,
+        operatingTasca: updatedOperatingTasca,
+      }));
+
+      setNewOperatingTasca(""); // Clear input
+    } catch (error) {
+      console.error("Error updating operating wallet:", error);
+      setStatus("Error updating operating wallet. Ensure you have the required permissions.");
+      toast.error("Error updating operating wallet. Ensure you have the required permissions.");
+    }
+  };
+
+  const isCurrentUserPadrone = padrones.includes(address);
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.connectWalletSection}>
+        <ConnectWallet className={styles.connectWalletBtn} />
+      </div>
+
+      <p className={styles.status}>{status}</p>
+
+      {!address ? (
+        <div className={styles.connectWalletPrompt}>
+          <p>Please connect your wallet to access owner operations.</p>
+        </div>
+      ) : (
+        <>
+          {/* Main OwnerOps UI */}
+          <div className={styles.walletInfo}>
+            <p>
+              <strong>Connected Wallet: </strong>
+              <span
+                className={styles.copyableAddress}
+                title="Click to copy or Ctrl+Click to open block explorer"
+                onClick={(e) => handleAddressClick(e, address)}
+              >
+                {shortenAddress(address)}
+              </span>
+            </p>
+            <p>
+              <strong>Contract Balance:</strong> {contractBalance} BNB
+            </p>
+          </div>
+
+          <div className={styles.sectionsContainer}>
+            {/* Contract Details Section */}
+            <div className={styles.section}>
+              <h2 className={styles.subheading}>Contract Details</h2>
+              <p>
+                <strong>Owner Address:</strong>{" "}
+                <span
+                  className={styles.copyableAddress}
+                  title="Click to copy or Ctrl+Click to open block explorer"
+                  onClick={(e) => handleAddressClick(e, contractInfo.owner)}
+                >
+                  {shortenAddress(contractInfo.owner)}
+                </span>
+              </p>
+              <p>
+                <strong>Contract Address:</strong>{" "}
+                <span
+                  className={styles.copyableAddress}
+                  title="Click to copy or Ctrl+Click to open block explorer"
+                  onClick={(e) => handleAddressClick(e, mohCA_ABI.address)}
+                >
+                  {shortenAddress(mohCA_ABI.address)}
+                </span>
+              </p>
+              <p>
+                <strong>Padrones Percentage:</strong>{" "}
+                {contractInfo.padronesPercentage}
+              </p>
+              <p>
+                <strong>Operating Costs Percentage:</strong>{" "}
+                {contractInfo.operatingCostsPercentage}%
+              </p>
+              <p>
+                <strong>Operating Wallet:</strong>{" "}
+                <span
+                  className={styles.copyableAddress}
+                  title="Click to copy or Ctrl+Click to open block explorer"
+                  onClick={(e) => handleAddressClick(e, contractInfo.operatingTasca)}
+                >
+                  {shortenAddress(contractInfo.operatingTasca)}
+                </span>
+              </p>
+            </div>
+
+            {/* Supply Details Section */}
+            <div
+              className={styles.section}
+              title={Object.entries(supplyDetails)
+                .map(([tier, supply]) => {
+                  const [forged] = supply.split("/");
+                  return `${forged} ${capitalize(tier)}`;
+                })
+                .join(", ")}
+            >
+              <h2 className={styles.subheading}>Supply Details</h2>
+              {Object.entries(supplyDetails).map(([tier, supply]) => (
+                <p key={tier}>
+                  <strong>{capitalize(tier)} :</strong> {supply}
+                </p>
+              ))}
+            </div>
+
+            {/* Manage Padrones Section */}
+            <div className={styles.section}>
+              <h2 className={styles.subheading}>Manage Padrones</h2>
+              <div className={styles.padronesList}>
+                <h5>Current Padrones</h5>
+                {padrones.length > 0 ? (
+                  <ul className={styles.padroneList}>
+                    {padrones.map((padrone, index) => (
+                      <li key={index} className={styles.padroneItem}>
+                        <span
+                          className={styles.copyableAddress}
+                          title="Click to copy or Ctrl+Click to open block explorer"
+                          onClick={(e) => handleAddressClick(e, padrone)}
+                        >
+                          {shortenAddress(padrone)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No padrones found.</p>
+                )}
+              </div>
+              <div className={styles.managePadrone}>
+                <input
+                  type="text"
+                  value={newPadrone}
+                  onChange={(e) => setNewPadrone(e.target.value)}
+                  placeholder="Enter padrone address"
+                  className={styles.input}
+                />
+                <div className={styles.padroneActions}>
+                  <button onClick={addPadrone} className={styles.buttonAdd}>
+                    Add Padrone
+                  </button>
+                  <button onClick={removePadrone} className={styles.buttonRemove}>
+                    Remove Padrone
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Update Allocation Percentages Section */}
+            <div className={styles.section}>
+              <h2 className={styles.subheading}>Update Allocation Percentages</h2>
+              <div className={styles.allocationForm}>
+                <div className={styles.inputGroup}>
+                  <label className={styles.label}>
+                    Owner / Padrone (%):
+                    <input
+                      type="number"
+                      value={parseFloat(contractInfo.padronesPercentage)}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        if (isNaN(value)) return;
+                        setContractInfo({
+                          ...contractInfo,
+                          padronesPercentage: `${value}%`,
+                        });
+                      }}
+                      placeholder="80"
+                      className={styles.input}
+                    />
+                  </label>
+                </div>
+                <div className={styles.inputGroup}>
+                  <label className={styles.label}>
+                    Operating Costs (%):
+                    <input
+                      type="number"
+                      value={parseFloat(contractInfo.operatingCostsPercentage)}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        if (isNaN(value)) return;
+                        setContractInfo({
+                          ...contractInfo,
+                          operatingCostsPercentage: `${value}%`,
+                        });
+                      }}
+                      placeholder="20"
+                      className={styles.input}
+                    />
+                  </label>
+                </div>
+                <button
+                  onClick={updatePercentages}
+                  className={styles.updatePercentagesBtn}
+                >
+                  Update Percentages
+                </button>
+              </div>
+            </div>
+
+            {/* Update Operating Tasca Section */}
+            <div className={styles.section}>
+              <h2 className={styles.subheading}>Update Operating Wallet</h2>
+              <p>
+                <strong>Current:</strong>{" "}
+                <span
+                  className={styles.copyableAddress}
+                  title="Click to copy or Ctrl+Click to open block explorer"
+                  onClick={(e) => handleAddressClick(e, contractInfo.operatingTasca)}
+                >
+                  {shortenAddress(contractInfo.operatingTasca)}
+                </span>
+              </p>
+              <div className={styles.updateOperatingTasca}>
+                <input
+                  type="text"
+                  value={newOperatingTasca}
+                  onChange={(e) => setNewOperatingTasca(e.target.value)}
+                  placeholder="Enter new operating wallet address"
+                  className={styles.input}
+                  style={{ marginBottom: "20px" }}
+                />
+                <button
+                  onClick={updateOperatingTasca}
+                  className={styles.updatePercentagesBtn}
+                >
+                  Update Operating Wallet
+                </button>
+              </div>
+            </div>
+
+            {/* Update Pricing Section */}
+            <div className={styles.section}>
+              <h2
+                className={styles.subheading}
+                onClick={() => toggleAccordion("pricing")}
+              >
+                Update Pricing{" "}
+                <span className={styles.accordionIcon}>
+                  {activeAccordion === "pricing" ? "-" : "+"}
+                </span>
+              </h2>
+              {activeAccordion === "pricing" && (
+                <div className={styles.accordionContent}>
+                  {Object.keys(prices).map((tier) => (
+                    <div key={tier} className={styles.priceUpdate}>
+                      <label className={styles.label}>
+                        {capitalize(tier)} Price (BNB):
+                        <input
+                          type="number"
+                          step="0.0001"
+                          value={prices[tier]}
+                          onChange={(e) =>
+                            setPrices({
+                              ...prices,
+                              [tier]: e.target.value,
+                            })
+                          }
+                          className={styles.input}
+                        />
+                      </label>
+                      <button
+                        onClick={() => updatePrice(tier, prices[tier])}
+                        className={styles.button}
+                      >
+                        Update
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Distribute Revenue Shares Section */}
+            <div className={styles.section}>
+              <h2 className={styles.subheading}>Distribute Revenue Shares</h2>
+              <button onClick={() => setShowDistributePage(true)} className={styles.button}>
+                Revenue Share Options
+              </button>
+            </div>
+
+            {/* Reports Section */}
+            <div className={styles.section}>
+              <h2 className={styles.subheading}>Reports</h2>
+              <button onClick={() => setShowReports(true)} className={styles.button}>
+                View Reports
+              </button>
+            </div>
+          </div>
+
+          {/* Reports Component */}
+          {showReports && <Reports onClose={handleCloseReports} />}
+
+          {/* Distribute Revenue Shares Component */}
+          {showDistributePage && <DistributeRevShare onBack={handleCloseDistribute} />}
+        </>
+      )}
     </div>
   );
 };

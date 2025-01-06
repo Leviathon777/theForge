@@ -1,0 +1,404 @@
+/* Reset and Basic Styles */
+.chessgamecontainer {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #1a1a1a;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+/* Control Buttons */
+.controls {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: 2px solid #555;
+    background: linear-gradient(145deg, #333, #111);
+    color: #FFD700;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.button:hover {
+    background: linear-gradient(145deg, #555, #222);
+    box-shadow: 0 8px 15px rgba(255, 215, 0, 0.5);
+}
+
+/* Container for Scoreboards and Chessboard */
+.container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+}
+
+/* Scoreboards */
+.scoreboard {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    color: #FFD700;
+    margin: 0 20px;
+}
+
+.scoreboard ul {
+    list-style: none;
+    margin-top: 10px;
+    padding-left: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.scoreboard li {
+    margin-bottom: 5px;
+}
+
+/* Chessboard Scene */
+.scene {
+    width: 800px;
+    height: 800px;
+    margin-top: 20px;
+    position: relative;
+}
+
+.chessboard {
+    position: relative; /* Containing block for absolutely positioned pieces */
+    width: 800px;
+    height: 800px;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+    background-color: #444; /* Slightly lighter than background */
+}
+
+.square {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(145deg, #1c1c1c, #101010); /* Light squares */
+    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.square.black {
+    background: linear-gradient(145deg, #0d0d0d, #050505); /* Dark squares */
+}
+
+.validMove {
+    background: rgba(0, 255, 0, 0.3);
+    border: 2px solid #00FF00;
+    border-radius: 5px;
+}
+
+/* Chess Pieces */
+.piece {
+    width: 80px;
+    height: 80px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    position: absolute; /* Absolutely positioned within the chessboard */
+    transform: translate(-50%, -50%);
+    transition: top 0.5s ease, left 0.5s ease, opacity 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 2; /* Default z-index */
+}
+
+.white {
+    z-index: 3; /* Ensure white pieces are on top */
+}
+
+.black {
+    z-index: 2;
+}
+
+.selected {
+    outline: 3px solid #FFD700;
+}
+
+.piece:hover {
+    transform: translate(-50%, -50%) scale(1.2);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); /* Glow effect */
+    z-index: 10; /* Bring hovered piece to the front */
+}
+
+/* HUD */
+.hud {
+    margin-top: 20px;
+    font-size: 20px;
+    color: #FFD700;
+}
+
+/* Modal Styles for Piece Details */
+.modal {
+    display: flex; /* Flex to center the modal */
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 100; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8); /* Black with opacity */
+}
+
+.modalContent {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px; /* Adjust as needed */
+    border-radius: 10px;
+    color: #fff;
+    text-align: center;
+    position: relative;
+}
+
+.modalContent img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+}
+
+.closeBtn {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.closeBtn:hover,
+.closeBtn:focus {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Turn Display */
+.turnDisplay {
+    margin-top: 10px;
+    font-size: 20px;
+    color: #FFD700;
+}
+
+
+
+/* components/misc/ChessGame.module.css */
+
+.chess_modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000; /* Ensure it's above all other elements */
+  }
+  
+  .chess_content {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    text-align: center;
+    color: white;
+  }
+  
+  .close_chess_button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+/* Reset and Basic Styles */
+.chessgamecontainer {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #1a1a1a;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+/* Control Buttons */
+.controls {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: 2px solid #555;
+    background: linear-gradient(145deg, #333, #111);
+    color: #FFD700;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.button:hover {
+    background: linear-gradient(145deg, #555, #222);
+    box-shadow: 0 8px 15px rgba(255, 215, 0, 0.5);
+}
+
+/* Container for Scoreboards and Chessboard */
+.container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+}
+
+/* Scoreboards and HUD */
+.scoreboard, .hud {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    color: #FFD700;
+    margin: 0 20px;
+}
+
+.scoreboard ul {
+    list-style: none;
+    margin-top: 10px;
+    padding-left: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.scoreboard li {
+    margin-bottom: 5px;
+}
+
+/* Chessboard Scene */
+.scene {
+    width: 800px;
+    height: 800px;
+    margin-top: 20px;
+    position: relative;
+}
+
+.chessboard {
+    position: relative; /* Containing block for absolutely positioned pieces */
+    width: 800px;
+    height: 800px;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+    background-color: #444; /* Slightly lighter than background */
+}
+
+.square {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(145deg, #1c1c1c, #101010); /* Light squares */
+    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.square.black {
+    background: linear-gradient(145deg, #0d0d0d, #050505); /* Dark squares */
+}
+
+.validMove {
+    background: rgba(0, 255, 0, 0.3);
+    border: 2px solid #00FF00;
+    border-radius: 5px;
+}
+
+.highlightedSquare {
+    background: rgba(0, 255, 0, 0.2);
+    border: 2px dashed #00FF00;
+    border-radius: 5px;
+}
+
+/* Chess Pieces */
+.piece {
+    width: 80px;
+    height: 80px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    position: absolute; /* Absolutely positioned within the chessboard */
+    transform: translate(-50%, -50%);
+    transition: box-shadow 0.3s ease;
+    z-index: 2; /* Default z-index */
+}
+
+.white {
+    z-index: 3; /* Ensure white pieces are on top */
+}
+
+.black {
+    z-index: 2;
+}
+
+.selected {
+    outline: 3px solid #FFD700;
+}
+
+/* Removed .piece:hover to make interactions non-obvious */
+
+/* HUD */
+.hud {
+    margin-top: 20px;
+    font-size: 20px;
+    color: #FFD700;
+}
+
+/* Turn Display */
+.turnDisplay {
+    margin-top: 10px;
+    font-size: 20px;
+    color: #FFD700;
+}
+
+

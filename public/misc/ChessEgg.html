@@ -1,0 +1,2768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Chess with AI</title>
+    <style>
+        /* Reset and Basic Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0; /* Ensure no extra margins */
+            background-color: #1a1a1a; /* Backup color if image fails to load */
+            background-image: url('https://favorminded.com/chessbg.webp'); /* Replace with your actual image filename */
+            background-size: cover; /* Makes the image cover the entire screen */
+            background-repeat: no-repeat; /* Prevents the image from repeating */
+            background-attachment: fixed; /* Keeps the image in place even when scrolling */
+            background-position: center; /* Centers the image */
+            font-family: Arial, sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px 0;
+        }
+
+        /* Container for Chessboard and Scoreboards */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 1368px;
+            gap: 40px; /* Space between scoreboards and chessboard */
+            padding: 20px 0;
+        }
+
+        /* Scoreboards */
+        .scoreboard {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFD700;
+            flex: 1; /* Allows scoreboards to take equal space */
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8); /* Deep shadow */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Space between captures and move history */
+            height: 800px; /* Match the chessboard height */
+            position: relative;
+        }
+
+        /* Captured Pieces Section */
+        .captured-pieces {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .scoreboard h3 {
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+        }
+
+        .scoreboard ul {
+            list-style: none;
+            padding-left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .scoreboard li {
+            margin-bottom: 5px;
+            text-align: center;
+            font-size: 18px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.7); /* Slight shadow for list items */
+        }
+
+        /* Highlight bonus captures in move history */
+        .move-history li.bonus-capture {
+            color: #FFD700; /* Gold color */
+            font-weight: bold;
+            background-color: rgba(255, 215, 0, 0.2); /* Slight gold background */
+            border-radius: 3px;
+        }
+
+        /* Move History Section */
+        .move-history {
+            flex: 1;
+            overflow-y: auto;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .move-history h3 {
+            text-align: left; /* Left-justify the heading */
+            margin-bottom: 5px;
+            font-size: 18px;
+            color: #FFD700;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .move-history ul {
+            list-style: none;
+            padding-left: 0;
+            max-height: 420px; /* Adjust as needed */
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
+            border-radius: 5px;
+            padding: 5px;
+            text-align: left; /* Left-justify the move list */
+        }
+
+        .move-history li {
+            margin-bottom: 3px;
+            font-size: 12px; /* Very small letters */
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            white-space: nowrap; /* Prevent line breaks */
+        }
+
+        /* Suggested Moves Section */
+        .suggested-moves {
+            position: fixed;
+            bottom: 20px;
+            right: 20px; /* Positioned on the right */
+            width: 220px; /* Slightly wider for grid layout */
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7); /* Darker background for readability */
+            border: 2px solid #fff; /* White outline */
+            border-radius: 10px;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            z-index: 50; /* Ensure it stays on top */
+        }
+
+        .suggested-moves h3 {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #FFD700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .suggested-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 columns for a compact grid */
+            grid-gap: 5px;
+            border: 1px solid #fff; /* White grid lines */
+            padding: 5px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1); /* Slightly visible background */
+        }
+
+        .suggested-grid::before,
+        .suggested-grid::after {
+            content: '';
+            grid-column: 1 / -1;
+            grid-row: 1 / -1;
+            border: 1px solid #fff;
+            pointer-events: none;
+        }
+
+        .suggested-move {
+            background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent squares */
+            border: 1px solid #fff; /* White border */
+            padding: 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .suggested-move:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* 3. Flashing Animation for Suggested Move */
+        @keyframes flash {
+            0% { background-color: rgba(255, 255, 255, 0.2); }
+            50% { background-color: rgba(255, 215, 0, 0.4); }
+            100% { background-color: rgba(255, 255, 255, 0.2); }
+        }
+
+        .suggested-move.best-move {
+            animation: flash 3s infinite;
+        }
+
+        /* Chess Openings Section */
+        .openings-section {
+            position: fixed;
+            bottom: 260px; /* Positioned above the Suggested Moves */
+            right: 20px;
+            width: 220px; /* Same width as Suggested Moves for consistency */
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7); /* Darker background for readability */
+            border: 2px solid #fff; /* White outline */
+            border-radius: 10px;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            z-index: 50; /* Ensure it stays on top */
+        }
+
+        .openings-section h3 {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #FFD700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .openings-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Single column for openings */
+            grid-gap: 5px;
+            border: 1px solid #fff; /* White grid lines */
+            padding: 5px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1); /* Slightly visible background */
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .opening-card {
+            background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent background */
+            border: 1px solid #fff; /* White border */
+            padding: 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .opening-card:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        .opening-card h4 {
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #FFD700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .opening-card p {
+            font-size: 12px;
+            color: #ccc;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* Chessboard Scene */
+        .scene {
+            width: 800px;
+            height: 800px;
+            position: relative;
+        }
+
+        .chessboard {
+            position: relative; /* Containing block for absolutely positioned pieces */
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .square {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(145deg, #1c1c1c, #101010); /* Light squares */
+            box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+
+        .square.black {
+            background: linear-gradient(145deg, #0d0d0d, #050505); /* Dark squares */
+        }
+
+        /* Highlight valid moves */
+        .valid-move {
+            background: rgba(0, 255, 0, 0.3);
+            border: 2px solid #00FF00;
+            border-radius: 5px;
+        }
+
+        /* Chess Pieces */
+        .piece {
+            width: 80px;
+            height: 80px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: pointer;
+            position: absolute; /* Absolutely positioned within the chessboard */
+            transform: translate(-50%, -50%);
+            transition: top 0.5s ease, left 0.5s ease, opacity 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 2; /* Default z-index */
+            border-radius: 4px;
+        }
+
+        .piece.white {
+            z-index: 3; /* Ensure white pieces are on top */
+        }
+
+        .piece.black {
+            z-index: 2;
+        }
+
+        .piece.in-check {
+            box-shadow: 0 0 20px red; /* Red glow when in check */
+        }
+
+        .piece:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); /* Glow effect */
+            z-index: 10; /* Bring hovered piece to the front */
+        }
+
+        .selected {
+            outline: 3px solid #FFD700;
+        }
+
+        /* Bottom Information Container */
+        .bottom-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px 0;
+            gap: 40px; /* Space between HUD and Instructions */
+        }
+
+        /* HUD and Turn Display */
+        .hud-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.7); /* Deep shadow */
+        }
+
+        .hud, .turn-display {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            font-size: 20px;
+            color: #FFD700;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6); /* Deep shadow */
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.8); /* Slight shadow for text */
+        }
+
+        /* Add classes for player text colors */
+        .white-text {
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .black-text {
+            /* Text Styling */
+            color: #000000; /* Black text */
+            font-weight: bold;
+            font-size: 1.2em; /* Optional: Adjust size as needed */
+
+            /* Background Highlight */
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+
+            text-shadow:
+                1px 1px 2px rgba(255, 255, 255, 0.5), /* Light shadow */
+                -1px -1px 2px rgba(0, 0, 0, 0.7);   /* Dark shadow */
+        }
+
+        /* Instructions Section */
+        .instructions-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.8);
+        }
+
+        .instructions {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px; /* Increased from 400px to 600px */
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6); /* Deep shadow */
+        }
+
+        .instructions h2 {
+            margin-bottom: 10px;
+            color: #FFD700;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.7); /* Deeper shadow */
+            font-size: 28px; /* Slightly larger font for emphasis */
+            font-weight: bold;
+            text-align: center; /* Center alignment */
+            margin-bottom: 15px;
+        }
+
+        .instructions p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            text-align: left; /* Left-align the regular text */
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5); /* Slight shadow for better readability */
+        }
+
+        .instructions strong {
+            color: #FFD700; /* Gold color for labels */
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5); /* Slight shadow */
+        }
+
+        .highlight {
+            color: #FFD700; /* Highlight color for tokens */
+            font-weight: bold;
+        }
+
+        /* Control Buttons Positioned Under HUD and Turn Display */
+        .controls {
+            width: 100%;
+            max-width: 350px; /* Adjusted to fit within the HUD container */
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px 0; /* Reduced padding to fit neatly under the HUD */
+            margin-top: 20px; /* Space above the buttons */
+        }
+
+        .button {
+            padding: 10px 20px;
+            border: 2px solid #555;
+            background: linear-gradient(145deg, #333, #111);
+            color: #FFD700;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        .button:hover {
+            background: linear-gradient(145deg, #555, #222);
+            box-shadow: 0 8px 15px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Placeholder for Capture Sounds (Hidden Audio Elements) */
+        .audio-placeholder {
+            display: none;
+        }
+
+        /* Modal Styles for Piece Details */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 100; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #2a2a2a;
+            margin: 10% auto; /* 10% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 400px; /* Could be more or less, depending on screen size */
+            border-radius: 10px;
+            color: #fff;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8); /* Deep shadow */
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5); /* Slight shadow for text */
+            text-align: left;
+        }
+
+        .modal-content p {
+            margin-bottom: 20px;
+            font-size: 16px;
+            text-shadow: 3px 3px 8px rgba(0,0,0,0.8); /* Slight shadow for text */
+            text-align: left; /* Ensure paragraph is left-aligned */
+        }
+
+        /* Removed the img tag and added video styling */
+        .modal-content video {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Modal Styles for Claim */
+        .claim-modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 101; /* Above other modals */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+        }
+
+        .claim-modal-content {
+            background-color: #2a2a2a;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px; /* Could be more or less, depending on screen size */
+            border-radius: 10px;
+            color: #fff;
+
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8); /* Deep shadow */
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5); /* Slight shadow for text */
+            background-image: url('https://favorminded.com/claimbg.webp');
+            background-size: cover; /* Makes the image cover the entire modal */
+            background-repeat: no-repeat; /* Prevents tiling of the image */
+            background-position: center; /* Centers the image in the modal */
+        }
+
+        .claim-modal-content p {
+            margin-bottom: 20px;
+            font-size: 16px;
+            text-shadow: 3px 3px 8px rgba(0,0,0,0.8); /* Slight shadow for text */
+        }
+
+        .claim-close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .claim-close-btn:hover,
+        .claim-close-btn:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .claim-button {
+            padding: 8px 16px;
+            border: 2px solid #555;
+            background: linear-gradient(145deg, #333, #111);
+            color: #FFD700;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        .claim-button:hover {
+            background: linear-gradient(145deg, #555, #222);
+            box-shadow: 0 8px 15px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Token Display Animation */
+        .token-animation {
+            transition: transform 1s ease-in-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1000px) {
+            .container, .bottom-info {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .scene {
+                width: 600px;
+                height: 600px;
+            }
+
+            .chessboard {
+                width: 100%;
+                height: 100%;
+            }
+
+            .instructions, .hud, .turn-display {
+                max-width: 300px;
+            }
+
+            /* Adjust move history max-height for smaller screens */
+            .move-history ul {
+                max-height: 120px;
+            }
+
+            .scoreboard {
+                height: 600px; /* Adjust height for smaller screens */
+            }
+
+            /* Adjust Suggested Moves for smaller screens */
+            .suggested-moves {
+                width: 180px;
+                padding: 8px;
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .suggested-moves h3 {
+                font-size: 14px;
+            }
+
+            .suggested-grid {
+                grid-template-columns: repeat(2, 1fr); /* Adjust grid columns */
+            }
+
+            .suggested-move {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            /* Adjust Openings Section for smaller screens */
+            .openings-section {
+                width: 180px;
+                padding: 8px;
+                bottom: 240px; /* Adjust position above Suggested Moves */
+                right: 10px;
+            }
+
+            .openings-section h3 {
+                font-size: 14px;
+            }
+
+            .opening-card {
+                font-size: 12px;
+                padding: 6px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .scene {
+                width: 400px;
+                height: 400px;
+            }
+
+            .chessboard {
+                width: 100%;
+                height: 100%;
+            }
+
+            .instructions, .hud, .turn-display {
+                max-width: 250px;
+                font-size: 16px;
+            }
+
+            .button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+
+            /* Further adjust move history for very small screens */
+            .move-history ul {
+                max-height: 100px;
+            }
+
+            .scoreboard {
+                height: 400px; /* Adjust height for very small screens */
+            }
+
+            /* Adjust Suggested Moves for very small screens */
+            .suggested-moves {
+                width: 140px;
+                padding: 6px;
+                bottom: 5px;
+                right: 5px;
+            }
+
+            .suggested-moves h3 {
+                font-size: 12px;
+            }
+
+            .suggested-grid {
+                grid-template-columns: 1fr; /* Single column grid */
+            }
+
+            .suggested-move {
+                font-size: 10px;
+                padding: 5px;
+            }
+
+            /* Adjust Openings Section for very small screens */
+            .openings-section {
+                width: 140px;
+                padding: 6px;
+                bottom: 220px; /* Adjust position above Suggested Moves */
+                right: 5px;
+            }
+
+            .openings-section h3 {
+                font-size: 12px;
+            }
+
+            .opening-card {
+                font-size: 10px;
+                padding: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Container for Chessboard and Scoreboards -->
+    <div class="container">
+        <!-- White Scoreboard -->
+        <div class="scoreboard" id="whiteScore">
+            <!-- Captured Pieces Section -->
+            <div class="captured-pieces">
+                <h3>White Captures:</h3>
+                <ul id="whiteCapturedList">
+                    <!-- Captured Black Pieces by White -->
+                </ul>
+            </div>
+            
+            <!-- Move History Section -->
+            <div class="move-history">
+                <h3>Move History:</h3>
+                <ul id="moveHistoryList">
+                    <!-- Moves will be appended here -->
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Chessboard -->
+        <div class="scene">
+            <div class="chessboard" id="chessboard"></div>
+        </div>
+        
+        <!-- Black Scoreboard -->
+        <div class="scoreboard" id="blackScore">
+            <!-- Captured Pieces Section -->
+            <div class="captured-pieces">
+                <h3>Black Captures:</h3>
+                <ul id="blackCapturedList">
+                    <!-- Captured White Pieces by Black -->
+                </ul>
+            </div>
+            
+            <!-- Optional: You can add another move history here if needed for black -->
+            <!-- Currently, only White scoreboard has move history -->
+        </div>
+    </div>
+
+    <!-- Chess Openings Section -->
+    <div class="openings-section" id="chessOpenings">
+        <h3>Chess Openings</h3>
+        <div class="openings-grid" id="openingsGrid">
+            <!-- Openings will be dynamically loaded here as grid cells -->
+        </div>
+    </div>
+
+    <!-- Suggested Moves Section -->
+    <div class="suggested-moves" id="suggestedMoves">
+        <h3>Suggested Moves</h3>
+        <div class="suggested-grid" id="suggestedGrid">
+            <!-- Suggested moves will be appended here as grid cells -->
+        </div>
+    </div>
+
+    <!-- Bottom Information: HUD and Instructions -->
+    <div class="bottom-info">
+        <!-- HUD and Turn Display -->
+        <div class="hud-container">
+            <div class="hud" id="tokenDisplay">
+                XdRiP Earned: 0.0001
+            </div>
+            <div class="turn-display" id="turnDisplay">
+                Current Turn: <span id="currentPlayer" class="white-text">White</span>
+            </div>
+            
+            <!-- Control Buttons Underneath HUD and Turn Display -->
+            <div class="controls">
+                <button class="button" id="onePlayer">1 Player</button>
+                <button class="button" id="twoPlayers">2 Players</button>
+                <button class="button" id="resetBoard">Reset Board</button>
+                <button id="fullscreenButton" class="button fullscreen-btn">Toggle Fullscreen</button>
+            </div>
+        </div>
+
+        <!-- Instructions Section -->
+        <div class="instructions-container">
+            <div class="instructions">
+                <h2>How to Play</h2>
+                <p>
+                    <strong>1 Player Mode:</strong> Play against the machine. Select "1 Player" to start a game where you control the White pieces and the AI controls the Black pieces.
+                </p>
+                <p>
+                    <strong>2 Players Mode:</strong> Play against another human. Select "2 Players" to take turns controlling the White and Black pieces.
+                </p>
+                <!-- New Line Added -->
+                <p>
+                    <strong>Suggested Moves:</strong> After selecting a piece, suggested moves will appear below. Click on a suggested move to execute it.
+                </p>
+                <p>
+                    <strong>Right-Click on a Piece:</strong> Right-click any piece on the board to view detailed information about it. **Discover the hidden bonus piece by capturing opponent's pieces to earn extra tokens!**
+                </p>
+                <p>
+                    <strong>Mining XdRiP:</strong> As you play, you're also mining <span class="highlight">XdRiP</span> tokens. Your mining rate increases with each successful move, allowing you to accumulate more tokens over time.
+                </p>
+                <p>
+                    <strong>Holding XdRiP:</strong> By holding onto your earned <span class="highlight">XdRiP</span> tokens, you unlock higher revenue shares. The more you hold, the more revenue share you receive.
+                </p>
+                <p>
+                    <strong>Congratulations!</strong> Keep playing to maximize your XdRiP earnings and enjoy the benefits of increased revenue shares.
+                </p>
+                <!-- Updated Small Print with Claim Details -->
+                <p style="font-size: 10px; color: #ccc;">
+                    Minimum cash out is 100 XdRiP. For your security, this game cannot connect to your wallet. Balances must be <a href="#" id="claimLink" style="color: #FFD700; text-decoration: underline;">claimed</a>. Maximum of 1000 tokens may be claimed before restart.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Placeholder Audio Elements for Capture Sounds -->
+    <div class="audio-placeholder">
+        <!-- Replace the 'src' attribute with actual sound file paths -->
+        <audio id="whiteCaptureSound">
+            <source src="https://your-audio-url.com/sounds/white-capture.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <audio id="blackCaptureSound">
+            <source src="https://your-audio-url.com/sounds/black-capture.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <!-- Modal for Piece Details -->
+    <div id="pieceModal" class="modal" aria-labelledby="modalPieceName" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <span class="close-btn" aria-label="Close">&times;</span>
+            <!-- Replaced img with video for autoplaying piece details -->
+            <video id="modalPieceVideo" autoplay muted loop></video>
+            
+            <!-- Updated H2 Element -->
+            <h2 id="modalPieceName" class="instruction" style="
+                color: #FFD700; 
+                text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.8);
+                text-align: center;
+                font-family: 'Cinzel', serif; /* Optional: Epic, military-style font */
+                font-size: 28px; /* Adjust size as needed */
+                margin-bottom: 15px; /* Space below the title */
+            ">
+                Piece Name
+            </h2>
+            
+            <!-- Description Paragraph -->
+            <p id="modalPieceDescription" style="
+                text-align: left;
+                color: #FFFFFF; /* Ensures the description is readable */
+                text-shadow: 2px 2px 5px rgba(0,0,0,0.6); /* Subtle shadow for depth */
+                font-size: 16px; /* Adjust size as needed */
+            ">
+                Piece Description
+            </p>
+            
+            <!-- Bonus Notification -->
+            <p id="bonusNotification" class="bonus-notification" style="display: none;">
+                You just earned 5 XdRiP!
+            </p>
+        </div>
+    </div>
+
+
+    <!-- Modal for Claim -->
+    <div id="claimModal" class="claim-modal" aria-labelledby="claimModalTitle" role="dialog" aria-modal="true">
+        <div class="claim-modal-content">
+            <span class="claim-close-btn" aria-label="Close">&times;</span>
+            <h2 id="claimModalTitle">Claim XdRiP</h2>
+            <p id="claimModalMessage">Checking your balance...</p>
+            <button id="claimButton" class="claim-button" style="display: none;">Take Screenshot</button>
+        </div>
+    </div>
+
+    <!-- Consolidated JavaScript -->
+    <script>
+        // Set your base URLs for images and videos here
+        const baseImageUrl = 'https://favorminded.com/'; // Replace with your actual image base URL
+        const baseVideoUrl = 'https://favorminded.com/'; // Replace with your actual video base URL
+
+        // Select DOM Elements
+        const chessboard = document.getElementById('chessboard');
+        const whiteCapturedList = document.getElementById('whiteCapturedList');
+        const blackCapturedList = document.getElementById('blackCapturedList');
+        const tokenDisplay = document.getElementById('tokenDisplay');
+        const resetButton = document.getElementById('resetBoard');
+        const turnDisplay = document.getElementById('turnDisplay');
+        const currentPlayerSpan = document.getElementById('currentPlayer');
+        const controlsContainer = document.querySelector('.controls');
+
+        // Audio Elements for Capture Sounds
+        const whiteCaptureSound = document.getElementById('whiteCaptureSound');
+        const blackCaptureSound = document.getElementById('blackCaptureSound');
+
+        // Modal Elements
+        const pieceModal = document.getElementById('pieceModal');
+        const modalPieceVideo = document.getElementById('modalPieceVideo');
+        const modalPieceName = document.getElementById('modalPieceName');
+        const modalPieceDescription = document.getElementById('modalPieceDescription');
+        const closeBtn = document.querySelector('.close-btn');
+        const bonusNotification = document.getElementById('bonusNotification');
+
+        // Claim Modal Elements
+        const claimModal = document.getElementById('claimModal');
+        const claimCloseBtn = document.querySelector('.claim-close-btn');
+        const claimLink = document.getElementById('claimLink');
+        const claimModalMessage = document.getElementById('claimModalMessage');
+        const claimButton = document.getElementById('claimButton');
+
+        // Suggested Moves Elements
+        const suggestedMovesDiv = document.getElementById('suggestedMoves');
+        const suggestedGrid = document.getElementById('suggestedGrid');
+
+        // Chess Openings Elements
+        const openingsGrid = document.getElementById('openingsGrid');
+
+        // Define Piece Order for Initial Setup
+        const pieceOrder = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
+
+        // Piece Descriptions with Video URLs
+        const pieceDescriptions = {
+            'white': {
+                'pawn': {
+                    name: 'White Pawn',
+                    description: 'A brave warrior of XdRiPia, the White Pawn advances with unwavering determination in the XGames, striving to enhance their combat prowess and secure victory for their team.',
+                    videoUrl: `${baseVideoUrl}white-pawn.mp4` // Replace with your actual video URL
+                },
+                'rook': {
+                    name: 'White Rook',
+                    description: 'A steadfast defender, the White Rook fortifies the team\'s frontlines in the XGames, embodying resilience and strategic strength to protect their comrades and uphold honor.',
+                    videoUrl: `${baseVideoUrl}white-rook.mp4`
+                },
+                'knight': {
+                    name: 'White Knight',
+                    description: 'An agile fighter, the White Knight maneuvers unpredictably across the battlefield in the XGames, refining tactical skills with every daring leap and strategic strike.',
+                    videoUrl: `${baseVideoUrl}white-knight.mp4`
+                },
+                'bishop': {
+                    name: 'White Bishop',
+                    description: 'A tactical commander, the White Bishop sweeps diagonally through the XGames arena, honing precision and strategic acumen with every calculated move and decisive action.',
+                    videoUrl: `${baseVideoUrl}white-bishop.mp4`
+                },
+                'queen': {
+                    name: 'White Queen',
+                    description: 'The elite warrior, the White Queen leads the charge in the XGames, showcasing unmatched versatility and commanding presence to dominate the battlefield and inspire allies.',
+                    videoUrl: `${baseVideoUrl}white-queen.mp4`
+                },
+                'king': {
+                    name: 'White King',
+                    description: 'The supreme leader, the White King oversees the XGames strategy, ensuring the team\'s integrity and orchestrating victories through unwavering leadership and tactical brilliance.',
+                    videoUrl: `${baseVideoUrl}white-king.mp4`
+                }
+            },
+            'black': {
+                'pawn': {
+                    name: 'Black Pawn',
+                    description: 'A relentless soldier of XdRiPia, the Black Pawn advances with unyielding courage in the XGames, striving to enhance their combat skills and secure triumph for their team.',
+                    videoUrl: `${baseVideoUrl}black-pawn.mp4`
+                },
+                'rook': {
+                    name: 'Black Rook',
+                    description: 'A formidable guardian, the Black Rook strengthens the team\'s defenses in the XGames, embodying unwavering resilience and strategic might to safeguard their allies.',
+                    videoUrl: `${baseVideoUrl}black-rook.mp4`
+                },
+                'knight': {
+                    name: 'Black Knight',
+                    description: 'A swift tactician, the Black Knight navigates the XGames arena with agility, refining strategic maneuvers and executing daring strikes to outmaneuver opponents.',
+                    videoUrl: `${baseVideoUrl}black-knight.mp4`
+                },
+                'bishop': {
+                    name: 'Black Bishop',
+                    description: 'A strategic commander, the Black Bishop sweeps diagonally through the XGames battlefield, honing precision and tactical expertise with each move and decisive action.',
+                    videoUrl: `${baseVideoUrl}black-bishop.mp4`
+                },
+                'queen': {
+                    name: 'Black Queen',
+                    description: 'The dominant force, the Black Queen commands the XGames arena with unparalleled versatility and authority, leading the team to victory through strategic mastery.',
+                    videoUrl: `${baseVideoUrl}black-queen.mp4`
+                },
+                'king': {
+                    name: 'Black King',
+                    description: 'The paramount leader, the Black King orchestrates the team\'s strategy in the XGames, ensuring their integrity and guiding them towards triumph with steadfast leadership.',
+                    videoUrl: `${baseVideoUrl}black-king.mp4`
+                }
+            }
+        };
+
+        // Chess Openings Data
+        const chessOpenings = [
+            {
+                name: "Ruy López (Spanish Opening)",
+                moves: ["e4", "e5", "Nf3", "Nc6", "Bb5"]
+            },
+            {
+                name: "Sicilian Defense",
+                moves: ["e4", "c5"]
+            },
+            {
+                name: "French Defense",
+                moves: ["e4", "e6"]
+            },
+            {
+                name: "Caro-Kann Defense",
+                moves: ["e4", "c6"]
+            },
+            {
+                name: "Italian Game",
+                moves: ["e4", "e5", "Nf3", "Nc6", "Bc4"]
+            },
+            {
+                name: "English Opening",
+                moves: ["c4"]
+            },
+            {
+                name: "Scandinavian Defense",
+                moves: ["e4", "d5"]
+            },
+            {
+                name: "Queen's Gambit",
+                moves: ["d4", "d5", "c4"]
+            },
+            {
+                name: "King's Indian Defense",
+                moves: ["d4", "Nf6", "c4", "g6"]
+            },
+            {
+                name: "Nimzo-Indian Defense",
+                moves: ["d4", "Nf6", "c4", "e6", "Nc3", "Bb4"]
+            }
+        ];
+
+        // Game State Variables
+        let selectedPiece = null;
+        let playerTurn = 'white'; // Current player's turn
+        let gameMode = 'twoPlayers';
+        let scores = { white: 0, black: 0 };
+        let tokens = 0.0001; // Start at 0.0001
+        let whiteCaptured = [];
+        let blackCaptured = [];
+        let isMoving = false; // Flag to prevent overlapping moves
+        let isApplyingOpening = false; // Flag to indicate if an opening is being applied
+
+        // Bonus Feature Variables
+        let bonusPiece = null;      // The randomly selected bonus piece
+        let bonusAwarded = false;   // Flag to ensure bonus is awarded only once
+
+        // Initialize move counter
+        let moveNumber = 1;
+
+        // Variables for Token Animation
+        let displayedTokens = 0.0001;
+        let animationInProgress = false;
+
+        // Initialize the board on page load
+        initializeBoard();
+
+        // Flag to ensure startTokenIncrement is called only once
+        let tokenIncrementStarted = false;
+
+        // Event Listeners for Game Mode Buttons
+        document.getElementById('onePlayer').addEventListener('click', () => {
+            if (isMoving || isApplyingOpening) {
+                alert('Cannot change game mode during a move or while applying an opening.');
+                return;
+            }
+            gameMode = 'onePlayer';
+            console.log(`Game mode set to ${gameMode}`);
+            alert('1 Player mode selected. You are playing as White.');
+            resetGame();
+        });
+
+        document.getElementById('twoPlayers').addEventListener('click', () => {
+            if (isMoving || isApplyingOpening) {
+                alert('Cannot change game mode during a move or while applying an opening.');
+                return;
+            }
+            gameMode = 'twoPlayers';
+            console.log(`Game mode set to ${gameMode}`);
+            alert('2 Players mode selected.');
+            resetGame();
+        });
+
+        // Event Listener for Reset Button
+        resetButton.addEventListener('click', () => {
+            if (isMoving || isApplyingOpening) {
+                alert('Cannot reset the board during a move or while applying an opening.');
+                return;
+            }
+            resetGame();
+        });
+
+        // Event Listeners for Openings
+        document.addEventListener('DOMContentLoaded', () => {
+            loadChessOpenings();
+        });
+
+        // Function to Load and Display Chess Openings
+        function loadChessOpenings() {
+            openingsGrid.innerHTML = ''; // Clear existing openings
+
+            chessOpenings.forEach(opening => {
+                const card = document.createElement('div');
+                card.classList.add('opening-card');
+                card.innerHTML = `
+                    <h4>${opening.name}</h4>
+                    <p>${opening.moves.join(', ')}</p>
+                `;
+
+                // Add click event to apply the opening
+                card.addEventListener('click', () => {
+                    applyOpening(opening.moves);
+                });
+
+                openingsGrid.appendChild(card);
+            });
+
+            console.log('Chess openings loaded and displayed.');
+        }
+
+        // Function to Apply an Opening to the Chessboard
+        async function applyOpening(moves) {
+            if (isMoving || isApplyingOpening) {
+                alert('Cannot apply an opening during a move or while applying another opening.');
+                return;
+            }
+
+            isApplyingOpening = true;
+            resetGame(); // Reset the board first
+
+            console.log(`Applying opening: ${moves.join(', ')}`);
+
+            for (let i = 0; i < moves.length; i++) {
+                const move = moves[i];
+                await new Promise(resolve => setTimeout(resolve, 500)); // Wait 500ms between moves
+                await makeMove(move, true); // Pass 'true' to indicate that the move is part of an opening
+            }
+
+            isApplyingOpening = false;
+            console.log('Opening applied successfully.');
+        }
+
+        // Function to Record Moves with Clear Chess Terminology
+        function recordMove(color, type, from, to, capture = false, capturedType = null, isBonusCapture = false) {
+            const moveList = document.getElementById('moveHistoryList');
+            const li = document.createElement('li');
+
+            // Create move description based on capture or simple move
+            let moveText = '';
+
+            if (capture && capturedType) {
+                moveText = `${color === 'white' ? moveNumber + '. White' : '   Black'} ${capitalizeFirstLetter(type)} captures ${capitalizeFirstLetter(capturedType)} on ${to}`;
+                if (isBonusCapture) {
+                    moveText += ' (Bonus Piece)';
+                    li.classList.add('bonus-capture'); // Add class for special styling
+                }
+            } else {
+                moveText = `${color === 'white' ? moveNumber + '. White' : '   Black'} ${capitalizeFirstLetter(type)} moves to ${to}`;
+            }
+
+            li.textContent = moveText;
+            moveList.appendChild(li);
+
+            // Display the Move History section if this is the first move
+            if (moveList.children.length === 1) {
+                document.querySelector('.move-history').style.display = 'block';
+            }
+
+            // Increment move number after Black's move
+            if (color === 'black') {
+                moveNumber++;
+            }
+        }
+
+        // Function to Toggle Player Turn
+        function togglePlayerTurn() {
+            playerTurn = playerTurn === 'white' ? 'black' : 'white';
+            // Update the span's text and class
+            currentPlayerSpan.textContent = capitalizeFirstLetter(playerTurn);
+            if (playerTurn === 'white') {
+                currentPlayerSpan.classList.remove('black-text');
+                currentPlayerSpan.classList.add('white-text');
+            } else {
+                currentPlayerSpan.classList.remove('white-text');
+                currentPlayerSpan.classList.add('black-text');
+            }
+            console.log(`togglePlayerTurn: playerTurn is now ${playerTurn}.`);
+        }
+
+        // Event Listener for Chessboard Clicks
+        chessboard.addEventListener('click', async (e) => {
+            if (isMoving || isApplyingOpening) {
+                console.log('A move or opening is currently in progress. Please wait.');
+                return;
+            }
+
+            let target = e.target;
+
+            // Traverse up the DOM tree to find if a piece or square was clicked
+            while (target && !target.classList.contains('piece') && !target.classList.contains('square') && target !== chessboard) {
+                target = target.parentElement;
+            }
+
+            if (!target || target === chessboard) return; // Clicked outside pieces and squares
+
+            if (target.classList.contains('piece')) {
+                const clickedPiece = target;
+                if (clickedPiece.dataset.color === playerTurn) {
+                    // Selecting your own piece
+                    console.log(`Attempting to select a ${clickedPiece.dataset.color} piece. Current player: ${playerTurn}`);
+                    selectPiece(clickedPiece);
+                } else {
+                    // Attempting to interact with opponent's piece
+                    if (selectedPiece) {
+                        const targetPosition = clickedPiece.dataset.position;
+                        const validMoves = getValidMoves(selectedPiece);
+
+                        if (validMoves.includes(targetPosition)) {
+                            console.log(`${capitalizeFirstLetter(selectedPiece.dataset.color)} ${capitalizeFirstLetter(selectedPiece.dataset.type)} attempting to capture ${capitalizeFirstLetter(clickedPiece.dataset.color)} ${capitalizeFirstLetter(clickedPiece.dataset.type)} at (${targetPosition})`);
+                            
+                            // Capture details before move
+                            const from = gridToChessNotation(...selectedPiece.dataset.position.split(',').map(Number));
+                            const to = gridToChessNotation(...targetPosition.split(',').map(Number));
+                            const type = selectedPiece.dataset.type;
+                            const color = selectedPiece.dataset.color;
+                            const capturedType = clickedPiece.dataset.type;
+
+                            isMoving = true; // Start of move
+
+                            // Await captureAndMove and get isBonusCapture flag
+                            let isBonusCapture = await captureAndMove(selectedPiece, clickedPiece, ...targetPosition.split(',').map(Number));
+
+                            // Record the move with isBonusCapture flag
+                            recordMove(color, type, from, to, true, capturedType, isBonusCapture);
+
+                            // Increment tokens for capture
+                            incrementTokens(0.005);
+
+                            togglePlayerTurn();
+
+                            checkGameOver();
+
+                            // AI Move
+                            if (gameMode === 'onePlayer' && playerTurn === 'black') {
+                                console.log('Triggering AI move.');
+                                setTimeout(async () => {
+                                    await makeComputerMove();
+                                    isMoving = false; // AI move completed
+                                }, 500);
+                                return; // Prevent setting isMoving to false prematurely
+                            }
+
+                            isMoving = false; // End of move
+                        } else {
+                            console.log(`Invalid capture attempt at: ${targetPosition}`);
+                            // Invalid capture, deselect
+                            deselectPiece();
+                            removeValidMoveHighlights();
+                        }
+                    } else {
+                        console.log(`It's not ${clickedPiece.dataset.color}'s turn.`);
+                        // No piece selected yet, cannot interact with opponent's piece
+                        return;
+                    }
+                }
+            } else if (target.classList.contains('square')) {
+                if (selectedPiece) {
+                    const targetPosition = target.dataset.position;
+                    const validMoves = getValidMoves(selectedPiece);
+
+                    console.log(`Attempting to move to: ${targetPosition}`);
+                    console.log(`Valid Moves:`, validMoves);
+
+                    // If the clicked square is a valid move
+                    if (validMoves.includes(targetPosition)) {
+                        const [targetRow, targetCol] = targetPosition.split(',').map(Number);
+                        const capturedPiece = getPieceAt(targetRow, targetCol);
+
+                        // Capture details before move
+                        const from = gridToChessNotation(...selectedPiece.dataset.position.split(',').map(Number));
+                        const to = gridToChessNotation(targetRow, targetCol);
+                        const type = selectedPiece.dataset.type;
+                        const color = selectedPiece.dataset.color;
+                        let capturedType = null;
+
+                        if (capturedPiece && capturedPiece.dataset.color !== color) {
+                            capturedType = capturedPiece.dataset.type;
+                        }
+
+                        isMoving = true; // Start of move
+
+                        if (capturedPiece && capturedPiece.dataset.color !== color) {
+                            console.log(`${capitalizeFirstLetter(color)} ${capitalizeFirstLetter(type)} attempting to capture ${capitalizeFirstLetter(capturedPiece.dataset.color)} ${capitalizeFirstLetter(capturedPiece.dataset.type)} at (${targetRow},${targetCol})`);
+                            // Capture the piece with animation and sound
+                            let isBonusCapture = await captureAndMove(selectedPiece, capturedPiece, targetRow, targetCol);
+
+                            // Record the move with isBonusCapture flag
+                            recordMove(color, type, from, to, true, capturedType, isBonusCapture);
+
+                            // Increment tokens for capture
+                            incrementTokens(0.005);
+
+                            togglePlayerTurn();
+
+                            checkGameOver();
+
+                            // AI Move
+                            if (gameMode === 'onePlayer' && playerTurn === 'black') {
+                                console.log('Triggering AI move.');
+                                setTimeout(async () => {
+                                    await makeComputerMove();
+                                    isMoving = false; // AI move completed
+                                }, 500);
+                                return; // Prevent setting isMoving to false prematurely
+                            }
+
+                            isMoving = false; // End of move
+                        } else {
+                            console.log(`${capitalizeFirstLetter(color)} ${capitalizeFirstLetter(type)} moving to (${targetRow},${targetCol}) without capturing.`);
+                            // Move the piece without capturing
+                            await movePiece(selectedPiece, targetRow, targetCol);
+                            // Increment tokens for move
+                            incrementTokens(0.001);
+                            // Update scores if necessary
+                            updateScores();
+
+                            // Record the move without bonus capture
+                            recordMove(color, type, from, to, false, null, false);
+
+                            togglePlayerTurn();
+                            checkGameOver();
+
+                            // AI Move
+                            if (gameMode === 'onePlayer' && playerTurn === 'black') {
+                                console.log('Triggering AI move.');
+                                setTimeout(async () => {
+                                    await makeComputerMove();
+                                    isMoving = false; // AI move completed
+                                }, 500);
+                                return; // Prevent setting isMoving to false prematurely
+                            }
+
+                            isMoving = false; // End of move
+                        }
+                    } else {
+                        console.log(`Invalid move attempted to: ${targetPosition}`);
+                        // Invalid move, deselect
+                        deselectPiece();
+                        removeValidMoveHighlights();
+                    }
+                }
+            }
+        });
+
+        // Event Listener for Right-Click (Context Menu) on Pieces and Board
+        chessboard.addEventListener('contextmenu', (e) => {
+            e.preventDefault(); // Prevent the default context menu
+
+            let target = e.target;
+
+            // Traverse up the DOM tree to find if a piece was clicked
+            while (target && !target.classList.contains('piece') && target !== chessboard) {
+                target = target.parentElement;
+            }
+
+            if (target.classList.contains('piece')) {
+                // Right-click on a piece
+                showPieceDetails(target);
+            } else {
+                // Right-click on the board or an empty square
+                showBoardDetails();
+            }
+        });
+
+        // Function to Show Board Details in Modal
+        function showBoardDetails() {
+            // Pause any currently playing piece video to prevent overlap
+            modalPieceVideo.pause();
+
+            // Set the video source to 'theboard4.mp4'
+            modalPieceVideo.src = `${baseVideoUrl}theboard4.mp4`; 
+
+            // Configure video playback properties
+            modalPieceVideo.autoplay = true;
+            modalPieceVideo.muted = true;
+            modalPieceVideo.loop = true;
+
+            // Display the video
+            modalPieceVideo.style.display = 'block';
+            modalPieceVideo.play().catch((error) => {
+                console.error(`Error playing board video: ${error}`);
+            });
+
+            // Update modal title
+            modalPieceName.textContent = 'The Board';
+
+            // Update modal description with enhanced HTML content
+            modalPieceDescription.innerHTML = `
+                <p>
+                    <strong>Welcome to The Board - </strong> the grand arena where strategy and honor converge. This Chessboard is not merely a game; it's a battlefield where every move echoes the valor and precision of the <em>Medals of Honor, The Guardians</em>.
+                </p>
+                <p>
+                    Here, the brave soldiers of <strong>XdRiPia</strong> come together in the <strong>XGames</strong> to enhance their undomitable fighting skills. Each piece you maneuver represents a warrior honing their tactical prowess, forging their legacy with every decisive action.
+                </p>
+                <p>
+                    Immerse yourself in the unique dynamics, designed to elevate your commanding presence as you orchestrate victories. For our esteemed executive holders, Finding The Board is a testament to your strategic mastery and unwavering dedication to excellence.
+                </p>
+            `;
+
+            // Hide any previous bonus notifications
+            bonusNotification.style.display = 'none';
+
+            // Make the modal visible
+            pieceModal.style.display = 'block';
+            console.log('showBoardDetails: Displayed details for The Forge.');
+        }
+
+        // Function to Initialize or Reset the Board
+        function initializeBoard() {
+            chessboard.innerHTML = '';
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const square = document.createElement('div');
+                    square.classList.add('square', (row + col) % 2 === 0 ? 'white' : 'black');
+                    square.dataset.position = `${row},${col}`;
+                    chessboard.appendChild(square);
+
+                    // Place pieces
+                    if (row === 1) {
+                        const piece = createPiece('black', 'pawn', row, col);
+                        chessboard.appendChild(piece);
+                    } else if (row === 6) {
+                        const piece = createPiece('white', 'pawn', row, col);
+                        chessboard.appendChild(piece);
+                    }
+                    // Place other pieces
+                    else if (row === 0 || row === 7) {
+                        const color = row === 0 ? 'black' : 'white';
+                        const pieceType = pieceOrder[col];
+                        const piece = createPiece(color, pieceType, row, col);
+                        chessboard.appendChild(piece);
+                    }
+                }
+            }
+            // Reset scores and captures
+            scores = { white: 0, black: 0 };
+            tokens = getStoredTokens() || 0.0001; // Initialize tokens from localStorage or start at 0.0001
+            whiteCaptured = [];
+            blackCaptured = [];
+            playerTurn = 'white'; // **Set playerTurn to 'white'**
+            console.log(`initializeBoard: playerTurn set to ${playerTurn}`);
+            updateScores();
+            updateHUD();
+            clearCapturedLists();
+            // Update the turnDisplay with the span
+            currentPlayerSpan.textContent = 'White';
+            currentPlayerSpan.classList.remove('black-text');
+            currentPlayerSpan.classList.add('white-text');
+            console.log('Board initialized/reset.');
+
+            // Bonus Feature: Select a Random Bonus Piece from All Pieces (Excluding Kings)
+            const allPiecesForBonus = Array.from(chessboard.querySelectorAll('.piece')).filter(piece => piece.dataset.type !== 'king');
+            if (allPiecesForBonus.length > 0) {
+                bonusPiece = allPiecesForBonus[Math.floor(Math.random() * allPiecesForBonus.length)];
+                bonusPiece.dataset.bonus = 'true'; // Mark as bonus piece
+                console.log(`Selected bonus piece: ${capitalizeFirstLetter(bonusPiece.dataset.color)} ${capitalizeFirstLetter(bonusPiece.dataset.type)} at ${bonusPiece.dataset.position}`);
+            } else {
+                bonusPiece = null;
+                console.log('No pieces available to select as bonus.');
+            }
+            bonusAwarded = false; // Reset bonus flag
+
+            // Note: Removed startTokenIncrement() from here to prevent multiple intervals
+        }
+
+        // Function to Reset the Game
+        function resetGame() {
+            selectedPiece = null;
+            initializeBoard();
+            console.log('Game has been reset.');
+        }
+
+        // Function to Create a Chess Piece
+        function createPiece(color, type, row, col) {
+            const piece = document.createElement('div');
+            piece.classList.add('piece', color); // Add color class for z-index control
+            piece.dataset.color = color;
+            piece.dataset.type = type;
+            piece.dataset.position = `${row},${col}`; // Track position
+
+            // Ensure the images are loaded from the specified URL
+            // If images are not available, use Unicode characters as placeholders
+            const unicodePieces = {
+                'white': {
+                    'pawn': '♙',
+                    'rook': '♖',
+                    'knight': '♘',
+                    'bishop': '♗',
+                    'queen': '♕',
+                    'king': '♔'
+                },
+                'black': {
+                    'pawn': '♟︎',
+                    'rook': '♜',
+                    'knight': '♞',
+                    'bishop': '♝',
+                    'queen': '♛',
+                    'king': '♚'
+                }
+            };
+
+            console.log(`Creating ${color} ${type} at (${row}, ${col})`);
+
+            // Set the background image from the specified URL
+            piece.style.backgroundImage = `url('${baseImageUrl}${color}-${type}.webp')`;
+
+            // Check if image exists by attempting to load it
+            const img = new Image();
+            img.src = `${baseImageUrl}${color}-${type}.webp`;
+            img.onload = () => {
+                piece.style.backgroundImage = `url('${baseImageUrl}${color}-${type}.webp')`;
+                console.log(`Loaded image for ${color} ${type} at (${row}, ${col})`);
+            };
+            img.onerror = () => {
+                // Use Unicode character as fallback
+                piece.textContent = unicodePieces[color][type] || '';
+                piece.style.fontSize = '64px';
+                piece.style.textAlign = 'center';
+                piece.style.lineHeight = '80px';
+                console.log(`Using Unicode for ${color} ${type} at (${row}, ${col})`);
+            };
+
+            piece.dataset.moved = 'false';
+            // Set initial position
+            piece.style.top = `${row * 100 + 50}px`;
+            piece.style.left = `${col * 100 + 50}px`;
+            piece.style.transform = 'translate(-50%, -50%)';
+            return piece;
+        }
+
+        // Function to Select a Piece
+        function selectPiece(piece) {
+            removeValidMoveHighlights();
+            if (selectedPiece) {
+                selectedPiece.classList.remove('selected');
+            }
+            selectedPiece = piece;
+            selectedPiece.classList.add('selected');
+            highlightValidMoves(selectedPiece);
+            console.log(`Selected ${capitalizeFirstLetter(selectedPiece.dataset.color)} ${capitalizeFirstLetter(selectedPiece.dataset.type)} at (${selectedPiece.dataset.position})`);
+            showSuggestedMoves(selectedPiece);
+        }
+
+        // Function to Deselect a Piece
+        function deselectPiece() {
+            if (selectedPiece) {
+                selectedPiece.classList.remove('selected');
+                console.log(`Deselected ${capitalizeFirstLetter(selectedPiece.dataset.color)} ${capitalizeFirstLetter(selectedPiece.dataset.type)}`);
+                selectedPiece = null;
+            }
+            // Clear Suggested Moves
+            clearSuggestedMoves();
+            removeValidMoveHighlights();
+        }
+
+        // Function to Capture and Move a Piece with Animation and Sound
+        function captureAndMove(capturingPiece, capturedPiece, targetRow, targetCol) {
+            return new Promise((resolve) => {
+                // Prevent capturing kings
+                if (capturedPiece.dataset.type === 'king') {
+                    alert('Kings cannot be captured! Try trapping the king instead.');
+                    console.log('captureAndMove: Attempted to capture a King. Move canceled.');
+                    resolve(false);
+                    return;
+                }
+
+                console.log(`captureAndMove: Capturing ${capturedPiece.dataset.color} ${capitalizeFirstLetter(capturedPiece.dataset.type)} with ${capturingPiece.dataset.color} ${capitalizeFirstLetter(capturingPiece.dataset.type)}`);
+
+                // Play Capture Sound
+                if (capturingPiece.dataset.color === 'white') {
+                    whiteCaptureSound.currentTime = 0;
+                    whiteCaptureSound.play();
+                    console.log('Playing white capture sound.');
+                } else {
+                    blackCaptureSound.currentTime = 0;
+                    blackCaptureSound.play();
+                    console.log('Playing black capture sound.');
+                }
+
+                // Animate the captured piece (fade out and scale down)
+                capturedPiece.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                capturedPiece.style.opacity = '0';
+                capturedPiece.style.transform += ' scale(0.5)';
+
+                // After animation, remove the captured piece and move the capturing piece
+                setTimeout(() => {
+                    // Remove the captured piece from the DOM
+                    capturedPiece.remove();
+                    console.log(`captureAndMove: Captured ${capturedPiece.dataset.color} ${capitalizeFirstLetter(capturedPiece.dataset.type)} removed from the board.`);
+
+                    // Add to captured list based on the color of the capturing piece
+                    if (capturingPiece.dataset.color === 'white') {
+                        whiteCaptured.push(capturedPiece.dataset.type);
+                        console.log(`captureAndMove: Added ${capitalizeFirstLetter(capturedPiece.dataset.type)} to White's captures.`);
+                    } else {
+                        blackCaptured.push(capturedPiece.dataset.type);
+                        console.log(`captureAndMove: Added ${capitalizeFirstLetter(capturedPiece.dataset.type)} to Black's captures.`);
+                    }
+
+                    // Check if the captured piece was the bonus piece
+                    let isBonusCapture = false;
+                    if (capturedPiece.dataset.bonus === "true" && !bonusAwarded) {
+                        if (capturedPiece.dataset.color !== playerTurn) {
+                            // Bonus piece is opponent's, award tokens
+                            tokens += 5;
+                            updateHUD();
+
+                            // Display bonus notification in the modal
+                            bonusNotification.textContent = 'You just earned 5 XdRiP!';
+                            bonusNotification.style.display = 'block';
+
+                            console.log('Bonus awarded: 5 XdRiP added.');
+                            isBonusCapture = true;
+                        } else {
+                            // Bonus piece is own, notify player
+                            alert('Your bonus piece was captured! You will not receive bonus tokens upon winning.');
+                            console.log('Bonus piece was captured and belongs to you.');
+                        }
+                        bonusAwarded = true; // Ensure bonus is awarded only once
+                    }
+
+                    // Move the capturing piece
+                    movePiece(capturingPiece, targetRow, targetCol).then(() => {
+                        // Update the capture lists in the UI
+                        updateScores();
+                        resolve(isBonusCapture); // Return whether it was a bonus capture
+                    });
+                }, 500); // Match the transition duration
+            });
+        }
+
+        // Function to Move a Piece with Animation
+        function movePiece(piece, targetRow, targetCol) {
+            return new Promise((resolve) => {
+                // Update the piece's position
+                piece.style.top = `${targetRow * 100 + 50}px`;
+                piece.style.left = `${targetCol * 100 + 50}px`;
+                piece.dataset.position = `${targetRow},${targetCol}`;
+                piece.dataset.moved = 'true';
+                console.log(`movePiece: Moved ${capitalizeFirstLetter(piece.dataset.color)} ${capitalizeFirstLetter(piece.dataset.type)} to (${targetRow},${targetCol})`);
+
+                // Remove Valid Move Highlights
+                removeValidMoveHighlights();
+
+                // Wait for the CSS transition to complete before resolving
+                setTimeout(() => {
+                    resolve();
+                }, 500); // Match the transition duration
+            });
+        }
+
+        // Function to Make Computer Move (Enhanced AI)
+        async function makeComputerMove() {
+            console.log('makeComputerMove: AI is making a move.');
+            const allPieces = Array.from(document.querySelectorAll(`.piece[data-color='black']`));
+            let moveMade = false;
+
+            // AI Prioritizes capturing moves, excluding kings
+            for (const piece of allPieces) {
+                const [row, col] = piece.dataset.position.split(',').map(Number);
+                const validMoves = getValidMoves(piece);
+                for (const move of validMoves) {
+                    const [targetRow, targetCol] = move.split(',').map(Number);
+                    const targetPiece = getPieceAt(targetRow, targetCol);
+                    if (targetPiece && targetPiece.dataset.color === 'white' && targetPiece.dataset.type !== 'king') {
+                        console.log(`makeComputerMove: AI attempting to capture ${capitalizeFirstLetter(targetPiece.dataset.color)} ${capitalizeFirstLetter(targetPiece.dataset.type)} at (${targetRow},${targetCol}) with ${capitalizeFirstLetter(piece.dataset.color)} ${capitalizeFirstLetter(piece.dataset.type)}`);
+                        
+                        // Capture details before move
+                        const from = gridToChessNotation(row, col);
+                        const to = gridToChessNotation(targetRow, targetCol);
+                        const type = piece.dataset.type;
+                        const color = piece.dataset.color;
+                        const capturedType = targetPiece.dataset.type;
+
+                        // Simulate the capture to check if it leaves AI's king in check
+                        const aiKing = document.querySelector(`.piece.black[data-type='king']`);
+                        const originalPosition = piece.dataset.position;
+                        piece.dataset.position = `${targetRow},${targetCol}`;
+                        piece.style.top = `${targetRow * 100 + 50}px`;
+                        piece.style.left = `${targetCol * 100 + 50}px`;
+
+                        const originalTargetPiece = targetPiece;
+                        targetPiece.remove();
+
+                        const isInCheck = isKingInCheck('black');
+
+                        // Revert the move
+                        piece.dataset.position = originalPosition;
+                        piece.style.top = `${parseInt(originalPosition.split(',')[0]) * 100 + 50}px`;
+                        piece.style.left = `${parseInt(originalPosition.split(',')[1]) * 100 + 50}px`;
+                        if (originalTargetPiece) {
+                            chessboard.appendChild(originalTargetPiece);
+                        }
+
+                        if (!isInCheck) {
+                            // Safe to make the move
+                            isMoving = true; // Start of move
+
+                            // Await captureAndMove and get isBonusCapture flag
+                            let isBonusCapture = await captureAndMove(piece, targetPiece, targetRow, targetCol);
+
+                            // Record the AI move with isBonusCapture flag
+                            recordMove(color, type, from, to, true, capturedType, isBonusCapture);
+
+                            // Increment tokens for capture
+                            if (isBonusCapture) {
+                                // Tokens already incremented in captureAndMove for bonus capture
+                            } else {
+                                incrementTokens(0.005); // Standard capture
+                            }
+
+                            togglePlayerTurn();
+
+                            checkGameOver();
+
+                            moveMade = true;
+                            console.log(`makeComputerMove: AI captured at (${targetRow},${targetCol})`);
+                            break;
+                        }
+                    }
+                }
+                if (moveMade) break;
+            }
+
+            if (!moveMade) {
+                // If no captures, move strategically
+                const movablePieces = allPieces.filter(piece => getValidMoves(piece).length > 0);
+                if (movablePieces.length === 0) {
+                    console.log('makeComputerMove: AI has no available moves.');
+                    return; // No moves available
+                }
+
+                // Implementing a simple strategy: move towards the center
+                const center = [3, 3]; // Center position
+
+                // Sort movable pieces based on distance to center
+                movablePieces.sort((a, b) => {
+                    const [aRow, aCol] = a.dataset.position.split(',').map(Number);
+                    const [bRow, bCol] = b.dataset.position.split(',').map(Number);
+                    const aDist = Math.abs(aRow - center[0]) + Math.abs(aCol - center[1]);
+                    const bDist = Math.abs(bRow - center[0]) + Math.abs(bCol - center[1]);
+                    return aDist - bDist;
+                });
+
+                for (const piece of movablePieces) {
+                    const validMoves = getValidMoves(piece);
+                    if (validMoves.length > 0) {
+                        // Filter out moves that would capture the king
+                        const filteredMoves = validMoves.filter(move => {
+                            const [r, c] = move.split(',').map(Number);
+                            const targetPiece = getPieceAt(r, c);
+                            return !(targetPiece && targetPiece.dataset.type === 'king');
+                        });
+
+                        if (filteredMoves.length === 0) continue; // No valid non-king capturing moves
+
+                        // Shuffle the filteredMoves to add randomness
+                        const shuffledMoves = filteredMoves.sort(() => 0.5 - Math.random());
+                        for (const move of shuffledMoves) {
+                            const [targetRow, targetCol] = move.split(',').map(Number);
+                            const targetPiece = getPieceAt(targetRow, targetCol);
+
+                            // Simulate the move to ensure it doesn't leave AI's king in check
+                            const aiKing = document.querySelector(`.piece.black[data-type='king']`);
+                            const originalPosition = piece.dataset.position;
+                            piece.dataset.position = `${targetRow},${targetCol}`;
+                            piece.style.top = `${targetRow * 100 + 50}px`;
+                            piece.style.left = `${targetCol * 100 + 50}px`;
+
+                            const originalTargetPiece = targetPiece;
+                            if (targetPiece) targetPiece.remove();
+
+                            const isInCheck = isKingInCheck('black');
+
+                            // Revert the move
+                            piece.dataset.position = originalPosition;
+                            piece.style.top = `${parseInt(originalPosition.split(',')[0]) * 100 + 50}px`;
+                            piece.style.left = `${parseInt(originalPosition.split(',')[1]) * 100 + 50}px`;
+                            if (originalTargetPiece) {
+                                chessboard.appendChild(originalTargetPiece);
+                            }
+
+                            if (!isInCheck) {
+                                // Safe to make the move
+                                if (targetPiece && targetPiece.dataset.color === 'white') {
+                                    const capturedType = targetPiece.dataset.type;
+                                    const from = gridToChessNotation(...piece.dataset.position.split(',').map(Number));
+                                    const to = gridToChessNotation(targetRow, targetCol);
+                                    const type = piece.dataset.type;
+                                    const color = piece.dataset.color;
+
+                                    isMoving = true; // Start of move
+
+                                    // Await captureAndMove and get isBonusCapture flag
+                                    let isBonusCapture = await captureAndMove(piece, targetPiece, targetRow, targetCol);
+
+                                    // Record the AI move with isBonusCapture flag
+                                    recordMove(color, type, from, to, true, capturedType, isBonusCapture);
+
+                                    // Increment tokens for capture
+                                    if (isBonusCapture) {
+                                        // Tokens already incremented in captureAndMove for bonus capture
+                                    } else {
+                                        incrementTokens(0.005); // Standard capture
+                                    }
+
+                                    togglePlayerTurn();
+                                    checkGameOver();
+
+                                    moveMade = true;
+                                    console.log(`makeComputerMove: AI captured at (${targetRow},${targetCol})`);
+                                    break;
+                                } else {
+                                    // Move without capturing
+                                    const from = gridToChessNotation(...piece.dataset.position.split(',').map(Number));
+                                    const to = gridToChessNotation(targetRow, targetCol);
+                                    const type = piece.dataset.type;
+                                    const color = piece.dataset.color;
+
+                                    isMoving = true; // Start of move
+
+                                    await movePiece(piece, targetRow, targetCol);
+                                    // Increment tokens for move
+                                    incrementTokens(0.001);
+                                    // Update scores if necessary
+                                    updateScores();
+
+                                    // Record the move without bonus capture
+                                    recordMove(color, type, from, to, false, null, false);
+
+                                    togglePlayerTurn();
+                                    checkGameOver();
+
+                                    moveMade = true;
+                                    console.log(`makeComputerMove: AI moved to (${targetRow},${targetCol})`);
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (moveMade) break;
+                    }
+                }
+            }
+        }
+
+        // Function to Check if the Game is Over (Checkmate or Stalemate)
+        function checkGameOver() {
+            const whiteKing = document.querySelector(`.piece.white[data-type='king']`);
+            const blackKing = document.querySelector(`.piece.black[data-type='king']`);
+
+            if (!whiteKing) {
+                // Black wins by checkmate
+                alert('Black Wins by Checkmate! Better luck next time.');
+                console.log('checkGameOver: Game Over - Black Wins by Checkmate.');
+                resetGame();
+            } else if (!blackKing) {
+                // White wins by checkmate
+                alert('White Wins by Checkmate! Congratulations!');
+                console.log('checkGameOver: Game Over - White Wins by Checkmate.');
+
+                // Award tokens only if White wins or finds the bonus piece
+                if (bonusPiece && bonusPiece.dataset.color === 'white') {
+                    const [bonusRow, bonusCol] = bonusPiece.dataset.position.split(',').map(Number);
+                    const currentBonusPiece = getPieceAt(bonusRow, bonusCol);
+                    if (currentBonusPiece) {
+                        // Bonus piece was White's and still on the board
+                        tokens += 5;
+                        updateHUD();
+                        alert('White preserved their bonus piece and earned an additional 5 XdRiP!');
+                        console.log('checkGameOver: Bonus awarded for White preserving own bonus piece.');
+                    }
+                }
+
+                resetGame();
+            } else {
+                // Check for checkmate or stalemate for White King
+                if (isKingInCheck('white')) {
+                    if (!canKingEscape('white')) {
+                        alert('Black Wins by Checkmate! Better luck next time.');
+                        console.log('checkGameOver: Game Over - Black Wins by Checkmate.');
+                        resetGame();
+                        return;
+                    }
+                } else {
+                    if (!canPlayerMakeAnyMove('white')) {
+                        alert('Stalemate! The game is a draw.');
+                        console.log('checkGameOver: Game Over - Stalemate.');
+                        resetGame();
+                        return;
+                    }
+                }
+
+                // Check for checkmate or stalemate for Black King
+                if (isKingInCheck('black')) {
+                    if (!canKingEscape('black')) {
+                        alert('White Wins by Checkmate! Congratulations!');
+                        console.log('checkGameOver: Game Over - White Wins by Checkmate.');
+                        resetGame();
+                        return;
+                    }
+                } else {
+                    if (!canPlayerMakeAnyMove('black')) {
+                        alert('Stalemate! The game is a draw.');
+                        console.log('checkGameOver: Game Over - Stalemate.');
+                        resetGame();
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Helper Function to Check if a King is in Check
+        function isKingInCheck(color) {
+            const king = document.querySelector(`.piece.${color}[data-type='king']`);
+            if (!king) return false; // King is already captured
+
+            const [kingRow, kingCol] = king.dataset.position.split(',').map(Number);
+            const enemyColor = color === 'white' ? 'black' : 'white';
+            const enemyPieces = Array.from(document.querySelectorAll(`.piece.${enemyColor}`));
+
+            for (const piece of enemyPieces) {
+                const validMoves = getValidMoves(piece);
+                if (validMoves.includes(`${kingRow},${kingCol}`)) {
+                    console.log(`isKingInCheck: ${color} King is under attack by ${enemyColor} ${capitalizeFirstLetter(piece.dataset.type)}.`);
+                    return true;
+                }
+            }
+
+            console.log(`isKingInCheck: ${color} King is not under attack.`);
+            return false;
+        }
+
+        // Function to Check if the King Can Escape Check
+        function canKingEscape(color) {
+            const king = document.querySelector(`.piece.${color}[data-type='king']`);
+            if (!king) return false; // King is already captured
+
+            const validMoves = getValidMoves(king);
+            for (const move of validMoves) {
+                const [r, c] = move.split(',').map(Number);
+                const targetPiece = getPieceAt(r, c);
+                
+                // Simulate the move
+                if (targetPiece) {
+                    // Temporarily remove the captured piece
+                    targetPiece.remove();
+                }
+                const originalPosition = king.dataset.position;
+                king.dataset.position = `${r},${c}`;
+                king.style.top = `${r * 100 + 50}px`;
+                king.style.left = `${c * 100 + 50}px`;
+
+                const inCheck = isKingInCheck(color);
+
+                // Revert the move
+                king.dataset.position = originalPosition;
+                king.style.top = `${parseInt(originalPosition.split(',')[0]) * 100 + 50}px`;
+                king.style.left = `${parseInt(originalPosition.split(',')[1]) * 100 + 50}px`;
+                if (targetPiece) {
+                    chessboard.appendChild(targetPiece);
+                }
+
+                if (!inCheck) {
+                    console.log(`canKingEscape: ${color} King can escape to (${r},${c}).`);
+                    return true;
+                }
+            }
+
+            console.log(`canKingEscape: ${color} King has no escape moves.`);
+            return false;
+        }
+
+        // Function to Check if the Player Can Make Any Move
+        function canPlayerMakeAnyMove(color) {
+            const playerPieces = Array.from(document.querySelectorAll(`.piece.${color}`));
+
+            for (const piece of playerPieces) {
+                const validMoves = getValidMoves(piece);
+                for (const move of validMoves) {
+                    const [r, c] = move.split(',').map(Number);
+                    const targetPiece = getPieceAt(r, c);
+                    
+                    // Simulate the move
+                    if (targetPiece) {
+                        // Temporarily remove the captured piece
+                        targetPiece.remove();
+                    }
+                    const originalPosition = piece.dataset.position;
+                    piece.dataset.position = `${r},${c}`;
+                    piece.style.top = `${r * 100 + 50}px`;
+                    piece.style.left = `${c * 100 + 50}px`;
+
+                    const inCheck = isKingInCheck(color);
+
+                    // Revert the move
+                    piece.dataset.position = originalPosition;
+                    piece.style.top = `${parseInt(originalPosition.split(',')[0]) * 100 + 50}px`;
+                    piece.style.left = `${parseInt(originalPosition.split(',')[1]) * 100 + 50}px`;
+                    if (targetPiece) {
+                        chessboard.appendChild(targetPiece);
+                    }
+
+                    if (!inCheck) {
+                        console.log(`canPlayerMakeAnyMove: ${color} Player can make a move with ${capitalizeFirstLetter(piece.dataset.type)} to (${r},${c}).`);
+                        return true;
+                    }
+                }
+            }
+
+            console.log(`canPlayerMakeAnyMove: ${color} Player has no legal moves.`);
+            return false;
+        }
+
+        // Function to Get Valid Moves for a Piece
+        function getValidMoves(piece) {
+            const [row, col] = piece.dataset.position.split(',').map(Number);
+            const type = piece.dataset.type;
+            const color = piece.dataset.color;
+            const direction = color === 'white' ? -1 : 1;
+            const moves = [];
+
+            const isInBounds = (r, c) => r >= 0 && r < 8 && c >= 0 && c < 8;
+
+            switch (type) {
+                case 'pawn':
+                    const nextRow = row + direction;
+                    // Move forward one square
+                    if (isInBounds(nextRow, col) && isSquareEmpty(nextRow, col)) {
+                        moves.push(`${nextRow},${col}`);
+                        // Move forward two squares from starting position
+                        if (piece.dataset.moved === 'false') {
+                            const twoStepsRow = nextRow + direction;
+                            if (isInBounds(twoStepsRow, col) && isSquareEmpty(twoStepsRow, col)) {
+                                moves.push(`${twoStepsRow},${col}`);
+                            }
+                        }
+                    }
+                    // Capture diagonally to the left
+                    if (isInBounds(nextRow, col - 1) && isEnemyPiece(nextRow, col - 1, color)) {
+                        moves.push(`${nextRow},${col - 1}`);
+                        console.log(`getValidMoves: Pawn at (${row},${col}) can capture at (${nextRow},${col - 1})`);
+                    }
+                    // Capture diagonally to the right
+                    if (isInBounds(nextRow, col + 1) && isEnemyPiece(nextRow, col + 1, color)) {
+                        moves.push(`${nextRow},${col + 1}`);
+                        console.log(`getValidMoves: Pawn at (${row},${col}) can capture at (${nextRow},${col + 1})`);
+                    }
+                    break;
+
+                case 'rook':
+                    // Horizontal and Vertical Moves
+                    const directionsRook = [
+                        [-1, 0], // Up
+                        [1, 0],  // Down
+                        [0, -1], // Left
+                        [0, 1]   // Right
+                    ];
+                    directionsRook.forEach(dir => {
+                        let r = row + dir[0];
+                        let c = col + dir[1];
+                        while (isInBounds(r, c)) {
+                            const targetPiece = getPieceAt(r, c);
+                            if (!targetPiece) {
+                                moves.push(`${r},${c}`);
+                            } else {
+                                if (targetPiece.dataset.color !== color) {
+                                    moves.push(`${r},${c}`);
+                                    console.log(`getValidMoves: Rook at (${row},${col}) can capture at (${r},${c})`);
+                                }
+                                break; // Blocked by any piece
+                            }
+                            r += dir[0];
+                            c += dir[1];
+                        }
+                    });
+                    break;
+
+                case 'knight':
+                    // L-shaped moves
+                    const knightMoves = [
+                        [row - 2, col - 1],
+                        [row - 2, col + 1],
+                        [row - 1, col - 2],
+                        [row - 1, col + 2],
+                        [row + 1, col - 2],
+                        [row + 1, col + 2],
+                        [row + 2, col - 1],
+                        [row + 2, col + 1],
+                    ];
+                    console.log(`getValidMoves: Calculating moves for Knight at (${row}, ${col})`);
+                    knightMoves.forEach(([r, c]) => {
+                        if (isInBounds(r, c)) {
+                            const targetPiece = getPieceAt(r, c);
+                            if (!targetPiece) {
+                                console.log(`getValidMoves: Knight can move to empty square (${r}, ${c})`);
+                                moves.push(`${r},${c}`);
+                            } else if (targetPiece.dataset.color !== color) {
+                                console.log(`getValidMoves: Knight can capture ${capitalizeFirstLetter(targetPiece.dataset.color)} ${capitalizeFirstLetter(targetPiece.dataset.type)} at (${r},${c})`);
+                                moves.push(`${r},${c}`);
+                            }
+                        }
+                    });
+                    break;
+
+                case 'bishop':
+                    // Diagonal Moves
+                    const bishopDirections = [
+                        [-1, -1], // Up-Left
+                        [-1, 1],  // Up-Right
+                        [1, -1],  // Down-Left
+                        [1, 1]    // Down-Right
+                    ];
+                    bishopDirections.forEach(dir => {
+                        let r = row + dir[0];
+                        let c = col + dir[1];
+                        while (isInBounds(r, c)) {
+                            const targetPiece = getPieceAt(r, c);
+                            if (!targetPiece) {
+                                moves.push(`${r},${c}`);
+                            } else {
+                                if (targetPiece.dataset.color !== color) {
+                                    moves.push(`${r},${c}`);
+                                    console.log(`getValidMoves: Bishop at (${row},${col}) can capture at (${r},${c})`);
+                                }
+                                break; // Blocked by any piece
+                            }
+                            r += dir[0];
+                            c += dir[1];
+                        }
+                    });
+                    break;
+
+                case 'queen':
+                    // Combines Rook and Bishop Moves
+                    const queenDirections = [
+                        [-1, 0], // Up
+                        [1, 0],  // Down
+                        [0, -1], // Left
+                        [0, 1],  // Right
+                        [-1, -1], // Up-Left
+                        [-1, 1],  // Up-Right
+                        [1, -1],  // Down-Left
+                        [1, 1]    // Down-Right
+                    ];
+                    queenDirections.forEach(dir => {
+                        let r = row + dir[0];
+                        let c = col + dir[1];
+                        while (isInBounds(r, c)) {
+                            const targetPiece = getPieceAt(r, c);
+                            if (!targetPiece) {
+                                moves.push(`${r},${c}`);
+                            } else {
+                                if (targetPiece.dataset.color !== color) {
+                                    moves.push(`${r},${c}`);
+                                    console.log(`getValidMoves: Queen at (${row},${col}) can capture at (${r},${c})`);
+                                }
+                                break; // Blocked by any piece
+                            }
+                            r += dir[0];
+                            c += dir[1];
+                        }
+                    });
+                    break;
+
+                case 'king':
+                    // One square in any direction
+                    const kingMoves = [
+                        [row - 1, col - 1],
+                        [row - 1, col],
+                        [row - 1, col + 1],
+                        [row, col - 1],
+                        [row, col + 1],
+                        [row + 1, col - 1],
+                        [row + 1, col],
+                        [row + 1, col + 1],
+                    ];
+                    kingMoves.forEach(([r, c]) => {
+                        if (isInBounds(r, c)) {
+                            const targetPiece = getPieceAt(r, c);
+                            if (!targetPiece || targetPiece.dataset.color !== color) {
+                                // Prevent capturing kings by filtering them out
+                                if (targetPiece && targetPiece.dataset.type === 'king') return;
+                                moves.push(`${r},${c}`);
+                                if (targetPiece) {
+                                    console.log(`getValidMoves: King at (${row},${col}) can capture at (${r},${c})`);
+                                } else {
+                                    console.log(`getValidMoves: King at (${row},${col}) can move to empty square (${r},${c})`);
+                                }
+                            }
+                        }
+                    });
+                    break;
+
+                default:
+                    break;
+            }
+
+            // Debugging: Log Valid Moves
+            console.log(`getValidMoves: Valid moves for ${capitalizeFirstLetter(color)} ${capitalizeFirstLetter(type)} at (${row}, ${col}):`, moves);
+            return moves;
+        }
+
+        // Function to Get Piece at Specific Position
+        function getPieceAt(row, col) {
+            const piece = Array.from(chessboard.querySelectorAll('.piece')).find(piece => {
+                return piece.dataset.position === `${row},${col}`;
+            });
+            if (piece) {
+                console.log(`getPieceAt: Found ${capitalizeFirstLetter(piece.dataset.color)} ${capitalizeFirstLetter(piece.dataset.type)} at (${row},${col})`);
+            } else {
+                console.log(`getPieceAt: No piece found at (${row},${col})`);
+            }
+            return piece;
+        }
+
+        // Function to Check if a Square is Empty
+        function isSquareEmpty(row, col) {
+            const empty = !getPieceAt(row, col);
+            console.log(`isSquareEmpty: Square (${row},${col}) is ${empty ? 'empty' : 'occupied'}.`);
+            return empty;
+        }
+
+        // Function to Check if a Square has an Enemy Piece
+        function isEnemyPiece(row, col, color) {
+            const piece = getPieceAt(row, col);
+            const isEnemy = piece && piece.dataset.color !== color;
+            console.log(`isEnemyPiece: Square (${row},${col}) has ${isEnemy ? 'an enemy piece' : 'no enemy piece'}.`);
+            return isEnemy;
+        }
+
+        // Function to Capitalize First Letter
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // Function to Clear Captured Lists and Move History
+        function clearCapturedLists() {
+            whiteCapturedList.innerHTML = '';
+            blackCapturedList.innerHTML = '';
+            console.log('clearCapturedLists: Cleared captured lists.');
+            
+            // Clear move history
+            const moveHistoryList = document.getElementById('moveHistoryList');
+            moveHistoryList.innerHTML = '';
+            console.log('clearCapturedLists: Cleared move history.');
+            
+            // Reset move number
+            moveNumber = 1;
+        }
+
+        // Function to Update Scores and Capture Lists
+        function updateScores() {
+            // Update White Captures List
+            whiteCapturedList.innerHTML = whiteCaptured.map(piece => `<li>${capitalizeFirstLetter(piece)}</li>`).join('');
+            console.log(`updateScores: White Captures Updated: ${whiteCaptured}`);
+
+            // Update Black Captures List
+            blackCapturedList.innerHTML = blackCaptured.map(piece => `<li>${capitalizeFirstLetter(piece)}</li>`).join('');
+            console.log(`updateScores: Black Captures Updated: ${blackCaptured}`);
+        }
+
+        // Function to Update HUD Tokens with Animation
+        function updateHUD() {
+            animateTokenUpdate(tokens);
+            console.log(`updateHUD: Tokens Updated: ${tokens}`);
+            storeTokens(); // Store tokens in localStorage
+        }
+
+        // Function to Animate Token Updates
+        function animateTokenUpdate(newTokens) {
+            if (animationInProgress) return; // Prevent overlapping animations
+            animationInProgress = true;
+
+            const duration = 500; // Animation duration in ms
+            const frameRate = 60; // Frames per second
+            const totalFrames = Math.round(duration / (1000 / frameRate));
+            const increment = (newTokens - displayedTokens) / totalFrames;
+            let currentFrame = 0;
+
+            function animate() {
+                if (currentFrame < totalFrames) {
+                    displayedTokens += increment;
+                    tokenDisplay.textContent = `XdRiP Earned: ${displayedTokens.toFixed(4)}`;
+                    currentFrame++;
+                    requestAnimationFrame(animate);
+                } else {
+                    displayedTokens = newTokens;
+                    tokenDisplay.textContent = `XdRiP Earned: ${displayedTokens.toFixed(4)}`;
+                    animationInProgress = false;
+                    checkTokenCap();
+                }
+            }
+
+            animate();
+        }
+
+        // Function to Increment Tokens with Cap Check
+        function incrementTokens(amount) {
+            const TOKEN_CAP = 1000.0;
+            if (tokens + amount > TOKEN_CAP) {
+                tokens = TOKEN_CAP;
+            } else {
+                tokens += amount;
+            }
+            updateHUD();
+        }
+
+        // Function to Highlight Valid Moves
+        function highlightValidMoves(piece) {
+            const validMoves = getValidMoves(piece);
+            validMoves.forEach(position => {
+                const [row, col] = position.split(',').map(Number);
+                const square = getSquareElement(row, col);
+                if (square) {
+                    square.classList.add('valid-move');
+                }
+            });
+            console.log(`highlightValidMoves: Highlighted valid moves for ${capitalizeFirstLetter(piece.dataset.color)} ${capitalizeFirstLetter(piece.dataset.type)}.`);
+        }
+
+        // Function to Remove Valid Move Highlights
+        function removeValidMoveHighlights() {
+            const highlightedSquares = document.querySelectorAll('.valid-move');
+            highlightedSquares.forEach(square => {
+                square.classList.remove('valid-move');
+            });
+            console.log('removeValidMoveHighlights: Removed all valid move highlights.');
+        }
+
+        // Helper Function to Get Square Element by Row and Column
+        function getSquareElement(row, col) {
+            return chessboard.querySelector(`.square[data-position='${row},${col}']`);
+        }
+
+        // Function to Show Suggested Moves
+        function showSuggestedMoves(piece) {
+            suggestedGrid.innerHTML = ''; // Clear previous suggestions
+
+            const validMoves = getValidMoves(piece);
+            if (validMoves.length === 0) return;
+
+            // Identify the best move (for simplicity, prioritize captures)
+            let bestMove = null;
+            for (const move of validMoves) {
+                const [r, c] = move.split(',').map(Number);
+                const targetPiece = getPieceAt(r, c);
+                if (targetPiece && targetPiece.dataset.color !== piece.dataset.color && targetPiece.dataset.type !== 'king') {
+                    bestMove = move;
+                    break;
+                }
+            }
+
+            // Select up to three suggested moves
+            const suggestions = validMoves.slice(0, 3);
+
+            suggestions.forEach(move => {
+                const [r, c] = move.split(',').map(Number);
+                const moveNotation = gridToChessNotation(r, c);
+                const moveDiv = document.createElement('div');
+                moveDiv.classList.add('suggested-move');
+                moveDiv.textContent = moveNotation;
+                moveDiv.dataset.move = move;
+                suggestedGrid.appendChild(moveDiv);
+
+                // Highlight the best move
+                if (move === bestMove) {
+                    moveDiv.classList.add('best-move');
+                }
+
+                // Add click event to execute the move
+                moveDiv.addEventListener('click', () => {
+                    // Simulate a click on the target square
+                    const targetSquare = getSquareElement(r, c);
+                    if (targetSquare) {
+                        targetSquare.click();
+                    }
+                });
+            });
+        }
+
+        // Function to Clear Suggested Moves
+        function clearSuggestedMoves() {
+            suggestedGrid.innerHTML = '';
+            console.log('clearSuggestedMoves: Cleared suggested moves.');
+        }
+
+        // Function to Show Piece Details in Modal
+        function showPieceDetails(piece) {
+            const color = piece.dataset.color;
+            const type = piece.dataset.type;
+
+            // Get piece details
+            const details = pieceDescriptions[color][type];
+
+            if (details) {
+                // Set video source
+                modalPieceVideo.src = details.videoUrl;
+                modalPieceVideo.style.display = 'block';
+                modalPieceVideo.play().catch((error) => {
+                    console.error(`Error playing video: ${error}`);
+                });
+
+                modalPieceName.textContent = details.name;
+                modalPieceDescription.textContent = details.description;
+
+                // Check if the piece is the bonus piece
+                if (piece.dataset.bonus === "true") {
+                    modalPieceDescription.innerHTML += "<br><br><strong>This is the bonus piece!</strong>";
+                }
+
+                // Show the modal
+                pieceModal.style.display = 'block';
+                console.log(`showPieceDetails: Displayed details for ${color} ${type}.`);
+            }
+        }
+
+        // Function to Close Modal
+        function closeModal() {
+            pieceModal.style.display = 'none';
+            modalPieceVideo.pause();
+            modalPieceVideo.currentTime = 0;
+            bonusNotification.style.display = 'none'; // Hide bonus notification
+            console.log('closeModal: Modal closed.');
+        }
+
+        // Event Listener for Close Button
+        closeBtn.addEventListener('click', closeModal);
+
+        // Event Listener for Click Outside Modal to Close
+        window.addEventListener('click', (event) => {
+            if (event.target == pieceModal) {
+                closeModal();
+            }
+        });
+
+        // Function to Store Tokens in localStorage
+        function storeTokens() {
+            localStorage.setItem('XdRiPTokens', tokens.toFixed(4));
+            console.log(`storeTokens: Tokens stored as ${tokens.toFixed(4)} in localStorage.`);
+        }
+
+        // Function to Get Stored Tokens from localStorage
+        function getStoredTokens() {
+            const stored = localStorage.getItem('XdRiPTokens');
+            if (stored) {
+                console.log(`getStoredTokens: Retrieved ${stored} tokens from localStorage.`);
+                return parseFloat(stored);
+            }
+            return null;
+        }
+
+        // Function to Start Token Increment
+        function startTokenIncrement() {
+            if (tokenIncrementStarted) return; // Prevent multiple intervals
+            tokenIncrementStarted = true;
+
+            const TOKEN_CAP = 1000.0;
+            if (tokens >= TOKEN_CAP) {
+                tokens = TOKEN_CAP;
+                updateHUD();
+                return;
+            }
+
+            // Calculate time since last update
+            const lastUpdate = localStorage.getItem('XdRiPLastUpdate');
+            const now = new Date().getTime();
+
+            if (lastUpdate) {
+                const elapsedHours = Math.floor((now - lastUpdate) / (1000 * 60 * 60));
+                if (elapsedHours > 0) {
+                    const increment = 0.0001 * elapsedHours;
+                    tokens += increment;
+                    if (tokens > TOKEN_CAP) tokens = TOKEN_CAP;
+                    updateHUD();
+                }
+            }
+
+            // Store the current time as last update
+            localStorage.setItem('XdRiPLastUpdate', now);
+
+            // Set interval to increment tokens every hour
+            setInterval(() => {
+                if (tokens < TOKEN_CAP) {
+                    tokens += 0.0001;
+                    if (tokens > TOKEN_CAP) tokens = TOKEN_CAP;
+                    updateHUD();
+                    localStorage.setItem('XdRiPLastUpdate', new Date().getTime());
+                }
+            }, 1000 * 60 * 60); // Every hour
+        }
+
+        // Initialize the token system on page load
+        window.addEventListener('load', () => {
+            // Retrieve stored tokens or initialize
+            tokens = getStoredTokens() || 0.0001;
+            displayedTokens = tokens;
+            tokenDisplay.textContent = `XdRiP Earned: ${displayedTokens.toFixed(4)}`;
+            storeTokens();
+            startTokenIncrement();
+            console.log(`window.onload: Tokens initialized to ${tokens.toFixed(4)}`);
+
+            // Set game mode to one player by default
+            gameMode = 'onePlayer';
+            console.log(`window.onload: Game mode set to ${gameMode}`);
+
+            // Simulate a click on the '1 Player' button to set the mode and reset the game
+            document.getElementById('onePlayer').click();
+
+            // Initialize Fullscreen Toggle
+            initializeFullscreenToggle();
+        });
+
+        // ----- Fullscreen Toggle Functionality -----
+        function initializeFullscreenToggle() {
+            const fullscreenButton = document.getElementById('fullscreenButton');
+
+            fullscreenButton.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        alert(`Error attempting to enable fullscreen mode: ${err.message} (${err.name})`);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            });
+        }
+        // -------------------------------------------
+
+        // ----- Claim Modal Functionality -----
+        // Function to Open Claim Modal
+        function openClaimModal() {
+            // Check if tokens >= 100
+            if (tokens >= 100) {
+                claimModalMessage.textContent = 'You have enough XdRiP to claim. Please take a screenshot of your balance to claim your XdRiP.';
+                claimButton.style.display = 'inline-block';
+            } else {
+                claimModalMessage.textContent = 'Not enough XdRiP to claim.';
+                claimButton.style.display = 'none';
+            }
+            claimModal.style.display = 'block';
+        }
+
+        // Function to Close Claim Modal
+        function closeClaimModal() {
+            claimModal.style.display = 'none';
+        }
+
+        // Event Listener for "claimLink" Click
+        claimLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            openClaimModal();
+        });
+
+        // Event Listener for Claim Modal Close Button
+        claimCloseBtn.addEventListener('click', closeClaimModal);
+
+        // Event Listener for Click Outside Claim Modal to Close
+        window.addEventListener('click', (event) => {
+            if (event.target == claimModal) {
+                closeClaimModal();
+            }
+        });
+
+        // Event Listener for "Take Screenshot" Button
+        claimButton.addEventListener('click', () => {
+            alert('Please take a screenshot of your balance as proof of claim.');
+            // Reset tokens after claiming
+            tokens = 0.0001;
+            updateHUD();
+            closeClaimModal();
+            alert('Your XdRiP tokens have been claimed and reset to 0.0001.');
+            console.log('Claimed tokens: Tokens reset to 0.0001.');
+        });
+        // ---------------------------------------
+
+        // Function to Check for Token Cap and Provide Feedback
+        function checkTokenCap() {
+            const TOKEN_CAP = 1000.0;
+            if (tokens >= TOKEN_CAP) {
+                alert('You have reached the maximum XdRiP tokens (1000). Please claim your tokens to continue earning.');
+                console.log('checkTokenCap: Token cap reached.');
+            }
+        }
+
+        // Function to Make a Move Based on Algebraic Notation
+        async function makeMove(move, isOpening = false) {
+            // Simplistic move parser: assumes all moves are simple (no captures, castling, promotions)
+            // For a complete implementation, consider using a chess library like chess.js
+            const pieceLetter = move.length === 2 ? 'pawn' : move[0].toLowerCase();
+            const targetSquare = move.length === 2 ? move : move.slice(1);
+            const [targetRow, targetCol] = algebraicToGrid(targetSquare);
+
+            // Find the first piece of the current player's color that can move to the target square
+            const playerColor = playerTurn;
+            const pieces = Array.from(document.querySelectorAll(`.piece.${playerColor}`));
+            for (const piece of pieces) {
+                const validMoves = getValidMoves(piece);
+                if (validMoves.includes(`${targetRow},${targetCol}`)) {
+                    // Move the piece
+                    const targetPiece = getPieceAt(targetRow, targetCol);
+                    if (targetPiece && targetPiece.dataset.color !== playerColor) {
+                        isMoving = true; // Start of move
+                        let isBonusCapture = await captureAndMove(piece, targetPiece, targetRow, targetCol);
+
+                        // Record the move with isBonusCapture flag
+                        const from = gridToChessNotation(...piece.dataset.position.split(',').map(Number));
+                        const to = gridToChessNotation(targetRow, targetCol);
+                        const type = piece.dataset.type;
+                        const color = piece.dataset.color;
+                        const capturedType = targetPiece.dataset.type;
+                        recordMove(color, type, from, to, true, capturedType, isBonusCapture);
+
+                        // Increment tokens for capture
+                        if (isBonusCapture) {
+                            // Tokens already incremented in captureAndMove for bonus capture
+                        } else {
+                            incrementTokens(0.005); // Standard capture
+                        }
+
+                        togglePlayerTurn();
+                        checkGameOver();
+
+                        // AI Move
+                        if (gameMode === 'onePlayer' && playerTurn === 'black' && !isOpening) {
+                            console.log('Triggering AI move.');
+                            setTimeout(async () => {
+                                await makeComputerMove();
+                                isMoving = false; // AI move completed
+                            }, 500);
+                            return; // Prevent setting isMoving to false prematurely
+                        }
+
+                        isMoving = false; // End of move
+                    } else {
+                        // Move the piece without capturing
+                        isMoving = true; // Start of move
+                        await movePiece(piece, targetRow, targetCol);
+                        // Increment tokens for move
+                        incrementTokens(0.001);
+                        // Update scores if necessary
+                        updateScores();
+
+                        // Record the move without bonus capture
+                        const from = gridToChessNotation(...piece.dataset.position.split(',').map(Number));
+                        const to = gridToChessNotation(targetRow, targetCol);
+                        const type = piece.dataset.type;
+                        const color = piece.dataset.color;
+                        recordMove(color, type, from, to, false, null, false);
+
+                        togglePlayerTurn();
+                        checkGameOver();
+
+                        // AI Move
+                        if (gameMode === 'onePlayer' && playerTurn === 'black' && !isOpening) {
+                            console.log('Triggering AI move.');
+                            setTimeout(async () => {
+                                await makeComputerMove();
+                                isMoving = false; // AI move completed
+                            }, 500);
+                            return; // Prevent setting isMoving to false prematurely
+                        }
+
+                        isMoving = false; // End of move
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Function to Convert Algebraic Notation to Grid Coordinates
+        function algebraicToGrid(algebraic) {
+            const files = { 'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7 };
+            const ranks = { '1': 7, '2': 6, '3': 5, '4': 4, '5': 3, '6': 2, '7': 1, '8': 0 };
+            const file = algebraic[0].toLowerCase();
+            const rank = algebraic[1];
+            return [ranks[rank], files[file]];
+        }
+
+        // Function to Convert Grid Coordinates to Algebraic Notation
+        function gridToChessNotation(row, col) {
+            const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+            const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+            return `${files[col]}${ranks[row]}`;
+        }
+
+        // Load Openings on Page Load
+        window.addEventListener('load', async () => {
+            // Existing initialization code...
+
+            // Load and display chess openings
+            loadChessOpenings();
+        });
+
+        // Function to Check Token Cap and Provide Feedback
+        // (Consolidated function, removed duplicate)
+        function checkTokenCap() {
+            const TOKEN_CAP = 1000.0;
+            if (tokens >= TOKEN_CAP) {
+                alert('You have reached the maximum XdRiP tokens (1000). Please claim your tokens to continue earning.');
+                console.log('checkTokenCap: Token cap reached.');
+            }
+        }
+    </script>
+</body>
+</html>

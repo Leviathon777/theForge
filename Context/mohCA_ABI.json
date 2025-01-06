@@ -1,1380 +1,1380 @@
 {
-  "address": "0x25464dF285405E6de12Fea4eb8916E5032E0FC6D",
-  "abi": [
-      {
-          "inputs": [],
-          "name": "ERC721EnumerableForbiddenBatchforge",
-          "type": "error"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "sender",
-                  "type": "address"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "address",
-                  "name": "owner",
-                  "type": "address"
-              }
-          ],
-          "name": "ERC721IncorrectOwner",
-          "type": "error"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "operator",
-                  "type": "address"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              }
-          ],
-          "name": "ERC721InsufficientApproval",
-          "type": "error"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "approver",
-                  "type": "address"
-              }
-          ],
-          "name": "ERC721InvalidApprover",
-          "type": "error"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "operator",
-                  "type": "address"
-              }
-          ],
-          "name": "ERC721InvalidOperator",
-          "type": "error"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "owner",
-                  "type": "address"
-              }
-          ],
-          "name": "ERC721InvalidOwner",
-          "type": "error"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "receiver",
-                  "type": "address"
-              }
-          ],
-          "name": "ERC721InvalidReceiver",
-          "type": "error"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "sender",
-                  "type": "address"
-              }
-          ],
-          "name": "ERC721InvalidSender",
-          "type": "error"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              }
-          ],
-          "name": "ERC721NonexistentToken",
-          "type": "error"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "owner",
-                  "type": "address"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "index",
-                  "type": "uint256"
-              }
-          ],
-          "name": "ERC721OutOfBoundsIndex",
-          "type": "error"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "owner",
-                  "type": "address"
-              }
-          ],
-          "name": "OwnableInvalidOwner",
-          "type": "error"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "account",
-                  "type": "address"
-              }
-          ],
-          "name": "OwnableUnauthorizedAccount",
-          "type": "error"
-      },
-      {
-          "anonymous": false,
-          "inputs": [
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "owner",
-                  "type": "address"
-              },
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "approved",
-                  "type": "address"
-              },
-              {
-                  "indexed": true,
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              }
-          ],
-          "name": "Approval",
-          "type": "event"
-      },
-      {
-          "anonymous": false,
-          "inputs": [
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "owner",
-                  "type": "address"
-              },
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "operator",
-                  "type": "address"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "bool",
-                  "name": "approved",
-                  "type": "bool"
-              }
-          ],
-          "name": "ApprovalForAll",
-          "type": "event"
-      },
-      {
-          "anonymous": false,
-          "inputs": [
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "padrone",
-                  "type": "address"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-              }
-          ],
-          "name": "Commonforged",
-          "type": "event"
-      },
-      {
-          "anonymous": false,
-          "inputs": [
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "padrone",
-                  "type": "address"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "cycleNumber",
-                  "type": "uint256"
-              }
-          ],
-          "name": "CycleCompleted",
-          "type": "event"
-      },
-      {
-          "anonymous": false,
-          "inputs": [
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "padrone",
-                  "type": "address"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-              }
-          ],
-          "name": "Epicforged",
-          "type": "event"
-      },
-      {
-          "anonymous": false,
-          "inputs": [
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "padrone",
-                  "type": "address"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-              }
-          ],
-          "name": "Eternalforged",
-          "type": "event"
-      },
-      {
-          "anonymous": false,
-          "inputs": [
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "padrone",
-                  "type": "address"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-              }
-          ],
-          "name": "Legendaryforged",
-          "type": "event"
-      },
-      {
-          "anonymous": false,
-          "inputs": [
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "previousOwner",
-                  "type": "address"
-              },
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "newOwner",
-                  "type": "address"
-              }
-          ],
-          "name": "OwnershipTransferred",
-          "type": "event"
-      },
-      {
-          "anonymous": false,
-          "inputs": [
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "padrone",
-                  "type": "address"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-              }
-          ],
-          "name": "Rareforged",
-          "type": "event"
-      },
-      {
-          "anonymous": false,
-          "inputs": [
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-              },
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-              },
-              {
-                  "indexed": true,
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              }
-          ],
-          "name": "Transfer",
-          "type": "event"
-      },
-      {
-          "anonymous": false,
-          "inputs": [
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "recipient",
-                  "type": "address"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-              }
-          ],
-          "name": "TransferFailed",
-          "type": "event"
-      },
-      {
-          "anonymous": false,
-          "inputs": [
-              {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "padrone",
-                  "type": "address"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              },
-              {
-                  "indexed": false,
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-              }
-          ],
-          "name": "Uncommonforged",
-          "type": "event"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              }
-          ],
-          "name": "approve",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-              }
-          ],
-          "name": "forgeCommon",
-          "outputs": [],
-          "stateMutability": "payable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-              }
-          ],
-          "name": "forgeEpic",
-          "outputs": [],
-          "stateMutability": "payable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-              }
-          ],
-          "name": "forgeEternal",
-          "outputs": [],
-          "stateMutability": "payable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-              }
-          ],
-          "name": "forgeLegendary",
-          "outputs": [],
-          "stateMutability": "payable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-              }
-          ],
-          "name": "forgeRare",
-          "outputs": [],
-          "stateMutability": "payable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "string",
-                  "name": "ipfsHash",
-                  "type": "string"
-              }
-          ],
-          "name": "forgeUncommon",
-          "outputs": [],
-          "stateMutability": "payable",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "renounceOwnership",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-              },
-              {
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              }
-          ],
-          "name": "safeTransferFrom",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-              },
-              {
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "bytes",
-                  "name": "data",
-                  "type": "bytes"
-              }
-          ],
-          "name": "safeTransferFrom",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint16",
-                  "name": "_padronesPercentage",
-                  "type": "uint16"
-              },
-              {
-                  "internalType": "uint16",
-                  "name": "_operatingCostsPercentage",
-                  "type": "uint16"
-              }
-          ],
-          "name": "setAllocationValue",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "operator",
-                  "type": "address"
-              },
-              {
-                  "internalType": "bool",
-                  "name": "approved",
-                  "type": "bool"
-              }
-          ],
-          "name": "setApprovalForAll",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "price",
-                  "type": "uint256"
-              }
-          ],
-          "name": "setCommonPrice",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "string",
-                  "name": "newContractURI",
-                  "type": "string"
-              }
-          ],
-          "name": "setContractURI",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "price",
-                  "type": "uint256"
-              }
-          ],
-          "name": "setEpicPrice",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "price",
-                  "type": "uint256"
-              }
-          ],
-          "name": "setEternalPrice",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "price",
-                  "type": "uint256"
-              }
-          ],
-          "name": "setLegendaryPrice",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "price",
-                  "type": "uint256"
-              }
-          ],
-          "name": "setRarePrice",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "price",
-                  "type": "uint256"
-              }
-          ],
-          "name": "setUncommonPrice",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-              },
-              {
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              }
-          ],
-          "name": "transferFrom",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "newOwner",
-                  "type": "address"
-              }
-          ],
-          "name": "transferOwnership",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address payable",
-                  "name": "_padroneTasca1",
-                  "type": "address"
-              },
-              {
-                  "internalType": "address payable",
-                  "name": "_padroneTasca2",
-                  "type": "address"
-              },
-              {
-                  "internalType": "address payable",
-                  "name": "_padroneTasca3",
-                  "type": "address"
-              },
-              {
-                  "internalType": "address payable",
-                  "name": "_padroneTasca4",
-                  "type": "address"
-              },
-              {
-                  "internalType": "address payable",
-                  "name": "_operatingTasca",
-                  "type": "address"
-              },
-              {
-                  "internalType": "address",
-                  "name": "initialOwner",
-                  "type": "address"
-              }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address payable",
-                  "name": "_operatingTasca",
-                  "type": "address"
-              }
-          ],
-          "name": "updateDistributionTascas",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "newPadrone",
-                  "type": "address"
-              },
-              {
-                  "internalType": "bool",
-                  "name": "add",
-                  "type": "bool"
-              }
-          ],
-          "name": "updatePadrone",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "owner",
-                  "type": "address"
-              }
-          ],
-          "name": "balanceOf",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "commonPrice",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "commonSupply",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "contractURI",
-          "outputs": [
-              {
-                  "internalType": "string",
-                  "name": "",
-                  "type": "string"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "epicPrice",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "epicSupply",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "eternalPrice",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "eternalSupply",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              }
-          ],
-          "name": "getApproved",
-          "outputs": [
-              {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "getforgedCounts",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "commonforged",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "commonRemaining",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "uncommonforged",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "uncommonRemaining",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "rareforged",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "rareRemaining",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "epicforged",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "epicRemaining",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "legendaryforged",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "legendaryRemaining",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "eternalforged",
-                  "type": "uint256"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "eternalRemaining",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              }
-          ],
-          "name": "getTokenIPFSHash",
-          "outputs": [
-              {
-                  "internalType": "string",
-                  "name": "",
-                  "type": "string"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "owner",
-                  "type": "address"
-              },
-              {
-                  "internalType": "address",
-                  "name": "operator",
-                  "type": "address"
-              }
-          ],
-          "name": "isApprovedForAll",
-          "outputs": [
-              {
-                  "internalType": "bool",
-                  "name": "",
-                  "type": "bool"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-              }
-          ],
-          "name": "isPadrone",
-          "outputs": [
-              {
-                  "internalType": "bool",
-                  "name": "",
-                  "type": "bool"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "legendaryPrice",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "legendarySupply",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "name",
-          "outputs": [
-              {
-                  "internalType": "string",
-                  "name": "",
-                  "type": "string"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "operatingCostsPercentage",
-          "outputs": [
-              {
-                  "internalType": "uint16",
-                  "name": "",
-                  "type": "uint16"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "operatingTasca",
-          "outputs": [
-              {
-                  "internalType": "address payable",
-                  "name": "",
-                  "type": "address"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "owner",
-          "outputs": [
-              {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              }
-          ],
-          "name": "ownerOf",
-          "outputs": [
-              {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "padronesPercentage",
-          "outputs": [
-              {
-                  "internalType": "uint16",
-                  "name": "",
-                  "type": "uint16"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "name": "padroneTascas",
-          "outputs": [
-              {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "rarePrice",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "rareSupply",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "bytes4",
-                  "name": "interfaceId",
-                  "type": "bytes4"
-              }
-          ],
-          "name": "supportsInterface",
-          "outputs": [
-              {
-                  "internalType": "bool",
-                  "name": "",
-                  "type": "bool"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "symbol",
-          "outputs": [
-              {
-                  "internalType": "string",
-                  "name": "",
-                  "type": "string"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "titolare",
-          "outputs": [
-              {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "index",
-                  "type": "uint256"
-              }
-          ],
-          "name": "tokenByIndex",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "owner",
-                  "type": "address"
-              },
-              {
-                  "internalType": "uint256",
-                  "name": "index",
-                  "type": "uint256"
-              }
-          ],
-          "name": "tokenOfOwnerByIndex",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-              }
-          ],
-          "name": "tokenURI",
-          "outputs": [
-              {
-                  "internalType": "string",
-                  "name": "",
-                  "type": "string"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "totalSupply",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "uncommonPrice",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      },
-      {
-          "inputs": [],
-          "name": "uncommonSupply",
-          "outputs": [
-              {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-              }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-      }
-  ],
-  "networks": {
-    "97": {}
+    "address": "0xEE40cA2395A707D30c89d0174A978FbcE9780FF4",
+    "abi": [
+        {
+            "inputs": [],
+            "name": "ERC721EnumerableForbiddenBatchforge",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "sender",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC721IncorrectOwner",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "operator",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "ERC721InsufficientApproval",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "approver",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC721InvalidApprover",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "operator",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC721InvalidOperator",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC721InvalidOwner",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "receiver",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC721InvalidReceiver",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "sender",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC721InvalidSender",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "ERC721NonexistentToken",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "index",
+                    "type": "uint256"
+                }
+            ],
+            "name": "ERC721OutOfBoundsIndex",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnableInvalidOwner",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "account",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnableUnauthorizedAccount",
+            "type": "error"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "approved",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Approval",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "operator",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "bool",
+                    "name": "approved",
+                    "type": "bool"
+                }
+            ],
+            "name": "ApprovalForAll",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "padrone",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "ipfsHash",
+                    "type": "string"
+                }
+            ],
+            "name": "Commonforged",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "padrone",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "cycleNumber",
+                    "type": "uint256"
+                }
+            ],
+            "name": "CycleCompleted",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "padrone",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "ipfsHash",
+                    "type": "string"
+                }
+            ],
+            "name": "Epicforged",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "padrone",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "ipfsHash",
+                    "type": "string"
+                }
+            ],
+            "name": "Eternalforged",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "padrone",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "ipfsHash",
+                    "type": "string"
+                }
+            ],
+            "name": "Legendaryforged",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "previousOwner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "newOwner",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnershipTransferred",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "padrone",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "ipfsHash",
+                    "type": "string"
+                }
+            ],
+            "name": "Rareforged",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "from",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Transfer",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "recipient",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                }
+            ],
+            "name": "TransferFailed",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "padrone",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "ipfsHash",
+                    "type": "string"
+                }
+            ],
+            "name": "Uncommonforged",
+            "type": "event"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "approve",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "ipfsHash",
+                    "type": "string"
+                }
+            ],
+            "name": "forgeCommon",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "ipfsHash",
+                    "type": "string"
+                }
+            ],
+            "name": "forgeEpic",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "ipfsHash",
+                    "type": "string"
+                }
+            ],
+            "name": "forgeEternal",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "ipfsHash",
+                    "type": "string"
+                }
+            ],
+            "name": "forgeLegendary",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "ipfsHash",
+                    "type": "string"
+                }
+            ],
+            "name": "forgeRare",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "ipfsHash",
+                    "type": "string"
+                }
+            ],
+            "name": "forgeUncommon",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "renounceOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "from",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "safeTransferFrom",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "from",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "name": "safeTransferFrom",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint16",
+                    "name": "_padronesPercentage",
+                    "type": "uint16"
+                },
+                {
+                    "internalType": "uint16",
+                    "name": "_operatingCostsPercentage",
+                    "type": "uint16"
+                }
+            ],
+            "name": "setAllocationValue",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "operator",
+                    "type": "address"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "approved",
+                    "type": "bool"
+                }
+            ],
+            "name": "setApprovalForAll",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setCommonPrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "newContractURI",
+                    "type": "string"
+                }
+            ],
+            "name": "setContractURI",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setEpicPrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setEternalPrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setLegendaryPrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setRarePrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setUncommonPrice",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "from",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "transferFrom",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "newOwner",
+                    "type": "address"
+                }
+            ],
+            "name": "transferOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address payable",
+                    "name": "_operatingTasca",
+                    "type": "address"
+                }
+            ],
+            "name": "updateDistributionTascas",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "newPadrone",
+                    "type": "address"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "add",
+                    "type": "bool"
+                }
+            ],
+            "name": "updatePadrone",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address payable",
+                    "name": "_padroneTasca1",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "_padroneTasca2",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "_padroneTasca3",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "_padroneTasca4",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address payable",
+                    "name": "_operatingTasca",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "initialOwner",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                }
+            ],
+            "name": "balanceOf",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "commonPrice",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "commonSupply",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "contractURI",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "epicPrice",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "epicSupply",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "eternalPrice",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "eternalSupply",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getApproved",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getforgedCounts",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "commonforged",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "commonRemaining",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "uncommonforged",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "uncommonRemaining",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "rareforged",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "rareRemaining",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "epicforged",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "epicRemaining",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "legendaryforged",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "legendaryRemaining",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "eternalforged",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "eternalRemaining",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getTokenIPFSHash",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "operator",
+                    "type": "address"
+                }
+            ],
+            "name": "isApprovedForAll",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "name": "isPadrone",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "legendaryPrice",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "legendarySupply",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "name",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "operatingCostsPercentage",
+            "outputs": [
+                {
+                    "internalType": "uint16",
+                    "name": "",
+                    "type": "uint16"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "operatingTasca",
+            "outputs": [
+                {
+                    "internalType": "address payable",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "owner",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "ownerOf",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "padronesPercentage",
+            "outputs": [
+                {
+                    "internalType": "uint16",
+                    "name": "",
+                    "type": "uint16"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "padroneTascas",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "rarePrice",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "rareSupply",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "bytes4",
+                    "name": "interfaceId",
+                    "type": "bytes4"
+                }
+            ],
+            "name": "supportsInterface",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "symbol",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "titolare",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "index",
+                    "type": "uint256"
+                }
+            ],
+            "name": "tokenByIndex",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "index",
+                    "type": "uint256"
+                }
+            ],
+            "name": "tokenOfOwnerByIndex",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "tokenURI",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "totalSupply",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "uncommonPrice",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "uncommonSupply",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ],
+    "networks": {
+      "97": {}
+    }
   }
-}
