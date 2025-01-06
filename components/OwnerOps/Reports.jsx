@@ -855,8 +855,8 @@ const Reports = ({ onClose }) => {
       setOwnerOpsData({
         owner,
         contractBalance: ethers.utils.formatEther(balance),
-        padronesPercentage: `${ethers.utils.formatUnits(pPct, 2)}%`,
-        operatingCostsPercentage: `${ethers.utils.formatUnits(oPct, 2)}%`,
+        padronesPercentage: `${(parseFloat(ethers.utils.formatUnits(pPct, 2)) * 100).toFixed(0)}%`,
+        operatingCostsPercentage: `${(parseFloat(ethers.utils.formatUnits(oPct, 2)) * 100).toFixed(0)}%`,
         operatingTasca: opTasca,
         padronesList,
         supplyDetails,
@@ -965,7 +965,7 @@ const Reports = ({ onClose }) => {
         const finalWeight =
           totalWeight > 0 ? totalWeight + totalWeight * (revshareBonus / 100) : 0;
 
-        // Calculate total investment in BNB
+        // total investment in BNB - not really accurate becasue bnb flucuates
         let investmentValueBNB = 0;
         data.medals.forEach((m) => {
           const cost = medalCosts[m.name] || 0;
@@ -1227,7 +1227,7 @@ const Reports = ({ onClose }) => {
                     <td>{h.revshareBonus}</td>
                     <td>{h.finalWeight}</td>
                     <td>{h.investmentValueBNB}</td>
-                    {/* ADDED title attribute on Value (USD) cell */}
+                    
                     <td
                     style={{cursor: "pointer"}}
                       title={
@@ -1246,7 +1246,7 @@ const Reports = ({ onClose }) => {
           </table>
         </div>
 
-        {/* If a medal was clicked, show secondary table */}
+        
         {selectedMedal && (
           <div className={styles.medalDetails}>
             <h4>Selected Medal Details</h4>

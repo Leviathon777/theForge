@@ -841,7 +841,9 @@
                 <p>
                     <strong>2 Players Mode:</strong> Play against another human. Select "2 Players" to take turns controlling the White and Black pieces.
                 </p>
-                <!-- New Line Added -->
+                <p>
+                <strong>Openings:</strong> Several classic opening moves can be played. In 1 player mode, by selecting an opening,  the game will automatically play your opening against the Black Team. If your selected opening has more than one move, upon completion you may need to select the Black Teams next move manually, and then proceed. 
+                </p>
                 <p>
                     <strong>Suggested Moves:</strong> After selecting a piece, suggested moves will appear below. Click on a suggested move to execute it.
                 </p>
@@ -857,8 +859,8 @@
                 <p>
                     <strong>Congratulations!</strong> Keep playing to maximize your XdRiP earnings and enjoy the benefits of increased revenue shares.
                 </p>
-                <!-- Updated Small Print with Claim Details -->
-                <p style="font-size: 10px; color: #ccc;">
+                
+                <p style="font-size: 12px; color: #ccc;">
                     Minimum cash out is 100 XdRiP. For your security, this game cannot connect to your wallet. Balances must be <a href="#" id="claimLink" style="color: #FFD700; text-decoration: underline;">claimed</a>. Maximum of 1000 tokens may be claimed before restart.
                 </p>
             </div>
@@ -1118,7 +1120,7 @@
             }
             gameMode = 'onePlayer';
             console.log(`Game mode set to ${gameMode}`);
-            alert('1 Player mode selected. You are playing as White.');
+            alert('1 Player mode selected. For best results click Toggle FullScreen. Please be sure to review How To Play. You are playing as White. ');
             resetGame();
         });
 

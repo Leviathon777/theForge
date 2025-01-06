@@ -41,6 +41,58 @@ const web3 = new Web3("https://bsc-dataseed1.binance.org/");
 const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
 
 
+
+
+// ChatWidget Component goes below imports above main component
+const ChatWidget = () => {
+  useEffect(() => {
+    // Prevent multiple script loads
+    const existingScript = document.querySelector(`script[src="https://app.chatsy.ai/resources/script.js?cb=1736020701266"]`);
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = 'https://app.chatsy.ai/resources/script.js?cb=1736020701266';
+      script.async = true;
+      script.crossOrigin = '*';
+      script.setAttribute('data-account-id', 'CpLt39gVKUfMu2OmWWceLO0qKTy1');
+      script.setAttribute('data-chat-id', 'WCHqMhL0wPmp8E');
+      script.setAttribute(
+        'data-settings',
+        JSON.stringify({
+          openChatButton: {
+            background: '#237afc',
+            text: '#ffffff',
+          },
+        })
+      );
+
+      // Optional: Handle script load and error events
+      script.onload = () => {
+        console.log('Chat script loaded successfully');
+      };
+
+      script.onerror = () => {
+        console.error('Failed to load the chat script');
+      };
+
+      document.body.appendChild(script);
+    }
+
+    // Cleanup if necessary
+    return () => {
+      // Optionally, remove the script when the component unmounts
+      // const script = document.querySelector(`script[src="https://app.chatsy.ai/resources/script.js?cb=1736020701266"]`);
+      // if (script) document.body.removeChild(script);
+    };
+  }, []);
+
+  return null; // This component does not render anything
+};
+
+
+
+
+
+
 const TheForge = () => {
   const router = useRouter();
   const [selectedMedalForForge, setSelectedMedalForForge] = useState(null);
@@ -754,12 +806,97 @@ const TheForge = () => {
   };
   
 
+  const triggerEasterEgg = () => {
+    const url = `${window.location.origin}/misc/ChessEgg.html`;
+    const options = "width=1024,height=768";
+
+    // Play epic sound effect
+    const audio = new Audio("/sounds/epic-sound.mp3"); 
+    audio.play().catch((error) => console.error("Failed to play sound:", error));
+
+    // Show toast message
+    toast.success("🎉 You found a secret! Opening the vault...", {
+      autoClose: 3000, 
+    });
+
+    
+    setTimeout(() => {
+      const chessGameWindow = window.open(url, "ChessGameWindow", options);
+
+      if (!chessGameWindow) {
+        console.error("Popup blocked! Please allow popups for this website.");
+        toast.error("Popup blocked! Please allow popups to access the secret.");
+      } else {
+        chessGameWindow.focus();
+      }
+    }, 3000); 
+  };
+
+  /*
+  useEffect(() => {
+    const handleKeyDownOrg = (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        console.log("Easter Egg Triggered via Ctrl + Enter!");
+        toast.info("🎉 Unlocking the Chess Game...");
+        triggerEasterEgg();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDownOrg);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDownOrg);
+    };
+  }, []);
+  */
+
+  useEffect(() => {
+    let typed = '';
+    const targets = ['medals', 'xdrip'];
+    const maxLength = Math.max(...targets.map(target => target.length));
+
+    const handleKeyDown = (e) => {
+      const key = e.key.toLowerCase();
+      if (key.length === 1 && /^[a-z]$/.test(key)) { 
+        typed += key;
+        if (typed.length > maxLength) {
+          typed = typed.slice(typed.length - maxLength);
+        }
+        if (targets.some(target => typed === target)) {
+          console.log(`Easter Egg Triggered via Typing '${typed}'!`);
+          triggerEasterEgg();
+          typed = '';
+        }
+      }
+    };
+
+    window.addEventListener('keypress', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keypress', handleKeyDown);
+    };
+  }, []);
+
+
+
+
 
   return (
     <div className={Style.the_forge}>
+
+<ChatWidget />
+
       <div className={Style.the_forge_wrapper}>
         <div className={Style.forge_button_upper}>
-          <h1 className={Style.lore_text}>MEDALS OF HONOR VAULT</h1>
+        <h1 className={Style.lore_text}>
+            MEDALS OF HONOR{' '}
+            <span
+            
+              className={Style.lore_text}
+            >
+              <h1>VAULT</h1>
+            </span>
+          </h1>
+
           <div className={Style.forge_button_wrapper}>
 
          
