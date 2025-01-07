@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { updateApplicantStatusInFirebase } from '../../firebase/forgeServices'; // Import your Firebase service
 
 const SECRET_KEY = process.env.SUMSUB_WEBHOOK_SECRET_KEY;
 
@@ -19,7 +20,6 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Verify signature
   if (!verifySignature(req)) {
     console.error('Invalid webhook signature');
     return res.status(401).json({ error: 'Invalid signature' });
@@ -30,35 +30,43 @@ export default async function handler(req, res) {
   try {
     console.log('Webhook event received:', event);
 
-    // Handle different webhook event types
     switch (event.type) {
-      case 'applicantCreated':
-        console.log('Applicant Created:', event.payload);
+      case 'applicantReviewed': {
+        const {
+          reviewResult: { reviewAnswer },
+          reviewStatus,
+          applicantId,
+          reviewDate,
+        } = event.payload;
+      
+        console.log('Applicant Reviewed:', { reviewAnswer, reviewStatus, applicantId, reviewDate });
+      
+        const walletAddress = applicantId; // Matches the externalUserId used when creating the applicant
+        const isApproved = reviewAnswer === 'GREEN';
+        const isRejected = reviewAnswer === 'RED';
+      
+        // Prepare the KYC update fields
+        const updateData = {
+          kycStatus: isApproved ? 'approved' : isRejected ? 'rejected' : 'under review',
+          kycSubmittedAt: reviewDate || null, // Submission date if provided
+          kycApprovedAt: isApproved ? reviewDate : null, // Approval date only if approved
+        };
+      
+        try {
+          // Call the updateForger function to update the user's document
+          const updateResult = await updateApplicantStatusInFirebase(walletAddress, updateData);
+      
+          console.log(`Forger with wallet address ${walletAddress} updated successfully.`);
+          console.log('Firebase Update Result:', updateResult);
+      
+          res.status(200).json({ success: true, message: 'KYC status updated successfully.' });
+        } catch (error) {
+          console.error('Error updating Firebase with applicant review status:', error);
+          res.status(500).json({ error: 'Error updating KYC status', details: error.message });
+        }
         break;
-
-      case 'applicantPending':
-        console.log('Applicant Pending:', event.payload);
-        break;
-
-      case 'applicantReviewed':
-        console.log('Applicant Reviewed:', event.payload);
-        break;
-
-      case 'applicantOnHold':
-        console.log('Applicant On Hold:', event.payload);
-        break;
-
-      case 'applicantActionPending':
-        console.log('Applicant Action Pending:', event.payload);
-        break;
-
-      case 'applicantActionReviewed':
-        console.log('Applicant Action Reviewed:', event.payload);
-        break;
-
-      case 'applicantWorkflowCompleted':
-        console.log('Applicant Workflow Completed:', event.payload);
-        break;
+      }
+        
 
       default:
         console.log('Unhandled webhook type:', event.type);

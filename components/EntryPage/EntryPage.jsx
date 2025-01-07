@@ -6,7 +6,6 @@ import Image from "next/image";
 import { VideoPlayer, TermsOfService, UserAgreement, Button } from "../componentsindex";
 import PrivacyPolicy from "../Legal/PrivacyPolicy";
 
-
 const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => {
   const [showEnterButton, setShowEnterButton] = useState(false);
   const [showSkipButton, setShowSkipButton] = useState(false);
@@ -29,7 +28,6 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
         handleEnterClick();
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       clearTimeout(timer);
@@ -57,29 +55,20 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
     setShowEnterButton(true);
     setShowSkipButton(false);
   };
-
   const handleManagePreferences = () => {
     setShowPreferencesModal(true);
   };
-
   const closePreferencesModal = () => {
     setShowPreferencesModal(false);
   };
-
   const togglePreference = (key) => {
     setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
   };
-
-
   const savePreferences = () => {
     try {
       if (preferences) {
-        // Save to cookies
         document.cookie = `cookiePreferences=${JSON.stringify(preferences)};path=/;max-age=2592000`;
-
-        // Save to local storage as a fallback
         localStorage.setItem("cookiePreferences", JSON.stringify(preferences));
-
         closePreferencesModal();
       } else {
         console.error("Preferences state is undefined!");
@@ -88,8 +77,6 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
       console.error("Failed to save preferences:", error);
     }
   };
-
-
   useEffect(() => {
     const savedPreferences = localStorage.getItem("cookiePreferences") || getCookie("cookiePreferences");
     if (savedPreferences) {
@@ -100,28 +87,19 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
       }
     }
   }, []);
-
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(";").shift();
     return null;
   };
-
-
-
-
   const [preferences, setPreferences] = useState({
     essential: true,
     analytics: false,
     marketing: false,
   });
-
   const [showPreferencesModal, setShowPreferencesModal] = useState(false);
   const [isPrivacyPolicyModalOpen, setIsPrivacyPolicyModalOpen] = useState(false);
-
-
-
   return (
     <motion.div
       className={styles.entryPageContainer}
@@ -254,8 +232,6 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
           </div>
         </div>
       )}
-
-
       {isTermsModalOpen && (
         <div className={styles.modal}>
           <TermsOfService />
@@ -264,15 +240,12 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
           </button>
         </div>
       )}
-
       {isPrivacyPolicyModalOpen && (
         <PrivacyPolicy
           isOpen={isPrivacyPolicyModalOpen}
           onRequestClose={() => setIsPrivacyPolicyModalOpen(false)}
         />
       )}
-
-
       {isUserAgreementModalOpen && (
         <div className={styles.modal}>
           <UserAgreement />
@@ -281,9 +254,6 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
           </button>
         </div>
       )}
-
-
-
       {showPreferencesModal && (
         <div
           style={{
@@ -373,7 +343,6 @@ const EntryPage = ({ onEnter, isModalVisible, handleAccept, handleDecline }) => 
           </div>
         </div>
       )}
-
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}

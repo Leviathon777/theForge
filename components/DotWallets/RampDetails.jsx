@@ -21,9 +21,9 @@ const RampDetails = ({ isVisible, onClose, infoModalData }) => {
   const headerMapping = [
     { display: "ID", key: "id" },
     { display: "Cost", key: "cost" },
-    { display: "XdRiP Rewards", key: "xdripRewards" },
+    { display: "XdRiP Threshold", key: "xdripThreshold" },
     { display: "Revenue Share", key: "revenueShare" },
-    { display: "Other Income", key: "otherIncome" },
+    { display: "XdRiP Bonus", key: "xdripBonus" },
     { display: "Reward Income", key: "rewardIncome" },
     { display: "Creators", key: "creators" },
     { display: "External URL", key: "externalUrl" },

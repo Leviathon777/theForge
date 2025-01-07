@@ -77,130 +77,18 @@
   --table-font-size: 1rem;
   --table-result-font-size: 0.9rem;
 
+  /* Button Specific Colors */
+  --btn-bg-color: linear-gradient(145deg, #0d0d0d, #1a1a1a);
+  --btn-font-color: white;
+  --btn-border-color: #1c1c1c;
+  --btn-hover-color: lightgray;
+  --btn-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7);
+  --btn-hover-shadow: 0px 8px 15px rgba(0, 0, 0, 0.6);
+  --btn-active-shadow: inset 0px 0px 15px rgba(255, 255, 255, 0.2), 0px 8px 20px rgba(0, 0, 0, 0.9);
+  --btn-border-radius: 12px;
+  --btn-padding: 10px 20px;
+
 }
-
-/*--------------------------------------------------------------
->>> GUN METAL THEME (Cool Industrial Feel)
---------------------------------------------------------------*/
-.theme-gun-metal {
-  --color-background: linear-gradient(145deg, #2b2b2b, #1f1f1f);
-  --color-text-primary: #d1d1d1;
-  --color-text-secondary: #9e9e9e;
-  --color-accent: #5c6b73;
-  --color-accent-light: #7c8d96;
-  --color-border: #2e2e2e;
-  --color-success: #40c057;
-  --color-error: #f03e3e;
-  --color-muted: #737373;
-
-  --glow-default: 0 0 15px rgba(92, 107, 115, 0.8);
-  --shadow-default: 0 3px 10px rgba(44, 44, 44, 0.7);
-
-  --gradient-button: linear-gradient(135deg, #5c6b73 0%, #7c8d96 100%);
-  --gradient-background: linear-gradient(145deg, #2b2b2b, #1f1f1f);
-
-  --progress-bar-color: rgba(92, 107, 115, 0.2);
-  /* Transparent Industrial Gray */
-  --progress-bar-fill-start: rgba(92, 107, 115, 0.5);
-  --progress-bar-fill-end: rgba(124, 141, 150, 0.5);
-  --progress-bar-glow: rgba(92, 107, 115, 0.5);
-  --progress-bar-inner-glow: rgba(92, 107, 115, 0.7);
-}
-
-/*--------------------------------------------------------------
->>> FUTURISTIC TECH THEME (Neon, Sci-fi)
---------------------------------------------------------------*/
-.theme-futuristic-tech {
-  --color-background: radial-gradient(circle, #1a1b1e, #0d0d0f);
-  --color-text-primary: #b8b8d1;
-  --color-text-secondary: #8585a8;
-  --color-accent: #4ee4c8;
-  --color-accent-light: #7cffe6;
-  --color-border: #2c2e33;
-  --color-success: #3ad4af;
-  --color-error: #ff4d4d;
-  --color-muted: #6b6d74;
-
-  --glow-default: 0 0 20px rgba(78, 228, 200, 0.8);
-  --shadow-default: 0 4px 15px rgba(26, 27, 30, 0.8);
-
-  --gradient-button: linear-gradient(135deg, #4ee4c8 0%, #7cffe6 100%);
-  --gradient-background: radial-gradient(circle, #1a1b1e, #0d0d0f);
-
-
-  --progress-bar-color: rgba(78, 228, 200, 0.2);
-  --progress-bar-fill-start: rgba(78, 228, 200, 0.5);
-  --progress-bar-fill-end: rgba(124, 255, 230, 0.5);
-  --progress-bar-glow: rgba(78, 228, 200, 0.5);
-  --progress-bar-inner-glow: rgba(78, 228, 200, 0.7);
-}
-
-
-/*--------------------------------------------------------------
->>> INDUSTRIAL STEEL THEME (Metallic, Heavy)
---------------------------------------------------------------*/
-.theme-industrial-steel {
-  --color-background: linear-gradient(135deg, #3b3b3b, #2b2b2b);
-  --color-text-primary: #d6d6d6;
-  --color-text-secondary: #aaaaaa;
-  --color-accent: #899499;
-  --color-accent-light: #c0cbd1;
-  --color-border: #545454;
-  --color-success: #82c91e;
-  --color-error: #ff6b6b;
-  --color-muted: #9e9e9e;
-
-  --glow-default: 0 0 12px rgba(137, 148, 153, 0.7);
-  --shadow-default: 0 5px 20px rgba(90, 90, 90, 0.6);
-
-  --gradient-button: linear-gradient(145deg, #899499, #c0cbd1);
-  --gradient-background: linear-gradient(135deg, #3b3b3b, #2b2b2b);
-
-  --progress-bar-color: rgba(137, 148, 153, 0.2);
-  --progress-bar-fill-start: rgba(137, 148, 153, 0.5);
-  --progress-bar-fill-end: rgba(192, 203, 209, 0.5);
-  --progress-bar-glow: rgba(137, 148, 153, 0.5);
-  --progress-bar-inner-glow: rgba(137, 148, 153, 0.7);
-}
-
-/*--------------------------------------------------------------
->>> RASTA THEME (Vibrant, Jamaican-Inspired)
---------------------------------------------------------------*/
-.theme-rasta {
-  --color-background: linear-gradient(145deg, #5a3939, #a3a12d);
-  --color-text-primary: #e60e0e;
-  --color-text-secondary: #c0c0c0;
-  --color-accent: #ffb400;
-  /* Yellow */
-  --color-accent-light: #ffecb3;
-  /* Light Yellow */
-  --color-border: #444444;
-  --color-success: #28a745;
-  /* Green */
-  --color-error: #d62828;
-  /* Red */
-  --color-muted: #6b6b6b;
-  --color-accent-2: #28a745;
-  /* Green for elements */
-  --color-accent-3: #d62828;
-  /* Red for elements */
-
-  --glow-default: 0 0 15px rgba(255, 180, 0, 0.8), 0 0 15px rgba(40, 167, 69, 0.6), 0 0 15px rgba(214, 40, 40, 0.6);
-  --shadow-default: 0 6px 20px rgba(18, 18, 18, 0.7);
-
-  --gradient-button: linear-gradient(135deg, #ffb400 0%, #28a745 40%, #d62828 80%);
-  --gradient-background: linear-gradient(145deg, #121212, #1c1c1c);
-
-  --progress-bar-color: rgba(255, 180, 0, 0.2);
-  /* Transparent Yellow */
-  --progress-bar-fill-start: rgba(255, 180, 0, 0.5);
-  --progress-bar-fill-end: rgba(40, 167, 69, 0.5);
-  /* Green */
-  --progress-bar-glow: rgba(255, 180, 0, 0.5);
-  --progress-bar-inner-glow: rgba(40, 167, 69, 0.7);
-  /* Green Inner glow */
-}
-
 /*--------------------------------------------------------------
 >>> GLOBAL STYLES (Shared Across Themes)
 --------------------------------------------------------------*/

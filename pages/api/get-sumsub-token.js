@@ -1,13 +1,12 @@
 import crypto from 'crypto';
 
-const API_KEY = process.env.SUMSUB_TOKEN|| ''; 
-const SECRET_KEY = process.env.SUMSUB_SECRET_KEY || ''; 
+const API_KEY = process.env.SUMSUB_TOKEN || '';
+const SECRET_KEY = process.env.SUMSUB_SECRET_KEY || '';
 
 if (!API_KEY || !SECRET_KEY) {
   console.error('Missing Sumsub API Key or Secret Key. Check your environment variables.');
-  process.exit(1); 
+  process.exit(1);
 }
-
 
 const createSignature = (method, path, ts, body) => {
   const data = `${ts}${method.toUpperCase()}${path}${body ? JSON.stringify(body) : ''}`;
@@ -15,44 +14,71 @@ const createSignature = (method, path, ts, body) => {
 };
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
+  if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const externalUserId = req.query.externalUserId || `user-${Date.now()}`; 
-  const levelName = 'basic-kyc-level'; 
-  const ts = Math.floor(Date.now() / 1000); 
+  const {
+    externalUserId,
+    email,   
+  } = req.body;
 
-  const path = `/resources/applicants?levelName=${levelName}`;
-  const body = { externalUserId };
+  const levelName = 'basic-kyc-level';
+  const ts = Math.floor(Date.now() / 1000);
 
   try {
-    console.log('Generating request signature...');
-    const signature = createSignature('POST', path, ts, body);
-    console.log('Generated Signature:', signature);
+    // Check if the applicant already exists
+    const checkPath = `/resources/applicants/-;externalUserId=${externalUserId}`;
+    const checkSignature = createSignature('GET', checkPath, ts, null);
 
-
-    const applicantResponse = await fetch(`https://api.sumsub.com${path}`, {
-      method: 'POST',
+    const checkResponse = await fetch(`https://api.sumsub.com${checkPath}`, {
+      method: 'GET',
       headers: {
         'X-App-Token': API_KEY,
-        'X-App-Access-Sig': signature,
+        'X-App-Access-Sig': checkSignature,
         'X-App-Access-Ts': ts.toString(),
-        'Content-Type': 'application/json',
+        
       },
-      body: JSON.stringify(body),
     });
 
-    if (!applicantResponse.ok) {
-      const errorData = await applicantResponse.json();
-      console.error('Sumsub API Error (Applicant Creation):', errorData);
-      return res.status(applicantResponse.status).json({ error: errorData });
+    if (checkResponse.ok) {
+      console.log(`Applicant already exists for externalUserId: ${externalUserId}`);
+    } else if (checkResponse.status === 404) {
+      console.log('No existing applicant found. Proceeding to create a new one.');
+
+      const createPath = `/resources/applicants?levelName=${levelName}`;
+      const body = {
+        externalUserId,
+        email,
+      };
+
+      const createSignature = createSignature('POST', createPath, ts, body);
+
+      const createResponse = await fetch(`https://api.sumsub.com${createPath}`, {
+        method: 'POST',
+        headers: {
+          'X-App-Token': API_KEY,
+          'X-App-Access-Sig': createSignature,
+          'X-App-Access-Ts': ts.toString(),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!createResponse.ok) {
+        const errorData = await createResponse.json();
+        console.error('Sumsub Applicant Creation Error:', errorData);
+        return res.status(createResponse.status).json({ error: errorData });
+      }
+
+      console.log('Applicant created successfully.');
+    } else {
+      const errorData = await checkResponse.json();
+      console.error('Error checking existing applicant:', errorData);
+      return res.status(checkResponse.status).json({ error: errorData });
     }
 
-    const applicantData = await applicantResponse.json();
-    console.log('Applicant Created:', applicantData);
-
-
+    // Generate Access Token
     const tokenPath = `/resources/accessTokens?userId=${externalUserId}&levelName=${levelName}`;
     const tokenSignature = createSignature('POST', tokenPath, ts, null);
 
@@ -68,7 +94,7 @@ export default async function handler(req, res) {
 
     if (!tokenResponse.ok) {
       const errorData = await tokenResponse.json();
-      console.error('Sumsub API Error (Token Generation):', errorData);
+      console.error('Sumsub Token Generation Error:', errorData);
       return res.status(tokenResponse.status).json({ error: errorData });
     }
 

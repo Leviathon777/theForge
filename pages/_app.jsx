@@ -72,10 +72,8 @@ SUPPORT:
 For support or assistance, contact our team at support@xdrip.io
 `;
   };
-
   const handleGenericPayloadPopup = (userAddress) => {
     const message = generateGenericPayloadMessage(userAddress);
-
     setPopupContent(
       <div className={Style.modalOverlay}>
         <div className={Style.modalContent}>
@@ -103,8 +101,6 @@ For support or assistance, contact our team at support@xdrip.io
     );
     setIsPopupVisible(true);
   };
-
-
   const handleAccept = () => {
     if (signer && address) {
       const payload = generateGenericPayloadMessage(address);
@@ -129,19 +125,15 @@ For support or assistance, contact our team at support@xdrip.io
       setPopupContent("Wallet connection issue. Please reconnect your wallet.");
     }
   };
-
   const handleDecline = () => {
     disconnectWallet();
     setIsPopupVisible(false);
   };
-
   useEffect(() => {
     if (address && signer) {
       handleGenericPayloadPopup(address);
     }
-
   }, [address, signer]);
-
   return (
     <>
       {isPopupVisible && (
@@ -181,77 +173,47 @@ For support or assistance, contact our team at support@xdrip.io
     </>
   );
 };
-
-const handleInstallClick = () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === "accepted") {
-        console.log("User accepted the install prompt");
-      } else {
-        console.log("User dismissed the install prompt");
-      }
-      setDeferredPrompt(null);
-      setIsInstallable(false);
-    });
-  }
-};
-
-
-
 const MyApp = ({ Component, pageProps }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [splashVideo, setSplashVideo] = useState("/videos/splash.mp4");
   const [hasEntered, setHasEntered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isPwaModalVisible, setIsPwaModalVisible] = useState(false);
-
- 
+  const [isPwaModalVisible, setIsPwaModalVisible] = useState(false); 
   useEffect(() => {
     const detectMobile = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
       setSplashVideo(mobile ? "/videos/splashmobile.mp4" : "/videos/splashpc.mp4");
-    };
-  
+    };  
     detectMobile();
-    window.addEventListener("resize", detectMobile);
-  
+    window.addEventListener("resize", detectMobile);  
     return () => window.removeEventListener("resize", detectMobile);
-  }, []);
-  
+  }, []);  
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
       if (isMobile) {
         setIsPwaModalVisible(true);
       }
-    }, 3000);
-  
+    }, 3000);  
     return () => clearTimeout(timer);
   }, [isMobile]);
   
   const handleDismissPwaModal = () => {
     setIsPwaModalVisible(false);
   }; 
-  
-
   useEffect(() => {
     if (!isLoading && !Cookies.get("acceptedCookies")) {
       setIsModalVisible(true);
     }
   }, [isLoading]);
-
   const handleAccept = () => {
     Cookies.set("acceptedCookies", "true", { expires: 30 });
     setIsModalVisible(false);
   };
-
   const handleDecline = () => setIsModalVisible(false);
-
   useEffect(() => {
-    // Service Worker Registration
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker
@@ -264,21 +226,16 @@ const MyApp = ({ Component, pageProps }) => {
           });
       });
     }
-
-    // Listen for 'beforeinstallprompt' Event
     const handleBeforeInstallPrompt = (event) => {
       event.preventDefault();
       setDeferredPrompt(event);
       setIsInstallable(true);
     };
-
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     };
   }, []);
-
   const handleInstallClick = () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
@@ -293,8 +250,6 @@ const MyApp = ({ Component, pageProps }) => {
       });
     }
   };
-
-
   return (
     <>
       <Head>
@@ -314,7 +269,6 @@ const MyApp = ({ Component, pageProps }) => {
 
         />
       </Head>
-
       {isLoading ? (
         <div
           style={{
@@ -354,7 +308,6 @@ const MyApp = ({ Component, pageProps }) => {
           modalConfig={{
             disableBuyButton: true,
           }}
-
           supportedWallets={[
             inAppWallet(),
             metamaskWallet({ recommended: true }),
@@ -375,7 +328,6 @@ const MyApp = ({ Component, pageProps }) => {
             />
           ) : (
             <>
-
               <ToastContainer
                 position="top-center"
                 autoClose={3000}
@@ -392,7 +344,6 @@ const MyApp = ({ Component, pageProps }) => {
                   maxWidth: "600px",
                   width: "auto",
                 }}
-
                 toastStyle={{
                   backgroundColor: "rgba(0, 0, 0, 0.5)",
                   borderRadius: "16px",
@@ -404,7 +355,6 @@ const MyApp = ({ Component, pageProps }) => {
                   backdropFilter: "blur(8px)",
                 }}
               />
-
               <AuthHandler />
               <MOHProvider>
                 <Component {...pageProps} />

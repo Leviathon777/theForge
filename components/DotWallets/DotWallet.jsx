@@ -97,6 +97,16 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
     const walletAddress = address;
     const baseCost = 0.5;
 
+    // Predefined medal details for lookup
+    const medalDetails = [
+      { title: "COMMON MEDAL OF HONOR", xdripThreshold: ".5% or 5,000,000 XdRiP", revenueShare: "10%", xdripBonus: "2%" },
+      { title: "UNCOMMON MEDAL OF HONOR", xdripThreshold: ".75% or 7,500,000 XdRiP", revenueShare: "25%", xdripBonus: "5%" },
+      { title: "RARE MEDAL OF HONOR", xdripThreshold: "1.0% or 10,000,000 XdRiP", revenueShare: "45%", xdripBonus: "7%" },
+      { title: "EPIC MEDAL OF HONOR", xdripThreshold: "1.25% or 12,500,000 XdRiP", revenueShare: "70%", xdripBonus: "10%" },
+      { title: "LEGENDARY MEDAL OF HONOR", xdripThreshold: "1.5% or 15,000,000 XdRiP", revenueShare: "100%", xdripBonus: "15%" },
+      { title: "ETERNAL MEDAL OF HONOR", xdripThreshold: "N/A", revenueShare: "Global", xdripBonus: "N/A" },
+    ];
+
     const rampData = {
       numberOfMedals: medals.length,
       totalValueInBNB: medals.reduce((total, medal, index) => {
@@ -109,126 +119,146 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
         const name = medal?.metadata?.name || "Unknown Medal";
         const medalCost =
           name === "ETERNAL MEDAL OF HONOR" ? 200 : baseCost + index * 0.5;
+
+        const medalInfo = medalDetails.find((m) => m.title === name) || {
+          xdripThreshold: "Unknown",
+          revenueShare: "Unknown",
+          xdripBonus: "Unknown",
+        };
+
         return {
-          id: medal?.tokenId.toString() || `unknown-${index}`, // Corrected access and converted to string
+          id: medal?.tokenId?.toString() || `unknown-${index}`, 
           name: name,
           cost: `${medalCost} BNB`,
-          rewardIncome: rewardIncomeTotal
-            ? `${rewardIncomeTotal} BNB`
-            : "N/A",
+          rewardIncome: rewardIncomeTotal ? `${rewardIncomeTotal} BNB` : "N/A",
           creators:
             medal?.metadata?.attributes?.find(
               (attr) => attr.trait_type === "CREATORS"
             )?.value || "Unknown Creators",
           externalUrl: medal?.metadata?.external_url || "No external URL provided",
-          xdripRewards: "50 XdRiP",
-          revenueShare: "20%",
-          otherIncome: "10%",
+          xdripThreshold: medalInfo.xdripThreshold,
+          revenueShare: medalInfo.revenueShare,
+          xdripBonus: medalInfo.xdripBonus,
         };
       }),
     };
+
+    // Log the medals array
+    console.log("Medals Data:", medals);
+
+    // Log the transformed rampData
+    console.log("Ramp Data:", rampData);
+
     setInfoModalData(rampData);
     setIsInfoModalVisible(true);
-  };
+
+  }
+
+    useEffect(() => {
+      if (!infoModalData || !infoModalData.medals?.length) {
+        setIsInfoModalVisible(false);
+      }
+    }, [infoModalData]);
 
 
-  useEffect(() => {
-    if (!infoModalData || !infoModalData.medals?.length) {
-      setIsInfoModalVisible(false);
-    }
-  }, [infoModalData]);
-
-  
-  const handleEternalInfo = () => {
-    if (!eternalMedal) return;
-
-    const walletAddress = address;
-    const eternalData = {
-      numberOfMedals: 1,
-      totalValueInBNB: 200,
-      walletAddress,
-      medals: [
-        {
-          id: eternalMedal.tokenId.toString() || "unknown", // Corrected access and converted to string
-          name: eternalMedal.metadata.name || "ETERNAL MEDAL OF HONOR",
-          cost: "200 BNB",
-          rewardIncome: rewardIncomeTotal ? `${rewardIncomeTotal} BNB` : "N/A",
-          creators:
-            eternalMedal.metadata.attributes?.find(
-              (attr) => attr.trait_type === "CREATORS"
-            )?.value || "Unknown Creators",
-          externalUrl:
-            eternalMedal.metadata.external_url || "No external URL provided",
-          xdripRewards: "100 XdRiP", // Adjust as needed
-          revenueShare: "50%",
-          otherIncome: "20%",
-        },
-      ],
+    const handleEternalInfo = () => {
+      if (!eternalMedal) return;
+    
+      const walletAddress = address;
+    
+      const eternalMedalInfo = medalDetails.find((medal) => medal.title === "ETERNAL MEDAL OF HONOR") || {
+        xdripThreshold: "Unknown",
+        revenueShare: "Unknown",
+        xdripBonus: "Unknown",
+      };
+    
+      const eternalData = {
+        numberOfMedals: 1,
+        totalValueInBNB: 200,
+        walletAddress,
+        medals: [
+          {
+            id: eternalMedal.tokenId.toString() || "unknown", 
+            name: eternalMedal.metadata.name || "ETERNAL MEDAL OF HONOR",
+            cost: "200 BNB",
+            rewardIncome: rewardIncomeTotal ? `${rewardIncomeTotal} BNB` : "N/A",
+            creators:
+              eternalMedal.metadata.attributes?.find(
+                (attr) => attr.trait_type === "CREATORS"
+              )?.value || "Unknown Creators",
+            externalUrl:
+              eternalMedal.metadata.external_url || "No external URL provided",
+            xdripThreshold: eternalMedalInfo.xdripThreshold,
+            revenueShare: eternalMedalInfo.revenueShare,
+            xdripBonus: eternalMedalInfo.xdripBonus,
+          },
+        ],
+      };
+    
+      setInfoModalData(eternalData);
+      setIsInfoModalVisible(true);
     };
+    
 
-    setInfoModalData(eternalData);
-    setIsInfoModalVisible(true);
+
+    const videoStyles = useMemo(() => ({
+      width: "100%",
+      height: "325px",
+      objectFit: "cover",
+      borderRadius: "40px",
+    }), []);
+
+    return (
+      <div className={Style.dot_wallet}>
+        <div className={Style.dot_wallet}>
+          {Object.keys(ramps).map((rampKey, index) => (
+            ramps[rampKey] && ramps[rampKey].length > 0 && (
+              <div key={rampKey} className={Style.dot_wallet}>
+                <div
+                  onClick={() => handleRampInfo(rampKey)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <h2>MEDALS OF HONOR RAMP {index + 1}</h2>
+                  {ramps[rampKey].some(medal => !medal.isPlaceholder) && (
+                    <p style={{ fontSize: "16px", color: "#fff", margin: "5px 0 0", textAlign: "center" }}>
+                      Click for details
+                    </p>
+                  )}
+                </div>
+                <DotCarousel medals={ramps[rampKey]} />
+              </div>
+            )
+          ))}
+        </div>
+
+        <div className={Style.eternal_dot_card}>
+          <h2
+            onClick={() => eternalMedal && handleEternalInfo()}
+            style={{ cursor: eternalMedal ? "pointer" : "default" }}
+          >
+            ETERNAL MEDAL OF HONOR
+          </h2>
+
+          <Eternal medals={eternalMedal ? [eternalMedal] : []} />
+
+          <div>
+          </div>
+        </div>
+
+        <RampDetails
+          isVisible={isInfoModalVisible}
+          onClose={() => setIsInfoModalVisible(false)}
+          infoModalData={infoModalData}
+        />
+
+        {selectedMedal && (
+          <DotDetailsModal
+            medal={selectedMedal}
+            onClose={() => setSelectedMedal(null)}
+          />
+        )}
+      </div>
+    );
   };
 
-
-  const videoStyles = useMemo(() => ({
-    width: "100%",
-    height: "325px",
-    objectFit: "cover",
-    borderRadius: "40px",
-  }), []);
-
-  return (
-    <div className={Style.dot_wallet}>
-      <div className={Style.dot_wallet}>
-        {Object.keys(ramps).map((rampKey, index) => (
-          ramps[rampKey] && ramps[rampKey].length > 0 && (
-            <div key={rampKey} className={Style.dot_wallet}>
-              <div
-                onClick={() => handleRampInfo(rampKey)}
-                style={{ cursor: "pointer" }}
-              >
-                <h2>MEDALS OF HONOR RAMP {index + 1}</h2>
-                {ramps[rampKey].some(medal => !medal.isPlaceholder) && (
-                  <p style={{ fontSize: "16px", color: "#fff", margin: "5px 0 0", textAlign: "center" }}>
-                    Click for details
-                  </p>
-                )}
-              </div>
-              <DotCarousel medals={ramps[rampKey]} />
-            </div>
-          )
-        ))}
-      </div>
-
-      <div className={Style.eternal_dot_card}>
-        <h2
-          onClick={() => eternalMedal && handleEternalInfo()}
-          style={{ cursor: eternalMedal ? "pointer" : "default" }}
-        >
-          ETERNAL MEDAL OF HONOR
-        </h2>
-
-        <Eternal medals={eternalMedal ? [eternalMedal] : []} />
-
-        <div>
-        </div>
-      </div>
-
-      <RampDetails
-        isVisible={isInfoModalVisible}
-        onClose={() => setIsInfoModalVisible(false)}
-        infoModalData={infoModalData}
-      />
-
-      {selectedMedal && (
-        <DotDetailsModal
-          medal={selectedMedal}
-          onClose={() => setSelectedMedal(null)}
-        />
-      )}
-    </div>
-  );
-};
-
-export default React.memo(DotWallet);
+  export default React.memo(DotWallet);

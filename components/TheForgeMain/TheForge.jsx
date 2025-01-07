@@ -438,56 +438,6 @@ const TheForge = () => {
     }
   };
 
-  const handleUserInfoSubmit = async (info) => {
-    console.log("Submitted Info:", info);
-
-    if (!address) {
-      console.error("Wallet address is not available.");
-      toast.error("Please connect your wallet.");
-      return;
-    }
-
-    try {
-      const dateOfJoin = new Date().toISOString();
-      console.log("Forger Info Being Passed:", {
-        agreed: info.agreed,
-        dateOfJoin,
-        email: info.email,
-        kycStatus: "pending",
-        kycSubmittedAt: null,
-        kycApprovedAt: null,
-        name: info.name,
-        refId: null,
-        walletAddress: address,
-      });
-
-      await addForger(
-        info.agreed,
-        dateOfJoin,
-        info.email,
-        "pending",
-        null,
-        null,
-        info.name,
-        null,
-        address
-      );
-
-      console.log("Forger successfully added to Firestore.");
-      toast.success("Your profile has been successfully created!");
-
-      // Fetch the forger info to verify
-      const userInfo = await getForger(address);
-      console.log("Fetched Forger Info:", userInfo);
-
-      setIsWelcomeModalVisible(true);
-      console.log("Welcome modal opened.");
-    } catch (error) {
-      console.error("Error adding forger:", error.message);
-      toast.error("Failed to save your information. Please try again.");
-    }
-  };
-
 
   const handleCryptoForge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
     console.log("handleCryptoForge called with:", { medalType, ipfsHash, revenueAccess, xdripBonus });
@@ -612,7 +562,7 @@ const TheForge = () => {
         await logMedalPurchase(address, medalType, itemPrice, transaction.hash, revenueAccess, xdripBonus);
         await sendReceiptEmail(
           userInfo.email,
-          userInfo.name,
+          userInfo.fullName,
           medalType,
           itemPrice,
           transaction.hash
@@ -627,7 +577,6 @@ const TheForge = () => {
           to: MohAddress,
           valueBNB: ethers.utils.formatEther(ethers.utils.parseUnits(itemPrice, "ether")),
           gasUsed: receipt.gasUsed?.toNumber(),
-          inputData: transaction.data,
           revenuePrecent: revenueAccess,
           xdripBonusPercent: xdripBonus,
         };
@@ -814,7 +763,6 @@ const TheForge = () => {
     setIsPaymentModalVisible(false);
   };
 
-
   const triggerEasterEgg = () => {
     const url = `${window.location.origin}/misc/ChessEgg.html`;
     const options = "width=1024,height=768";
@@ -839,7 +787,6 @@ const TheForge = () => {
     let typed = '';
     const targets = ['medals', 'xdrip'];
     const maxLength = Math.max(...targets.map(target => target.length));
-
     const handleKeyDown = (e) => {
       const key = e.key.toLowerCase();
       if (key.length === 1 && /^[a-z]$/.test(key)) {
@@ -854,17 +801,11 @@ const TheForge = () => {
         }
       }
     };
-
     window.addEventListener('keypress', handleKeyDown);
-
     return () => {
       window.removeEventListener('keypress', handleKeyDown);
     };
   }, []);
-
-
-
-
 
   return (
     <div className={Style.the_forge}>
@@ -1066,13 +1007,7 @@ const TheForge = () => {
                       if (address) {
                         router.push({
                           pathname: "/kycPage",
-                          query: {
-                            address,
-                            name: userInfo.fullName,
-                            email: userInfo.email,
-                            phoneNumber: userInfo.phoneNumber || "",
-                            kycStatus: userInfo.kycStatus || "not_started",
-                          },
+                          query: { userInfo: JSON.stringify(userInfo) },
                         });
                       } else {
                         router.push("/kycPage");

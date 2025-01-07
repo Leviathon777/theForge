@@ -1,45 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import snsWebSdk from '@sumsub/websdk';
 import styles from '../styles/KYCPage.module.css';
-import { Button, InvestorProfileModal } from "../components/componentsindex";
+import { Button } from "../components/componentsindex";
 import { useRouter } from 'next/router';
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { updateApplicantStatusInFirebase } from '../firebase/forgeServices';
 
 const KYCPage = () => {
   const [accessToken, setAccessToken] = useState(null);
   const [loading, setLoading] = useState(false);
   const [kycStarted, setKycStarted] = useState(false);
-  const [isReminderPopupVisible, setIsReminderPopupVisible] = useState(false); // Popup state
-  const [userInfo, setUserInfo] = useState(null);
+  const [isReminderPopupVisible, setIsReminderPopupVisible] = useState(false); 
+  const [userData, setUserData] = useState(null); 
   const router = useRouter();
-  const [queryParams, setQueryParams] = useState({});
 
   useEffect(() => {
-    console.log("Router Object:", router); // Logs the entire router object
-    if (router.isReady) {
-      setQueryParams(router.query);
-      console.log("Router Query Parameters:", router.query); // Logs the query parameters
+    if (router.isReady && router.query.userInfo) {
+      try {
+        const parsedUserInfo = JSON.parse(router.query.userInfo);
+        setUserData(parsedUserInfo);
+        console.log("Parsed User Info:", parsedUserInfo);
+      } catch (error) {
+        console.error("Error parsing userInfo:", error);
+      }
     }
-  }, [router.isReady, router.query]);
-
-  const { address, name, email, phoneNumber, kycStatus } = queryParams;
-
-  useEffect(() => {
-    if (name && email) {
-      setUserInfo({
-        name,
-        email,
-        phoneNumber: phoneNumber || '',
-        kycStatus: kycStatus || 'not_started',
-      });
-    }
-  }, [name, email, phoneNumber, kycStatus]);
+  }, [router.isReady, router.query.userInfo]);
+  
 
   const fetchAccessToken = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/get-sumsub-token');
+      const response = await fetch('/api/get-sumsub-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          externalUserId: userData.walletAddress, 
+          email: userData.email,               
+        }),
+      });
       if (!response.ok) throw new Error(`Failed to fetch access token. Status: ${response.status}`);
       const data = await response.json();
       setAccessToken(data.token);
@@ -49,26 +48,54 @@ const KYCPage = () => {
       setLoading(false);
     }
   };
-
+  
   const initializeKYCWidget = () => {
     if (accessToken) {
       snsWebSdk
         .init(accessToken, () => fetch('/api/get-sumsub-token').then((res) => res.json()).then((data) => data.token))
         .withConf({ lang: 'en' })
-        .on('onError', (error) => console.error('WebSDK Error:', error))
-        .onMessage((type, payload) => console.log('WebSDK Message:', type, payload))
+        .on('onError', (error) => {
+          console.error('WebSDK Error:', error);
+        })
+        .onMessage(async (type, payload) => {
+          console.group('WebSDK Message');
+          console.log('Message Type:', type);
+          console.log('Payload:', payload);
+          console.groupEnd();
+  
+          if (type === 'idCheck.onApplicantStatusChanged') {
+            const {
+              reviewStatus,
+              reviewResult: { reviewAnswer } = {},
+              reviewDate,
+              attemptId,
+            } = payload;
+  
+            const updateData = {
+              kycStatus: reviewStatus,
+              kycApprovedAt: reviewAnswer === 'GREEN' ? reviewDate : null,
+              kycSubmittedAt: reviewAnswer !== 'GREEN' ? reviewDate : null,
+              kycReviewAnswer: reviewAnswer,
+            };
+  
+            try {
+              console.log('Updating Firebase with KYC status...');
+              await updateApplicantStatusInFirebase(userData.walletAddress, updateData); 
+              console.log('Firebase updated successfully.');
+            } catch (error) {
+              console.error('Error updating Firebase:', error);
+            }
+          }
+        })
         .build()
         .launch('#sumsub-websdk-container');
     }
   };
+  
 
   const handleBeginKYC = () => {
-    if (!address) {
+    if (!userData?.walletAddress) {
       toast.info("Please connect your wallet to proceed.");
-      return;
-    }
-    if (!userInfo) {
-      setIsReminderPopupVisible(true);
       return;
     }
     setKycStarted(true);
@@ -76,18 +103,6 @@ const KYCPage = () => {
       fetchAccessToken();
     }
   };
-
-  const handleProfileRedirect = () => {
-    if (address) {
-      router.push({
-        pathname: '/InvestorProfile',
-        query: { address },
-      });
-    } else {
-      toast.error("No wallet address found. Please connect your wallet.");
-    }
-  };
-  
 
   useEffect(() => {
     if (accessToken && kycStarted) {

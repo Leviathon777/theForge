@@ -12,7 +12,6 @@ export const addForger = async (profileData) => {
     dateOfJoin,
     email,
     kycStatus = "not yet submitted",
-    kycSubmittedAt = null,
     kycApprovedAt = null,
     fullName,
     walletAddress,
@@ -462,7 +461,41 @@ export const updateForger = async (walletAddress, updateData) => {
     throw new Error(`Failed to update user profile: ${error.message}`);
   }
 };
+/************************************************************************************
+                                 UPDATING THE USER 
+*************************************************************************************/
+export const updateApplicantStatusInFirebase = async (walletAddress, updateData) => {
+  const firestore = getFirestore();
+  const forgerRef = collection(firestore, "forgers");
 
+  console.log("Updating KYC for forger with wallet address:", walletAddress);
+
+  if (!walletAddress) {
+    console.error("Error: walletAddress is required.");
+    throw new Error("walletAddress cannot be empty.");
+  }
+
+  try {
+    // Reference the user's document in the "forgers" collection
+    const forgerDocRef = doc(forgerRef, walletAddress);
+
+    // Check if the document exists
+    const forgerDoc = await getDoc(forgerDocRef);
+    if (!forgerDoc.exists()) {
+      console.error(`Forger with wallet address ${walletAddress} does not exist.`);
+      throw new Error(`Forger with wallet address ${walletAddress} not found.`);
+    }
+
+    // Update the document with the provided KYC fields
+    await updateDoc(forgerDocRef, updateData);
+
+    console.log(`Successfully updated KYC for wallet address: ${walletAddress}`);
+    return { success: true, message: "KYC fields updated successfully." };
+  } catch (error) {
+    console.error("Error updating KYC fields:", error.message);
+    throw new Error(`Failed to update KYC fields: ${error.message}`);
+  }
+};
 /************************************************************************************
                         UPDATING THE KYC STATUS OF THE USER 
 *************************************************************************************/
@@ -568,16 +601,16 @@ export const logMedalPurchase = async (walletAddress, medalType, price, transact
 /************************************************************************************
                           SEND RECIEPT EMAIL TO THE FORGER
 *************************************************************************************/
-export const sendReceiptEmail = async (email, name, medalType, price, transactionHash) => {
+export const sendReceiptEmail = async (email, fullName, medalType, price, transactionHash) => {
   const firestore = getFirestore();
   const mailRef = collection(firestore, "mail");
-
+  const transactionNumber = `X-${transactionHash.slice(0, 6)}-${transactionHash.slice(-6)}`;
   try {
     const emailDocData = {
       to: [email],
       message: {
         subject: "Your Medal of Honor Receipt",
-        text: `Hi ${name}, \n\nCongratulations on forging your ${medalType} Medal of Honor. Here are the details: \n\nMedal Type: ${medalType} \nPrice: ${price} BNB\n\nThank you for your continued support!\n\nThe Forge Team`,
+        text: `Hi ${fullName}, \n\nCongratulations on forging your ${medalType} Medal of Honor. Here are the details: \n\nMedal Type: ${medalType} \nPrice: ${price} BNB\n\nThank you for your continued support!\n\nThe Forge Team`,
         html: `
 <!DOCTYPE html>
 <html lang="en">
@@ -612,13 +645,13 @@ export const sendReceiptEmail = async (email, name, medalType, price, transactio
   <div style="width: 100%; background-color: rgb(43, 40, 40);">
     <div class="container" style="max-width: 600px; margin: 20px auto; padding: 20px; background: rgb(54, 54, 54); border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
       <div class="header" style="background-color: rgb(0, 0, 0); color: #ffffff; padding: 20px; text-align: center;">
-        <img src="https://files.elfsightcdn.com/eafe4a4d-3436-495d-b748-5bdce62d911d/3f1b449b-f38b-42d4-bd7c-2d46bcf846b8/MetalsOfHonor.webp" alt="The Forge Logo" style="height: 75px; margin-bottom: 10px;">
+        <img src="https://files.elfsightcdn.com/eafe4a4d-3436-495d-b748-5bdce62d911d/3f1b449b-f38b-42d4-bd7c-2d46bcf846b8/MetalsOfHonor.webp" alt="The Forge Logo" style="width="450"; margin-bottom: 10px;">
         <h1 style="margin: 0; font-size: 36px;">Your Receipt</h1>
         <h2 style="margin: 0; font-size: 24px;">Medal of Honor</h2>
       </div>
 
       <div style="padding: 20px; background-color: rgb(0, 0, 0); border-radius: 8px; color: #ffffff;">
-        <p style="font-size: 18px;">Congratulations, <strong>${name}</strong>!</p>
+        <p style="font-size: 18px;">Congratulations, <strong>${fullName}</strong>!</p>
         <p>You’ve successfully forged your <strong>${medalType}</strong> Medal of Honor.</p>
 
         <div style="overflow-x: auto;">
@@ -630,6 +663,10 @@ export const sendReceiptEmail = async (email, name, medalType, price, transactio
             <tr>
               <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">Price:</td>
               <td style="padding: 10px; border: 1px solid #ddd;">${price} BNB</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">Transaction Number:</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${transactionNumber}</td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">Transaction ID:</td>
@@ -676,13 +713,13 @@ export const sendReceiptEmail = async (email, name, medalType, price, transactio
 };
 
 
-
 /************************************************************************************
                   TRACKING TRANSACTIONS FOR FULL LOGGING
 *************************************************************************************/
 export const trackDetailedTransaction = async (address, medalType, transactionData) => {
   const firestore = getFirestore();
-  const transactionsRef = collection(firestore, "transactions");
+  const transactionsCollection = collection(firestore, "transactions");
+
   const {
     transactionHash,
     status,
@@ -693,36 +730,50 @@ export const trackDetailedTransaction = async (address, medalType, transactionDa
     to,
     valueBNB,
     gasUsed,
-    inputData,
   } = transactionData;
 
-  const documentData = {
+
+  const transactionNumber = `X-${transactionHash.slice(0, 6)}-${transactionHash.slice(-6)}`;
+
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  const transactionLog = {
     purchaser: address,
     purchasedMedal: medalType,
-    transactionDetails: {
-      transactionHash,
-      status,
-      blockNumber,
-      timestamp,
-      action,
-      from,
-      to,
-      valueBNB,
-      gasDetails: {
-        gasUsed,
-      },
-      inputData,
-    },
+    transactionHash,
+    status,
+    blockNumber,
+    timestamp,
+    action,
+    from,
+    to,
+    valueBNB,
+    gasUsed,
   };
 
   try {
-    await setDoc(doc(transactionsRef, transactionHash), documentData);
-    console.log("Transaction tracked successfully:", transactionHash);
+    const dateDocRef = doc(transactionsCollection, currentDate);
+    const dateDocSnap = await getDoc(dateDocRef);
+
+    if (dateDocSnap.exists()) {
+      await updateDoc(dateDocRef, {
+        [transactionNumber]: transactionLog,
+      });
+    } else {
+      await setDoc(dateDocRef, {
+        date: currentDate,
+        [transactionNumber]: transactionLog,
+      });
+    }
+
+    console.log("Transaction tracked successfully with number:", transactionNumber);
   } catch (error) {
     console.error("Error tracking transaction:", error.message);
     throw error;
   }
 };
+
+
 
 /************************************************************************************
                 OWNER FUNCTION FINDING TRANSACTIONS FOR FULL LOGGING
