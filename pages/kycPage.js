@@ -11,6 +11,7 @@ const KYCPage = () => {
   const [accessToken, setAccessToken] = useState(null);
   const [loading, setLoading] = useState(false);
   const [kycStarted, setKycStarted] = useState(false);
+  const [kycStatus, setKycStatus] = useState(null); 
   const [isReminderPopupVisible, setIsReminderPopupVisible] = useState(false); 
   const [userData, setUserData] = useState(null); 
   const router = useRouter();
@@ -20,6 +21,7 @@ const KYCPage = () => {
       try {
         const parsedUserInfo = JSON.parse(router.query.userInfo);
         setUserData(parsedUserInfo);
+        setKycStatus(parsedUserInfo.kycStatus || null); 
         console.log("Parsed User Info:", parsedUserInfo);
       } catch (error) {
         console.error("Error parsing userInfo:", error);
@@ -51,6 +53,7 @@ const KYCPage = () => {
   
   const initializeKYCWidget = () => {
     if (accessToken) {
+      const submissionTimestamp = new Date().toISOString();
       snsWebSdk
         .init(accessToken, () => fetch('/api/get-sumsub-token').then((res) => res.json()).then((data) => data.token))
         .withConf({ lang: 'en' })
@@ -74,10 +77,10 @@ const KYCPage = () => {
             const updateData = {
               kycStatus: reviewStatus,
               kycApprovedAt: reviewAnswer === 'GREEN' ? reviewDate : null,
-              kycSubmittedAt: reviewAnswer !== 'GREEN' ? reviewDate : null,
+              kycSubmittedAt: submissionTimestamp,
               kycReviewAnswer: reviewAnswer,
             };
-  
+            setKycStatus(updateData.kycStatus);
             try {
               console.log('Updating Firebase with KYC status...');
               await updateApplicantStatusInFirebase(userData.walletAddress, updateData); 
@@ -171,7 +174,14 @@ const KYCPage = () => {
         <div className={styles.verticalLine}></div>
 
         <div className={styles.right}>
-          {!kycStarted ? (
+          {kycStatus === 'completed' && userData?.kycReviewAnswer === 'GREEN' ? (
+            <img 
+              src="/img/kycApproved.png" 
+              alt="KYC Approved" 
+              className={styles.right_image}
+              style={{ width: '100%', height: 'auto', maxWidth: '600px' }} 
+            />
+          ) : !kycStarted ? (
             <Button
               btnName="Begin Your KYC Submission"
               onClick={handleBeginKYC}

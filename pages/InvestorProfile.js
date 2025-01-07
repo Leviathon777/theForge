@@ -73,7 +73,7 @@ const InvestorProfile = () => {
             return;
         }
 
-        const totalSupply = 1_000_000_000; 
+        const totalSupply = 1_000_000_000;
         const dripPercent = ((xdripBalance / totalSupply) * 100).toFixed(2);
         const profileData = {
             fullName: `${firstName} ${middleInitial ? middleInitial + " " : ""}${lastName}${surname ? " " + surname : ""}`,
@@ -90,6 +90,10 @@ const InvestorProfile = () => {
             walletAddress,
             dob,
             agreed,
+            kycStatus: "Not Submitted",
+            kycApprovedAt: "Not Submitted",
+            kycSubmittedAt: "Not Submitted",
+            kycReviewAnswer: "Not Submitted",
             ukFCAAgreed: territory === "UK" ? ukFCAAgreed : null,
             dateOfJoin: new Date().toISOString(),
             drip: {
