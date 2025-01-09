@@ -14,10 +14,10 @@ const TransakButton = ({ user, walletAddress, onShowInvestorProfile }) => {
   const initializeTransak = () => {
     transak = new window.TransakSDK.default({
       apiKey: process.env.NEXT_PUBLIC_TRANSAK_API_KEY,
-      environment: "STAGING",
+      environment: "PRODUCTION",
       widgetHeight: "600px",
       widgetWidth: "350px",
-      exchangeScreenTitle: "XDRIP Digital Management Crypto Onboarding",
+      exchangeScreenTitle: "XDRIP Digital Management BNB Onboarding",
       cryptoCurrencyCode: "BNB",
       network: "bsc",
       defaultCryptoCurrency: "BNB",
