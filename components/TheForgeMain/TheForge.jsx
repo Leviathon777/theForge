@@ -763,6 +763,7 @@ const TheForge = () => {
     setIsPaymentModalVisible(false);
   };
 
+  /* future reference
   const triggerEasterEgg = () => {
     const url = `${window.location.origin}/misc/ChessEgg.html`;
     const options = "width=1024,height=768";
@@ -773,19 +774,19 @@ const TheForge = () => {
     });
 
     setTimeout(() => {
-      const chessGameWindow = window.open(url, "ChessGameWindow", options);
-      if (!chessGameWindow) {
+      const eggWindow = window.open(url, "eggWindow", options);
+      if (!eggWindow) {
         console.error("Popup blocked! Please allow popups for this website.");
         toast.error("Popup blocked! Please allow popups to access the secret.");
       } else {
-        chessGameWindow.focus();
+        eggWindow.focus();
       }
     }, 3000);
   };
 
   useEffect(() => {
     let typed = '';
-    const targets = ['medals', 'xdrip'];
+    const targets = ['whateverword', 'anotherword'];
     const maxLength = Math.max(...targets.map(target => target.length));
     const handleKeyDown = (e) => {
       const key = e.key.toLowerCase();
@@ -806,6 +807,7 @@ const TheForge = () => {
       window.removeEventListener('keypress', handleKeyDown);
     };
   }, []);
+*/
 
   return (
     <div className={Style.the_forge}>
