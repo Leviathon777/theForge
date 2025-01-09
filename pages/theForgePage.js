@@ -11,33 +11,33 @@ import { useRouter } from 'next/router';
 const PwaInstructionsModal = ({ onClose }) => (
   <div className={Style.modalOverlay}>
     <div className={Style.modalContent}>
-    <div className={Style.modalText}>
-      <h2>Installing MOH As A PWA</h2>
-      <p>Enhance your mobile experience by installing our site as a Progressive Web App.</p>
-      <div className={Style.modalDevice}>
-      <h3>For Android Devices</h3>
-      <ol>
-        <li>Launch your browser (e.g., Google Chrome, Firefox) and navigate to our website.</li>
-        <li>Tap the three-dot menu icon (usually in the top-right corner).</li>
-        <li>Select "Add to Home Screen" or "Install App."</li>
-        <li>Tap "Add" or "Install" to confirm.</li>
-        <li>The app will now appear on your home screen. Tap it to open it like a regular app.</li>
-      </ol>
+      <div className={Style.modalText}>
+        <h2>Installing MOH As A PWA</h2>
+        <p>Enhance your mobile experience by installing our site as a Progressive Web App.</p>
+        <div className={Style.modalDevice}>
+          <h3>For Android Devices</h3>
+          <ol>
+            <li>Launch your browser (e.g., Google Chrome, Firefox) and navigate to our website.</li>
+            <li>Tap the three-dot menu icon (usually in the top-right corner).</li>
+            <li>Select "Add to Home Screen" or "Install App."</li>
+            <li>Tap "Add" or "Install" to confirm.</li>
+            <li>The app will now appear on your home screen. Tap it to open it like a regular app.</li>
+          </ol>
+        </div>
+        <div className={Style.modalDevice}>
+          <h3>For iOS Devices (iPhone/iPad)</h3>
+          <ol>
+            <li>Launch Safari and navigate to our website.</li>
+            <li>Tap the "Share" button (square with an upward arrow at the bottom of the screen).</li>
+            <li>Scroll down and tap "Add to Home Screen."</li>
+            <li>Customize the name if desired, then tap "Add" in the top-right corner.</li>
+            <li>The app icon will appear on your home screen. Tap it to open and use the app.</li>
+          </ol>
+        </div>
+        <button className={Style.closeButton} onClick={onClose}>
+          Close
+        </button>
       </div>
-      <div className={Style.modalDevice}>
-      <h3>For iOS Devices (iPhone/iPad)</h3>
-      <ol>
-        <li>Launch Safari and navigate to our website.</li>
-        <li>Tap the "Share" button (square with an upward arrow at the bottom of the screen).</li>
-        <li>Scroll down and tap "Add to Home Screen."</li>
-        <li>Customize the name if desired, then tap "Add" in the top-right corner.</li>
-        <li>The app icon will appear on your home screen. Tap it to open and use the app.</li>
-      </ol>
-      </div>
-      <button className={Style.closeButton} onClick={onClose}>
-        Close
-      </button>
-    </div>
     </div>
   </div>
 );
@@ -105,8 +105,8 @@ const TheForgePage = () => {
   const handleNavigation = () => {
     router.push('/OwnerOpsPage').catch(err => console.error("Navigation error:", err));
   };
-  const handleTestNavigation = () => {
-    router.push('/test').catch(err => console.error("Navigation error:", err));
+  const handleDocNavigation = () => {
+    router.push('/SiteFlow').catch(err => console.error("Navigation error:", err));
   };
 
   return (
@@ -125,18 +125,18 @@ const TheForgePage = () => {
       }}
     >
       <div className={Style.theForge_content}>
-      {isMobile && (
-        <button
-          className={Style.pwaButton}
-          onClick={() => setIsPwaModalOpen(true)}
-        >
-          How To Install PWA
-        </button>
-      )}
+        {isMobile && (
+          <button
+            className={Style.pwaButton}
+            onClick={() => setIsPwaModalOpen(true)}
+          >
+            How To Install PWA
+          </button>
+        )}
 
-      {isPwaModalOpen && (
-        <PwaInstructionsModal onClose={() => setIsPwaModalOpen(false)} />
-      )}
+        {isPwaModalOpen && (
+          <PwaInstructionsModal onClose={() => setIsPwaModalOpen(false)} />
+        )}
         <div className={Style.first_component}>
           <h1>THE FORGE OF DESTINY</h1>
         </div>
@@ -181,7 +181,7 @@ const TheForgePage = () => {
         <div className={Style.glowingDivider}></div>
         <MyDotData>
           <div className={Style.second_component}>
-            <TheForge setIsModalOpen={setIsModalOpen} bnbPrice={bnbPrice}/>
+            <TheForge setIsModalOpen={setIsModalOpen} bnbPrice={bnbPrice} />
           </div>
           <div className={Style.glowingDivider}></div>
           <div className={Style.third_component}>
@@ -217,6 +217,16 @@ const TheForgePage = () => {
                 isActive={false}
                 setIsActive={() => { }}
                 title="User Agreement"
+              />
+              <Button
+                btnName="Site Flow Docs"
+                onClick={handleDocNavigation}
+                fontSize="inherit"
+                paddingLeft="0"
+                paddingRight="0"
+                isActive={false}
+                setIsActive={() => { }}
+                title="Partnership Docs"
               />
               {isOwner && (
                 <Button

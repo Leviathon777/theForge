@@ -3,6 +3,8 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { arrayUnion } from 'firebase/firestore';
 import { firestore, db } from "./config";
 
+import path from 'path';
+
 /************************************************************************************
                    ADD NEW FORGER TO FIREBASE AND SEND EMAIL
 ************************************************************************************/
@@ -195,14 +197,10 @@ border-radius: 8px;
   width: 100%;
 }
 
-.email-section-content-row {}
-
 .email-section-icon-container {
   width: 90px;
   text-align: center;
 }
-
-.email-section-icon-link {}
 
 .email-section-icon-image {
   width: 90px;
@@ -608,102 +606,313 @@ export const sendReceiptEmail = async (email, fullName, medalType, price, transa
   const firestore = getFirestore();
   const mailRef = collection(firestore, "mail");
   const transactionNumber = `X-${transactionHash.slice(0, 6)}-${transactionHash.slice(-6)}`;
+
+  // Map medalType to corresponding image URLs
+  const medalImages = {
+    "COMMON": "https://xdrip.io/wp-content/uploads/2025/01/Common_MOH_transparent.webp",
+    "UNCOMMON": "https://xdrip.io/wp-content/uploads/2025/01/Uncommon_MOH_transparent.webp",
+    "RARE": "https://xdrip.io/wp-content/uploads/2025/01/Rare_MOH_transparent.webp",
+    "EPIC": "https://xdrip.io/wp-content/uploads/2025/01/Epic_MOH_transparent.webp",
+    "LEGENDARY": "https://xdrip.io/wp-content/uploads/2025/01/Legendary_MOH_transparent.webp",
+    "ETERNAL": "https://xdrip.io/wp-content/uploads/2025/01/Eternal_MOH_transparent.webp",
+  };
+
+  // Get the image URL for the given medalType, or use a default image if not found
+  const medalImageURL = medalImages[medalType] || "https://files.elfsightcdn.com/eafe4a4d-3436-495d-b748-5bdce62d911d/3f1b449b-f38b-42d4-bd7c-2d46bcf846b8/MetalsOfHonor.webp";
+
+
   try {
     const emailDocData = {
       to: [email],
       message: {
-        subject: "Your Medal of Honor Receipt",
+        subject: "XDRIP Digital Management RECEIPT",
         text: `Hi ${fullName}, \n\nCongratulations on forging your ${medalType} Medal of Honor. Here are the details: \n\nMedal Type: ${medalType} \nPrice: ${price} BNB\n\nThank you for your continued support!\n\nThe Forge Team`,
         html: `
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Receipt Email</title>
-  <style>
-    @media (max-width: 600px) {
-      table {
-        width: 100% !important;
-        font-size: 14px !important;
-      }
-      td {
-        word-break: break-word !important;
-        white-space: normal !important;
-      }
-      .container {
-        padding: 10px !important;
-      }
-      .header {
-        font-size: 24px !important;
-      }
-      .button {
-        font-size: 14px !important;
-        padding: 10px 15px !important;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --font-size-base: 18px;
+            --font-size-small: 14px;
+            --font-size-medium: 16px;
+            --font-size-large: 28px;
+            --font-size-extra-large: 42px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: rgb(43, 40, 40);
+            font-size: var(--font-size-base);
+        }
+        .email-body {
+            background: rgb(0, 0, 0);
+        }
+        .email-outer-table {
+            width: 100%;
+        }
+        .email-inner-table {
+            background-color: #000000;
+            padding: 2rem;
+        }
+        .email-logo-image {
+            color:rgb(255, 255, 255);
+        }
+        .email-title-container {
+          color:rgb(255, 255, 255);
+            padding: 20px;
+        }
+        .email-title {
+            font-size: var(--font-size-extra-large);
+         color:rgb(255, 255, 255);
+        }
+        .email-subtitle {
+            font-size: var(--font-size-medium);
+          color:rgb(255, 255, 255);
+        }
+        .email-heading {
+            font-size: var(--font-size-large);
+              color:rgb(255, 255, 255);
+        }
+        .email-paragraph {
+            font-size: var(--font-size-base);
+            color:rgb(255, 255, 255);
+            line-height: 1.6;
+        }
+        .email-cta-link {
+            background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5));
+            color:rgb(255, 255, 255);
+            padding: 5px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            text-decoration: none;
+            font-size: var(--font-size-medium);
+            margin: 2.5rem;
+        }
+        .email-image-row {
+            margin: 2.5rem;
+        }
+        .email-image-container {
+            margin: 2.5rem;
+        }
+        .email-quickstart-title {
+            font-size: 35px;
+            color:rgb(255, 255, 255);
+        }
+        .email-quickstart-image {
+            width: 600px;
+            border-radius: 10px;
+        }
+        .email-section {
+            padding: 1rem;
+            margin: 1rem;
+            background-color: #333333;
+            border-radius: 8px;
+        }
+        .email-section-table {
+            width: 100%;
+        }
+        .email-section-icon-container {
+            width: 90px;
+            text-align: center;
+        }
+        .email-section-icon-image {
+            width: 90px;
+        }
+        .email-section-heading {
+            font-size: 25px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        .email-section-paragraph {
+            font-size: var(--font-size-base);
+            margin-top: 10px;
+            color: #ffffff;
+        }
+        .email-follow-container {
+            color: #ffffff;
+            padding: 20px;
+        }
+        .email-follow-title {
+            font-size: var(--font-size-large);
+        }
+        .email-follow-image {
+            height: 24px;
+            margin: 0 5px;
+        }
+        .email-footer {
+            text-align: center;
+            background: rgb(0, 0, 0);
+            color: #ffffff;
+            padding: 20px;
+            font-size: var(--font-size-small);
+        }
+        .email-footer-link {
+            color: #27ae60;
+            text-decoration: none;
+        }
+        @media only screen and (max-width: 600px) {
+            :root {
+                --font-size-base: 14px;
+                --font-size-small: 12px;
+                --font-size-medium: 16px;
+                --font-size-large: 18px;
+                --font-size-extra-large: 22px;
+            }
+            body {
+                font-size: var(--font-size-base);
+            }
+            .content {
+                padding: 10px;
+            }
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
-<body style="padding: 0; margin: 0; font-family: Arial, sans-serif;">
-  <div style="width: 100%; background-color: rgb(43, 40, 40);">
-    <div class="container" style="max-width: 600px; margin: 20px auto; padding: 20px; background: rgb(54, 54, 54); border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-      <div class="header" style="background-color: rgb(0, 0, 0); color: #ffffff; padding: 20px; text-align: center;">
-        <img src="https://files.elfsightcdn.com/eafe4a4d-3436-495d-b748-5bdce62d911d/3f1b449b-f38b-42d4-bd7c-2d46bcf846b8/MetalsOfHonor.webp" alt="The Forge Logo" style="width="450"; margin-bottom: 10px;">
-        <h1 style="margin: 0; font-size: 36px;">Your Receipt</h1>
-        <h2 style="margin: 0; font-size: 24px;">Medal of Honor</h2>
-      </div>
+<body class="email-body">
+    <table class="email-outer-table" align="center" cellpadding="0" cellspacing="0" width="100%">
+        <tr class="email-row">
+            <td class="email-container" align="center">
+                <table class="email-inner-table" bgcolor="#000000" align="center" cellpadding="0" cellspacing="0"
+                    width="600" style="padding: 2rem;">
+                    <tr class="email-logo-row">
+                        <td class="email-logo-container" align="center">
+                            <a class="email-logo-link" target="_blank" href="https://www.moh.xdrip.io">
+                                <img class="email-logo-image"
+                                    src="${medalImageURL}"
+                                    title="Logo"
+                                    style="width: 450px; max-width: 100%; height: auto; display: block;">
+                            </a>
+                        </td>
+                    </tr>
+                    <tr class="email-title-row">
+                        <td class="email-title-container" align="center" style="color:rgb(255, 255, 255); padding: 20px;">
+                            <h1 class="email-title"><strong>CONGRATULATIONS</strong></h1>
+                            <h1 class="email-title"><strong>And</strong></h1>
+                            <h1 class="email-title"><strong>Thank You</strong></h1>
+                            <p class="email-subtitle">"Your Support Is Greatly Appreciated, And Your Trust Is Valued"</p>
+                            <p class="email-subtitle">XDRIP Digital Management Ownership</p>
+                        </td>
+                    </tr>
+                    <tr class="email-content-row">
+                        <td class="email-content-container" align="center" style="padding: 20px; color:rgb(255, 255, 255);">
+                            <h2 class="email-heading">Hi ${fullName},</h2>
+                            <p class="email-paragraph">We're Xcited to be a part of your journey here on <strong>The
+                                    Forge</strong> &ndash; your gateway to the exciting world of DeFi investing.</p>
+                            <p class="email-paragraph">Below we have attached a receipt detailing your most recent
+                                investment in the <strong>${medalType}</strong> Medal of Honor </p>
 
-      <div style="padding: 20px; background-color: rgb(0, 0, 0); border-radius: 8px; color: #ffffff;">
-        <p style="font-size: 18px;">Congratulations, <strong>${fullName}</strong>!</p>
-        <p>You’ve successfully forged your <strong>${medalType}</strong> Medal of Honor.</p>
+                            <div style="overflow-x: auto;">
+                                <table
+                                    style="width: 100%; margin-top: 20px; border-collapse: collapse; font-size: 16px;">
+                                    <tr>
+                                        <td
+                                            style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">
+                                            Medal Type:</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${medalType}</td>
+                                    </tr>
+                                    <tr>
+                                        <td
+                                            style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">
+                                            Price:</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${price} BNB</td>
+                                    </tr>
+                                    <tr>
+                                        <td
+                                            style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">
+                                            Transaction Number:</td>
+                                        <td style="padding: 10px; border: 1px solid #ddd;">${transactionNumber}</td>
+                                    </tr>
+                                    <tr>
+                                     <td
+                                        style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">
+                                         BlockChain Link:
+                                        </td>
+                                              <td style="padding: 10px; border: 1px solid #ddd;">
+                                        <a href="https://testnet.bscscan.com/tx/${transactionHash}" 
+                                        style=" text-decoration: none; font-weight: bold;" 
+                                        target="_blank">
+                                         View Transaction
+                                                 </a>
+                                           </td>
+                                                      </tr>
 
-        <div style="overflow-x: auto;">
-          <table style="width: 100%; margin-top: 20px; border-collapse: collapse; font-size: 16px;">
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">Medal Type:</td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${medalType}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">Price:</td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${price} BNB</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">Transaction Number:</td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${transactionNumber}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: rgb(0, 0, 0);">Transaction ID:</td>
-              <td style="
-                padding: 10px; 
-                border: 1px solid #ddd; 
-                overflow: hidden; 
-                text-overflow: ellipsis; 
-                white-space: nowrap;">
-                <span title="${transactionHash}">${transactionHash}</span>
-                <br>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${transactionHash}" alt="QR Code" style="margin-top: 10px;">
-              </td>
-            </tr>
-          </table>
-        </div>
-
-        <p style="margin-top: 20px; font-size: 14px; color: #bbbbbb;">Thank you for supporting <strong>The Forge</strong>. Share your achievement and track your medals anytime.</p>
-
-        <div style="text-align: center; margin-top: 30px;">
-          <a href="https://moh.xdrip.io" class="button" style="text-decoration: none; background-color: #170cce; color: #ffffff; padding: 10px 20px; border-radius: 5px; font-size: 16px;">View Your Dashboard</a>
-        </div>
-      </div>
-
-      <div style="text-align: center; padding: 10px; background-color: rgb(0, 0, 0); color: #ffffff; font-size: 12px;">
-        <p style="margin: 0;">&copy; 2024 XDRIP Digital Management LLC | Visit us at <a href="https://xdrip.io" style="color: #170cce; text-decoration: underline;">www.xdrip.io</a></p>
-      </div>
-    </div>
-  </div>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="email-image-row">
+                        <td class="email-image-container" align="center">
+                            <h1 class="email-quickstart-title">Continue Your Journey</h1>
+                            <a class="email-quickstart-link" target="_blank" href="https://moh.xdrip.io">
+                                <img class="email-quickstart-image"
+                                    src="https://xdrip.io/wp-content/uploads/2024/12/TheForge_noredirect-4.webp" alt=""
+                                    width="600" style="margin-top: 1rem; margin-bottom: 4rem; border-radius: 10px;">
+                            </a>
+                        </td>
+                    </tr>
+                    <tr class="email-follow-row">
+                        <td class="email-follow-container" align="center" style="color:rgb(255, 255, 255); padding: 20px;">
+                            <h2 class="email-follow-title" style="margin-bottom: 10px; font-size: 20px;">Follow us!</h2>
+                            <table align="center" style="margin: 0 auto;">
+                                <tr>
+                                    <td style="padding: 0 5px;">
+                                        <a class="email-follow-link" href="https://x.com/XDRIP">
+                                            <img class="email-follow-image"
+                                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/X_logo_2023_%28white%29.png/240px-X_logo_2023_%28white%29.png"
+                                                alt="X" height="24" style="display: block;">
+                                        </a>
+                                    </td>
+                                    <td style="padding: 0 5px;">
+                                        <a class="email-follow-link" href="https://www.instagram.com/thexdripofficial/">
+                                            <img class="email-follow-image"
+                                                src="https://fpdtaan.stripocdn.email/content/assets/img/social-icons/logo-colored/instagram-logo-colored.png"
+                                                alt="Instagram" height="24" style="display: block;">
+                                        </a>
+                                    </td>
+                                    <td style="padding: 0 5px;">
+                                        <a class="email-follow-link" href="https://www.facebook.com/TheXdripOfficial/">
+                                            <img class="email-follow-image"
+                                                src="https://fpdtaan.stripocdn.email/content/assets/img/social-icons/logo-colored/facebook-logo-colored.png"
+                                                alt="Facebook" height="24" style="display: block;">
+                                        </a>
+                                    </td>
+                                    <td style="padding: 0 5px;">
+                                        <a class="email-follow-link"
+                                            href="https://www.youtube.com/channel/UCql_clMpK5GYxXUREIGfnRw">
+                                            <img class="email-follow-image"
+                                                src="https://fpdtaan.stripocdn.email/content/assets/img/social-icons/logo-colored/youtube-logo-colored.png"
+                                                alt="YouTube" height="24" style="display: block;">
+                                        </a>
+                                    </td>
+                                    <td style="padding: 0 5px;">
+                                        <a class="email-follow-link" href="mailto:contact@moh.xdrip.io">
+                                            <img class="email-follow-image"
+                                                src="https://fpdtaan.stripocdn.email/content/assets/img/other-icons/logo-colored/mail-logo-colored.png"
+                                                alt="Email" height="24" style="display: block;">
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr class="email-footer-row">
+                        <td class="email-footer" align="center">
+                            &copy; 2024 XDRIP Digital Management LLC. All rights reserved.<br>
+                            Visit us at <a class="email-footer-link" href="https://xdrip.io">moh.xdrip.io</a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
-</html>
-
-
-        `,
+</html>`,
       },
     };
 
