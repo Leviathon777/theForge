@@ -21,7 +21,7 @@ const TransakMOH = ({ user, medal, onClose, onSuccess, onError }) => {
 
     const settings = {
       apiKey: process.env.NEXT_PUBLIC_TRANSAK_API_KEY,
-      environment: "STAGING",
+      environment: "PRODUCTION",
       widgetHeight: "600px",
       widgetWidth: "350px",
       themeColor: "000000",

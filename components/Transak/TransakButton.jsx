@@ -12,8 +12,26 @@ const TransakButton = ({ user, walletAddress, onShowInvestorProfile }) => {
   };
 
   const initializeTransak = () => {
+    const apiKey = process.env.NEXT_PUBLIC_TRANSAK_API_KEY;
+    const hostURL = window.location.origin;
+
+    // Log important environment and configuration variables
+    console.log("Initializing Transak...");
+    console.log("API Key:", apiKey);
+    console.log("Environment: PRODUCTION");
+    console.log("Host URL:", hostURL);
+    console.log("Wallet Address:", walletAddress);
+    console.log("User Email:", user?.email);
+
+    // Check if the Transak SDK is loaded
+    if (!window.TransakSDK) {
+      console.error("Transak SDK is not loaded.");
+      toast.error("Failed to load Transak SDK. Please refresh the page.");
+      return;
+    }
+
     transak = new window.TransakSDK.default({
-      apiKey: process.env.NEXT_PUBLIC_TRANSAK_API_KEY,
+      apiKey,
       environment: "PRODUCTION",
       widgetHeight: "600px",
       widgetWidth: "350px",
@@ -25,18 +43,22 @@ const TransakButton = ({ user, walletAddress, onShowInvestorProfile }) => {
       walletAddress: walletAddress || "",
       themeColor: "000000",
       email: user?.email || "",
-      hostURL: window.location.origin,
+      hostURL,
       productsAvailed: "BUY,SELL",
       isFeeCalculationHidden: false,
       hideMenu: false,
       colorMode: "DARK",
     });
 
+    // Log the Transak configuration
+    console.log("Transak Configuration:", transak);
+
     transak.init();
     lockScroll();
 
     transak.on(transak.ALL_EVENTS, (data) => console.log("Event:", data));
     transak.on(transak.EVENTS.TRANSAK_WIDGET_CLOSE, () => {
+      console.log("Transak widget closed.");
       unlockScroll();
       setIsActive(false);
     });
