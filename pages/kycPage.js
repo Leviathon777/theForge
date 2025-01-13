@@ -149,9 +149,7 @@ const KYCPage = () => {
     }
   };
 
-
-
-
+  
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
