@@ -73,6 +73,7 @@ const KYCPage = () => {
           form_id: '3cb68f2c002d714c821b92b0765545f633ad',
           external_applicant_id: userData.walletAddress,
           redirect_url: '',
+
         }),
       });
       if (!response.ok) {
@@ -93,7 +94,7 @@ const KYCPage = () => {
   };
 
   useEffect(() => {
-    const allowedOrigins = ['https://forms-new.kycaid.com', 'http://localhost:3000'];
+    const allowedOrigins = ['https://forms-new.kycaid.com', 'http://localhost:3000', 'https://www.moh.xdrip.io'];
   
     const handleMessage = async (event) => {
       // Validate origin

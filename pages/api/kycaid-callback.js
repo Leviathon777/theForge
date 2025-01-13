@@ -10,25 +10,15 @@ export default async function handler(req, res) {
 
   const {
     request_id,
-    type,    
+    type,
+    form_id,
+    form_token,
+    verification_id,
     applicant_id,
     external_applicant_id,
-    verification_id,
-    form_id,    
     verification_status,
     verification_attempts_left,
   } = req.body;
-
-  // Log payload for debugging
-  console.log('[Callback] Full Payload:', req.body);
-
-  // Validate required fields
-  if (!type || !applicant_id) {
-    console.error('[Callback] Missing critical fields:', req.body);
-    return res.status(400).json({ error: 'Missing required fields in payload.' });
-  }
-
-  console.log('[Callback] Processing event type:', type);
 
   try {
     const kycData = {
