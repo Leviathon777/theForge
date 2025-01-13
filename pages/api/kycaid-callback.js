@@ -9,13 +9,14 @@ export default async function handler(req, res) {
   }
 
   const {
-    type,
-    verification_status,
+    request_id,
+    type,    
     applicant_id,
     external_applicant_id,
-    form_id,
     verification_id,
-    request_id,
+    form_id,    
+    verification_status,
+    verification_attempts_left,
   } = req.body;
 
   // Log payload for debugging
@@ -31,13 +32,15 @@ export default async function handler(req, res) {
 
   try {
     const kycData = {
-      request_id,
       type,
-      form_id,
-      verification_id,
-      external_applicant_id,
-      applicant_id,
       verification_status,
+      applicant_id,
+      external_applicant_id,
+      form_id,
+      form_token,
+      verification_id,
+      verification_attempts_left,
+      request_id,
     };
 
     // Create KYC folder in Firebase
