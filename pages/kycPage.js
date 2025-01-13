@@ -93,58 +93,38 @@ const KYCPage = () => {
   };
 
   useEffect(() => {
-    const handleMessage = async (event) => {
-      console.log("Received message event:", event); // Full event for debugging
-      console.log("Event data:", event.data); // Log the message payload
+    const allowedOrigins = ['https://forms-new.kycaid.com', 'http://localhost:3000'];
   
-      // Validate the message origin
-      if (event.origin !== "https://forms-new.kycaid.com") {
-        console.warn("Ignored message from unauthorized origin:", event.origin);
+    const handleMessage = async (event) => {
+      // Validate origin
+      if (!allowedOrigins.includes(event.origin)) {
+        console.warn('Ignored message from unauthorized origin:', event.origin);
         return;
       }
   
-      const { event: messageEvent, verification_id, external_applicant_id } = event.data;
+      // Validate payload structure
+      const { data } = event;
+      if (!data || !data.event || !data.verification_id || !data.external_applicant_id) {
+        console.error('Invalid message payload:', data);
+        return;
+      }
   
-      if (messageEvent === "FORM_COMPLETED") {
-        console.log("FORM_COMPLETED event detected with data:", { verification_id, external_applicant_id });
-  
-        // Use external_applicant_id or fallback to walletAddress from userData
-        const applicantId = external_applicant_id || userData?.walletAddress;
-  
-        if (!applicantId) {
-          console.error("Missing external_applicant_id and fallback walletAddress.");
-          return;
-        }
-  
-        const updateData = {
-          kyc: {
-            kycStatus: "submitted",
-            kycSubmittedAt: new Date().toISOString(),
-            kycReviewAnswer: "false",
-          },
-        };
-  
-        try {
-          console.log("Updating Firebase with applicantId:", applicantId);
-          await updateApplicantStatusInFirebase(applicantId, updateData);
-          toast.success("KYC process completed successfully.");
-        } catch (error) {
-          console.error("Error updating Firebase:", error);
-          toast.error("Failed to update KYC status.");
-        }
+      // Handle valid events
+      if (data.event === 'FORM_COMPLETED') {
+        console.log('Processing FORM_COMPLETED event:', data);
+        // Additional processing logic...
       } else {
-        console.warn("Unexpected message event type:", messageEvent);
+        console.warn('Unexpected event type:', data.event);
       }
     };
   
-    // Add the event listener
-    window.addEventListener("message", handleMessage);
+    window.addEventListener('message', handleMessage);
   
-    // Cleanup the event listener on unmount
     return () => {
-      window.removeEventListener("message", handleMessage);
+      window.removeEventListener('message', handleMessage);
     };
   }, [userData]);
+  
   
   
 
