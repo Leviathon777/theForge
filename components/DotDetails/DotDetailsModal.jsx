@@ -11,7 +11,7 @@ if (typeof window !== 'undefined') {
   Modal.setAppElement('#__next');
 }
 
-const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, isUserInfoModalOpen, setIsUserInfoModalOpen }) => {
+const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, address, isUserInfoModalOpen, setIsReminderPopupVisible }) => {
   const mohContractAddress = useMemo(() => mohCA_ABI.address, []);
   const companies = useMemo(() => [
     { name: "XdRiP Digital Management, LLC", url: "https://xdrip.io" },
@@ -45,12 +45,14 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, isUserI
   }, []);
 
   const handleForgeClick = () => {
-    if (!userInfo) {
-      
-      setIsUserInfoModalOpen(true);
-      toast.info("Please enter your name and email to proceed.");
-      return;
-    }
+        if (!address) {
+          toast.info("Please connect your wallet to proceed with Forging.");
+          return;
+        }
+        if (!userInfo) {
+          setIsReminderPopupVisible(true);
+          return;
+        }
     forge(medal.title, medal.ipfsHash, medal.revenueAccess, medal.xdripBonus);
   };
   

@@ -15,7 +15,7 @@ import {
   useSigner,
 } from "@thirdweb-dev/react";
 import { MyDotDataContext } from "../../Context/MyDotDataContext.js";
-import Style from "./theForge.module.css";
+import Style from "./ForgeComponent.module.css";
 import moreStyles from "../Button/Button.module.css";
 import videos from "../../public/videos/index.js";
 import { Button, VideoPlayer, DotDetailsModal, WalkthroughModal, TransakButton, TransakMOH, LoaderMOH } from "../componentsindex.js";
@@ -27,8 +27,8 @@ import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
-import { getForger, addForger, logMedalPurchase, sendReceiptEmail, trackDetailedTransaction } from "../../firebase/forgeServices";
-import { useXoast } from "../Xoast/Xoast";
+import { getForger, addForger, logMedalPurchase, sendReceiptEmail, trackDetailedTransaction } from "../../firebase/forgeServices.js";
+import { useXoast } from "../Xoast/Xoast.jsx";
 
 
 const MohAddress = mohCA_ABI.address;
@@ -75,7 +75,7 @@ const ChatWidget = () => {
 };
 
 
-const TheForge = () => {
+const ForgeComponent = () => {
   const router = useRouter();
   const [selectedMedalForForge, setSelectedMedalForForge] = useState(null);
   const [selectedMedalDetails, setSelectedMedalDetails] = useState(null);
@@ -158,7 +158,7 @@ const TheForge = () => {
                   DateLastLogged: new Date().toISOString(),
                 },
               };
-              await updateForger(updatedUserData);
+              await updateForger(address, updatedUserData);
               console.log("Profile updated successfully.");
             }
           } else {
@@ -205,6 +205,7 @@ const TheForge = () => {
       query: {
         address,
         xdripBalance,
+        
       },
     });
   };
@@ -251,7 +252,7 @@ const TheForge = () => {
       rotateY: [0, 360],
       transition: {
         ease: "linear",
-        duration: 30,
+        duration: 60,
         repeat: Infinity,
       },
     });
@@ -438,7 +439,7 @@ const TheForge = () => {
     }
   };
 
-
+/* FUTURE TRANSAK ONE INTEGRATION 
   const handleCryptoForge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
     console.log("handleCryptoForge called with:", { medalType, ipfsHash, revenueAccess, xdripBonus });
     if (!address) {
@@ -453,7 +454,7 @@ const TheForge = () => {
     }
     console.log("KYC check passed. Proceeding to forge:", medalType);
     return forge(medalType, ipfsHash, revenueAccess, xdripBonus);
-  };
+  };*/
 
   const forge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
     if (!userInfo) {
@@ -558,7 +559,6 @@ const TheForge = () => {
       const receipt = await transaction.wait();
       console.log("Transaction Confirmed:", receipt);
       if (receipt.status === 1) {
-        toast.success("Your Medal Of Honor was forged successfully!");
         await logMedalPurchase(address, medalType, itemPrice, transaction.hash, revenueAccess, xdripBonus);
         await sendReceiptEmail(
           userInfo.email,
@@ -577,7 +577,7 @@ const TheForge = () => {
           to: MohAddress,
           valueBNB: ethers.utils.formatEther(ethers.utils.parseUnits(itemPrice, "ether")),
           gasUsed: receipt.gasUsed?.toNumber(),
-          revenuePrecent: revenueAccess,
+          revenuePercent: revenueAccess,
           xdripBonusPercent: xdripBonus,
         };
         await trackDetailedTransaction(address, medalType, transactionData);
@@ -683,9 +683,7 @@ const TheForge = () => {
   const getRandomTitle = () => {
     return buttonTitles[Math.floor(Math.random() * buttonTitles.length)];
   };
-
   const [randomTitle, setRandomTitle] = useState(getRandomTitle());
-
   useEffect(() => {
     const cycleTitles = () => {
       setRandomTitle((prevTitle) => {
@@ -694,12 +692,51 @@ const TheForge = () => {
         return buttonTitles[nextIndex];
       });
     };
-
     const interval = setInterval(cycleTitles, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleForgeClick = (medal) => {
+
+  const handleForgeClick = async (medal) => {
+    console.log("Medal selected for forging:", medal);
+    console.log("Current userInfo:", userInfo);
+    if (!address) {
+      toast.info("Please connect your wallet to proceed with Forging.");
+      return;
+    }
+    if (!userInfo) {
+      setIsReminderPopupVisible(true);
+      return;
+    }
+    if (medal.title === "ETERNAL" && userInfo?.kycStatus !== "approved") {
+      setIsKYCReminderVisible(true);
+      console.log("KYC is not approved. Showing KYC reminder...");
+      return;
+    }
+    setSelectedMedalForForge(medal);
+    try {
+      console.log("Proceeding to forge medal:", medal.title);
+      setIsLoading(true);
+      await forge(medal.title, medal.ipfsHash, medal.revenueAccess, medal.xdripBonus);
+      toast.success(`${medal.title} Medal forged successfully!`);
+      await fetchDots();
+      const updatedCounts = await fetchForgedCounts();
+      if (updatedCounts) {
+        setForgedCounts(updatedCounts);
+      }
+      await fetchMedalCount(address);
+    } catch (error) {
+      console.error("Error forging medal:", error);
+      toast.error("Error while forging medal. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+
+  /* FUTURE TRANSAK ONE INTEGRATION 
+const handleForgeClick = (medal) => {
     console.log("Medal selected for forging:", medal);
     console.log("Current userInfo:", userInfo);
     if (!address) {
@@ -762,6 +799,8 @@ const TheForge = () => {
     setPaymentMethod("transak");
     setIsPaymentModalVisible(false);
   };
+   */
+
 
   /* future reference
   const triggerEasterEgg = () => {
@@ -989,13 +1028,14 @@ const TheForge = () => {
                           pathname: "/InvestorWallet",
                           query: {
                             address,
-                            userInfo: JSON.stringify(userInfo), 
+                            bnbBalance,
+                            userInfo: JSON.stringify(userInfo),
                           },
                         });
                       } else {
                         router.push({
                           pathname: "/InvestorProfile",
-                          query: { address, xdripBalance },
+                          query: { address, xdripBalance, bnbBalance, },
                         });
                       }
                     }}
@@ -1009,18 +1049,18 @@ const TheForge = () => {
                       if (address) {
                         router.push({
                           pathname: "/kycPage",
-                          query: { userInfo: JSON.stringify(userInfo) },
+                          query: {
+                            userInfo: JSON.stringify(userInfo),
+                            address,
+                          },
                         });
                       } else {
-                        router.push("/kycPage");
-                      }
-                      closeDropdown();
+                        toast.info("To access investor areas, please connect your wallet.");
+                      }                      
                     }}
                   >
                     KYC VERIFICATION
                   </div>
-
-                  {/* Transak Button */}
                   <TransakButton
                     user={userInfo}
                     walletAddress={address}
@@ -1228,14 +1268,69 @@ const TheForge = () => {
           </div>
         )}
 
-        {isPaymentModalVisible && (
+        {isReminderPopupVisible && (
+          <div className={Style.popupOverlay}>
+            <div className={Style.popupContent}>
+              <h3>Complete Your Profile</h3>
+              <p>
+                To fully access the investing features of The Forge, please complete your investor profile.
+              </p>
+              <p>
+                You will be able to return to this at a later date, but your profile will need to be completed before investing with XDRIP Digital Management.
+              </p>
+              <div className={Style.popupButtons}>
+                <Button
+                  btnName="Create Profile"
+                  onClick={handleProfileRedirect}
+                  fontSize="inherit"
+                />
+                <Button
+                  btnName="Later"
+                  onClick={() => setIsReminderPopupVisible(false)}
+                  fontSize="inherit"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isTransakActive && (
+          <div className={Style.modalOverlay} onClick={(e) => e.target === e.currentTarget && setIsTransakActive(false)}>
+          </div>
+        )}
+
+        {selectedMedalDetails && (
+          <div
+            className={Style.modalOverlay}
+            onClick={(e) => e.target === e.currentTarget && setSelectedMedalDetails(null)}
+          >
+            <DotDetailsModal
+              medal={selectedMedalDetails}
+              onClose={() => setSelectedMedalDetails(null)}
+              forge={forge}
+              userInfo={userInfo}
+              isUserInfoModalOpen={isReminderPopupVisible}
+              setIsUserInfoModalOpen={setIsReminderPopupVisible}
+              showForgeButton={true}
+              setIsReminderPopupVisible={setIsReminderPopupVisible}
+              address={address}
+            />
+          </div>
+        )}
+        {isLoading && (
+          <LoaderMOH
+            imageSrc={`/img/${selectedMedalForForge?.title?.toLowerCase()}.png`}
+            isVisible={isLoading}
+          />
+        )}
+
+        {/*FUTURE TRANSAK ONE INTEGRATION*/}
+        {/*{isPaymentModalVisible && (
           <div className={Style.modalOverlay} onClick={(e) => e.target === e.currentTarget && setIsPaymentModalVisible(false)}>
             <div className={Style.modalContent}>
               <button className={Style.closeButton} onClick={() => setIsPaymentModalVisible(false)}>
                 &times;
-              </button>
-
-              {/* KYC Prompt */}
+              </button>          
               {modalStep === "kycPrompt" && (
                 <>
                   {console.log("KYC Prompt Step Opened. Medal:", selectedMedalForForge, "UserInfo:", userInfo)}
@@ -1327,63 +1422,10 @@ const TheForge = () => {
               )}
             </div>
           </div>
-        )}
+        )}*/}
 
-        {isReminderPopupVisible && (
-          <div className={Style.popupOverlay}>
-            <div className={Style.popupContent}>
-              <h3>Complete Your Profile</h3>
-              <p>
-                To fully access the investing features of The Forge, please complete your investor profile.
-              </p>
-              <p>
-                You will be able to return to this at a later date, but your profile will need to be completed before investing with XDRIP Digital Management.
-              </p>
-              <div className={Style.popupButtons}>
-                <Button
-                  btnName="Create Profile"
-                  onClick={handleProfileRedirect}
-                  fontSize="inherit"
-                />
-                <Button
-                  btnName="Later"
-                  onClick={() => setIsReminderPopupVisible(false)}
-                  fontSize="inherit"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {isTransakActive && (
-          <div className={Style.modalOverlay} onClick={(e) => e.target === e.currentTarget && setIsTransakActive(false)}>
-          </div>
-        )}
-
-        {selectedMedalDetails && (
-          <div
-            className={Style.modalOverlay}
-            onClick={(e) => e.target === e.currentTarget && setSelectedMedalDetails(null)}
-          >
-            <DotDetailsModal
-              medal={selectedMedalDetails}
-              onClose={() => setSelectedMedalDetails(null)}
-              forge={forge} // Ensure that the forge function is passed correctly
-              userInfo={userInfo} // Pass userInfo if available
-              isUserInfoModalOpen={isReminderPopupVisible}
-              setIsUserInfoModalOpen={setIsReminderPopupVisible}
-              showForgeButton={true} // Show Forge button
-            />
-          </div>
-        )}
-        {isLoading && (
-          <LoaderMOH
-            imageSrc={`/img/${selectedMedalForForge?.title?.toLowerCase()}.png`}
-            isVisible={isLoading}
-          />
-        )}
       </div>
     </div>
   );
 };
-export default React.memo(TheForge);
+export default React.memo(ForgeComponent);

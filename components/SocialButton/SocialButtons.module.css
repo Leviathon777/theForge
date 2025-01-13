@@ -28,7 +28,7 @@
   cursor: pointer;
   transition: all 0.3s;
   -webkit-appearance: none;
-  appearance: none; /* Standard appearance property for compatibility */
+  appearance: none; 
 }
 
 .svgContainer, .svgContainertwit, .svgContainerinsta, .svgContainerstock {
@@ -70,7 +70,7 @@
   border: 1px solid var(--color-border);
   background-color: rgba(204, 204, 204, 0.466);
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px); /* Safari/iOS support */
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .Btntwit:hover .svgContainertwit,
@@ -82,9 +82,7 @@
   background-color: rgba(202, 202, 202, 0.466);
 }
 
-/* Responsive adjustments */
 
-/* Tablets and smaller desktops */
 @media (max-width: 1024px) {
   .BtnBox {
     flex-direction: row;
@@ -103,11 +101,11 @@
   }
 }
 
-/* Small devices (smartphones) */
+
 @media (max-width: 768px) {
   .BtnBox {
     flex-direction: row;
-    gap: 0.3rem;
+    gap: 0.5rem;
     padding-bottom: 0.5rem;
     align-items: center;
   }
@@ -123,11 +121,11 @@
   }
 }
 
-/* Extra-small devices (very small smartphones) */
+
 @media (max-width: 576px) {
   .BtnBox {
     flex-direction: row;
-    gap: 0.2rem;
+    gap: 0.5rem;
   }
 
   .Btn, .Btntwit, .Btninsta, .Btnstock {
@@ -141,23 +139,23 @@
   }
 
   .Btn:hover .BG, .Btntwit:hover .BGtwit, .Btninsta:hover .BGinsta, .Btnstock:hover .BGstock {
-    transform: rotate(-20deg); /* Less rotation on mobile */
+    transform: rotate(-20deg); 
   }
 }
 
-/* Safari/iOS-specific compatibility */
+
 @media not all and (min-resolution:.001dpcm) { 
-  @supports (-webkit-appearance:none) { /* Safari-specific detection */
+  @supports (-webkit-appearance:none) { 
     
     .Btn, .Btntwit, .Btninsta, .Btnstock {
       -webkit-appearance: none;
       appearance: none;
-      -webkit-tap-highlight-color: transparent; /* Prevents tap highlight on iOS */
+      -webkit-tap-highlight-color: transparent; 
     }
     
     .svgContainer, .svgContainertwit, .svgContainerinsta, .svgContainerstock {
-      backdrop-filter: blur(4px); /* Standard property */
-      -webkit-backdrop-filter: blur(4px); /* Safari/iOS compatibility */
+      backdrop-filter: blur(4px); 
+      -webkit-backdrop-filter: blur(4px); 
     }
   }
 }

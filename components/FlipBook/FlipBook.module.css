@@ -1,4 +1,3 @@
-/* FLIP BOOK MAIN CONTENT CSS CODE BASIC AND MEDIA QUERYS */
 .flipbookwrapper {
     display: flex;
     flex-direction: column;
@@ -95,7 +94,6 @@
 }
 
 
-/* CSS for the table of contents page */
 .contentsContainer {
     background: black;
     padding: 1rem;
@@ -533,7 +531,7 @@
     }
 
     .dedicationContainer {
-        padding: .5rem;
+        padding: .25rem;
         border-bottom-left-radius: 0rem;
         border-top-left-radius: 0rem;
         border-bottom-right-radius: 1rem;
@@ -710,7 +708,7 @@
         margin: 0rem;
     }
 
-    /* FlipBook.module.css */
+
     .backPage {
         display: flex;
         width: 100%;
@@ -913,7 +911,6 @@
         margin: 0rem;
     }
 
-    /* FlipBook.module.css */
     .backPage {
         display: flex;
         width: 100%;

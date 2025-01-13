@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, memo, forwardRef } from "react";
 import { motion } from "framer-motion";
 import DotWallet from "../components/DotWallets/DotWallet";
-import { Button, SocialButtons, TheForge, TermsOfService, UserAgreement, FlipBook } from "../components/componentsindex";
+import { Button, SocialButtons, ForgeComponent, TermsOfService, UserAgreement, FlipBook } from "../components/componentsindex";
 import MyDotData from "../Context/MyDotDataContext";
 import Style from "../styles/theForge.module.css";
 import { useSigner, useAddress } from '@thirdweb-dev/react';
@@ -42,7 +42,7 @@ const PwaInstructionsModal = ({ onClose }) => (
   </div>
 );
 
-const TheForgePage = () => {
+const TheForge = () => {
   const [bnbPrice, setBnbPrice] = useState(null);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isUserAgreementModalOpen, setIsUserAgreementModalOpen] = useState(false);
@@ -103,7 +103,7 @@ const TheForgePage = () => {
   }, [signer, address]);
 
   const handleNavigation = () => {
-    router.push('/OwnerOpsPage').catch(err => console.error("Navigation error:", err));
+    router.push('/Xecutives').catch(err => console.error("Navigation error:", err));
   };
   const handleDocNavigation = () => {
     router.push('/SiteFlow').catch(err => console.error("Navigation error:", err));
@@ -181,7 +181,7 @@ const TheForgePage = () => {
         <div className={Style.glowingDivider}></div>
         <MyDotData>
           <div className={Style.second_component}>
-            <TheForge setIsModalOpen={setIsModalOpen} bnbPrice={bnbPrice} />
+            <ForgeComponent setIsModalOpen={setIsModalOpen} bnbPrice={bnbPrice} />
           </div>
           <div className={Style.glowingDivider}></div>
           <div className={Style.third_component}>
@@ -218,16 +218,6 @@ const TheForgePage = () => {
                 setIsActive={() => { }}
                 title="User Agreement"
               />
-              <Button
-                btnName="Site Flow Docs"
-                onClick={handleDocNavigation}
-                fontSize="inherit"
-                paddingLeft="0"
-                paddingRight="0"
-                isActive={false}
-                setIsActive={() => { }}
-                title="Partnership Docs"
-              />
               {isOwner && (
                 <Button
                   btnName="Owner Operations"
@@ -255,4 +245,4 @@ const TheForgePage = () => {
     </motion.div>
   );
 };
-export default TheForgePage;
+export default TheForge;

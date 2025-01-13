@@ -1,6 +1,6 @@
 import Button from "./Button/Button";
 import DotWallet from "./DotWallets/DotWallet";
-import TheForge from "./TheForgeMain/TheForge";
+import ForgeComponent from "./TheForgeMain/ForgeComponent";
 import EntryPage from "./EntryPage/EntryPage";
 import SocialButtons from "./SocialButton/SocialButtons";
 import VideoPlayer from "./VideoPlayer/VideoPlayer";
@@ -20,9 +20,10 @@ import Xoast from "./Xoast/Xoast";
 import LoaderMOH from "./Loader/LoaderMOH";
 import MobileModal from "./EntryPage/MobileModal";
 import UKCompliance from "./Legal/UKCompliance";
-
+import CookieManager from "./Legal/CookieManager";
 export {
   UKCompliance,
+  CookieManager,
   MobileModal,
   TransakMOH,
   LoaderMOH,
@@ -41,7 +42,7 @@ export {
   SocialButtons,
   EntryPage,
   DotWallet,
-  TheForge,
+  ForgeComponent,
   Button,
   VideoPlayer,
 };

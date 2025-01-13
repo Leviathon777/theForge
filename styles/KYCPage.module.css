@@ -46,17 +46,12 @@
   margin: 0 10px;
 }
 
-#sumsub-websdk-container {
-  width: 100%;
-  max-width: 800px;
-  min-height: 600px;
-  margin: 0 auto;
-}
 
 .walkthrough_wrapper {
   display: flex;
   flex-direction: column;
-  width: 90%;
+  width: 600px;
+  min-height: 700px;
   background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
   box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
   padding: 20px;
@@ -65,21 +60,36 @@
   text-align: justify;
 }
 
-.walkthrough {
-  margin-bottom: 40px;
-  max-width: 100%;
+.topper {
+  width: 100%;
+  border-bottom: .1rem solid white;
+  margin-bottom: 1rem;
 }
-
+.walkthrough {
+  margin-bottom: 1rem;
+  max-width: 100%;
+  padding: 1rem;
+}
+.htwo{
+  font-size: .8rem;
+ }
 .container h1 {
   text-align: center;
   margin-bottom: 20px;
 }
 
+.walkthrough h5 {
+  font-size: 1.6rem;
+  
+  text-align: center;
+}
+
 .walkthrough h2 {
   font-size: 1.5rem;
-  margin-top: 20px;
-  margin-bottom: 10px;
+  margin-top: 2rem;
+  margin-bottom: .5rem;
 }
+
 
 .walkthrough p,
 .walkthrough ul,
@@ -115,8 +125,6 @@
 
 .right_image{
   width: 100%;
-  border-radius: 1rem;
-  box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 
 .popupOverlay {

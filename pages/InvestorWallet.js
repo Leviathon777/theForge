@@ -6,7 +6,7 @@ import MyDotData from "../Context/MyDotDataContext";
 
 const InvestorWallet = () => {
   const router = useRouter();
-  const { address, userInfo: userInfoString } = router.query;
+  const { address, bnbBalance, userInfo: userInfoString } = router.query;
 
   const [userInfo, setUserInfo] = useState(null);
 
@@ -19,7 +19,7 @@ const InvestorWallet = () => {
         console.error("Error parsing userInfoString:", error);
       }
     }
-  }, [userInfoString, address, router.query]);
+  }, [userInfoString, address, bnbBalance, router.query]);
 
   const formatDate = (isoDate) => {
     if (!isoDate) return "N/A";
@@ -35,11 +35,15 @@ const InvestorWallet = () => {
         <div className={Style.walletInfoWrapper}>
           <div className={Style.walletInfoContainer}>
             <div className={Style.walletInfoItem}>
-              <span className={Style.walletInfoLabel}>XDRIP Holdings:</span>
-              <span className={Style.walletInfoValue}>{userInfo?.drip?.dripHeld ?? "N/A"}</span>
+              <span className={Style.walletInfoLabel}>BNB Balance:</span>
+              <span className={Style.walletInfoValue}>{bnbBalance ?? "N/A"}</span>
             </div>
             <div className={Style.walletInfoItem}>
-              <span className={Style.walletInfoLabel}>XDRIP Supply Percentage:</span>
+              <span className={Style.walletInfoLabel}>XDRIP Balance:</span>
+              <span className={Style.walletInfoValue}>{userInfo?.drip?.dripHeld ?? "0"}</span>
+            </div>
+            <div className={Style.walletInfoItem}>
+              <span className={Style.walletInfoLabel}>XDRIP Supply Percent:</span>
               <span className={Style.walletInfoValue}>{userInfo?.drip?.supplyPercent ?? "N/A"}</span>
             </div>
           </div>
@@ -74,10 +78,23 @@ const InvestorWallet = () => {
               {/* KYC Information */}
               <div className={Style.card}>
                 <h3 className={Style.cardTitle}>KYC Information</h3>
-                <p>KYC Alert: {userInfo.kycReviewAnswer || "N/A"}</p>
-                <p>KYC Status: {userInfo.kycStatus || "N/A"}</p>
-                <p>KYC Submitted At: {formatDate(userInfo.kycSubmittedAt)}</p>
-                <p>KYC Approved At: {formatDate(userInfo.kycApprovedAt)}</p>
+                <p>KYC Verified: {userInfo.kyc?.kycReviewAnswer || "N/A"}</p>
+                <p>KYC Status: {userInfo.kyc?.kycStatus || "N/A"}</p>
+                <p>
+                  KYC Submitted On: {""} 
+                  {userInfo.kyc?.kycSubmittedAt && userInfo.kyc.kycSubmittedAt !== "N/A"
+                    ? formatDate(userInfo.kyc.kycSubmittedAt)
+                    : "N/A"}
+                </p>
+                <p>
+                  KYC Approved On: {""} 
+                  {userInfo.kyc?.kycApprovedAt && userInfo.kyc.kycApprovedAt !== "N/A"
+                    ? formatDate(userInfo.kyc.kycApprovedAt)
+                    : "N/A"}
+                </p>
+
+
+
               </div>
 
               {/* Other Details */}

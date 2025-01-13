@@ -95,8 +95,9 @@
 
 .walletInfoContainer {
   display: flex;
-  width: 90%;
-  max-width: 500px;
+  width: 100%;
+  max-width: 600px;
+  padding-right: 1rem;
   justify-content: center;
   align-items: center;
   margin: 0rem 0rem 2rem 0rem;

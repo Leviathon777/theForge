@@ -90,10 +90,12 @@ const InvestorProfile = () => {
             walletAddress,
             dob,
             agreed,
-            kycStatus: "Not Submitted",
-            kycApprovedAt: "Not Submitted",
-            kycSubmittedAt: "Not Submitted",
-            kycReviewAnswer: "Not Submitted",
+            kyc: {
+            kycStatus: "not submitted",
+            kycApprovedAt: "N/A",
+            kycSubmittedAt: "N/A",
+            kycReviewAnswer: "false",
+            },
             ukFCAAgreed: territory === "UK" ? ukFCAAgreed : null,
             dateOfJoin: new Date().toISOString(),
             drip: {
@@ -108,7 +110,7 @@ const InvestorProfile = () => {
             await addForger(profileData);
             toast.success("Profile submitted successfully!");
             setTimeout(() => {
-                router.push("/theForgePage");
+                router.push("/TheForge");
             }, 3000);
         } catch (error) {
             console.error("Error submitting profile:", error);
@@ -119,7 +121,7 @@ const InvestorProfile = () => {
 
 
     const handleBackToForge = () => {
-        router.push("/theForgePage");
+        router.push("/TheForge");
     };
 
     return (

@@ -13,27 +13,31 @@ export const addForger = async (profileData) => {
     agreed = false,
     dateOfJoin,
     email,
-    kycStatus,
-    kycApprovedAt,
-    kycSubmittedAt,
-    kycReviewAnswer,
+    kyc: {
+      kycStatus,
+      kycApprovedAt,
+      kycSubmittedAt,
+      kycReviewAnswer,
+    },
     fullName,
     walletAddress,
     phone = null,
-    mailingAddress: { streetAddress, apartment, city, state, zipCode },
+    mailingAddress: {
+      streetAddress,
+      apartment,
+      city,
+      state,
+      zipCode
+    },
     territory = null,
     dob = null,
     ukFCAAgreed = null,
     drip: { dripHeld, supplyPercent, dateLastLogged },
   } = profileData;
-
   const firestore = getFirestore();
   const forgerRef = collection(firestore, "forgers");
   const mailRef = collection(firestore, "mail");
-
   console.log("Incoming profileData to addForger:", profileData);
-
-  // Validate inputs
   if (!walletAddress) {
     console.error("Error: walletAddress is required but was not provided.");
     throw new Error("walletAddress cannot be empty.");
@@ -46,25 +50,20 @@ export const addForger = async (profileData) => {
     console.error("Error: fullName is required but was not provided.");
     throw new Error("fullName cannot be empty.");
   }
-
   try {
-    // Check if wallet address already exists
     const walletQuery = query(forgerRef, where("walletAddress", "==", walletAddress));
     const walletSnapshot = await getDocs(walletQuery);
     if (!walletSnapshot.empty) {
       console.error(`Error: Wallet address ${walletAddress} already exists.`);
       throw new Error("This wallet address is already registered.");
     }
-
-    // Check if email already exists
     const emailQuery = query(forgerRef, where("email", "==", email));
+    const emailDocRef = doc(mailRef, walletAddress.toLowerCase());
     const emailSnapshot = await getDocs(emailQuery);
     if (!emailSnapshot.empty) {
       console.error(`Error: Email ${email} already exists.`);
       throw new Error("This email is already registered.");
     }
-
-    // Proceed to create the forger
     const forgerDocData = {
       walletAddress,
       email,
@@ -82,16 +81,20 @@ export const addForger = async (profileData) => {
       agreed,
       ukFCAAgreed,
       dateOfJoin: dateOfJoin || new Date().toISOString(),
-      kycStatus,
-      kycApprovedAt,
-      kycSubmittedAt,
-      kycReviewAnswer,
+      kyc: {
+        kycStatus,
+        kycApprovedAt,
+        kycSubmittedAt,
+        kycReviewAnswer,
+      },
       drip: {
         dripHeld,
         supplyPercent,
         dateLastLogged,
       },
     };
+    console.log("Wallet Address:", walletAddress);
+    console.log("Document Data:", forgerDocData);
     await setDoc(doc(forgerRef, walletAddress), forgerDocData);
     console.log("Forger created successfully:", forgerDocData);
     const emailHTML = `
@@ -108,7 +111,6 @@ export const addForger = async (profileData) => {
   --font-size-large: 28px;
   --font-size-extra-large: 42px;
 }
-
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -116,11 +118,9 @@ body {
   background: rgb(43, 40, 40);
   font-size: var(--font-size-base);
 }
-
 .email-body {
   background: rgb(0, 0, 0);
 }
-
 .email-outer-table {
   width: 100%;
 }
@@ -131,17 +131,14 @@ body {
 .email-logo-image {
   width: 450px;
 }
-
 .email-title-container {
   color: #fbf8f9;
   padding: 20px;
 }
-
 .email-title {
   font-size: var(--font-size-extra-large);
   color: #fbf8f9;
 }
-
 .email-subtitle {
   font-size: var(--font-size-medium);
   color: #fbf8f9;
@@ -150,13 +147,11 @@ body {
   font-size: var(--font-size-large);
   color: #ffffff;
 }
-
 .email-paragraph {
   font-size: var(--font-size-base);
    color: #e8e6e3;
   line-height: 1.6;
 }
-
 .email-cta-link {
   background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5));
   color: #e8e6e3;
@@ -167,71 +162,57 @@ body {
   font-size: var(--font-size-medium);
   margin: 2.5rem;
 }
-
 .email-image-row {
  margin: 2.5rem;
 }
-
 .email-image-container {
  margin: 2.5rem;
 }
-
 .email-quickstart-title {
   font-size: 35px;
   color: #f8f6f7;
 }
-
 .email-quickstart-image {
   width: 600px;
   border-radius: 10px;
 }
-
 .email-section {
 padding: 1rem; 
 margin: 1rem;
 background-color: #333333; 
 border-radius: 8px;   
 }
-
 .email-section-table {
   width: 100%;
 }
-
 .email-section-icon-container {
   width: 90px;
   text-align: center;
 }
-
 .email-section-icon-image {
   width: 90px;
 }
-
 .email-section-heading {
   font-size: 25px;
   color: #ffffff;
   margin-bottom: 10px;
 }
-
 .email-section-paragraph {
   font-size: var(--font-size-base);
   margin-top: 10px;
   color: #ffffff;
 }
-
 .email-follow-container {
   color: #ffffff;
   padding: 20px;
 }
-
 .email-follow-title {
   font-size: var(--font-size-large);
 }
-
 .email-follow-image {
   height: 24px;
   margin: 0 5px;
 }
-
 .email-footer {
   text-align: center;
   background:rgb(0, 0, 0);
@@ -239,12 +220,10 @@ border-radius: 8px;
   padding: 20px;
   font-size: var(--font-size-small);
 }
-
 .email-footer-link {
   color: #27ae60;
   text-decoration: none;
 }
-
 @media only screen and (max-width: 600px) {
   :root {
     --font-size-base: 14px;
@@ -253,15 +232,12 @@ border-radius: 8px;
     --font-size-large: 18px;
     --font-size-extra-large: 22px;
   }
-
   body {
     font-size: var(--font-size-base);
   }
-
   .content {
     padding: 10px;
   }
-
   .section {
     padding: 20px;
   }
@@ -413,48 +389,38 @@ border-radius: 8px;
 </body>
     </html>
   `;
-    const emailDocData = {
-      to: [email],
-      message: {
-        subject: "🔥 Welcome to The Forge! Your Journey Begins 🔥",
-        html: emailHTML,
-      },
-    };
-    await addDoc(mailRef, emailDocData);
-    console.log("Welcome email queued successfully:", emailDocData);
+  const emailDocData = {
+    to: [email],
+    message: {
+      subject: "🔥 Welcome to The Forge! Your Journey Begins 🔥",
+      html: emailHTML,
+    },
+  };  
+    await setDoc(emailDocRef, emailDocData, { merge: true });
+    console.log("Welcome email queued successfully with walletAddress as docId:", walletAddress);
   } catch (error) {
-    console.error("Error adding forger or sending email:", error.message);
+    console.error("Error adding email document:", error.message);
     throw error;
-  }
-};
+  }};
+  
 /************************************************************************************
                                  UPDATING THE USER 
 *************************************************************************************/
 export const updateForger = async (walletAddress, updateData) => {
   const firestore = getFirestore();
   const forgerRef = collection(firestore, "forgers");
-
   console.log("Updating forger profile for wallet address:", walletAddress);
-
-  // Validate inputs
   if (!walletAddress) {
     console.error("Error: walletAddress is required but was not provided.");
     throw new Error("walletAddress cannot be empty.");
   }
-
   try {
-    // Reference the user's document in the "forgers" collection
     const forgerDocRef = doc(forgerRef, walletAddress);
-
-    // Check if the document exists
     const forgerDoc = await getDoc(forgerDocRef);
     if (!forgerDoc.exists()) {
       throw new Error(`User with wallet address ${walletAddress} not found.`);
     }
-
-    // Update the document with the provided fields
     await updateDoc(forgerDocRef, updateData);
-
     console.log(`Forger profile updated successfully for wallet address: ${walletAddress}`);
     return { success: true, message: "User profile updated successfully." };
   } catch (error) {
@@ -466,30 +432,22 @@ export const updateForger = async (walletAddress, updateData) => {
                                  UPDATING THE USER 
 *************************************************************************************/
 export const updateApplicantStatusInFirebase = async (walletAddress, updateData) => {
+  console.log("Updating KYC for forger with wallet address:", walletAddress);
   const firestore = getFirestore();
   const forgerRef = collection(firestore, "forgers");
-
-  console.log("Updating KYC for forger with wallet address:", walletAddress);
-
+  
   if (!walletAddress) {
     console.error("Error: walletAddress is required.");
     throw new Error("walletAddress cannot be empty.");
   }
-
   try {
-    // Reference the user's document in the "forgers" collection
     const forgerDocRef = doc(forgerRef, walletAddress);
-
-    // Check if the document exists
     const forgerDoc = await getDoc(forgerDocRef);
     if (!forgerDoc.exists()) {
       console.error(`Forger with wallet address ${walletAddress} does not exist.`);
       throw new Error(`Forger with wallet address ${walletAddress} not found.`);
     }
-
-    // Update the document with the provided KYC fields
     await updateDoc(forgerDocRef, updateData);
-
     console.log(`Successfully updated KYC for wallet address: ${walletAddress}`);
     return { success: true, message: "KYC fields updated successfully." };
   } catch (error) {
@@ -498,68 +456,32 @@ export const updateApplicantStatusInFirebase = async (walletAddress, updateData)
   }
 };
 /************************************************************************************
-                        UPDATING THE KYC STATUS OF THE USER 
-*************************************************************************************/
-export const updateUserStatusInFirebase = async (email, status, refId = null, kycApprovedAt = null) => {
-  const firestore = getFirestore();
-  const userRef = collection(firestore, "forgers");
-
-  try {
-    const userQuery = query(userRef, where("email", "==", email));
-    const userSnapshot = await getDocs(userQuery);
-
-    if (!userSnapshot.empty) {
-      const userDoc = userSnapshot.docs[0];
-      const userDocRef = doc(firestore, "forgers", userDoc.id);
-
-      const updateData = {
-        kycStatus: status,
-      };
-
-      if (refId) updateData.refId = refId;
-      if (kycApprovedAt) updateData.kycApprovedAt = kycApprovedAt;
-
-      await updateDoc(userDocRef, updateData);
-
-      console.log(`User with email ${email} status updated to ${status} `);
-    } else {
-      console.log(`No user found with email ${email} `);
-    }
-  } catch (error) {
-    console.error(`Error updating user status for email ${email}: `, error.message);
-    throw error;
-  }
-};
-
-
-/************************************************************************************
                         GET USER INFO WHEN WALLET CONNECTS
 *************************************************************************************/
 export const getForger = async (walletAddress) => {
+  console.log("Fetching forger data for wallet address:", walletAddress); // Log wallet address
   const firestore = getFirestore();
-  const userRef = collection(firestore, "forgers");
+  const userRef = doc(firestore, "forgers", walletAddress); // Directly fetch the doc by ID
+
   try {
-    const existingUserQuery = query(userRef, where("walletAddress", "==", walletAddress));
-    const existingUserSnapshot = await getDocs(existingUserQuery);
-    if (!existingUserSnapshot.empty) {
-      const userData = existingUserSnapshot.docs[0].data();
-      console.log("User found:", userData);
+    const userSnapshot = await getDoc(userRef); // Fetch document
+    if (userSnapshot.exists()) {
+      const userData = userSnapshot.data();
+      console.log("User found:", userData); // Log found user data
       return userData;
     } else {
-      console.log("No user found for this wallet address.");
+      console.log("No user found for wallet address:", walletAddress); // Log no results
       return null;
     }
   } catch (error) {
-    console.error("Error retrieving user:", error.message);
+    console.error("Error retrieving user:", error.message); // Log query errors
     throw error;
   }
 };
-
-
 /************************************************************************************
                   LOGGING MEDAL PURCHASE AND RAMP PROGRESSION
 *************************************************************************************/
-export const logMedalPurchase = async (walletAddress, medalType, price, transactionHash, revenuePrecent, xdripBonusPercent) => {
+export const logMedalPurchase = async (walletAddress, medalType, price, transactionHash, revenuePercent, xdripBonusPercent) => {
   const firestore = getFirestore();
   const userRef = doc(firestore, "forgers", walletAddress);
   try {
@@ -570,27 +492,28 @@ export const logMedalPurchase = async (walletAddress, medalType, price, transact
     }
     const updatedUserDoc = await getDoc(userRef);
     let ramps = updatedUserDoc.data();
-    let lastRampKey = Object.keys(ramps)
-      .filter((ramp) => ramp.startsWith("ramp"))
-      .sort((a, b) => parseInt(a.replace("ramp", "")) - parseInt(b.replace("ramp", "")))
-      .pop() || "ramp1";
+    let lastRampKey =
+      Object.keys(ramps)
+        .filter((ramp) => ramp.startsWith("ramp"))
+        .sort((a, b) => parseInt(a.replace("ramp", "")) - parseInt(b.replace("ramp", "")))
+        .pop() || "ramp1";
     let lastRamp = ramps[lastRampKey] || [];
     const orderedMedals = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY"];
     if (lastRamp.length >= orderedMedals.length) {
       const nextRampNumber = parseInt(lastRampKey.replace("ramp", ""), 10) + 1;
-      lastRampKey = `ramp${nextRampNumber} `;
+      lastRampKey = `ramp${nextRampNumber}`; 
       lastRamp = [];
     }
     const purchaseData = {
       medalType,
       price,
       transactionHash,
-      revenuePrecent,
+      revenuePercent,
       xdripBonusPercent,
       timestamp: new Date(),
     };
     await updateDoc(userRef, {
-      [`${lastRampKey} `]: arrayUnion(purchaseData),
+      [lastRampKey]: arrayUnion(purchaseData), 
     });
     console.log("Purchase logged successfully in", lastRampKey);
   } catch (error) {
@@ -606,8 +529,6 @@ export const sendReceiptEmail = async (email, fullName, medalType, price, transa
   const firestore = getFirestore();
   const mailRef = collection(firestore, "mail");
   const transactionNumber = `X-${transactionHash.slice(0, 6)}-${transactionHash.slice(-6)}`;
-
-  // Map medalType to corresponding image URLs
   const medalImages = {
     "COMMON": "https://xdrip.io/wp-content/uploads/2025/01/Common_MOH_transparent.webp",
     "UNCOMMON": "https://xdrip.io/wp-content/uploads/2025/01/Uncommon_MOH_transparent.webp",
@@ -616,11 +537,7 @@ export const sendReceiptEmail = async (email, fullName, medalType, price, transa
     "LEGENDARY": "https://xdrip.io/wp-content/uploads/2025/01/Legendary_MOH_transparent.webp",
     "ETERNAL": "https://xdrip.io/wp-content/uploads/2025/01/Eternal_MOH_transparent.webp",
   };
-
-  // Get the image URL for the given medalType, or use a default image if not found
   const medalImageURL = medalImages[medalType] || "https://files.elfsightcdn.com/eafe4a4d-3436-495d-b748-5bdce62d911d/3f1b449b-f38b-42d4-bd7c-2d46bcf846b8/MetalsOfHonor.webp";
-
-
   try {
     const emailDocData = {
       to: [email],
@@ -915,7 +832,6 @@ export const sendReceiptEmail = async (email, fullName, medalType, price, transa
 </html>`,
       },
     };
-
     await addDoc(mailRef, emailDocData);
     console.log("Receipt email queued successfully:", emailDocData);
   } catch (error) {
@@ -923,8 +839,6 @@ export const sendReceiptEmail = async (email, fullName, medalType, price, transa
     throw error;
   }
 };
-
-
 /************************************************************************************
                   TRACKING TRANSACTIONS FOR FULL LOGGING
 *************************************************************************************/
@@ -944,11 +858,8 @@ export const trackDetailedTransaction = async (address, medalType, transactionDa
     gasUsed,
   } = transactionData;
 
-
-  const transactionNumber = `X-${transactionHash.slice(0, 6)}-${transactionHash.slice(-6)}`;
-
-  const currentDate = new Date().toISOString().split("T")[0];
-
+  const walletDocRef = doc(transactionsCollection, address.toLowerCase());
+  const transactionNumber = `X-${transactionHash.slice(0, 6)}-${transactionHash.slice(-6)}`; 
   const transactionLog = {
     purchaser: address,
     purchasedMedal: medalType,
@@ -962,31 +873,38 @@ export const trackDetailedTransaction = async (address, medalType, transactionDa
     valueBNB,
     gasUsed,
   };
-
   try {
-    const dateDocRef = doc(transactionsCollection, currentDate);
-    const dateDocSnap = await getDoc(dateDocRef);
-
-    if (dateDocSnap.exists()) {
-      await updateDoc(dateDocRef, {
-        [transactionNumber]: transactionLog,
-      });
-    } else {
-      await setDoc(dateDocRef, {
-        date: currentDate,
-        [transactionNumber]: transactionLog,
-      });
-    }
-
-    console.log("Transaction tracked successfully with number:", transactionNumber);
+    await setDoc(walletDocRef, { [transactionNumber]: transactionLog }, { merge: true });
+    console.log("Transaction tracked successfully for wallet:", address, "with number:", transactionNumber);
   } catch (error) {
     console.error("Error tracking transaction:", error.message);
     throw error;
   }
 };
 
+/************************************************************************************
+                  KYC FOR FULL LOGGING
+*************************************************************************************/
+export const createKYCFolder = async (external_applicant_id, kycData) => {
+  const firestore = getFirestore();
+  const kycCollection = collection(firestore, "kyc");
+  const currentDate = new Date().toISOString();
 
+  const kycLog = {
+    ...kycData,
+    external_applicant_id,
+    timestamp: currentDate,
+  };
 
+  try {
+    const kycDocRef = doc(kycCollection, external_applicant_id);
+    await setDoc(kycDocRef, kycLog, { merge: true });
+    console.log("[Firebase] KYC data logged successfully for:", external_applicant_id);
+  } catch (error) {
+    console.error("[Firebase] Error logging KYC data:", error.message);
+    throw error;
+  }
+};
 /************************************************************************************
                 OWNER FUNCTION FINDING TRANSACTIONS FOR FULL LOGGING
 *************************************************************************************/

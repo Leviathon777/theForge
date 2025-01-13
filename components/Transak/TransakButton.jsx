@@ -92,7 +92,7 @@ const TransakButton = ({ user, walletAddress, onShowInvestorProfile }) => {
   const handleButtonClick = (e) => {
     e.preventDefault();
     if (!walletAddress) {
-      toast.info("Please connect your wallet to proceed.");
+     toast.info("To access investor areas, please connect your wallet.");
       return;
     }
     if (!user?.email) {

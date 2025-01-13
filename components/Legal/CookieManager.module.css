@@ -1,0 +1,241 @@
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.cookieOverlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  overflow: auto;
+  animation: slideUp 0.5s ease-in-out forwards;
+}
+
+.cookieOverlay.slideDown {
+  animation: slideDown 0.5s ease-in-out forwards;
+}
+
+.cookieContent {
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.301);
+  background: var(--background-gradient-dark);
+  box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+  width: 50%;
+  text-align: left;
+}
+
+  
+  .cookieHeader {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .cookieBody {
+    text-align: left;
+    padding: 0 20px;
+  }
+  
+  .cookieParagraph {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  .cookieList {
+    margin-left: 40px;
+    margin-bottom: 10px;
+    list-style-type: disc;
+  }
+  
+  .linkButton {
+    background: none;
+    border: none;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  
+  .footerLinks {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .footerLinks p {
+    margin: 0;
+  }
+  
+  .cookieButton {
+    padding: 8px 15px;
+    font-size: 0.8rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .cookieButton.accept {
+    background-color: #28a745;
+    color: #fff;
+  }
+  
+  .cookieButton.accept:hover {
+    background-color: #218838;
+  }
+  
+  .cookieButton.decline {
+    background-color: #dc3545;
+    color: #fff;
+  }
+  
+  .cookieButton.decline:hover {
+    background-color: #c82333;
+  }
+  
+  .cookieButton.manage {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .cookieButton.manage:hover {
+    background-color: #0056b3;
+  }
+
+  .buttonContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 2rem;
+  }
+
+  @media (max-width: 599px) {
+    .entryPageContainer {
+      align-items: center;
+      justify-content: center;
+    }
+  
+    .imageWrapper {
+      width: 300px; 
+      height: 300px;
+    }
+  }
+  
+  @media (min-width: 600px) and (max-width: 899px) {
+    .entryPageContainer {
+      align-items: center;
+      justify-content: center;
+    }
+  
+    .enterContainer {
+      top: 50%; 
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+  
+    .imageWrapper {
+      width: 400px; 
+      height: 400px;
+    }  
+  }
+  
+
+  @media (max-width: 768px) {
+    .cookieContent {
+      width: 70%;
+      padding: 15px;
+      border-radius: 8px;
+    }
+  
+    .cookieHeader {
+      font-size: 1.3rem;
+    }
+  
+    .cookieParagraph {
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+  
+    .cookieButton {
+      padding: 10px;
+      font-size: 0.85rem;
+    }
+  }
+  
+
+  @media (max-width: 480px) {
+    .cookieOverlay {
+      align-items: flex-start;
+      padding: 20px 0; 
+    }
+  
+    .cookieContent {
+      width: 90%;
+      padding: 10px;
+      border-radius: 6px;
+    }
+  
+    .cookieHeader {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+  
+    .cookieParagraph {
+      font-size: 0.7rem;
+      line-height: 1.3;
+    }
+  
+    .cookieList {
+      margin-left: 20px;
+      margin-bottom: 8px;
+    }
+  
+    .cookieButton {
+      padding: 8px 8px;
+      font-size: 0.6rem;
+      margin: 5px 0;
+    }
+  
+    .cookieBody {
+      font-size: .7rem;
+    } 
+    
+    .cookieList {
+      font-size: .7rem;
+    }
+  
+    .linkButton {
+      background: none;
+      border: none;
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+  }
+  
+  
+  
