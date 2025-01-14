@@ -868,18 +868,33 @@ export const trackDetailedTransaction = async (address, medalType, transactionDa
 /************************************************************************************
                   KYC FOR FULL LOGGING
 *************************************************************************************/
+const sanitizeData = (data) => {
+  if (typeof data !== "object" || data === null) return data;
+
+  return Object.fromEntries(
+    Object.entries(data).map(([key, value]) => [
+      key,
+      value === undefined || value === null ? "" : sanitizeData(value),
+    ])
+  );
+};
+
 export const createKYCFolder = async (external_applicant_id, kycData) => {
   const firestore = getFirestore();
   const kycCollection = collection(firestore, "kyc");
   const currentDate = new Date().toISOString();
-  const kycLog = {
+
+  // Sanitize kycData to remove undefined or null fields
+  const sanitizedKYCData = sanitizeData({
     ...kycData,
     external_applicant_id,
     timestamp: currentDate,
-  };
+  });
+
   try {
     const kycDocRef = doc(kycCollection, external_applicant_id);
-    await setDoc(kycDocRef, kycLog, { merge: true });
+    await setDoc(kycDocRef, sanitizedKYCData, { merge: true });
+    console.log("[Firebase] KYC data logged successfully:", external_applicant_id);
   } catch (error) {
     console.error("[Firebase] Error logging KYC data:", error.message);
     throw error;
