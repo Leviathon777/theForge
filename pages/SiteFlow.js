@@ -26,7 +26,6 @@ const SiteFlow = () => {
                     </div>
                 </section>
 
-
                 {/* Wallet Connection */}
                 <section className={styles.section}>
                     <h2 className={styles.subheading}>Step 2: Wallet Connection</h2>
@@ -78,7 +77,6 @@ const SiteFlow = () => {
                         </ul>
                     </div>
                 </section>
-
 
                 {/* Profile Creation and Verification */}
                 <section className={styles.section}>

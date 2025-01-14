@@ -61,7 +61,6 @@ const ChatWidget = () => {
         })
       );
       script.onload = () => {
-        console.log('Chat script loaded successfully');
       };
       script.onerror = () => {
         console.error('Failed to load the chat script');
@@ -133,7 +132,6 @@ const ForgeComponent = () => {
     const handleWalletConnect = async () => {
       if (address) {
         setCurrentAccount(address);
-        console.log(`Wallet connected: ${address}`);
         try {
           const userData = await getForger(address);
           if (userData && userData.fullName && userData.email) {
@@ -146,9 +144,6 @@ const ForgeComponent = () => {
             // Fetch the latest XDRIP balance
             const fetchedBalance = await fetchXDRIPBalance();
             if (userData.drip?.dripCount !== fetchedBalance) {
-              console.log(
-                `Updating profile: XDRIP balance changed from ${userData.drip?.dripCount} to ${fetchedBalance}`
-              );
               const dripPercent = ((fetchedBalance / 1_000_000_000) * 100).toFixed(2);
               const updatedUserData = {
                 ...userData,
@@ -159,7 +154,6 @@ const ForgeComponent = () => {
                 },
               };
               await updateForger(address, updatedUserData);
-              console.log("Profile updated successfully.");
             }
           } else {
             setIsReminderPopupVisible(true);
@@ -180,12 +174,10 @@ const ForgeComponent = () => {
   const fetchXDRIPBalance = async () => {
     try {
       const balance = await XdRiPContract.methods.balanceOf(address).call();
-      console.log("Raw balance:", balance);
       const balanceString = balance.toString();
       const formattedBalance = web3.utils.fromWei(balanceString, 'gwei');
       const finalDisplayBalance = parseFloat(formattedBalance).toFixed(0);
 
-      console.log("Displayed XDRIP balance:", finalDisplayBalance);
       setXdripBalance(finalDisplayBalance);
     } catch (error) {
       console.error("Error retrieving XDRIP balance:", error);
@@ -329,7 +321,6 @@ const ForgeComponent = () => {
         try {
           const balance = await provider.getBalance(address);
           const formattedBalance = ethers.utils.formatEther(balance);
-          console.log("BNB Balance:", formattedBalance);
           setBnbBalance(formattedBalance);
         } catch (error) {
           console.error("Error fetching BNB balance:", error);
@@ -441,7 +432,6 @@ const ForgeComponent = () => {
 
 /* FUTURE TRANSAK ONE INTEGRATION 
   const handleCryptoForge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
-    console.log("handleCryptoForge called with:", { medalType, ipfsHash, revenueAccess, xdripBonus });
     if (!address) {
       toast.info("Please connect your wallet to proceed.");
       connectLocalWallet();
@@ -452,7 +442,6 @@ const ForgeComponent = () => {
       console.error("KYC not approved for ETERNAL medal.");
       return Promise.reject("KYC not approved for ETERNAL medal.");
     }
-    console.log("KYC check passed. Proceeding to forge:", medalType);
     return forge(medalType, ipfsHash, revenueAccess, xdripBonus);
   };*/
 
@@ -464,7 +453,6 @@ const ForgeComponent = () => {
     setIsPaymentModalVisible(false);
     setIsLoading(true);
     try {
-      console.log("Forging medal of type:", medalType);
       if (!signer) {
         toast.error("Signer not available. Please connect your wallet.");
         return;
@@ -476,11 +464,9 @@ const ForgeComponent = () => {
       const provider = signer.provider;
       if (!provider) {
         toast.error("Provider is missing. Please reconnect your wallet.");
-        console.log("Provider is missing!");
         return;
       }
       const contract = fetchMohContract(signer);
-      console.log("Connected to contract at:", MohAddress);
       switch (medalType) {
         case "COMMON":
           break;
@@ -546,7 +532,6 @@ const ForgeComponent = () => {
       try {
         const estimatedGas = await contract.estimateGas[forgeFunction.name](ipfsHash, { value: price });
         gasLimit = estimatedGas.add(ethers.BigNumber.from(10000));
-        console.log("Estimated gas:", gasLimit.toString());
       } catch (error) {
         console.error("Gas estimation failed. Falling back ");
         gasLimit = ethers.BigNumber.from(990000);
@@ -555,9 +540,7 @@ const ForgeComponent = () => {
         value: price,
         gasLimit,
       });
-      console.log("Transaction sent:", transaction);
       const receipt = await transaction.wait();
-      console.log("Transaction Confirmed:", receipt);
       if (receipt.status === 1) {
         await logMedalPurchase(address, medalType, itemPrice, transaction.hash, revenueAccess, xdripBonus);
         await sendReceiptEmail(
@@ -698,8 +681,6 @@ const ForgeComponent = () => {
 
 
   const handleForgeClick = async (medal) => {
-    console.log("Medal selected for forging:", medal);
-    console.log("Current userInfo:", userInfo);
     if (!address) {
       toast.info("Please connect your wallet to proceed with Forging.");
       return;
@@ -710,12 +691,10 @@ const ForgeComponent = () => {
     }
     if (medal.title === "ETERNAL" && userInfo?.kycStatus !== "approved") {
       setIsKYCReminderVisible(true);
-      console.log("KYC is not approved. Showing KYC reminder...");
       return;
     }
     setSelectedMedalForForge(medal);
     try {
-      console.log("Proceeding to forge medal:", medal.title);
       setIsLoading(true);
       await forge(medal.title, medal.ipfsHash, medal.revenueAccess, medal.xdripBonus);
       toast.success(`${medal.title} Medal forged successfully!`);
@@ -737,8 +716,6 @@ const ForgeComponent = () => {
 
   /* FUTURE TRANSAK ONE INTEGRATION 
 const handleForgeClick = (medal) => {
-    console.log("Medal selected for forging:", medal);
-    console.log("Current userInfo:", userInfo);
     if (!address) {
       toast.info("Please connect your wallet to proceed.");
       return;
@@ -749,7 +726,6 @@ const handleForgeClick = (medal) => {
     }
     setModalStep("kycPrompt");
     if (userInfo.kycStatus !== "approved") {
-      console.log("KYC is not approved, showing KYC options...");
       setMedalToForge(medal);
       setIsKYCReminderVisible(true);
     }
@@ -759,16 +735,12 @@ const handleForgeClick = (medal) => {
 
 
   const proceedWithCrypto = async () => {
-    console.log("Proceed with Crypto clicked.");
-    console.log("Current selectedMedalForForge:", selectedMedalForForge);
     if (!selectedMedalForForge) {
       toast("No medal selected. Please try again.");
       console.error("Error: No medal selected. selectedMedalForForge is null or undefined.");
       return;
     }
     setPaymentMethod("crypto");
-    console.log("Payment method set to crypto.");
-    console.log("Medal details being passed to handleCryptoForge:", {
       title: selectedMedalForForge.title,
       ipfsHash: selectedMedalForForge.ipfsHash,
       revenueAccess: selectedMedalForForge.revenueAccess,
@@ -781,9 +753,7 @@ const handleForgeClick = (medal) => {
         selectedMedalForForge.revenueAccess,
         selectedMedalForForge.xdripBonus
       );
-      console.log("handleCryptoForge executed successfully.");
       setIsPaymentModalVisible(false);
-      console.log("Payment modal closed.");
     } catch (error) {
       console.error("Error during forging process:", error);
       toast.error("Failed to process the forge request. Please try again.");
@@ -835,7 +805,6 @@ const handleForgeClick = (medal) => {
           typed = typed.slice(typed.length - maxLength);
         }
         if (targets.some(target => typed === target)) {
-          console.log(`Easter Egg Triggered via Typing '${typed}'!`);
           triggerEasterEgg();
           typed = '';
         }
@@ -1069,7 +1038,6 @@ const handleForgeClick = (medal) => {
                       closeDropdown();
                     }}
                     onSuccess={(data) => {
-                      console.log("Transak payment successful:", data);
                       closeDropdown();
                     }}
                     onError={(error) => {
@@ -1333,7 +1301,6 @@ const handleForgeClick = (medal) => {
               </button>          
               {modalStep === "kycPrompt" && (
                 <>
-                  {console.log("KYC Prompt Step Opened. Medal:", selectedMedalForForge, "UserInfo:", userInfo)}
                   {selectedMedalForForge?.title === "ETERNAL" ? (
                     <div className={Style.kycReminder}>
                       <h3>KYC Required</h3>
@@ -1344,7 +1311,6 @@ const handleForgeClick = (medal) => {
                         <Button
                           btnName="Go to KYC Page"
                           onClick={() => {
-                            console.log("Redirecting to KYC page...");
                             router.push({
                               pathname: '/kycPage',
                               query: { address, name: userInfo?.fullName || '', email: userInfo?.email || '' },
@@ -1365,7 +1331,6 @@ const handleForgeClick = (medal) => {
                         <Button
                           btnName="Proceed Without KYC"
                           onClick={() => {
-                            console.log("User chose to proceed without KYC. Medal:", selectedMedalForForge);
                             setModalStep("paymentOptions");
                           }}
                           fontSize="inherit"
@@ -1373,7 +1338,6 @@ const handleForgeClick = (medal) => {
                         <Button
                           btnName="Go to KYC Page"
                           onClick={() => {
-                            console.log("Redirecting to KYC page...");
                             router.push({
                               pathname: '/kycPage',
                               query: { address, name: userInfo?.fullName || '', email: userInfo?.email || '' },
@@ -1389,14 +1353,12 @@ const handleForgeClick = (medal) => {
               )}
               {modalStep === "paymentOptions" && (
                 <>
-                  {console.log("Payment Options Step Opened. Medal:", selectedMedalForForge, "UserInfo:", userInfo)}
                   <h2>Select Payment Method</h2>
                   <p>How would you like to pay for the {selectedMedalForForge?.title} medal?</p>
                   <div className={Style.buttonFlex}>
                     <Button
                       btnName="Pay with Crypto"
                       onClick={() => {
-                        console.log("User chose Pay with Crypto. Medal:", selectedMedalForForge);
                         proceedWithCrypto(selectedMedalForForge);
                       }}
                       fontSize="inherit"
@@ -1404,7 +1366,6 @@ const handleForgeClick = (medal) => {
                     <Button
                       btnName="Back"
                       onClick={() => {
-                        console.log("User clicked Back to KYC prompt.");
                         setModalStep("kycPrompt");
                       }}
                       fontSize="inherit"
@@ -1412,7 +1373,6 @@ const handleForgeClick = (medal) => {
                     <Button
                       btnName="Pay with Transak"
                       onClick={() => {
-                        console.log("User chose Pay with Transak. Medal:", selectedMedalForForge);
                         proceedWithTransak(selectedMedalForForge);
                       }}
                       fontSize="inherit"

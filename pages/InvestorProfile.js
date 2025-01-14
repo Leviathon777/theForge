@@ -92,9 +92,9 @@ const InvestorProfile = () => {
             agreed,
             kyc: {
             kycStatus: "not submitted",
-            kycApprovedAt: "N/A",
+            kycCompletedAt: "N/A",
             kycSubmittedAt: "N/A",
-            kycReviewAnswer: "false",
+            kycVerified: "false",
             },
             ukFCAAgreed: territory === "UK" ? ukFCAAgreed : null,
             dateOfJoin: new Date().toISOString(),

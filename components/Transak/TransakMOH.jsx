@@ -62,14 +62,12 @@ const TransakMOH = ({ user, medal, onClose, onSuccess, onError }) => {
       const channel = pusher.subscribe(orderId);
 
       channel.bind("ORDER_COMPLETED", (orderData) => {
-        console.log("ORDER COMPLETED websocket event", orderData);
         unlockScroll();
         setIsActive(false);
         onSuccess(orderData);
       });
 
       channel.bind("ORDER_FAILED", (orderData) => {
-        console.log("ORDER FAILED websocket event", orderData);
         unlockScroll();
         setIsActive(false);
         onError(orderData);
@@ -77,13 +75,11 @@ const TransakMOH = ({ user, medal, onClose, onSuccess, onError }) => {
     };
 
     transak.on(Transak.EVENTS.TRANSAK_ORDER_CREATED, (orderData) => {
-      console.log("Transak order created:", orderData);
       const orderId = orderData.status?.id;
       if (orderId) subscribeToWebsockets(orderId);
     });
 
     transak.on(Transak.EVENTS.TRANSAK_WIDGET_CLOSE, () => {
-      console.log("Widget closed");
       unlockScroll();
       setIsActive(false);
       onClose();
@@ -105,7 +101,6 @@ const TransakMOH = ({ user, medal, onClose, onSuccess, onError }) => {
     window.addEventListener("resize", checkIsMobile);
 
     return () => {
-      console.log("Component unmounting. Cleaning up...");
       window.removeEventListener("resize", checkIsMobile);
       unlockScroll();
     };

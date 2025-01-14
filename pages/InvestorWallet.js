@@ -88,8 +88,8 @@ const InvestorWallet = () => {
                 </p>
                 <p>
                   KYC Approved On: {""} 
-                  {userInfo.kyc?.kycApprovedAt && userInfo.kyc.kycApprovedAt !== "N/A"
-                    ? formatDate(userInfo.kyc.kycApprovedAt)
+                  {userInfo.kyc?.kycCompletedAt && userInfo.kyc.kycCompletedAt !== "N/A"
+                    ? formatDate(userInfo.kyc.kycCompletedAt)
                     : "N/A"}
                 </p>
 

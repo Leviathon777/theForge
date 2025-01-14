@@ -12,7 +12,6 @@ function NextDOTId() {
       const signer = provider.getSigner();
       const contract = new ethers.Contract(mohCA.address, mohCA.abi, signer);
       const forgedCounts = await contract.getforgedCounts();
-      console.log("Forged Counts:", forgedCounts);
 
       let currentCounter;
       let offset;

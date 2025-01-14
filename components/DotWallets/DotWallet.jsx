@@ -1,13 +1,12 @@
 // DotWallet.jsx
 
-import React, { useContext, useEffect, useState, useMemo, useCallback } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 import Style from "./DotWallet.module.css";
 import DotCarousel from "./DotCarousel.jsx";
 import Eternal from "./DotEternal.jsx";
 import { MyDotDataContext } from '../../Context/MyDotDataContext.js';
 import { VideoPlayer, DotDetailsModal, RampDetails } from "../componentsindex.js";
 import videos from "../../public/videos/index.js";
-import mohCA_ABI from "../../Context/mohCA_ABI.json";
 
 const videoPaths = {
   "COMMON MEDAL OF HONOR": videos.common,
@@ -53,17 +52,13 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
         }
       }
     });
-
     if (currentRamp.length > 0) {
       ramps[`ramp${rampNumber}`] = currentRamp;
     }
-
     return { ramps, eternal };
   };
 
-
   useEffect(() => {
-    console.log("Dots data:", dots);
     if (address && dots && dots.length > 0) {
       const { ramps: organizedRamps, eternal } = organizeMedalsByRarity(dots);
       setRamps(organizedRamps);
@@ -82,7 +77,6 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
       setEternalMedal(null);
     }
   }, [dots, address]);
-
 
   const handleRampInfo = (rampKey) => {
     const medals = ramps[rampKey];
@@ -142,16 +136,8 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
         };
       }),
     };
-
-    // Log the medals array
-    console.log("Medals Data:", medals);
-
-    // Log the transformed rampData
-    console.log("Ramp Data:", rampData);
-
     setInfoModalData(rampData);
     setIsInfoModalVisible(true);
-
   }
 
     useEffect(() => {
@@ -193,20 +179,10 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
             xdripBonus: eternalMedalInfo.xdripBonus,
           },
         ],
-      };
-    
+      };    
       setInfoModalData(eternalData);
       setIsInfoModalVisible(true);
     };
-    
-
-
-    const videoStyles = useMemo(() => ({
-      width: "100%",
-      height: "325px",
-      objectFit: "cover",
-      borderRadius: "40px",
-    }), []);
 
     return (
       <div className={Style.dot_wallet}>
@@ -230,7 +206,6 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
             )
           ))}
         </div>
-
         <div className={Style.eternal_dot_card}>
           <h2
             onClick={() => eternalMedal && handleEternalInfo()}
@@ -238,19 +213,15 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
           >
             ETERNAL MEDAL OF HONOR
           </h2>
-
           <Eternal medals={eternalMedal ? [eternalMedal] : []} />
-
           <div>
           </div>
         </div>
-
         <RampDetails
           isVisible={isInfoModalVisible}
           onClose={() => setIsInfoModalVisible(false)}
           infoModalData={infoModalData}
         />
-
         {selectedMedal && (
           <DotDetailsModal
             medal={selectedMedal}
@@ -260,5 +231,4 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
       </div>
     );
   };
-
   export default React.memo(DotWallet);

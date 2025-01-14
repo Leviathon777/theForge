@@ -1,5 +1,3 @@
-// DotCarousel.jsx
-
 import React, { useState, useMemo, useCallback } from 'react';
 import Image from "next/image";
 import styles from './DotCarousel.module.css';
@@ -21,7 +19,6 @@ const Carousel = ({ medals = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedMedal, setSelectedMedal] = useState(null);
 
-  // empties
   const medalPlaceholders = useMemo(() => [
     { title: "COMMON MEDAL OF HONOR" },
     { title: "UNCOMMON MEDAL OF HONOR" },
@@ -31,12 +28,9 @@ const Carousel = ({ medals = [] }) => {
   ], []);
 
   const handleMedalDetails = useCallback((medal) => {
-    console.log('handleMedalDetails called with medal:', medal);
     const videoPath = videoPaths[medal.metadata.name] || "";
-    console.log(`Loading video for ${medal.metadata.name}: ${videoPath}`);
-
     const formattedMedal = {
-      id: medal.tokenId.toString(), // Corrected access and converted to string
+      id: medal.tokenId.toString(), 
       medalVideo: videoPath,
       title: medal.metadata?.name || medal.title,
       description: medal.metadata?.description || "NO DATA AVAILABLE",
@@ -45,7 +39,6 @@ const Carousel = ({ medals = [] }) => {
       contractAddress: mohCA_ABI.address,
       isPlaceholder: medal.isPlaceholder
     };
-    console.log('Formatted Medal:', formattedMedal);
     setSelectedMedal(formattedMedal);
   }, []);
 
@@ -106,7 +99,6 @@ const Carousel = ({ medals = [] }) => {
       {/* Carousel Cards */}
       <div className={styles.cards}>
         {displayedItems.map((item, index) => {
-          console.log(`Medal Metadata for item ${index}:`, item.metadata);
           const position = (index - currentIndex + 5) % 5;
           const cardClass = `${styles.card} ${styles[`position${position}`]}`;
           const videoSrc = videoPaths[item.metadata?.name] || "";

@@ -17,12 +17,9 @@ const XdRiPRewardsChecker = () => {
 
   const checkRewardDistribution = async () => {
     try {
-      console.log("Fetching last reward block...");
       const lastRewardBlock = await XdRiPContract.methods.lastRewardBlock().call();
       const currentBlock = await web3.eth.getBlockNumber();
-      console.log(`Last Reward Block: ${lastRewardBlock}, Current Block: ${currentBlock}`);
-
-      if (currentBlock > lastRewardBlock) {
+       if (currentBlock > lastRewardBlock) {
         setRewardStatus("Distributed");
       } else {
         setRewardStatus("Not yet distributed");
@@ -35,10 +32,8 @@ const XdRiPRewardsChecker = () => {
 
   const fetchXDRIPBalance = async () => {
     try {
-      console.log("Fetching XDRIP balance for:", address);
       const balance = await XdRiPContract.methods.balanceOf(address).call();
       const formattedBalance = web3.utils.fromWei(balance, "ether");
-      console.log(`Balance fetched: ${formattedBalance} XDRIP`);
       setXdripBalance(formattedBalance);
     } catch (error) {
       console.error("Error retrieving XDRIP balance:", error);
@@ -48,7 +43,6 @@ const XdRiPRewardsChecker = () => {
 
   useEffect(() => {
     if (address) {
-      console.log("Address connected:", address);
       checkRewardDistribution();
       fetchXDRIPBalance();
     }

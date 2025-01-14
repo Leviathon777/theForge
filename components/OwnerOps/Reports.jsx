@@ -329,8 +329,7 @@ const Reports = ({ onClose }) => {
             const fundsDistributed = fundsEvents.map((event) => ({
                 totalDistributed: ethers.utils.formatEther(event.args.totalDistributed),
                 blockNumber: event.blockNumber,
-            }));
-            console.log("FundsDistributed events:", fundsDistributed);
+            }));    
 
             // Fetch investorPaid events
             const investorFilter = distributeContract.filters.investorPaid();
@@ -340,19 +339,14 @@ const Reports = ({ onClose }) => {
                 amount: ethers.utils.formatEther(event.args.amount),
                 blockNumber: event.blockNumber,
             }));
-            console.log("InvestorPaid events:", investorPaid);
-
             setFundsDistributedEvents(fundsDistributed);
             setInvestorPaidEvents(investorPaid);
-
             setStatus("Events fetched successfully.");
         } catch (error) {
             console.error("Error fetching distribution events:", error);
             setStatus("Error fetching distribution events. See console for details.");
         }
     }, [distributeContract]);
-
-
 
     useEffect(() => {
         const initContracts = async () => {
@@ -361,27 +355,21 @@ const Reports = ({ onClose }) => {
                     setStatus("MetaMask is required to use this feature.");
                     return;
                 }
-
                 await window.ethereum.request({ method: "eth_requestAccounts" });
-
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
-
                 const distInstance = new ethers.Contract(
                     distributeCA_ABI.address,
                     distributeCA_ABI.abi,
                     signer
                 );
                 setDistributeContract(distInstance);
-                console.log("Distribute contract initialized:", distInstance);
-
                 setStatus("Contracts initialized successfully.");
             } catch (err) {
                 console.error("Error initializing contracts:", err);
                 setStatus("Error initializing contracts.");
             }
         };
-
         initContracts();
     }, []);
 
@@ -1056,8 +1044,6 @@ const Reports = ({ onClose }) => {
           signer
         );
         setDistributeContract(distInstance);
-        console.log("Distribute contract initialized:", distInstance);
-
         setStatus("Contracts initialized successfully.");
       } catch (err) {
         console.error("Error initializing contracts:", err);

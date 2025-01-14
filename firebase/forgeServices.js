@@ -1,5 +1,4 @@
-import { getFirestore, collection, query, where, addDoc, getDocs, getDoc, deleteDoc, doc, updateDoc, setDoc, serverTimestamp } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getFirestore, collection, query, where, addDoc, getDocs, getDoc, deleteDoc, doc, updateDoc, setDoc,  } from "firebase/firestore";
 import { arrayUnion } from 'firebase/firestore';
 import { firestore, db } from "./config";
 
@@ -15,9 +14,9 @@ export const addForger = async (profileData) => {
     email,
     kyc: {
       kycStatus,
-      kycApprovedAt,
+      kycCompletedAt,
       kycSubmittedAt,
-      kycReviewAnswer,
+      kycVerified,
     },
     fullName,
     walletAddress,
@@ -37,31 +36,25 @@ export const addForger = async (profileData) => {
   const firestore = getFirestore();
   const forgerRef = collection(firestore, "forgers");
   const mailRef = collection(firestore, "mail");
-  console.log("Incoming profileData to addForger:", profileData);
   if (!walletAddress) {
-    console.error("Error: walletAddress is required but was not provided.");
     throw new Error("walletAddress cannot be empty.");
   }
   if (!email) {
-    console.error("Error: email is required but was not provided.");
     throw new Error("email cannot be empty.");
   }
   if (!fullName) {
-    console.error("Error: fullName is required but was not provided.");
     throw new Error("fullName cannot be empty.");
   }
   try {
     const walletQuery = query(forgerRef, where("walletAddress", "==", walletAddress));
     const walletSnapshot = await getDocs(walletQuery);
     if (!walletSnapshot.empty) {
-      console.error(`Error: Wallet address ${walletAddress} already exists.`);
       throw new Error("This wallet address is already registered.");
     }
     const emailQuery = query(forgerRef, where("email", "==", email));
     const emailDocRef = doc(mailRef, walletAddress.toLowerCase());
     const emailSnapshot = await getDocs(emailQuery);
     if (!emailSnapshot.empty) {
-      console.error(`Error: Email ${email} already exists.`);
       throw new Error("This email is already registered.");
     }
     const forgerDocData = {
@@ -83,9 +76,9 @@ export const addForger = async (profileData) => {
       dateOfJoin: dateOfJoin || new Date().toISOString(),
       kyc: {
         kycStatus,
-        kycApprovedAt,
+        kycCompletedAt,
         kycSubmittedAt,
-        kycReviewAnswer,
+        kycVerified,
       },
       drip: {
         dripHeld,
@@ -93,10 +86,7 @@ export const addForger = async (profileData) => {
         dateLastLogged,
       },
     };
-    console.log("Wallet Address:", walletAddress);
-    console.log("Document Data:", forgerDocData);
     await setDoc(doc(forgerRef, walletAddress), forgerDocData);
-    console.log("Forger created successfully:", forgerDocData);
     const emailHTML = `
     <!DOCTYPE html>
     <html lang="en">
@@ -397,7 +387,6 @@ border-radius: 8px;
     },
   };  
     await setDoc(emailDocRef, emailDocData, { merge: true });
-    console.log("Welcome email queued successfully with walletAddress as docId:", walletAddress);
   } catch (error) {
     console.error("Error adding email document:", error.message);
     throw error;
@@ -409,7 +398,6 @@ border-radius: 8px;
 export const updateForger = async (walletAddress, updateData) => {
   const firestore = getFirestore();
   const forgerRef = collection(firestore, "forgers");
-  console.log("Updating forger profile for wallet address:", walletAddress);
   if (!walletAddress) {
     console.error("Error: walletAddress is required but was not provided.");
     throw new Error("walletAddress cannot be empty.");
@@ -421,7 +409,6 @@ export const updateForger = async (walletAddress, updateData) => {
       throw new Error(`User with wallet address ${walletAddress} not found.`);
     }
     await updateDoc(forgerDocRef, updateData);
-    console.log(`Forger profile updated successfully for wallet address: ${walletAddress}`);
     return { success: true, message: "User profile updated successfully." };
   } catch (error) {
     console.error("Error updating forger profile:", error.message);
@@ -432,10 +419,8 @@ export const updateForger = async (walletAddress, updateData) => {
                                  UPDATING THE USER 
 *************************************************************************************/
 export const updateApplicantStatusInFirebase = async (walletAddress, updateData) => {
-  console.log("Updating KYC for forger with wallet address:", walletAddress);
   const firestore = getFirestore();
   const forgerRef = collection(firestore, "forgers");
-  
   if (!walletAddress) {
     console.error("Error: walletAddress is required.");
     throw new Error("walletAddress cannot be empty.");
@@ -447,9 +432,17 @@ export const updateApplicantStatusInFirebase = async (walletAddress, updateData)
       console.error(`Forger with wallet address ${walletAddress} does not exist.`);
       throw new Error(`Forger with wallet address ${walletAddress} not found.`);
     }
-    await updateDoc(forgerDocRef, updateData);
-    console.log(`Successfully updated KYC for wallet address: ${walletAddress}`);
+    const existingData = forgerDoc.data();
+    const mergedData = {
+      ...existingData,
+      kyc: {
+        ...existingData.kyc,
+        ...updateData.kyc,
+      },
+    };
+    await updateDoc(forgerDocRef, mergedData);
     return { success: true, message: "KYC fields updated successfully." };
+
   } catch (error) {
     console.error("Error updating KYC fields:", error.message);
     throw new Error(`Failed to update KYC fields: ${error.message}`);
@@ -459,22 +452,18 @@ export const updateApplicantStatusInFirebase = async (walletAddress, updateData)
                         GET USER INFO WHEN WALLET CONNECTS
 *************************************************************************************/
 export const getForger = async (walletAddress) => {
-  console.log("Fetching forger data for wallet address:", walletAddress); // Log wallet address
   const firestore = getFirestore();
-  const userRef = doc(firestore, "forgers", walletAddress); // Directly fetch the doc by ID
-
+  const userRef = doc(firestore, "forgers", walletAddress); 
   try {
-    const userSnapshot = await getDoc(userRef); // Fetch document
+    const userSnapshot = await getDoc(userRef);
     if (userSnapshot.exists()) {
       const userData = userSnapshot.data();
-      console.log("User found:", userData); // Log found user data
       return userData;
     } else {
-      console.log("No user found for wallet address:", walletAddress); // Log no results
       return null;
     }
   } catch (error) {
-    console.error("Error retrieving user:", error.message); // Log query errors
+    console.error("Error retrieving user:", error.message);
     throw error;
   }
 };
@@ -487,7 +476,6 @@ export const logMedalPurchase = async (walletAddress, medalType, price, transact
   try {
     const userDoc = await getDoc(userRef);
     if (!userDoc.exists()) {
-      console.log("User document does not exist. Creating new user document with ramp1.");
       await setDoc(userRef, { ramp1: [] });
     }
     const updatedUserDoc = await getDoc(userRef);
@@ -515,7 +503,6 @@ export const logMedalPurchase = async (walletAddress, medalType, price, transact
     await updateDoc(userRef, {
       [lastRampKey]: arrayUnion(purchaseData), 
     });
-    console.log("Purchase logged successfully in", lastRampKey);
   } catch (error) {
     console.error("Error logging purchase:", error.message);
     throw error;
@@ -833,7 +820,6 @@ export const sendReceiptEmail = async (email, fullName, medalType, price, transa
       },
     };
     await addDoc(mailRef, emailDocData);
-    console.log("Receipt email queued successfully:", emailDocData);
   } catch (error) {
     console.error("Error sending receipt email:", error.message);
     throw error;
@@ -845,7 +831,6 @@ export const sendReceiptEmail = async (email, fullName, medalType, price, transa
 export const trackDetailedTransaction = async (address, medalType, transactionData) => {
   const firestore = getFirestore();
   const transactionsCollection = collection(firestore, "transactions");
-
   const {
     transactionHash,
     status,
@@ -875,13 +860,11 @@ export const trackDetailedTransaction = async (address, medalType, transactionDa
   };
   try {
     await setDoc(walletDocRef, { [transactionNumber]: transactionLog }, { merge: true });
-    console.log("Transaction tracked successfully for wallet:", address, "with number:", transactionNumber);
   } catch (error) {
     console.error("Error tracking transaction:", error.message);
     throw error;
   }
 };
-
 /************************************************************************************
                   KYC FOR FULL LOGGING
 *************************************************************************************/
@@ -889,17 +872,14 @@ export const createKYCFolder = async (external_applicant_id, kycData) => {
   const firestore = getFirestore();
   const kycCollection = collection(firestore, "kyc");
   const currentDate = new Date().toISOString();
-
   const kycLog = {
     ...kycData,
     external_applicant_id,
     timestamp: currentDate,
   };
-
   try {
     const kycDocRef = doc(kycCollection, external_applicant_id);
     await setDoc(kycDocRef, kycLog, { merge: true });
-    console.log("[Firebase] KYC data logged successfully for:", external_applicant_id);
   } catch (error) {
     console.error("[Firebase] Error logging KYC data:", error.message);
     throw error;
@@ -925,10 +905,8 @@ export const findTransaction = async ({ tokenId, transactionHash, purchasedMedal
     const querySnapshot = await getDocs(q);
     const results = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     if (results.length === 0) {
-      console.log("No matching transaction found.");
       return null;
     }
-    console.log("Matching transactions:", results);
     return results;
   } catch (error) {
     console.error("Error finding transaction:", error.message);

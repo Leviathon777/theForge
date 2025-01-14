@@ -4,8 +4,6 @@ import { Button } from "../components/componentsindex";
 import { useRouter } from 'next/router';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { updateApplicantStatusInFirebase } from "../firebase/forgeServices";
-
 
 const KYCPage = () => {
   const [formUrl, setFormUrl] = useState('');
@@ -36,7 +34,6 @@ const KYCPage = () => {
           if (parsedUserInfo && typeof parsedUserInfo === 'object') {
             setUserData(parsedUserInfo);
             setKycStatus(parsedUserInfo.kyc?.kycStatus || null);
-            console.log("Parsed User Info:", parsedUserInfo);
           } else {
             console.warn("Parsed userInfo is not a valid object:", parsedUserInfo);
           }
@@ -44,15 +41,12 @@ const KYCPage = () => {
           console.error("Error parsing userInfo:", error);
         }
       } else {
-        console.log("userInfo is not present in query params.");
       }
       if (router.query.address) {
-        console.log("Wallet Address:", router.query.address);
         setWalletAddress(router.query.address);
       }
     }
   }, [router.isReady, router.query.userInfo, router.query.address]);
-
 
   useEffect(() => {
     if (kycStatus === "completed") {
@@ -61,10 +55,8 @@ const KYCPage = () => {
     }
   }, [kycStatus]);
 
-
   const fetchFormUrl = async () => {
     setLoading(true);
-    console.log("Sending walletAddress:", userData.walletAddress);
     try {
       const response = await fetch('/api/kycaid-handler', {
         method: 'POST',
@@ -73,7 +65,6 @@ const KYCPage = () => {
           form_id: '3cb68f2c002d714c821b92b0765545f633ad',
           external_applicant_id: userData.walletAddress,
           redirect_url: '',
-
         }),
       });
       if (!response.ok) {
@@ -82,7 +73,6 @@ const KYCPage = () => {
         throw new Error(`Failed to fetch form URL. Status: ${response.status}`);
       }
       const data = await response.json();
-      console.log('Form URL fetched:', data.form_url);
       setFormUrl(data.form_url);
       setKycStarted(true);
     } catch (error) {
@@ -92,43 +82,6 @@ const KYCPage = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const allowedOrigins = ['https://forms-new.kycaid.com', 'http://localhost:3000', 'https://www.moh.xdrip.io'];
-  
-    const handleMessage = async (event) => {
-      // Validate origin
-      if (!allowedOrigins.includes(event.origin)) {
-        console.warn('Ignored message from unauthorized origin:', event.origin);
-        return;
-      }
-  
-      // Validate payload structure
-      const { data } = event;
-      if (!data || !data.event || !data.verification_id || !data.external_applicant_id) {
-        console.error('Invalid message payload:', data);
-        return;
-      }
-  
-      // Handle valid events
-      if (data.event === 'FORM_COMPLETED') {
-        console.log('Processing FORM_COMPLETED event:', data);
-        // Additional processing logic...
-      } else {
-        console.warn('Unexpected event type:', data.event);
-      }
-    };
-  
-    window.addEventListener('message', handleMessage);
-  
-    return () => {
-      window.removeEventListener('message', handleMessage);
-    };
-  }, [userData]);
-  
-  
-  
-
 
   const handleBeginKYC = () => {
     if (!userData) {
@@ -149,22 +102,22 @@ const KYCPage = () => {
     }
   };
 
-  
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <div className={styles.left}>
-          <h1 className={styles.title}>Know Your XDRIP Customer</h1>
+          <div className={styles.topper}>
+            <h1 className={styles.title}>XDRIP Digital Management's </h1>
+            <h1 className={styles.title}>KYC Submission Portal</h1>
+          </div>
           <div className={styles.walkthrough_wrapper}>
             <section className={styles.walkthrough}>
               <div className={styles.topperTitle}>
-              <h5>
-                <strong>Welcome to XDRIP Digital Management's Identity Verification Submission Portal</strong>
-              </h5>
+                <p>
+                  At XDRIP Digital Management, your security and privacy are at the core of everything we do. To ensure a safe and trusted environment, we partner with KYCAID for seamless identity verification.
+                </p>
               </div>
-              <p>
-                At XDRIP Digital Management, your security and privacy are at the core of everything we do. To ensure a safe and trusted environment, we partner with KYCAID for seamless identity verification.
-              </p>
+
               <h2>Why Verify Your Identity?</h2>
               <ul>
                 <li>
@@ -179,9 +132,8 @@ const KYCPage = () => {
               </ul>
               <h2>A Trusted Verification Process</h2>
               <p>
-                We’ve partnered with KYCAID, a leader in secure identity verification, to provide a smooth and confidential KYC experience. Your data is handled with the highest level of security, in full compliance with GDPR and global privacy standards.
+                We’ve implemented KYCAID, a leader in secure identity verification, to provide a smooth and confidential KYC experience. Your data is handled with the highest level of security, in full compliance with GDPR and global privacy standards.
               </p>
-
             </section>
             <div className={styles.button_wrapper}>
               <Button
@@ -193,7 +145,6 @@ const KYCPage = () => {
             </div>
           </div>
         </div>
-
         <div className={styles.verticalLine}></div>
         <div className={styles.right}>
           {kycStatus === "completed" && userData?.kyc?.kycReviewAnswer === "true" ? (
@@ -259,5 +210,4 @@ const KYCPage = () => {
     </div>
   );
 };
-
 export default KYCPage;

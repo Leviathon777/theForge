@@ -1119,7 +1119,6 @@
                 return;
             }
             gameMode = 'onePlayer';
-            console.log(`Game mode set to ${gameMode}`);
             alert('1 Player mode selected. For best results click Toggle FullScreen. Please be sure to review How To Play. You are playing as White. ');
             resetGame();
         });
@@ -1130,7 +1129,6 @@
                 return;
             }
             gameMode = 'twoPlayers';
-            console.log(`Game mode set to ${gameMode}`);
             alert('2 Players mode selected.');
             resetGame();
         });
@@ -1169,7 +1167,6 @@
                 openingsGrid.appendChild(card);
             });
 
-            console.log('Chess openings loaded and displayed.');
         }
 
         // Function to Apply an Opening to the Chessboard
@@ -1178,40 +1175,30 @@
                 alert('Cannot apply an opening during a move or while applying another opening.');
                 return;
             }
-
             isApplyingOpening = true;
-            resetGame(); // Reset the board first
-
-            console.log(`Applying opening: ${moves.join(', ')}`);
-
+            resetGame();
             for (let i = 0; i < moves.length; i++) {
                 const move = moves[i];
-                await new Promise(resolve => setTimeout(resolve, 500)); // Wait 500ms between moves
-                await makeMove(move, true); // Pass 'true' to indicate that the move is part of an opening
+                await new Promise(resolve => setTimeout(resolve, 500)); 
+                await makeMove(move, true); 
             }
-
             isApplyingOpening = false;
-            console.log('Opening applied successfully.');
         }
 
         // Function to Record Moves with Clear Chess Terminology
         function recordMove(color, type, from, to, capture = false, capturedType = null, isBonusCapture = false) {
             const moveList = document.getElementById('moveHistoryList');
             const li = document.createElement('li');
-
-            // Create move description based on capture or simple move
             let moveText = '';
-
             if (capture && capturedType) {
                 moveText = `${color === 'white' ? moveNumber + '. White' : '   Black'} ${capitalizeFirstLetter(type)} captures ${capitalizeFirstLetter(capturedType)} on ${to}`;
                 if (isBonusCapture) {
                     moveText += ' (Bonus Piece)';
-                    li.classList.add('bonus-capture'); // Add class for special styling
+                    li.classList.add('bonus-capture'); 
                 }
             } else {
                 moveText = `${color === 'white' ? moveNumber + '. White' : '   Black'} ${capitalizeFirstLetter(type)} moves to ${to}`;
             }
-
             li.textContent = moveText;
             moveList.appendChild(li);
 
@@ -1219,8 +1206,6 @@
             if (moveList.children.length === 1) {
                 document.querySelector('.move-history').style.display = 'block';
             }
-
-            // Increment move number after Black's move
             if (color === 'black') {
                 moveNumber++;
             }
@@ -1229,7 +1214,6 @@
         // Function to Toggle Player Turn
         function togglePlayerTurn() {
             playerTurn = playerTurn === 'white' ? 'black' : 'white';
-            // Update the span's text and class
             currentPlayerSpan.textContent = capitalizeFirstLetter(playerTurn);
             if (playerTurn === 'white') {
                 currentPlayerSpan.classList.remove('black-text');
@@ -1238,16 +1222,13 @@
                 currentPlayerSpan.classList.remove('white-text');
                 currentPlayerSpan.classList.add('black-text');
             }
-            console.log(`togglePlayerTurn: playerTurn is now ${playerTurn}.`);
         }
 
         // Event Listener for Chessboard Clicks
         chessboard.addEventListener('click', async (e) => {
             if (isMoving || isApplyingOpening) {
-                console.log('A move or opening is currently in progress. Please wait.');
                 return;
             }
-
             let target = e.target;
 
             // Traverse up the DOM tree to find if a piece or square was clicked
@@ -1255,13 +1236,12 @@
                 target = target.parentElement;
             }
 
-            if (!target || target === chessboard) return; // Clicked outside pieces and squares
+            if (!target || target === chessboard) return; 
 
             if (target.classList.contains('piece')) {
                 const clickedPiece = target;
                 if (clickedPiece.dataset.color === playerTurn) {
                     // Selecting your own piece
-                    console.log(`Attempting to select a ${clickedPiece.dataset.color} piece. Current player: ${playerTurn}`);
                     selectPiece(clickedPiece);
                 } else {
                     // Attempting to interact with opponent's piece
@@ -1270,8 +1250,7 @@
                         const validMoves = getValidMoves(selectedPiece);
 
                         if (validMoves.includes(targetPosition)) {
-                            console.log(`${capitalizeFirstLetter(selectedPiece.dataset.color)} ${capitalizeFirstLetter(selectedPiece.dataset.type)} attempting to capture ${capitalizeFirstLetter(clickedPiece.dataset.color)} ${capitalizeFirstLetter(clickedPiece.dataset.type)} at (${targetPosition})`);
-                            
+                                                       
                             // Capture details before move
                             const from = gridToChessNotation(...selectedPiece.dataset.position.split(',').map(Number));
                             const to = gridToChessNotation(...targetPosition.split(',').map(Number));
@@ -1296,7 +1275,6 @@
 
                             // AI Move
                             if (gameMode === 'onePlayer' && playerTurn === 'black') {
-                                console.log('Triggering AI move.');
                                 setTimeout(async () => {
                                     await makeComputerMove();
                                     isMoving = false; // AI move completed
@@ -1306,13 +1284,11 @@
 
                             isMoving = false; // End of move
                         } else {
-                            console.log(`Invalid capture attempt at: ${targetPosition}`);
                             // Invalid capture, deselect
                             deselectPiece();
                             removeValidMoveHighlights();
                         }
                     } else {
-                        console.log(`It's not ${clickedPiece.dataset.color}'s turn.`);
                         // No piece selected yet, cannot interact with opponent's piece
                         return;
                     }
@@ -1321,9 +1297,6 @@
                 if (selectedPiece) {
                     const targetPosition = target.dataset.position;
                     const validMoves = getValidMoves(selectedPiece);
-
-                    console.log(`Attempting to move to: ${targetPosition}`);
-                    console.log(`Valid Moves:`, validMoves);
 
                     // If the clicked square is a valid move
                     if (validMoves.includes(targetPosition)) {
@@ -1344,7 +1317,7 @@
                         isMoving = true; // Start of move
 
                         if (capturedPiece && capturedPiece.dataset.color !== color) {
-                            console.log(`${capitalizeFirstLetter(color)} ${capitalizeFirstLetter(type)} attempting to capture ${capitalizeFirstLetter(capturedPiece.dataset.color)} ${capitalizeFirstLetter(capturedPiece.dataset.type)} at (${targetRow},${targetCol})`);
+                           
                             // Capture the piece with animation and sound
                             let isBonusCapture = await captureAndMove(selectedPiece, capturedPiece, targetRow, targetCol);
 
@@ -1360,7 +1333,6 @@
 
                             // AI Move
                             if (gameMode === 'onePlayer' && playerTurn === 'black') {
-                                console.log('Triggering AI move.');
                                 setTimeout(async () => {
                                     await makeComputerMove();
                                     isMoving = false; // AI move completed
@@ -1370,7 +1342,6 @@
 
                             isMoving = false; // End of move
                         } else {
-                            console.log(`${capitalizeFirstLetter(color)} ${capitalizeFirstLetter(type)} moving to (${targetRow},${targetCol}) without capturing.`);
                             // Move the piece without capturing
                             await movePiece(selectedPiece, targetRow, targetCol);
                             // Increment tokens for move
@@ -1386,7 +1357,6 @@
 
                             // AI Move
                             if (gameMode === 'onePlayer' && playerTurn === 'black') {
-                                console.log('Triggering AI move.');
                                 setTimeout(async () => {
                                     await makeComputerMove();
                                     isMoving = false; // AI move completed
@@ -1397,7 +1367,6 @@
                             isMoving = false; // End of move
                         }
                     } else {
-                        console.log(`Invalid move attempted to: ${targetPosition}`);
                         // Invalid move, deselect
                         deselectPiece();
                         removeValidMoveHighlights();
@@ -1466,7 +1435,6 @@
 
             // Make the modal visible
             pieceModal.style.display = 'block';
-            console.log('showBoardDetails: Displayed details for The Forge.');
         }
 
         // Function to Initialize or Reset the Board
@@ -1502,7 +1470,6 @@
             whiteCaptured = [];
             blackCaptured = [];
             playerTurn = 'white'; // **Set playerTurn to 'white'**
-            console.log(`initializeBoard: playerTurn set to ${playerTurn}`);
             updateScores();
             updateHUD();
             clearCapturedLists();
@@ -1510,17 +1477,14 @@
             currentPlayerSpan.textContent = 'White';
             currentPlayerSpan.classList.remove('black-text');
             currentPlayerSpan.classList.add('white-text');
-            console.log('Board initialized/reset.');
 
             // Bonus Feature: Select a Random Bonus Piece from All Pieces (Excluding Kings)
             const allPiecesForBonus = Array.from(chessboard.querySelectorAll('.piece')).filter(piece => piece.dataset.type !== 'king');
             if (allPiecesForBonus.length > 0) {
                 bonusPiece = allPiecesForBonus[Math.floor(Math.random() * allPiecesForBonus.length)];
                 bonusPiece.dataset.bonus = 'true'; // Mark as bonus piece
-                console.log(`Selected bonus piece: ${capitalizeFirstLetter(bonusPiece.dataset.color)} ${capitalizeFirstLetter(bonusPiece.dataset.type)} at ${bonusPiece.dataset.position}`);
             } else {
                 bonusPiece = null;
-                console.log('No pieces available to select as bonus.');
             }
             bonusAwarded = false; // Reset bonus flag
 
@@ -1531,7 +1495,6 @@
         function resetGame() {
             selectedPiece = null;
             initializeBoard();
-            console.log('Game has been reset.');
         }
 
         // Function to Create a Chess Piece
@@ -1563,7 +1526,6 @@
                 }
             };
 
-            console.log(`Creating ${color} ${type} at (${row}, ${col})`);
 
             // Set the background image from the specified URL
             piece.style.backgroundImage = `url('${baseImageUrl}${color}-${type}.webp')`;
@@ -1573,7 +1535,6 @@
             img.src = `${baseImageUrl}${color}-${type}.webp`;
             img.onload = () => {
                 piece.style.backgroundImage = `url('${baseImageUrl}${color}-${type}.webp')`;
-                console.log(`Loaded image for ${color} ${type} at (${row}, ${col})`);
             };
             img.onerror = () => {
                 // Use Unicode character as fallback
@@ -1581,7 +1542,6 @@
                 piece.style.fontSize = '64px';
                 piece.style.textAlign = 'center';
                 piece.style.lineHeight = '80px';
-                console.log(`Using Unicode for ${color} ${type} at (${row}, ${col})`);
             };
 
             piece.dataset.moved = 'false';
@@ -1601,7 +1561,6 @@
             selectedPiece = piece;
             selectedPiece.classList.add('selected');
             highlightValidMoves(selectedPiece);
-            console.log(`Selected ${capitalizeFirstLetter(selectedPiece.dataset.color)} ${capitalizeFirstLetter(selectedPiece.dataset.type)} at (${selectedPiece.dataset.position})`);
             showSuggestedMoves(selectedPiece);
         }
 
@@ -1609,7 +1568,6 @@
         function deselectPiece() {
             if (selectedPiece) {
                 selectedPiece.classList.remove('selected');
-                console.log(`Deselected ${capitalizeFirstLetter(selectedPiece.dataset.color)} ${capitalizeFirstLetter(selectedPiece.dataset.type)}`);
                 selectedPiece = null;
             }
             // Clear Suggested Moves
@@ -1623,22 +1581,17 @@
                 // Prevent capturing kings
                 if (capturedPiece.dataset.type === 'king') {
                     alert('Kings cannot be captured! Try trapping the king instead.');
-                    console.log('captureAndMove: Attempted to capture a King. Move canceled.');
                     resolve(false);
                     return;
                 }
-
-                console.log(`captureAndMove: Capturing ${capturedPiece.dataset.color} ${capitalizeFirstLetter(capturedPiece.dataset.type)} with ${capturingPiece.dataset.color} ${capitalizeFirstLetter(capturingPiece.dataset.type)}`);
 
                 // Play Capture Sound
                 if (capturingPiece.dataset.color === 'white') {
                     whiteCaptureSound.currentTime = 0;
                     whiteCaptureSound.play();
-                    console.log('Playing white capture sound.');
                 } else {
                     blackCaptureSound.currentTime = 0;
                     blackCaptureSound.play();
-                    console.log('Playing black capture sound.');
                 }
 
                 // Animate the captured piece (fade out and scale down)
@@ -1650,15 +1603,12 @@
                 setTimeout(() => {
                     // Remove the captured piece from the DOM
                     capturedPiece.remove();
-                    console.log(`captureAndMove: Captured ${capturedPiece.dataset.color} ${capitalizeFirstLetter(capturedPiece.dataset.type)} removed from the board.`);
 
                     // Add to captured list based on the color of the capturing piece
                     if (capturingPiece.dataset.color === 'white') {
                         whiteCaptured.push(capturedPiece.dataset.type);
-                        console.log(`captureAndMove: Added ${capitalizeFirstLetter(capturedPiece.dataset.type)} to White's captures.`);
                     } else {
                         blackCaptured.push(capturedPiece.dataset.type);
-                        console.log(`captureAndMove: Added ${capitalizeFirstLetter(capturedPiece.dataset.type)} to Black's captures.`);
                     }
 
                     // Check if the captured piece was the bonus piece
@@ -1673,12 +1623,10 @@
                             bonusNotification.textContent = 'You just earned 5 XdRiP!';
                             bonusNotification.style.display = 'block';
 
-                            console.log('Bonus awarded: 5 XdRiP added.');
                             isBonusCapture = true;
                         } else {
                             // Bonus piece is own, notify player
                             alert('Your bonus piece was captured! You will not receive bonus tokens upon winning.');
-                            console.log('Bonus piece was captured and belongs to you.');
                         }
                         bonusAwarded = true; // Ensure bonus is awarded only once
                     }
@@ -1701,7 +1649,6 @@
                 piece.style.left = `${targetCol * 100 + 50}px`;
                 piece.dataset.position = `${targetRow},${targetCol}`;
                 piece.dataset.moved = 'true';
-                console.log(`movePiece: Moved ${capitalizeFirstLetter(piece.dataset.color)} ${capitalizeFirstLetter(piece.dataset.type)} to (${targetRow},${targetCol})`);
 
                 // Remove Valid Move Highlights
                 removeValidMoveHighlights();
@@ -1715,7 +1662,6 @@
 
         // Function to Make Computer Move (Enhanced AI)
         async function makeComputerMove() {
-            console.log('makeComputerMove: AI is making a move.');
             const allPieces = Array.from(document.querySelectorAll(`.piece[data-color='black']`));
             let moveMade = false;
 
@@ -1727,7 +1673,6 @@
                     const [targetRow, targetCol] = move.split(',').map(Number);
                     const targetPiece = getPieceAt(targetRow, targetCol);
                     if (targetPiece && targetPiece.dataset.color === 'white' && targetPiece.dataset.type !== 'king') {
-                        console.log(`makeComputerMove: AI attempting to capture ${capitalizeFirstLetter(targetPiece.dataset.color)} ${capitalizeFirstLetter(targetPiece.dataset.type)} at (${targetRow},${targetCol}) with ${capitalizeFirstLetter(piece.dataset.color)} ${capitalizeFirstLetter(piece.dataset.type)}`);
                         
                         // Capture details before move
                         const from = gridToChessNotation(row, col);
@@ -1778,7 +1723,6 @@
                             checkGameOver();
 
                             moveMade = true;
-                            console.log(`makeComputerMove: AI captured at (${targetRow},${targetCol})`);
                             break;
                         }
                     }
@@ -1790,7 +1734,6 @@
                 // If no captures, move strategically
                 const movablePieces = allPieces.filter(piece => getValidMoves(piece).length > 0);
                 if (movablePieces.length === 0) {
-                    console.log('makeComputerMove: AI has no available moves.');
                     return; // No moves available
                 }
 
@@ -1872,7 +1815,6 @@
                                     checkGameOver();
 
                                     moveMade = true;
-                                    console.log(`makeComputerMove: AI captured at (${targetRow},${targetCol})`);
                                     break;
                                 } else {
                                     // Move without capturing
@@ -1896,7 +1838,6 @@
                                     checkGameOver();
 
                                     moveMade = true;
-                                    console.log(`makeComputerMove: AI moved to (${targetRow},${targetCol})`);
                                     break;
                                 }
                             }
@@ -1916,12 +1857,10 @@
             if (!whiteKing) {
                 // Black wins by checkmate
                 alert('Black Wins by Checkmate! Better luck next time.');
-                console.log('checkGameOver: Game Over - Black Wins by Checkmate.');
                 resetGame();
             } else if (!blackKing) {
                 // White wins by checkmate
                 alert('White Wins by Checkmate! Congratulations!');
-                console.log('checkGameOver: Game Over - White Wins by Checkmate.');
 
                 // Award tokens only if White wins or finds the bonus piece
                 if (bonusPiece && bonusPiece.dataset.color === 'white') {
@@ -1932,7 +1871,6 @@
                         tokens += 5;
                         updateHUD();
                         alert('White preserved their bonus piece and earned an additional 5 XdRiP!');
-                        console.log('checkGameOver: Bonus awarded for White preserving own bonus piece.');
                     }
                 }
 
@@ -1942,14 +1880,12 @@
                 if (isKingInCheck('white')) {
                     if (!canKingEscape('white')) {
                         alert('Black Wins by Checkmate! Better luck next time.');
-                        console.log('checkGameOver: Game Over - Black Wins by Checkmate.');
                         resetGame();
                         return;
                     }
                 } else {
                     if (!canPlayerMakeAnyMove('white')) {
                         alert('Stalemate! The game is a draw.');
-                        console.log('checkGameOver: Game Over - Stalemate.');
                         resetGame();
                         return;
                     }
@@ -1959,14 +1895,12 @@
                 if (isKingInCheck('black')) {
                     if (!canKingEscape('black')) {
                         alert('White Wins by Checkmate! Congratulations!');
-                        console.log('checkGameOver: Game Over - White Wins by Checkmate.');
                         resetGame();
                         return;
                     }
                 } else {
                     if (!canPlayerMakeAnyMove('black')) {
                         alert('Stalemate! The game is a draw.');
-                        console.log('checkGameOver: Game Over - Stalemate.');
                         resetGame();
                         return;
                     }
@@ -1986,12 +1920,10 @@
             for (const piece of enemyPieces) {
                 const validMoves = getValidMoves(piece);
                 if (validMoves.includes(`${kingRow},${kingCol}`)) {
-                    console.log(`isKingInCheck: ${color} King is under attack by ${enemyColor} ${capitalizeFirstLetter(piece.dataset.type)}.`);
                     return true;
                 }
             }
 
-            console.log(`isKingInCheck: ${color} King is not under attack.`);
             return false;
         }
 
@@ -2026,12 +1958,10 @@
                 }
 
                 if (!inCheck) {
-                    console.log(`canKingEscape: ${color} King can escape to (${r},${c}).`);
                     return true;
                 }
             }
 
-            console.log(`canKingEscape: ${color} King has no escape moves.`);
             return false;
         }
 
@@ -2066,13 +1996,11 @@
                     }
 
                     if (!inCheck) {
-                        console.log(`canPlayerMakeAnyMove: ${color} Player can make a move with ${capitalizeFirstLetter(piece.dataset.type)} to (${r},${c}).`);
                         return true;
                     }
                 }
             }
 
-            console.log(`canPlayerMakeAnyMove: ${color} Player has no legal moves.`);
             return false;
         }
 
@@ -2103,12 +2031,10 @@
                     // Capture diagonally to the left
                     if (isInBounds(nextRow, col - 1) && isEnemyPiece(nextRow, col - 1, color)) {
                         moves.push(`${nextRow},${col - 1}`);
-                        console.log(`getValidMoves: Pawn at (${row},${col}) can capture at (${nextRow},${col - 1})`);
                     }
                     // Capture diagonally to the right
                     if (isInBounds(nextRow, col + 1) && isEnemyPiece(nextRow, col + 1, color)) {
                         moves.push(`${nextRow},${col + 1}`);
-                        console.log(`getValidMoves: Pawn at (${row},${col}) can capture at (${nextRow},${col + 1})`);
                     }
                     break;
 
@@ -2130,7 +2056,6 @@
                             } else {
                                 if (targetPiece.dataset.color !== color) {
                                     moves.push(`${r},${c}`);
-                                    console.log(`getValidMoves: Rook at (${row},${col}) can capture at (${r},${c})`);
                                 }
                                 break; // Blocked by any piece
                             }
@@ -2152,15 +2077,12 @@
                         [row + 2, col - 1],
                         [row + 2, col + 1],
                     ];
-                    console.log(`getValidMoves: Calculating moves for Knight at (${row}, ${col})`);
                     knightMoves.forEach(([r, c]) => {
                         if (isInBounds(r, c)) {
                             const targetPiece = getPieceAt(r, c);
                             if (!targetPiece) {
-                                console.log(`getValidMoves: Knight can move to empty square (${r}, ${c})`);
                                 moves.push(`${r},${c}`);
                             } else if (targetPiece.dataset.color !== color) {
-                                console.log(`getValidMoves: Knight can capture ${capitalizeFirstLetter(targetPiece.dataset.color)} ${capitalizeFirstLetter(targetPiece.dataset.type)} at (${r},${c})`);
                                 moves.push(`${r},${c}`);
                             }
                         }
@@ -2185,7 +2107,6 @@
                             } else {
                                 if (targetPiece.dataset.color !== color) {
                                     moves.push(`${r},${c}`);
-                                    console.log(`getValidMoves: Bishop at (${row},${col}) can capture at (${r},${c})`);
                                 }
                                 break; // Blocked by any piece
                             }
@@ -2217,7 +2138,6 @@
                             } else {
                                 if (targetPiece.dataset.color !== color) {
                                     moves.push(`${r},${c}`);
-                                    console.log(`getValidMoves: Queen at (${row},${col}) can capture at (${r},${c})`);
                                 }
                                 break; // Blocked by any piece
                             }
@@ -2247,9 +2167,7 @@
                                 if (targetPiece && targetPiece.dataset.type === 'king') return;
                                 moves.push(`${r},${c}`);
                                 if (targetPiece) {
-                                    console.log(`getValidMoves: King at (${row},${col}) can capture at (${r},${c})`);
                                 } else {
-                                    console.log(`getValidMoves: King at (${row},${col}) can move to empty square (${r},${c})`);
                                 }
                             }
                         }
@@ -2261,7 +2179,6 @@
             }
 
             // Debugging: Log Valid Moves
-            console.log(`getValidMoves: Valid moves for ${capitalizeFirstLetter(color)} ${capitalizeFirstLetter(type)} at (${row}, ${col}):`, moves);
             return moves;
         }
 
@@ -2271,9 +2188,7 @@
                 return piece.dataset.position === `${row},${col}`;
             });
             if (piece) {
-                console.log(`getPieceAt: Found ${capitalizeFirstLetter(piece.dataset.color)} ${capitalizeFirstLetter(piece.dataset.type)} at (${row},${col})`);
             } else {
-                console.log(`getPieceAt: No piece found at (${row},${col})`);
             }
             return piece;
         }
@@ -2281,7 +2196,6 @@
         // Function to Check if a Square is Empty
         function isSquareEmpty(row, col) {
             const empty = !getPieceAt(row, col);
-            console.log(`isSquareEmpty: Square (${row},${col}) is ${empty ? 'empty' : 'occupied'}.`);
             return empty;
         }
 
@@ -2289,7 +2203,6 @@
         function isEnemyPiece(row, col, color) {
             const piece = getPieceAt(row, col);
             const isEnemy = piece && piece.dataset.color !== color;
-            console.log(`isEnemyPiece: Square (${row},${col}) has ${isEnemy ? 'an enemy piece' : 'no enemy piece'}.`);
             return isEnemy;
         }
 
@@ -2302,12 +2215,10 @@
         function clearCapturedLists() {
             whiteCapturedList.innerHTML = '';
             blackCapturedList.innerHTML = '';
-            console.log('clearCapturedLists: Cleared captured lists.');
             
             // Clear move history
             const moveHistoryList = document.getElementById('moveHistoryList');
             moveHistoryList.innerHTML = '';
-            console.log('clearCapturedLists: Cleared move history.');
             
             // Reset move number
             moveNumber = 1;
@@ -2317,17 +2228,14 @@
         function updateScores() {
             // Update White Captures List
             whiteCapturedList.innerHTML = whiteCaptured.map(piece => `<li>${capitalizeFirstLetter(piece)}</li>`).join('');
-            console.log(`updateScores: White Captures Updated: ${whiteCaptured}`);
 
             // Update Black Captures List
             blackCapturedList.innerHTML = blackCaptured.map(piece => `<li>${capitalizeFirstLetter(piece)}</li>`).join('');
-            console.log(`updateScores: Black Captures Updated: ${blackCaptured}`);
         }
 
         // Function to Update HUD Tokens with Animation
         function updateHUD() {
             animateTokenUpdate(tokens);
-            console.log(`updateHUD: Tokens Updated: ${tokens}`);
             storeTokens(); // Store tokens in localStorage
         }
 
@@ -2380,7 +2288,6 @@
                     square.classList.add('valid-move');
                 }
             });
-            console.log(`highlightValidMoves: Highlighted valid moves for ${capitalizeFirstLetter(piece.dataset.color)} ${capitalizeFirstLetter(piece.dataset.type)}.`);
         }
 
         // Function to Remove Valid Move Highlights
@@ -2389,7 +2296,6 @@
             highlightedSquares.forEach(square => {
                 square.classList.remove('valid-move');
             });
-            console.log('removeValidMoveHighlights: Removed all valid move highlights.');
         }
 
         // Helper Function to Get Square Element by Row and Column
@@ -2446,7 +2352,6 @@
         // Function to Clear Suggested Moves
         function clearSuggestedMoves() {
             suggestedGrid.innerHTML = '';
-            console.log('clearSuggestedMoves: Cleared suggested moves.');
         }
 
         // Function to Show Piece Details in Modal
@@ -2475,7 +2380,6 @@
 
                 // Show the modal
                 pieceModal.style.display = 'block';
-                console.log(`showPieceDetails: Displayed details for ${color} ${type}.`);
             }
         }
 
@@ -2485,7 +2389,6 @@
             modalPieceVideo.pause();
             modalPieceVideo.currentTime = 0;
             bonusNotification.style.display = 'none'; // Hide bonus notification
-            console.log('closeModal: Modal closed.');
         }
 
         // Event Listener for Close Button
@@ -2501,14 +2404,12 @@
         // Function to Store Tokens in localStorage
         function storeTokens() {
             localStorage.setItem('XdRiPTokens', tokens.toFixed(4));
-            console.log(`storeTokens: Tokens stored as ${tokens.toFixed(4)} in localStorage.`);
         }
 
         // Function to Get Stored Tokens from localStorage
         function getStoredTokens() {
             const stored = localStorage.getItem('XdRiPTokens');
             if (stored) {
-                console.log(`getStoredTokens: Retrieved ${stored} tokens from localStorage.`);
                 return parseFloat(stored);
             }
             return null;
@@ -2562,11 +2463,9 @@
             tokenDisplay.textContent = `XdRiP Earned: ${displayedTokens.toFixed(4)}`;
             storeTokens();
             startTokenIncrement();
-            console.log(`window.onload: Tokens initialized to ${tokens.toFixed(4)}`);
 
             // Set game mode to one player by default
             gameMode = 'onePlayer';
-            console.log(`window.onload: Game mode set to ${gameMode}`);
 
             // Simulate a click on the '1 Player' button to set the mode and reset the game
             document.getElementById('onePlayer').click();
@@ -2634,7 +2533,6 @@
             updateHUD();
             closeClaimModal();
             alert('Your XdRiP tokens have been claimed and reset to 0.0001.');
-            console.log('Claimed tokens: Tokens reset to 0.0001.');
         });
         // ---------------------------------------
 
@@ -2643,7 +2541,6 @@
             const TOKEN_CAP = 1000.0;
             if (tokens >= TOKEN_CAP) {
                 alert('You have reached the maximum XdRiP tokens (1000). Please claim your tokens to continue earning.');
-                console.log('checkTokenCap: Token cap reached.');
             }
         }
 
@@ -2687,7 +2584,6 @@
 
                         // AI Move
                         if (gameMode === 'onePlayer' && playerTurn === 'black' && !isOpening) {
-                            console.log('Triggering AI move.');
                             setTimeout(async () => {
                                 await makeComputerMove();
                                 isMoving = false; // AI move completed
@@ -2717,7 +2613,6 @@
 
                         // AI Move
                         if (gameMode === 'onePlayer' && playerTurn === 'black' && !isOpening) {
-                            console.log('Triggering AI move.');
                             setTimeout(async () => {
                                 await makeComputerMove();
                                 isMoving = false; // AI move completed
@@ -2762,7 +2657,6 @@
             const TOKEN_CAP = 1000.0;
             if (tokens >= TOKEN_CAP) {
                 alert('You have reached the maximum XdRiP tokens (1000). Please claim your tokens to continue earning.');
-                console.log('checkTokenCap: Token cap reached.');
             }
         }
     </script>

@@ -10,10 +10,8 @@ if (typeof window !== 'undefined') {
 const RampDetails = ({ isVisible, onClose, infoModalData }) => {
   useEffect(() => {
     if (infoModalData) {
-      console.log("Info Modal Data:", infoModalData);
     }
   }, [infoModalData]);
-
   if (!isVisible || !infoModalData || !infoModalData.medals) {
     return null;
   }
@@ -105,7 +103,6 @@ const RampDetails = ({ isVisible, onClose, infoModalData }) => {
     </Modal>
   );
 };
-
 RampDetails.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
@@ -122,5 +119,4 @@ RampDetails.propTypes = {
     ),
   }),
 };
-
 export default RampDetails;

@@ -20,7 +20,6 @@ const connectingWithSmartContract = async () => {
     const contract = fetchMarketplaceContract(signer);
     return contract;
   } catch (error) {
-    console.log("Something went wrong while connecting with contract", error);
   }
 };
 
@@ -62,7 +61,6 @@ export const MOHProvider = ({ children }) => {
       setCurrentAccount(address);
       updateBalance();
     } else {
-      console.log("No account");
     }
   };
   useEffect(() => {

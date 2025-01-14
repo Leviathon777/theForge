@@ -1411,7 +1411,7 @@ import {
   ConnectWallet,
   useSigner,
 } from "@thirdweb-dev/react";
-import DistributeRevShare from "./DistributeToHolders"; // Ensure correct import
+import DistributeRevShare from "./DistributeToHolders.jsx"; // Ensure correct import
 import Reports from "./Reports"; 
 import mohCA_ABI from "../../Context/mohCA_ABI.json"; 
 import distributeCA_ABI from "../../Context/distributeCA_ABI.json"; 

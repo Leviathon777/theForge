@@ -102,7 +102,6 @@ For support or assistance, contact our team at support@xdrip.io
         JSON.stringify({ address, signature, payload, expirationTime })
       );
 
-      console.log("MOHVAT stored:", signature);
       setMohvat(signature);
       setIsPopupVisible(false);
     } else {
@@ -124,10 +123,8 @@ For support or assistance, contact our team at support@xdrip.io
         const { expirationTime } = storedVAT;
 
         if (Date.now() < expirationTime) {
-          console.log("Using stored VAT:", storedVAT);
           setMohvat(storedVAT.signature);
         } else {
-          console.log("Stored VAT expired. Prompting for new signature.");
           handleGenericPayloadPopup(address);
         }
       } else {
@@ -256,7 +253,6 @@ const MyApp = ({ Component, pageProps }) => {
         navigator.serviceWorker
           .register("/service-worker.js")
           .then((registration) => {
-            console.log("Service Worker registered with scope:", registration.scope);
           })
           .catch((error) => {
             console.error("Service Worker registration failed:", error);
