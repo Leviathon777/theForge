@@ -78,7 +78,7 @@ const InvestorWallet = () => {
               {/* KYC Information */}
               <div className={Style.card}>
                 <h3 className={Style.cardTitle}>KYC Information</h3>
-                <p>KYC Verified: {userInfo.kyc?.kycReviewAnswer || "N/A"}</p>
+                <p>KYC Verified: {userInfo.kyc?.kycVerified || "N/A"}</p>
                 <p>KYC Status: {userInfo.kyc?.kycStatus || "N/A"}</p>
                 <p>
                   KYC Submitted On: {""} 

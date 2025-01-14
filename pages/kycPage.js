@@ -147,7 +147,7 @@ const KYCPage = () => {
         </div>
         <div className={styles.verticalLine}></div>
         <div className={styles.right}>
-          {kycStatus === "completed" && userData?.kyc?.kycReviewAnswer === "true" ? (
+          {kycStatus === "completed" && userData?.kyc?.kycVerified === true ? (
             <img
               src={randomImage}
               alt="KYC Approved"
