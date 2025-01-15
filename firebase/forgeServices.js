@@ -35,7 +35,7 @@ export const addForger = async (profileData) => {
   } = profileData;
   const firestore = getFirestore();
   const forgerRef = collection(firestore, "forgerAccount");
-  const mailRef = collection(firestore, "mail");
+  const mailRef = collection(firestore, "forgerEmails");
   if (!walletAddress) {
     throw new Error("walletAddress cannot be empty.");
   }
@@ -51,8 +51,8 @@ export const addForger = async (profileData) => {
     if (!walletSnapshot.empty) {
       throw new Error("This wallet address is already registered.");
     }
-    const emailQuery = query(forgerRef, where("forgerEmails", "==", forgerEmails));
-    const emailDocRef = doc(mailRef, walletAddress.toLowerCase());
+    const emailQuery = query(forgerRef, where("forgerEmails", "==", email));
+    const emailDocRef = doc(mailRef, walletAddress);
     const emailSnapshot = await getDocs(emailQuery);
     if (!emailSnapshot.empty) {
       throw new Error("This email is already registered.");
