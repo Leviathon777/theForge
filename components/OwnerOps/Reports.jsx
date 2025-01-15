@@ -646,7 +646,6 @@ export default Reports;
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { ethers } from "ethers";
 import { useAddress, ConnectWallet } from "@thirdweb-dev/react";
-
 import Web3 from "web3";
 
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
@@ -725,7 +724,7 @@ const Reports = ({ onClose }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Ethers/Web3 initializations
+  // --- Ethers/Web3 initializations ---
   useEffect(() => {
     const init = async () => {
       if (!window.ethereum) {
@@ -740,7 +739,7 @@ const Reports = ({ onClose }) => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
 
-        // MOH
+        // MOH Contract
         const mohInstance = new ethers.Contract(
           mohCA_ABI.address,
           mohCA_ABI.abi,
@@ -748,7 +747,7 @@ const Reports = ({ onClose }) => {
         );
         setMohContract(mohInstance);
 
-        // Distribute
+        // Distribute Contract
         const distInstance = new ethers.Contract(
           distributeCA_ABI.address,
           distributeCA_ABI.abi,
@@ -756,7 +755,7 @@ const Reports = ({ onClose }) => {
         );
         setDistributeContract(distInstance);
 
-        // XdRiP (read-only)
+        // XdRiP Contract (read-only)
         const web3 = new Web3("https://bsc-dataseed1.binance.org/");
         const xdripInstance = new web3.eth.Contract(
           xdripCA_ABI.abi,
@@ -942,7 +941,7 @@ const Reports = ({ onClose }) => {
         // XdRiP
         const xdripBal = await fetchXDRIPBalance(ownerAddr);
 
-        // revshare bonus
+        // Revshare bonus
         let revshareBonus = 0;
         if (xdripBal >= 1.48) revshareBonus = 15;
         else if (xdripBal >= 1.25) revshareBonus = 10;
@@ -953,7 +952,7 @@ const Reports = ({ onClose }) => {
         const finalWeight =
           totalWeight > 0 ? totalWeight + totalWeight * (revshareBonus / 100) : 0;
 
-        // total investment in BNB - not really accurate becasue bnb flucuates
+        // Total investment in BNB
         let investmentValueBNB = 0;
         data.medals.forEach((m) => {
           const cost = medalCosts[m.name] || 0;
@@ -1026,7 +1025,7 @@ const Reports = ({ onClose }) => {
     });
   };
 
-  // Another init for Distribute contract if needed
+  // Additional init for Distribute contract if needed
   useEffect(() => {
     const initContracts = async () => {
       try {
@@ -1053,7 +1052,54 @@ const Reports = ({ onClose }) => {
     initContracts();
   }, []);
 
-  // Render sections
+  // --- Copy Holders Table to Clipboard ---
+  const copyHoldersTable = () => {
+    if (holdersInfo.length === 0) {
+      toast.info("No holders info to copy.");
+      return;
+    }
+    // Define column headers
+    const headers = [
+      "Holder",
+      "Medals Owned",
+      "Total Weight",
+      "XdRiP Balance",
+      "Bonus (%)",
+      "Final Weight",
+      "Investment (BNB)",
+      "Value (USD)",
+    ];
+    // Map holders data into tab-separated values
+    const rows = holdersInfo.map((h) => {
+      // Format medals as e.g. COMMON(#1), EPIC(#120)
+      const medalsStr = h.medals
+        .map((m) => `${m.name}(#${m.tokenId})`)
+        .join(", ");
+      // Format USD value if bnbToUsd is available
+      const bnbAmount = parseFloat(h.investmentValueBNB);
+      const usdValue = bnbToUsd > 0 ? (bnbAmount * bnbToUsd).toFixed(2) : "0.00";
+
+      return [
+        h.address,
+        medalsStr,
+        h.totalWeight,
+        h.xdripBalance,
+        h.revshareBonus,
+        h.finalWeight,
+        h.investmentValueBNB,
+        `$${usdValue}`,
+      ].join("\t");
+    });
+    // Combine header and rows (separated by newline)
+    const tsv = [headers.join("\t"), ...rows].join("\n");
+
+    // Copy the TSV data to clipboard
+    navigator.clipboard.writeText(tsv)
+      .then(() => toast.success("Table copied to clipboard!"))
+      .catch(() => toast.error("Failed to copy table."));
+  };
+
+  // --- Render sections ---
   const renderOwnerOpsSection = () => {
     const {
       owner,
@@ -1155,13 +1201,19 @@ const Reports = ({ onClose }) => {
         </button>
       );
     }
-
+  
     return (
       <div className={styles.reportBox}>
         <h3>Medal Holders & Weights</h3>
-        <button onClick={fetchHoldersData} className={styles.buttonSmall}>
-          Refresh
-        </button>
+        {/* Button Container for Refresh & Copy */}
+        <div className={styles.buttonContainer}>
+          <button onClick={fetchHoldersData} className={styles.button}>
+            Refresh
+          </button>
+          <button onClick={copyHoldersTable} className={styles.button}>
+            Export / Copy 
+          </button>
+        </div>
         <div className={styles.tableWrapper}>
           <table className={styles.table}>
             <thead>
@@ -1181,7 +1233,7 @@ const Reports = ({ onClose }) => {
                 const bnbAmount = parseFloat(h.investmentValueBNB);
                 const usdValue =
                   bnbToUsd > 0 ? (bnbAmount * bnbToUsd).toFixed(2) : "0.00";
-
+  
                 return (
                   <tr key={idx}>
                     <td>
@@ -1213,9 +1265,8 @@ const Reports = ({ onClose }) => {
                     <td>{h.revshareBonus}</td>
                     <td>{h.finalWeight}</td>
                     <td>{h.investmentValueBNB}</td>
-                    
                     <td
-                    style={{cursor: "pointer"}}
+                      style={{ cursor: "pointer" }}
                       title={
                         bnbToUsd > 0
                           ? `BNB Price: $${bnbToUsd.toFixed(2)}\n` +
@@ -1231,8 +1282,7 @@ const Reports = ({ onClose }) => {
             </tbody>
           </table>
         </div>
-
-        
+  
         {selectedMedal && (
           <div className={styles.medalDetails}>
             <h4>Selected Medal Details</h4>
@@ -1253,19 +1303,18 @@ const Reports = ({ onClose }) => {
                   <td>{selectedMedal.forgedOn}</td>
                   <td>{selectedMedal.priceBNB}</td>
                   <td
-  style={{ cursor: "pointer" }}
-  title={
-    bnbToUsd > 0
-      ? `BNB Price: $${bnbToUsd.toFixed(2)}\n` +
-        `${selectedMedal.priceBNB} BNB = $${(selectedMedal.priceBNB * bnbToUsd).toFixed(2)}`
-      : "BNB price not available"
-  }
->
-  {bnbToUsd > 0
-    ? `$${(selectedMedal.priceBNB * bnbToUsd).toFixed(2)}`
-    : "0.00"}
-</td>
-
+                    style={{ cursor: "pointer" }}
+                    title={
+                      bnbToUsd > 0
+                        ? `BNB Price: $${bnbToUsd.toFixed(2)}\n` +
+                          `${selectedMedal.priceBNB} BNB = $${(selectedMedal.priceBNB * bnbToUsd).toFixed(2)}`
+                        : "BNB price not available"
+                    }
+                  >
+                    {bnbToUsd > 0
+                      ? `$${(selectedMedal.priceBNB * bnbToUsd).toFixed(2)}`
+                      : "0.00"}
+                  </td>
                 </tr>
               </tbody>
             </table>
