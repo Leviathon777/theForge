@@ -1,22 +1,6 @@
 {
-    "address": "0x8C2bc5B02beBb7ABe20314aEc00cE2D242407150",
+    "address": "0x57fAAd2274bE3107020ACa02660426dDDdC1C5bE",
     "abi": [
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "initialOwner",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address",
-                    "name": "_mohContract",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "nonpayable",
-            "type": "constructor"
-        },
         {
             "inputs": [
                 {
@@ -236,6 +220,129 @@
             "type": "event"
         },
         {
+            "inputs": [],
+            "name": "distributeRevenue",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "pause",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "renounceOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "newOwner",
+                    "type": "address"
+                }
+            ],
+            "name": "transferOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "stateMutability": "payable",
+            "type": "receive"
+        },
+        {
+            "inputs": [],
+            "name": "unpause",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "_newPercentage",
+                    "type": "uint256"
+                }
+            ],
+            "name": "updateDistributionPercentage",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address[]",
+                    "name": "investors",
+                    "type": "address[]"
+                },
+                {
+                    "internalType": "uint256[]",
+                    "name": "weights",
+                    "type": "uint256[]"
+                }
+            ],
+            "name": "updateFinalWeights",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_newMOHContract",
+                    "type": "address"
+                }
+            ],
+            "name": "updateMOHContract",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address[]",
+                    "name": "investors",
+                    "type": "address[]"
+                },
+                {
+                    "internalType": "uint256[]",
+                    "name": "weights",
+                    "type": "uint256[]"
+                }
+            ],
+            "name": "updateXdRiPWeights",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "initialOwner",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_mohContract",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
             "inputs": [
                 {
                     "internalType": "uint256",
@@ -252,13 +359,6 @@
                 }
             ],
             "stateMutability": "pure",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "distributeRevenue",
-            "outputs": [],
-            "stateMutability": "nonpayable",
             "type": "function"
         },
         {
@@ -401,13 +501,6 @@
         },
         {
             "inputs": [],
-            "name": "pause",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [],
             "name": "paused",
             "outputs": [
                 {
@@ -417,13 +510,6 @@
                 }
             ],
             "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "renounceOwnership",
-            "outputs": [],
-            "stateMutability": "nonpayable",
             "type": "function"
         },
         {
@@ -462,88 +548,6 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "newOwner",
-                    "type": "address"
-                }
-            ],
-            "name": "transferOwnership",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "unpause",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_newPercentage",
-                    "type": "uint256"
-                }
-            ],
-            "name": "updateDistributionPercentage",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address[]",
-                    "name": "investors",
-                    "type": "address[]"
-                },
-                {
-                    "internalType": "uint256[]",
-                    "name": "weights",
-                    "type": "uint256[]"
-                }
-            ],
-            "name": "updateFinalWeights",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "_newMOHContract",
-                    "type": "address"
-                }
-            ],
-            "name": "updateMOHContract",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address[]",
-                    "name": "investors",
-                    "type": "address[]"
-                },
-                {
-                    "internalType": "uint256[]",
-                    "name": "weights",
-                    "type": "uint256[]"
-                }
-            ],
-            "name": "updateXdRiPWeights",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
                     "name": "",
                     "type": "address"
                 }
@@ -558,10 +562,6 @@
             ],
             "stateMutability": "view",
             "type": "function"
-        },
-        {
-            "stateMutability": "payable",
-            "type": "receive"
         }
     ],
     "networks": {
