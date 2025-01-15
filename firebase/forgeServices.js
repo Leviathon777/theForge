@@ -34,7 +34,7 @@ export const addForger = async (profileData) => {
     drip: { dripHeld, supplyPercent, dateLastLogged },
   } = profileData;
   const firestore = getFirestore();
-  const forgerRef = collection(firestore, "forgers");
+  const forgerRef = collection(firestore, "forgerAccount");
   const mailRef = collection(firestore, "mail");
   if (!walletAddress) {
     throw new Error("walletAddress cannot be empty.");
@@ -51,7 +51,7 @@ export const addForger = async (profileData) => {
     if (!walletSnapshot.empty) {
       throw new Error("This wallet address is already registered.");
     }
-    const emailQuery = query(forgerRef, where("email", "==", email));
+    const emailQuery = query(forgerRef, where("forgerEmails", "==", forgerEmails));
     const emailDocRef = doc(mailRef, walletAddress.toLowerCase());
     const emailSnapshot = await getDocs(emailQuery);
     if (!emailSnapshot.empty) {
@@ -397,7 +397,7 @@ border-radius: 8px;
 *************************************************************************************/
 export const updateForger = async (walletAddress, updateData) => {
   const firestore = getFirestore();
-  const forgerRef = collection(firestore, "forgers");
+  const forgerRef = collection(firestore, "forgerAccount");
   if (!walletAddress) {
     console.error("Error: walletAddress is required but was not provided.");
     throw new Error("walletAddress cannot be empty.");
@@ -420,7 +420,7 @@ export const updateForger = async (walletAddress, updateData) => {
 *************************************************************************************/
 export const updateApplicantStatusInFirebase = async (walletAddress, updateData) => {
   const firestore = getFirestore();
-  const forgerRef = collection(firestore, "forgers");
+  const forgerRef = collection(firestore, "forgerAccount");
   if (!walletAddress) {
     console.error("Error: walletAddress is required.");
     throw new Error("walletAddress cannot be empty.");
@@ -453,7 +453,7 @@ export const updateApplicantStatusInFirebase = async (walletAddress, updateData)
 *************************************************************************************/
 export const getForger = async (walletAddress) => {
   const firestore = getFirestore();
-  const userRef = doc(firestore, "forgers", walletAddress); 
+  const userRef = doc(firestore, "forgerAccount", walletAddress); 
   try {
     const userSnapshot = await getDoc(userRef);
     if (userSnapshot.exists()) {
@@ -472,7 +472,7 @@ export const getForger = async (walletAddress) => {
 *************************************************************************************/
 export const logMedalPurchase = async (walletAddress, medalType, price, transactionHash, revenuePercent, xdripBonusPercent) => {
   const firestore = getFirestore();
-  const userRef = doc(firestore, "forgers", walletAddress);
+  const userRef = doc(firestore, "forgerAccount", walletAddress);
   try {
     const userDoc = await getDoc(userRef);
     if (!userDoc.exists()) {
@@ -514,7 +514,7 @@ export const logMedalPurchase = async (walletAddress, medalType, price, transact
 *************************************************************************************/
 export const sendReceiptEmail = async (email, fullName, medalType, price, transactionHash) => {
   const firestore = getFirestore();
-  const mailRef = collection(firestore, "mail");
+  const mailRef = collection(firestore, "forgerEmails");
   const transactionNumber = `X-${transactionHash.slice(0, 6)}-${transactionHash.slice(-6)}`;
   const medalImages = {
     "COMMON": "https://xdrip.io/wp-content/uploads/2025/01/Common_MOH_transparent.webp",
@@ -881,7 +881,7 @@ const sanitizeData = (data) => {
 
 export const createKYCFolder = async (external_applicant_id, kycData) => {
   const firestore = getFirestore();
-  const kycCollection = collection(firestore, "kyc");
+  const kycCollection = collection(firestore, "forgerKYC");
   const currentDate = new Date().toISOString();
 
   // Sanitize kycData to remove undefined or null fields

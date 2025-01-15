@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from 'next/router';
 import { motion, useAnimation } from "framer-motion";
@@ -619,23 +618,6 @@ const ForgeComponent = () => {
       fetchMedalCount(address);
     } else {
       setCurrentAccount("");
-    }
-  }, [address]);
-
-  const fetchForgedCountsForAddress = async (address) => {
-    if (!signer) return;
-    try {
-      const contract = fetchMohContract(signer);
-      const counts = await contract.getForgedCountsForAddress(address);
-      setMedalCount(counts);
-    } catch (error) {
-      console.error("Error fetching forged counts for address:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (address) {
-      fetchForgedCountsForAddress(address);
     }
   }, [address]);
 
