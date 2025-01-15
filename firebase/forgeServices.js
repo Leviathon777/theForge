@@ -1,4 +1,4 @@
-import { getFirestore, collection, query, where, addDoc, getDocs, getDoc, deleteDoc, doc, updateDoc, setDoc,  } from "firebase/firestore";
+import { getFirestore, collection, query, where, addDoc, getDocs, getDoc, deleteDoc, doc, updateDoc, setDoc, } from "firebase/firestore";
 import { arrayUnion } from 'firebase/firestore';
 import { firestore, db } from "./config";
 
@@ -51,7 +51,7 @@ export const addForger = async (profileData) => {
     if (!walletSnapshot.empty) {
       throw new Error("This wallet address is already registered.");
     }
-    const emailQuery = query(forgerRef, where("forgerEmails", "==", email));
+    const emailQuery = query(forgerRef, where("email", "==", email));
     const emailDocRef = doc(mailRef, walletAddress);
     const emailSnapshot = await getDocs(emailQuery);
     if (!emailSnapshot.empty) {
@@ -379,19 +379,20 @@ border-radius: 8px;
 </body>
     </html>
   `;
-  const emailDocData = {
-    to: [email],
-    message: {
-      subject: "🔥 Welcome to The Forge! Your Journey Begins 🔥",
-      html: emailHTML,
-    },
-  };  
+    const emailDocData = {
+      to: [email],
+      message: {
+        subject: "🔥 Welcome to The Forge! Your Journey Begins 🔥",
+        html: emailHTML,
+      },
+    };
     await setDoc(emailDocRef, emailDocData, { merge: true });
   } catch (error) {
     console.error("Error adding email document:", error.message);
     throw error;
-  }};
-  
+  }
+};
+
 /************************************************************************************
                                  UPDATING THE USER 
 *************************************************************************************/
@@ -453,7 +454,7 @@ export const updateApplicantStatusInFirebase = async (walletAddress, updateData)
 *************************************************************************************/
 export const getForger = async (walletAddress) => {
   const firestore = getFirestore();
-  const userRef = doc(firestore, "forgerAccount", walletAddress); 
+  const userRef = doc(firestore, "forgerAccount", walletAddress);
   try {
     const userSnapshot = await getDoc(userRef);
     if (userSnapshot.exists()) {
@@ -473,25 +474,37 @@ export const getForger = async (walletAddress) => {
 export const logMedalPurchase = async (walletAddress, medalType, price, transactionHash, revenuePercent, xdripBonusPercent) => {
   const firestore = getFirestore();
   const userRef = doc(firestore, "forgerAccount", walletAddress);
+
   try {
+    // Get or initialize the user document
     const userDoc = await getDoc(userRef);
     if (!userDoc.exists()) {
       await setDoc(userRef, { ramp1: [] });
     }
+
+    // Retrieve updated document
     const updatedUserDoc = await getDoc(userRef);
     let ramps = updatedUserDoc.data();
-    let lastRampKey =
-      Object.keys(ramps)
-        .filter((ramp) => ramp.startsWith("ramp"))
-        .sort((a, b) => parseInt(a.replace("ramp", "")) - parseInt(b.replace("ramp", "")))
-        .pop() || "ramp1";
-    let lastRamp = ramps[lastRampKey] || [];
     const orderedMedals = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY"];
-    if (lastRamp.length >= orderedMedals.length) {
+
+    // Determine the last ramp and its completeness
+    let lastRampKey = Object.keys(ramps)
+      .filter((ramp) => ramp.startsWith("ramp"))
+      .sort((a, b) => parseInt(a.replace("ramp", "")) - parseInt(b.replace("ramp", "")))
+      .pop() || "ramp1";
+
+    let lastRamp = ramps[lastRampKey] || [];
+
+
+    const existingMedalIndex = lastRamp.findIndex((medal) => medal.medalType === medalType);
+
+    if (existingMedalIndex !== -1 || lastRamp.length >= orderedMedals.length) {
+
       const nextRampNumber = parseInt(lastRampKey.replace("ramp", ""), 10) + 1;
-      lastRampKey = `ramp${nextRampNumber}`; 
-      lastRamp = [];
+      lastRampKey = `ramp${nextRampNumber}`;
+      lastRamp = ramps[lastRampKey] || [];
     }
+
     const purchaseData = {
       medalType,
       price,
@@ -500,19 +513,28 @@ export const logMedalPurchase = async (walletAddress, medalType, price, transact
       xdripBonusPercent,
       timestamp: new Date(),
     };
+
+    lastRamp.push(purchaseData);
+    lastRamp.sort(
+      (a, b) => orderedMedals.indexOf(a.medalType) - orderedMedals.indexOf(b.medalType)
+    );
     await updateDoc(userRef, {
-      [lastRampKey]: arrayUnion(purchaseData), 
+      [lastRampKey]: lastRamp,
     });
+
+    console.log(`Logged purchase to ${lastRampKey}:`, purchaseData);
+
   } catch (error) {
     console.error("Error logging purchase:", error.message);
     throw error;
   }
 };
 
+
 /************************************************************************************
                           SEND RECIEPT EMAIL TO THE FORGER
 *************************************************************************************/
-export const sendReceiptEmail = async (email, fullName, medalType, price, transactionHash) => {
+export const sendReceiptEmail = async (address, email, fullName, medalType, price, transactionHash) => {
   const firestore = getFirestore();
   const mailRef = collection(firestore, "forgerEmails");
   const transactionNumber = `X-${transactionHash.slice(0, 6)}-${transactionHash.slice(-6)}`;
@@ -819,9 +841,93 @@ export const sendReceiptEmail = async (email, fullName, medalType, price, transa
 </html>`,
       },
     };
-    await addDoc(mailRef, emailDocData);
+    const emailDocRef = doc(mailRef, address);
+    await setDoc(emailDocRef, emailDocData);
+
+    console.log("Receipt email document successfully created with ID:", address);
   } catch (error) {
     console.error("Error sending receipt email:", error.message);
+    throw error;
+  }
+};
+/************************************************************************************
+                          EMAIL FROM FORGER TO US 
+*************************************************************************************/
+export const sendContactUsEmail = async (senderEmail, message, address) => {
+  const firestore = getFirestore();
+  const mailRef = collection(firestore, "forgerEmails");
+  address = address || "123456789123456789123456789123456789123456";
+
+  try {
+    const emailDocData = {
+      to: ["contact@moh.xdrip.io"],
+      message: {
+        subject: "New Contact Us Submission",
+        text: `You have received a new message from: ${senderEmail}\n\nMessage:\n${message}`,
+        html: `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 24px;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .footer {
+            font-size: 14px;
+            color: #888;
+            margin-top: 20px;
+        }
+        .footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>New Contact Us Message</h1>
+        <p><strong>From:</strong> ${senderEmail}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message}</p>
+        <div class="footer">
+            
+        </div>
+    </div>
+</body>
+</html>
+        `,
+      },
+    };
+    const emailDocRef = doc(mailRef, address);
+    await setDoc(emailDocRef, emailDocData);
+    console.log("Contact Us email document successfully added to Firebase.");
+  } catch (error) {
+    console.error("Error sending Contact Us email:", error.message);
     throw error;
   }
 };
@@ -844,7 +950,7 @@ export const trackDetailedTransaction = async (address, medalType, transactionDa
   } = transactionData;
 
   const walletDocRef = doc(transactionsCollection, address.toLowerCase());
-  const transactionNumber = `X-${transactionHash.slice(0, 6)}-${transactionHash.slice(-6)}`; 
+  const transactionNumber = `X-${transactionHash.slice(0, 6)}-${transactionHash.slice(-6)}`;
   const transactionLog = {
     purchaser: address,
     purchasedMedal: medalType,

@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef, memo, forwardRef } from "react";
+import React, { useState, useEffect, useRef, memo, forwardRef, useContext } from "react";
 import { motion } from "framer-motion";
 import DotWallet from "../components/DotWallets/DotWallet";
-import { Button, SocialButtons, ForgeComponent, TermsOfService, UserAgreement, FlipBook } from "../components/componentsindex";
+import { Button, SocialButtons, ForgeComponent, TermsOfService, UserAgreement, FlipBook, EmailFormPopup } from "../components/componentsindex";
 import MyDotData from "../Context/MyDotDataContext";
 import Style from "../styles/theForge.module.css";
 import { useSigner, useAddress } from '@thirdweb-dev/react';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
+import { usePayload } from "../Context/PayloadContext";
 
 const PwaInstructionsModal = ({ onClose }) => (
   <div className={Style.modalOverlay}>
@@ -53,7 +54,13 @@ const TheForge = () => {
   const router = useRouter();
   const [isMobile, setIsMobile] = useState(false);
   const [isPwaModalOpen, setIsPwaModalOpen] = useState(false);
+  const { setActivatePayload } = usePayload();
+  const [isEmailFormOpen, setIsEmailFormOpen] = useState(false);
 
+  useEffect(() => {
+    setActivatePayload(true);
+    return () => setActivatePayload(false);
+  }, [setActivatePayload]);
 
   useEffect(() => {
     const mobileCheck = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -209,6 +216,16 @@ const TheForge = () => {
                 title="Terms of Service"
               />
               <Button
+                btnName="Contact Us"
+                onClick={() => setIsEmailFormOpen(true)}
+                fontSize="inherit"
+                paddingLeft="0"
+                paddingRight="0"
+                isActive={false}
+                setIsActive={() => { }}
+                title="Contact Us"
+              />
+              <Button
                 btnName="User Agreement"
                 onClick={() => setIsUserAgreementModalOpen(true)}
                 fontSize="inherit"
@@ -239,6 +256,12 @@ const TheForge = () => {
               isOpen={isUserAgreementModalOpen}
               onRequestClose={() => setIsUserAgreementModalOpen(false)}
             />
+            {isEmailFormOpen && (
+              <EmailFormPopup
+                isVisible={isEmailFormOpen}
+                onClose={() => setIsEmailFormOpen(false)}
+              />
+            )}
           </div>
         </MyDotData>
       </div >
