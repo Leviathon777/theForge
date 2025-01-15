@@ -134,7 +134,7 @@ const ForgeComponent = () => {
         try {
           const userData = await getForger(address);
           if (userData && userData.fullName && userData.email) {
-            setUserInfo(userData);
+            setUserInfo(userData);         
             const hasShownWelcome = localStorage.getItem("hasShownWelcome");
             if (!hasShownWelcome) {
               setIsWelcomeModalVisible(true);
@@ -187,6 +187,7 @@ const ForgeComponent = () => {
   useEffect(() => {
     if (address) {
       fetchXDRIPBalance();
+      fetchDots();
     }
   }, [address]);
 
@@ -196,7 +197,7 @@ const ForgeComponent = () => {
       query: {
         address,
         xdripBalance,
-        
+
       },
     });
   };
@@ -356,7 +357,7 @@ const ForgeComponent = () => {
   };
 
   useEffect(() => {
-    if (isPaymentModalVisible || isTransakActive || selectedMedalDetails) {
+    if (isTransakActive || selectedMedalDetails) {
       document.body.classList.add("modalOpen");
     } else {
       document.body.classList.remove("modalOpen");
@@ -365,7 +366,7 @@ const ForgeComponent = () => {
     return () => {
       document.body.classList.remove("modalOpen");
     };
-  }, [isPaymentModalVisible, isTransakActive, selectedMedalDetails]);
+  }, [isTransakActive, selectedMedalDetails]);
 
   useEffect(() => {
     const loadForgedCounts = async () => {
@@ -405,9 +406,11 @@ const ForgeComponent = () => {
       const itemPrice = currentMedal.price.split(" ")[0];
       const price = ethers.utils.parseUnits(itemPrice, "ether");
       const forgeFunction = contract[`forge${currentMedal.title}`];
+
       const transaction = await forgeFunction(ipfsHash, {
         value: price,
       });
+      
       const receipt = await transaction.wait();
       if (receipt.status === 1) {
         toast.success("Your Medal Of Honor was forged successfully!");
@@ -429,43 +432,62 @@ const ForgeComponent = () => {
     }
   };
 
-/* FUTURE TRANSAK ONE INTEGRATION 
-  const handleCryptoForge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
-    if (!address) {
-      toast.info("Please connect your wallet to proceed.");
-      connectLocalWallet();
-      return Promise.reject("No wallet connected.");
-    }
-    if (medalType === "ETERNAL" && userInfo?.kycStatus !== "approved") {
-      toast.error("KYC approval is required to forge the Eternal Medal. Please complete your KYC verification.");
-      console.error("KYC not approved for ETERNAL medal.");
-      return Promise.reject("KYC not approved for ETERNAL medal.");
-    }
-    return forge(medalType, ipfsHash, revenueAccess, xdripBonus);
-  };*/
+  /* FUTURE TRANSAK ONE INTEGRATION 
+    const handleCryptoForge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
+      if (!address) {
+        toast.info("Please connect your wallet to proceed.");
+        connectLocalWallet();
+        return Promise.reject("No wallet connected.");
+      }
+      if (medalType === "ETERNAL" && userInfo?.kycStatus !== "approved") {
+        toast.error("KYC approval is required to forge the Eternal Medal. Please complete your KYC verification.");
+        console.error("KYC not approved for ETERNAL medal.");
+        return Promise.reject("KYC not approved for ETERNAL medal.");
+      }
+      return forge(medalType, ipfsHash, revenueAccess, xdripBonus);
+    };*/
 
-  const forge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
-    if (!userInfo) {
-      console.error("User info not provided!");
+  const handleForgeClick = async (medal) => {
+    if (!address) {
+      toast.info("Please connect your wallet to proceed with Forging.");
       return;
     }
-    setIsPaymentModalVisible(false);
+    if (!userInfo) {
+      setIsReminderPopupVisible(true);
+      return;
+    }
+    if (medal.title === "ETERNAL" && userInfo?.kycStatus !== "approved") {
+      setIsKYCReminderVisible(true);
+      return;
+    }
+    setSelectedMedalForForge(medal);
+    try {
+      await forge(medal.title, medal.ipfsHash, medal.revenueAccess, medal.xdripBonus);
+      const updatedCounts = await fetchForgedCounts();
+      if (updatedCounts) setForgedCounts(updatedCounts);
+      await fetchMedalCount(address);
+    } catch (error) {
+      console.error("Error forging medal:", error);
+      toast.error(error.message || "Error while forging medal. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  const forge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
+    if (!signer || !address) {
+      throw new Error("Signer or wallet address not found. Please connect your wallet.");
+    }
+    const provider = signer.provider;
+    if (!provider) {
+      throw new Error("Provider is missing. Please reconnect your wallet.");
+    }
+
+    const contract = fetchMohContract(signer);
+
     setIsLoading(true);
     try {
-      if (!signer) {
-        toast.error("Signer not available. Please connect your wallet.");
-        return;
-      }
-      if (!address) {
-        toast.error("No address found. Please connect your wallet.");
-        return;
-      }
-      const provider = signer.provider;
-      if (!provider) {
-        toast.error("Provider is missing. Please reconnect your wallet.");
-        return;
-      }
-      const contract = fetchMohContract(signer);
       switch (medalType) {
         case "COMMON":
           break;
@@ -539,10 +561,14 @@ const ForgeComponent = () => {
         value: price,
         gasLimit,
       });
+
       const receipt = await transaction.wait();
       if (receipt.status === 1) {
+        // Post-transaction tasks
+        toast.success(`${medalType} Medal forged successfully!`);
         await logMedalPurchase(address, medalType, itemPrice, transaction.hash, revenueAccess, xdripBonus);
         await sendReceiptEmail(
+          address,
           userInfo.email,
           userInfo.fullName,
           medalType,
@@ -562,8 +588,8 @@ const ForgeComponent = () => {
           revenuePercent: revenueAccess,
           xdripBonusPercent: xdripBonus,
         };
-        await trackDetailedTransaction(address, medalType, transactionData);
-        await fetchDots();
+        await trackDetailedTransaction(address, medalType, transactionData); 
+        fetchDots();     
       } else {
         toast.error("Transaction failed. Please try again.");
       }
@@ -615,7 +641,7 @@ const ForgeComponent = () => {
   useEffect(() => {
     if (address) {
       setCurrentAccount(address);
-      fetchMedalCount(address);
+      fetchMedalCount(address); 
     } else {
       setCurrentAccount("");
     }
@@ -660,40 +686,6 @@ const ForgeComponent = () => {
     const interval = setInterval(cycleTitles, 30000);
     return () => clearInterval(interval);
   }, []);
-
-
-  const handleForgeClick = async (medal) => {
-    if (!address) {
-      toast.info("Please connect your wallet to proceed with Forging.");
-      return;
-    }
-    if (!userInfo) {
-      setIsReminderPopupVisible(true);
-      return;
-    }
-    if (medal.title === "ETERNAL" && userInfo?.kycStatus !== "approved") {
-      setIsKYCReminderVisible(true);
-      return;
-    }
-    setSelectedMedalForForge(medal);
-    try {
-      setIsLoading(true);
-      await forge(medal.title, medal.ipfsHash, medal.revenueAccess, medal.xdripBonus);
-      toast.success(`${medal.title} Medal forged successfully!`);
-      await fetchDots();
-      const updatedCounts = await fetchForgedCounts();
-      if (updatedCounts) {
-        setForgedCounts(updatedCounts);
-      }
-      await fetchMedalCount(address);
-    } catch (error) {
-      console.error("Error forging medal:", error);
-      toast.error("Error while forging medal. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
 
 
   /* FUTURE TRANSAK ONE INTEGRATION 
@@ -1007,7 +999,7 @@ const handleForgeClick = (medal) => {
                         });
                       } else {
                         toast.info("To access investor areas, please connect your wallet.");
-                      }                      
+                      }
                     }}
                   >
                     KYC VERIFICATION

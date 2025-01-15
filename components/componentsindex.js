@@ -21,8 +21,10 @@ import LoaderMOH from "./Loader/LoaderMOH";
 import MobileModal from "./EntryPage/MobileModal";
 import UKCompliance from "./Legal/UKCompliance";
 import CookieManager from "./Legal/CookieManager";
+import EmailFormPopup from "./Legal/EmailFormPopup";
 export {
   UKCompliance,
+  EmailFormPopup,
   CookieManager,
   MobileModal,
   TransakMOH,

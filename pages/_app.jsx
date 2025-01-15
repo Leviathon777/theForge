@@ -19,8 +19,11 @@ import { ChainId } from "@thirdweb-dev/sdk";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Style from "../styles/app.module.css";
+import { PayloadProvider } from "../Context/PayloadContext";
+import { usePayload } from "../Context/PayloadContext";
 
 const AuthHandler = () => {
+  const { activatePayload } = usePayload();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [popupContent, setPopupContent] = useState("");
   const [mohvat, setMohvat] = useState("");
@@ -95,43 +98,29 @@ For support or assistance, contact our team at support@xdrip.io
     if (signer && address) {
       const payload = generateGenericPayloadMessage(address);
       const signature = await signer.signMessage(payload);
-
-      const expirationTime = Date.now() + 4 * 60 * 60 * 1000; // 4 hours
+      const expirationTime = Date.now() + 4 * 60 * 60 * 1000;
       localStorage.setItem(
         "mohvat",
         JSON.stringify({ address, signature, payload, expirationTime })
       );
-
-      setMohvat(signature);
       setIsPopupVisible(false);
-    } else {
-      console.error("Signer or address is not available.");
-      setPopupContent("Wallet connection issue. Please reconnect your wallet.");
     }
   };
 
   const handleDecline = () => {
-    disconnectWallet();
     setIsPopupVisible(false);
   };
 
   useEffect(() => {
-    if (address && signer) {
+    if (activatePayload && address && signer) {
       const storedVAT = JSON.parse(localStorage.getItem("mohvat"));
-
       if (storedVAT && storedVAT.address === address) {
-        const { expirationTime } = storedVAT;
-
-        if (Date.now() < expirationTime) {
-          setMohvat(storedVAT.signature);
-        } else {
-          handleGenericPayloadPopup(address);
-        }
-      } else {
-        handleGenericPayloadPopup(address);
+        if (Date.now() < storedVAT.expirationTime) return;
       }
+      handleGenericPayloadPopup(address);
     }
-  }, [address, signer]);
+  }, [activatePayload, address, signer]);
+
 
   return (
     <>
@@ -288,6 +277,7 @@ const MyApp = ({ Component, pageProps }) => {
           content="The Medals of Honor Collection by XdRiP Digital Management, LLC"
         />
       </Head>
+      
       {isPwaModalVisible && isMobile ? (
         <MobileModal onDismiss={handleDismissPwaModal} />
       ) : isLoading ? (
@@ -322,6 +312,7 @@ const MyApp = ({ Component, pageProps }) => {
           />
         </div>
       ) : (
+        <PayloadProvider>
         <ThirdwebProvider
           activeChain={ChainId.BinanceSmartChainTestnet}
           clientId={process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
@@ -380,6 +371,7 @@ const MyApp = ({ Component, pageProps }) => {
             />
           </MOHProvider>
         </ThirdwebProvider>
+        </PayloadProvider>
       )}
     </>
   );
