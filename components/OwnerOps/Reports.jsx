@@ -645,7 +645,7 @@ export default Reports;
 // Reports.jsx
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { ethers } from "ethers";
-import { useAddress, ConnectWallet } from "@thirdweb-dev/react";
+import { useAddress, ConnectWallet, useSigner } from "@thirdweb-dev/react";
 import Web3 from "web3";
 
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
@@ -660,8 +660,8 @@ const Reports = ({ onClose }) => {
   const [status, setStatus] = useState("");
 
   // Contract states
-  const [mohContract, setMohContract] = useState(null);
-  const [distributeContract, setDistributeContract] = useState(null);
+  const [setMohContract] = useState(null);
+  const [setDistributeContract] = useState(null);
   const [xdripContract, setXdripContract] = useState(null);
 
   // Data states
@@ -724,7 +724,33 @@ const Reports = ({ onClose }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // --- Ethers/Web3 initializations ---
+  
+  
+  const signer = useSigner();
+
+  const mohContract = useMemo(() => {
+    return signer
+      ? new ethers.Contract(
+          mohCA_ABI.address,
+          mohCA_ABI.abi,
+          signer
+        )
+      : null;
+  }, [signer]);
+
+  const distributeContract = useMemo(() => {
+    return signer
+      ? new ethers.Contract(
+        distributeCA_ABI.address,
+        distributeCA_ABI.abi,
+          signer
+        )
+      : null;
+  }, [signer]);
+
+
+
+
   useEffect(() => {
     const init = async () => {
       if (!window.ethereum) {
@@ -733,27 +759,7 @@ const Reports = ({ onClose }) => {
       }
       try {
         setStatus("Initializing contracts (MOH + Distribute with signer, XdRiP with Web3)...");
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-
-        // Ethers provider + signer
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-
-        // MOH Contract
-        const mohInstance = new ethers.Contract(
-          mohCA_ABI.address,
-          mohCA_ABI.abi,
-          signer
-        );
-        setMohContract(mohInstance);
-
-        // Distribute Contract
-        const distInstance = new ethers.Contract(
-          distributeCA_ABI.address,
-          distributeCA_ABI.abi,
-          signer
-        );
-        setDistributeContract(distInstance);
+               
 
         // XdRiP Contract (read-only)
         const web3 = new Web3("https://bsc-dataseed1.binance.org/");
