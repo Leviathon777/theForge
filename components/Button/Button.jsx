@@ -17,6 +17,8 @@ const Button = ({
   paddingLeft = "0",
   padding = "0px 0px",
   title = "",
+  // NEW PROP
+  background, 
 }) => {
   const playClickSound = () => {
     const audio = new Audio("../../sounds/button_click_2_-30dB.mp3");
@@ -35,13 +37,15 @@ const Button = ({
     }
   };
 
-
   return (
     <div className={`${Style.box} ${isActive ? Style.active : ""}`}>
       <button
         id={id}
         className={`btn ${classStyle} ${isActive ? "active" : ""}`}
-        style={{ fontSize }}
+        style={{
+          fontSize,
+          ...(background && { background }),
+        }}
         onClick={handleButtonClick}
         title={title}
       >

@@ -93,6 +93,7 @@ const Carousel = ({ medals = [] }) => {
           isActive={false}
           title="Go Left"
           icon=""
+          
         />
       </div>
 

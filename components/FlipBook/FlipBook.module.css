@@ -2,14 +2,15 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    margin: auto;
+    align-items: center;    
     padding: 1rem;
     width: 100%;
-    height: auto;
+    height: 100%;
     overflow: hidden;
     position: relative
 }
+
+
 
 .flipBookOpen {
     transform: translateX(0);
@@ -27,6 +28,7 @@
     margin: 0rem;
     width: 100%;
     height: 100%;
+    box-sizing: border-box;
 }
 
 
@@ -514,7 +516,7 @@
 
 
 
-@media (max-width: 480px) {
+@media ( max-width: 768px) {
     .flipbookwrapper {
         height: auto;
         padding: 0;
@@ -750,185 +752,3 @@
     }
 }
 
-@media (max-width: 768px) {
-    .flipbookwrapper {
-        height: auto;
-    }
-
-    .flipbookMobileWrapper {
-        width: 100%;
-        height: auto;
-    }
-
-    .cover .imagePage {
-        width: 100%;
-        height: auto;
-        margin: 0;
-    }
-
-    .cover .pageContent_title,
-    .pageContent_title {
-        font-size: 2rem;
-    }
-
-
-
-    .dedicationParagraph {
-        font-size: 0.6rem;
-        text-indent: 1rem;
-        margin-bottom: .25rem;
-        line-height: 1;
-    }
-
-    .dedicationTitle {
-        font-size: .8rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .dedicationSignature {
-        font-size: 0.6rem;
-        margin-top: 5px;
-    }
-
-    .contents_page {
-        padding: 10px;
-    }
-
-    .contents_page h1 {
-        font-size: 1rem;
-        padding: 0rem;
-        margin: 0rem;
-    }
-
-    .contentsList .pageNumber,
-    .contentsList .contentTitle {
-        font-size: 0.6rem;
-    }
-
-
-
-
-    .proposalTitle {
-        text-align: center;
-        font-size: .9rem;
-        line-height: 1;
-        font-weight: bold;
-        margin: 5px;
-        color: #ffffff;
-    }
-
-    .proposalSubTitle {
-        text-align: center;
-        font-size: .75rem;
-        line-height: 1;
-        font-weight: bold;
-        margin-bottom: 0px;
-        color: #ffffff;
-    }
-
-    .proposalLabel {
-        font-size: .5rem;
-        margin-bottom: 0px;
-    }
-
-    .rightProposalContainer {
-        padding: 5px;
-        text-align: left;
-    }
-
-    .proposalPages {
-        margin-top: 10px;
-        padding: .22rem;
-    }
-
-    .disclaimerPages {
-        margin-top: 10px;
-    }
-
-    .disclaimerPage,
-    .rightDisclaimerPage,
-    .rightProposalPage,
-    .proposalPage {
-        padding: .25rem;
-        margin-bottom: 2.5px;
-        border-radius: .35rem;
-    }
-
-
-    .proposalParagraph {
-        text-indent: .5rem;
-        font-size: .585rem;
-        line-height: 1.1;
-        margin-bottom: 0px;
-        text-shadow: none;
-        color: #6d6d6d;
-    }
-
-    .proposalContainer ul {
-        list-style: disc;
-        margin-left: 20px;
-    }
-
-    .proposalContainer li {
-        margin-bottom: 8px;
-        font-size: 1rem;
-        color: #ffffff;
-    }
-
-    .disclaimerTitle {
-        text-align: center;
-        font-size: 1rem;
-        line-height: 1;
-        font-weight: bold;
-        margin-bottom: 1px;
-        color: #ffffff;
-    }
-
-    .disclaimerLeader {
-        text-indent: .5rem;
-        font-size: .6rem;
-        line-height: 1.2;
-
-    }
-
-    .disclaimerParagraph {
-        text-indent: .5rem;
-        font-size: .52rem;
-        line-height: 1.1;
-    }
-
-    .disclaimerLabel {
-        font-size: .55rem;
-        font-weight: bold;
-        text-decoration: underline;
-        text-shadow: none;
-        margin-bottom: 0px;
-        color: var(--color-light);
-    }
-
-    .disclaimerTop {
-        padding: 0rem;
-        margin: 0rem;
-    }
-
-    .backPage {
-        display: flex;
-        width: 100%;
-        height: 100%;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .backPageImage {
-        display: flex;
-        margin-top: .5rem;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        border-radius: 1rem;
-        opacity: 20%;
-    }
-}
