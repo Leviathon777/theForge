@@ -40,6 +40,8 @@ const web3 = new Web3("https://bsc-dataseed1.binance.org/");
 const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
 
 
+
+/* chatsy
 const ChatWidget = () => {
   useEffect(() => {
     const existingScript = document.querySelector(`script[src="https://app.chatsy.ai/resources/script.js?cb=1736020701266"]`);
@@ -71,6 +73,79 @@ const ChatWidget = () => {
   }, []);
   return null;
 };
+*/
+
+
+/*https://www.jotform.com/agent/build/01946c5bcc597753bf32b6dab0266c4e4772/publish */
+
+const ChatWidget = () => {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-embedded-agent.js';
+    script.async = true;
+
+    script.onload = () => {
+      if (window.AgentInitializer) {
+        window.AgentInitializer.init({
+          rootId: 'JotformAgent-01946c5bcc597753bf32b6dab0266c4e4772',
+          formID: '01946c5bcc597753bf32b6dab0266c4e4772',
+          queryParams: ['skipWelcome=1', 'maximizable=1'],
+          domain: 'https://www.jotform.com',
+          isInitialOpen: false,
+          isDraggable: true,
+          customizations: {
+            greeting: 'Yes',
+            greetingMessage: 'Welcome to the Forge! How can I help?',
+            pulse: 'Yes',
+            position: 'right',
+            customCSS: `
+              /* Force Custom Styles for Chat Widget */
+              #JotformAgent-01946c5bcc597753bf32b6dab0266c4e4772 {
+                border-radius: 12px !important;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7) !important;
+                background: -webkit-linear-gradient(145deg, #0d0d0d, #1a1a1a) !important;
+                background: linear-gradient(145deg, #0d0d0d, #1a1a1a) !important;
+                color: white !important;
+              }
+              #JotformAgent-01946c5bcc597753bf32b6dab0266c4e4772 .btn {
+                background: -webkit-linear-gradient(145deg, #0d0d0d, #1a1a1a) !important;
+                background: linear-gradient(145deg, #0d0d0d, #1a1a1a) !important;
+                color: white !important;
+                border: 2px solid #1c1c1c !important;
+                border-radius: 12px !important;
+                box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7) !important;
+                transition: all 0.3s ease !important;
+              }
+              #JotformAgent-01946c5bcc597753bf32b6dab0266c4e4772 .btn:hover {
+                color: lightgray !important;
+                transform: translateY(-3px) !important;
+                text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.8) !important;
+              }
+            `,
+          },
+        });
+      } else {
+        console.error('AgentInitializer is not available');
+      }
+    };
+
+    script.onerror = () => {
+      console.error('Failed to load the JotForm agent script');
+    };
+
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  return <div id="JotformAgent-01946c5bcc597753bf32b6dab0266c4e4772" />;
+};
+
+
+
+
 
 
 const ForgeComponent = () => {

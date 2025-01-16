@@ -1784,7 +1784,7 @@ const OwnerOps = () => {
               </span>
             </p>
             <p>
-              <strong>Contract Balance:</strong> {contractBalance} BNB
+              <strong>Connected Wallet Balance</strong> {contractBalance} BNB
             </p>
           </div>
 
