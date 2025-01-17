@@ -1,5 +1,5 @@
 {
-    "address": "0x57fAAd2274bE3107020ACa02660426dDDdC1C5bE",
+    "address": "0x33EB65A2d4D47cB7D539CBA8eC137894e497D898",
     "abi": [
         {
             "inputs": [
@@ -468,6 +468,31 @@
                     "internalType": "uint256",
                     "name": "",
                     "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getDistributions",
+            "outputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "uint256",
+                            "name": "amount",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "timestamp",
+                            "type": "uint256"
+                        }
+                    ],
+                    "internalType": "struct RevShareDistribution.DistributionRecord[]",
+                    "name": "",
+                    "type": "tuple[]"
                 }
             ],
             "stateMutability": "view",
