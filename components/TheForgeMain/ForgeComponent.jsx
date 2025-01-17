@@ -26,7 +26,7 @@ import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
-import { getForger, addForger, logMedalPurchase, sendReceiptEmail, trackDetailedTransaction } from "../../firebase/forgeServices.js";
+import { getForger, logMedalPurchase, sendReceiptEmail, trackDetailedTransaction, updateForger } from "../../firebase/forgeServices.js";
 import { useXoast } from "../Xoast/Xoast.jsx";
 
 
@@ -821,7 +821,7 @@ const handleForgeClick = (medal) => {
    */
 
 
-  /* future reference
+  
   const triggerEasterEgg = () => {
     const url = `${window.location.origin}/misc/ChessEgg.html`;
     const options = "width=1024,height=768";
@@ -844,7 +844,7 @@ const handleForgeClick = (medal) => {
 
   useEffect(() => {
     let typed = '';
-    const targets = ['whateverword', 'anotherword'];
+    const targets = ['medals', 'xdrip'];
     const maxLength = Math.max(...targets.map(target => target.length));
     const handleKeyDown = (e) => {
       const key = e.key.toLowerCase();
@@ -864,7 +864,7 @@ const handleForgeClick = (medal) => {
       window.removeEventListener('keypress', handleKeyDown);
     };
   }, []);
-*/
+
 
   return (
     <div className={Style.the_forge}>

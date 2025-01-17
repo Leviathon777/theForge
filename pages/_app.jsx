@@ -119,6 +119,7 @@ For support or assistance, contact our team at support@xdrip.io
 
   const handleDecline = () => {
     setIsPopupVisible(false);
+    disconnectWallet();
   };
 
   useEffect(() => {
