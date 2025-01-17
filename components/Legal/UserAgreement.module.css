@@ -1,36 +1,67 @@
-.modal {
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
-  position: relative;
-  background: var(--background-gradient-dark);
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  overflow-y: auto;
-  max-height: 80vh;
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
 }
 
 .modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   z-index: 2000;
+  overflow: hidden;
+  animation: slideUp 0.5s ease-in-out forwards;
+}
+
+.modalOverlay.slideDown {
+  animation: slideDown 0.5s ease-in-out forwards;
+}
+
+.modal {
+  max-width: 650px;
+  padding: 20px;
+  position: relative;
+  border-top-left-radius: .5rem;
+  justify-content: center;
+  align-items: flex-end;
+  background: var(--background-gradient-dark);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  max-height: 90vh;
+  z-index: 9999;
 }
 
 .modalWrapper {
-  padding: 20px;
+  padding: 1.5rem;
   font-family: Arial, sans-serif;
   color: white;
 }
 
 .modalTitle {
-  font-size: 24px;
+  font-size: 2rem;
   font-weight: bold;
   margin-bottom: 15px;
   text-align: center;
@@ -56,6 +87,7 @@
   font-size: 14px;
   line-height: 1.6;
   margin-bottom: 10px;
+  color: #757575;
 }
 
 .sectionList {
@@ -67,6 +99,7 @@
   font-size: 14px;
   margin-bottom: 5px;
   list-style: disc;
+  color: #757575;
 }
 
 .closeButton {

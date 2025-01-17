@@ -1,17 +1,18 @@
 import React from "react";
 import Modal from "react-modal";
 import Style from "./TermsOfService.module.css";
+import { Button } from "../componentsindex";
 
-const TermsOfService = ({ isOpen, onRequestClose }) => (
+const TermsOfService = ({ isOpen, onRequestClose, isClosing }) => (
   <Modal
     isOpen={isOpen}
     onRequestClose={onRequestClose}
-    contentLabel="Terms of Service"
+    contentLabel="XDRIP Terms of Service"
     className={Style.modal}
-    overlayClassName={Style.modalOverlay}
+    overlayClassName={`${Style.modalOverlay} ${isClosing ? Style.slideDown : ""}`}
   >
     <div className={Style.modalWrapper}>
-      <h2 className={Style.modalTitle}>Terms of Service</h2>
+      <h2 className={Style.modalTitle}>XDRIP Terms of Service</h2>
       <p className={Style.modalIntro}>
         Welcome to <strong>The Forge - Medals of Honor</strong>, a platform developed by XDRIP Digital Management LLC. Please read these Terms of Service carefully before using the platform.
       </p>
@@ -99,9 +100,17 @@ const TermsOfService = ({ isOpen, onRequestClose }) => (
         </p>
       </div>
 
-      <button onClick={onRequestClose} className={Style.closeButton}>
-        Close
-      </button>
+          <Button
+            btnName="Close"
+            onClick={onRequestClose}
+            fontSize="1rem"
+            paddingTop=".25rem"
+            paddingRight="1rem"
+            paddingBottom=".25rem"
+            paddingLeft="1rem"
+            background=""
+            title="Close Modal"
+          />
     </div>
   </Modal>
 );

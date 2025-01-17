@@ -3,7 +3,7 @@ import { motion, useAnimation } from "framer-motion";
 import styles from "./EntryPage.module.css";
 import videos from "../../public/videos";
 import Image from "next/image";
-import { VideoPlayer,Button } from "../componentsindex";
+import { VideoPlayer, Button } from "../componentsindex";
 import { useRouter } from "next/router";
 
 const EntryPage = ({
@@ -30,7 +30,6 @@ const EntryPage = ({
         handleEnterClick();
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       clearTimeout(timer);
@@ -116,7 +115,11 @@ const EntryPage = ({
       >
         <Button
           btnName="Skip"
-          fontSize="12px"
+          fontSize=".8rem"
+          paddingTop=".35rem"
+          paddingRight=".9rem"
+          paddingBottom=".35rem"
+          paddingLeft=".9rem"
           onClick={isModalVisible ? null : handleSkipClick}
           className={styles.skipButton}
         />

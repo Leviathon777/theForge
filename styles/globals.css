@@ -378,48 +378,6 @@ hr {
 }
 
 
-/*=== Cookie Notification ===*/
-.cookie-notification {
-  position: fixed;
-  bottom: var(--spacing-md);
-  right: var(--spacing-md);
-  background-color: #1c1c1c;
-  padding: var (--spacing-md);
-  border-radius: var(--spacing-sm);
-  box-shadow: var(--shadow-default);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  max-width: 400px;
-}
-
-.cookie-notification p {
-  flex: 1;
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
-}
-
-.cookie-button {
-  padding: var(--spacing-xs) var(--spacing-md);
-  background-color: var(--color-accent);
-  color: var(--color-text-primary);
-  border-radius: var(--spacing-xs);
-  box-shadow: var(--shadow-default);
-  transition: background-color var(--transition-default);
-}
-
-.cookie-button:hover {
-  background-color: var(--color-accent-light);
-}
-
-.cookie-button.decline {
-  background-color: var(--color-error);
-}
-
-.cookie-button.decline:hover {
-  background-color: #e60000;
-}
-
 /*=== Welcome Message Overlay ===*/
 .welcome-message-overlay {
   position: fixed;

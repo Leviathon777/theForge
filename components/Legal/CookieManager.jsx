@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Cookies from "js-cookie";
 import styles from "./CookieManager.module.css";
-import { PrivacyPolicy, TermsOfService, UserAgreement} from "../componentsindex";
+import { PrivacyPolicy, TermsOfService, UserAgreement, Button } from "../componentsindex";
 
 
 const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, handleDeclineCookies }) => {
@@ -47,10 +47,14 @@ const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, ha
                     <h2 className={styles.cookieHeader}>We Respect Your Privacy</h2>
                     <div className={styles.cookieBody}>
                         <p className={styles.cookieParagraph}>
-                            At XdRiP, XMarket, XECHO, TheForge, XdRiPia Content, and our affiliates, we strive to provide a personalized and enhanced experience for all users. To achieve this, we use cookies and similar technologies to understand your preferences, improve site functionality, analyze website performance, and deliver tailored content, including promotions and marketing.
+                            At XdRiP, XMarket, XECHO, TheForge, XdRiPia Content, and our affiliates, we strive to provide a personalized and
+                            enhanced experience for all users. To achieve this, we use cookies and similar technologies to understand your
+                            preferences, improve site functionality, analyze website performance, and deliver tailored content, including
+                            promotions and marketing.
                         </p>
                         <p className={styles.cookieParagraph}>
-                            <strong>How We Use Your Information:</strong> When you interact with our platform, we may collect and process limited information about your browsing behavior. This data helps us to:
+                            <strong>How We Use Your Information:</strong> When you interact with our platform, we may collect and process limited
+                            information about your browsing behavior. This data helps us to:
                         </p>
                         <ul className={styles.cookieList}>
                             <li>Optimize your experience by remembering your preferences.</li>
@@ -59,26 +63,18 @@ const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, ha
                             <li>Ensure compliance with security and legal obligations.</li>
                         </ul>
                         <p className={styles.cookieParagraph}>
-                            Please note that we <strong>do not sell your personal data</strong> to third parties. Any information shared is strictly for the purposes outlined above and remains protected under our
-                            <button
-                                className={styles.linkButton}
-                                onClick={() => setIsPrivacyPolicyModalOpen(true)}
-                            >
-                                Privacy Policy
-                            </button>.
+                            Please note that we <strong>do not sell your personal data</strong> to third parties. Any information
+                            shared is strictly for the purposes outlined above and remains protected under our privacy policy.
                         </p>
                         <p className={styles.cookieParagraph}>
-                            <strong>Your Choices Matter:</strong> You are in control of your data and how it is used. By clicking "Accept All," you consent to the use of cookies for the purposes stated above. If you prefer to customize your cookie settings, you may click "Manage Preferences" to select only essential cookies or decline non-essential cookies altogether.
+                            <strong>Your Choices Matter:</strong> You are in control of your data and how it is used. By clicking "Accept All,"
+                            you consent to the use of cookies for the purposes stated above. If you prefer to customize your cookie settings,
+                            you may click "Manage Preferences" to select only essential cookies or decline non-essential cookies altogether.
                         </p>
                         <p className={styles.cookieParagraph}>
-                            Additionally, while we may use limited data to send personalized promotional content, you can
-                            <button
-                                className={styles.linkButton}
-                                onClick={() => setIsUserAgreementModalOpen(true)}
-                            >
-                                opt out of receiving promotional emails
-                            </button>{" "}
-                            at any time. Opting out will not affect essential service communications required for your account.
+                            Additionally, while we may use limited data to send personalized promotional content,
+                            you can opt out of receiving promotional emails at any time. Opting out will not
+                            affect essential service communications required for your account.
                         </p>
                     </div>
                     <div className={styles.footerLinks}>
@@ -96,7 +92,7 @@ const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, ha
                             >
                                 Privacy Policy
                             </button>{" "}
-                            |{" "}
+                            | {" "}
                             <button
                                 className={styles.linkButton}
                                 onClick={() => setIsUserAgreementModalOpen(true)}
@@ -106,29 +102,50 @@ const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, ha
                         </p>
                     </div>
                     <div className={styles.buttonContainer}>
-                        <button className={`${styles.cookieButton} ${styles.accept}`} onClick={acceptManager}>
-                            Accept All
-                        </button>
-                        <button className={`${styles.cookieButton} ${styles.decline}`} onClick={closeManager}>
-                            Decline
-                        </button>
-                        <button
+                        <Button
+                            btnName="Accept All"
+                            onClick={acceptManager}
+                            className={`${styles.cookieButton} ${styles.accept}`}
+                            fontSize=".8rem"
+                            paddingTop=".5rem"
+                            paddingRight=".75rem"
+                            paddingBottom=".5rem"
+                            paddingLeft=".75rem"
+                            background="rgba(0, 255, 0, 0.5)"
+                        />
+                        <Button
+                            btnName="Decline"
+                            onClick={closeManager}
+                            className={`${styles.cookieButton} ${styles.decline}`}
+                            fontSize=".8rem"
+                            paddingTop=".5rem"
+                            paddingRight=".75rem"
+                            paddingBottom=".5rem"
+                            paddingLeft=".75rem"
+                            background="rgba(255, 0, 0, 0.5)"
+                        />
+                        <Button
+                            btnName="Manage Preferences"
                             onClick={() => setShowPreferencesModal(true)}
                             className={`${styles.cookieButton} ${styles.manage}`}
-                        >
-                            Manage Preferences
-                        </button>
+                            fontSize=".8rem"
+                            paddingTop=".5rem"
+                            paddingRight=".75rem"
+                            paddingBottom=".5rem"
+                            paddingLeft=".75rem"
+                            background="rgba(0, 0, 255, 0.5)"
+                        />
+
                     </div>
                 </div>
             </div>
-
             {
                 isTermsModalOpen && (
                     <div className={styles.modal}>
-                        <TermsOfService />
-                        <button className={styles.closeButton} onClick={() => setIsTermsModalOpen(false)}>
-                            Close
-                        </button>
+                        <TermsOfService
+                            isOpen={isTermsModalOpen}
+                            onRequestClose={() => setIsTermsModalOpen(false)}
+                        />
                     </div>
                 )
             }
@@ -143,10 +160,11 @@ const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, ha
             {
                 isUserAgreementModalOpen && (
                     <div className={styles.modal}>
-                        <UserAgreement />
-                        <button className={styles.closeButton} onClick={() => setIsUserAgreementModalOpen(false)}>
-                            Close
-                        </button>
+                        <UserAgreement
+                            isOpen={isUserAgreementModalOpen}
+                            onRequestClose={() => setIsUserAgreementModalOpen(false)}
+                        />
+
                     </div>
                 )
             }
@@ -168,10 +186,10 @@ const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, ha
                     >
                         <div
                             style={{
-                                background: "rgba(0, 0, 0, 0.8)",
+                                background: "linear-gradient(145deg, #0d0d0d, #1a1a1a)",
                                 padding: "20px",
-                                borderRadius: "8px",
-                                border: "4px solid black",
+                                borderRadius: ".5rem",
+                                border: ".1rem solid rgba(255, 255, 255, 0.301)",
                                 width: "90%",
                                 maxWidth: "500px",
                                 textAlign: "left",
@@ -207,35 +225,29 @@ const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, ha
                                     <span>Marketing Cookies (Deliver personalized promotions)</span>
                                 </label>
                             </form>
-                            <div style={{ marginTop: "20px", textAlign: "center" }}>
-                                <button
+                            <div className={styles.buttonContainer}>
+                                <Button
+                                    btnName="Save Preferences"
                                     onClick={savePreferences}
-                                    style={{
-                                        margin: "0 10px",
-                                        padding: "10px 20px",
-                                        background: "#28a745",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        cursor: "pointer",
-                                    }}
-                                >
-                                    Save Preferences
-                                </button>
-                                <button
+                                    className={`${styles.cookieButton} ${styles.manage}`}
+                                    fontSize=".8rem"
+                                    paddingTop=".5rem"
+                                    paddingRight="1rem"
+                                    paddingBottom=".5rem"
+                                    paddingLeft="1rem"
+                                   background="rgba(0, 255, 0, 0.5)"
+                                />
+                                <Button
+                                    btnName="Close"
                                     onClick={closePreferencesModal}
-                                    style={{
-                                        margin: "0 10px",
-                                        padding: "10px 20px",
-                                        background: "#dc3545",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        cursor: "pointer",
-                                    }}
-                                >
-                                    Cancel
-                                </button>
+                                    className={`${styles.cookieButton} ${styles.manage}`}
+                                    fontSize=".8rem"
+                                    paddingTop=".5rem"
+                                    paddingRight="1rem"
+                                    paddingBottom=".5rem"
+                                    paddingLeft="1rem"
+                                    background="rgba(255, 0, 0, 0.5)"
+                                />
                             </div>
                         </div>
                     </div>

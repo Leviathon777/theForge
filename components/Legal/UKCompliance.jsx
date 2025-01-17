@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import Style from "./UKCompliance.module.css";
 
-const UKCompliance = ({ isOpen, onRequestClose, onConfirm }) => {
+
+const UKCompliance = ({ isOpen, onRequestClose, isClosing }) => {
   const [agreed, setAgreed] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
 
@@ -12,7 +13,7 @@ const UKCompliance = ({ isOpen, onRequestClose, onConfirm }) => {
       onRequestClose={onRequestClose}
       contentLabel="UK Compliance Agreement"
       className={Style.modal}
-      overlayClassName={Style.modalOverlay}
+      overlayClassName={`${Style.modalOverlay} ${isClosing ? Style.slideDown : ""}`}
     >
       <div className={Style.modalWrapper}>
         <h2 className={Style.modalTitle}>Important Disclosures for UK Investors</h2>

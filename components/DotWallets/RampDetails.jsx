@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import Style from "./RampDetails.module.css";
 import Modal from "react-modal";
-
+import { Button } from "../componentsindex.js";
 if (typeof window !== 'undefined') {
   Modal.setAppElement('#__next');
 }
@@ -96,9 +96,19 @@ const RampDetails = ({ isVisible, onClose, infoModalData }) => {
         </div>
       </div>
       <div className={Style.bottom}>
-        <button onClick={onClose} className={Style.closeButton}>
-          Close
-        </button>
+        <Button
+          btnName=" Close"
+          onClick={onClose}
+          fontSize="1.25rem"
+          paddingTop=".25rem"
+          paddingRight="1rem"
+          paddingBottom=".25rem"
+          paddingLeft="1rem"
+          background=""
+          isActive={false}
+          title="Go Left"
+          icon=""
+        />
       </div>
     </Modal>
   );

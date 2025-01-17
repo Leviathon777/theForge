@@ -1,101 +1,111 @@
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.modalOverlay {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 2000;
+  overflow: hidden;
+  animation: slideUp 0.5s ease-in-out forwards;
+}
+
+.modalOverlay.slideDown {
+  animation: slideDown 0.5s ease-in-out forwards;
+}
+
 .modal {
-    max-width: 600px;
-    width: 600px;
-    margin: auto;
-    padding: 20px;
-    position: relative;
-    background: var(--background-gradient-dark);
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    overflow-y: auto;
-    max-height: 80vh;
-  }
-  
-  .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-  }
-  
-  .modalWrapper {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    color: white;
-  }
-  
-  .closeButton {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
-  
-  .title {
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
-    color: white;
-    text-align: center;
-  }
-  
-  .success {
-    color: green;
-    font-size: 1rem;
-    margin-bottom: 1rem;
-  }
-  
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .label {
-    font-size: 1rem;
-    text-align: left;
-    color: white;
-  }
-  
-  .input,
-  .textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-  }
-  
-  .textarea {
-    resize: none;
-    height: 100px;
-  }
-  
-  .submitButton {
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .submitButton:hover {
-    background-color: #0056b3;
-  }
-  
-  .submitButton:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
+  width: 36rem;
+  padding: 20px;
+  position: relative;
+  border-top-left-radius: .5rem;
+  border-top-right-radius: .5rem;
+  justify-content: center;
+  align-items: flex-end;
+  background: var(--background-gradient-dark);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border-top: .1rem solid rgba(255, 255, 255, 0.301);
+  border-right: .1rem solid rgba(255, 255, 255, 0.301);
+  border-left: .1rem solid rgba(255, 255, 255, 0.301);
+  overflow-y: auto;
+  max-height: 90vh;
+  z-index: 9999;
+}
+
+.modalWrapper {
+  padding: 0rem .5rem 0rem .5rem;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+.close_buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0rem;
+  margin: 0rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: white;
+  text-align: center;
+}
+
+.success {
+  color: green;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.label {
+  font-size: 1rem;
+  text-align: left;
+  color: white;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.textarea {
+  resize: none;
+  height: 100px;
+}

@@ -1,17 +1,20 @@
 import React from "react";
 import Modal from "react-modal";
 import Style from "./PrivacyPolicy.module.css";
+import { Button } from "../componentsindex";
 
-const PrivacyPolicy = ({ isOpen, onRequestClose }) => (
+const PrivacyPolicy = ({ isOpen, onRequestClose, isClosing }) => (
+
+  
   <Modal
     isOpen={isOpen}
     onRequestClose={onRequestClose}
     contentLabel="Privacy Policy"
     className={Style.modal}
-    overlayClassName={Style.modalOverlay}
+    overlayClassName={`${Style.modalOverlay} ${isClosing ? Style.slideDown : ""}`}
   >
     <div className={Style.modalWrapper}>
-      <h2 className={Style.modalTitle}>Privacy Policy</h2>
+      <h2 className={Style.modalTitle}>XDRIP Privacy Policy</h2>
       <p className={Style.modalIntro}>
         Welcome to <strong>The Forge - Medals of Honor</strong>, a platform developed by XDRIP Digital Management LLC. This Privacy Policy outlines how we collect, use, and protect your personal information.
       </p>
@@ -97,10 +100,17 @@ const PrivacyPolicy = ({ isOpen, onRequestClose }) => (
       <div className={Style.lastUpdated}>
         <p>Last Updated: 1/5/2025</p>
       </div>
-
-      <button onClick={onRequestClose} className={Style.closeButton}>
-        Close
-      </button>
+      <Button
+        btnName="Close"
+        onClick={onRequestClose}
+        fontSize="1rem"
+        paddingTop=".25rem"
+        paddingRight="1rem"
+        paddingBottom=".25rem"
+        paddingLeft="1rem"
+        background=""
+        title="Close Modal"
+      />
     </div>
   </Modal>
 );

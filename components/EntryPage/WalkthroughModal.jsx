@@ -135,6 +135,11 @@ const WalkthroughModal = ({ isOpen, onRequestClose = false }) => {
                             btnName="Back to Wallet Options"
                             onClick={() => setHasWallet(null)}
                             fontSize="inherit"
+                            paddingTop=".5rem"
+                            paddingRight="1rem"
+                            paddingBottom=".5rem"
+                            paddingLeft="1rem"
+                            background=""
                             className={styles.actionButton}
                         />
                     ) : (
@@ -142,6 +147,11 @@ const WalkthroughModal = ({ isOpen, onRequestClose = false }) => {
                             btnName="Back"
                             onClick={() => setStep(step - 1)}
                             fontSize="inherit"
+                            paddingTop=".5rem"
+                            paddingRight="1rem"
+                            paddingBottom=".5rem"
+                            paddingLeft="1rem"
+                            background=""
                             className={styles.actionButton}
                         />
                     )}
@@ -149,6 +159,11 @@ const WalkthroughModal = ({ isOpen, onRequestClose = false }) => {
                         <Button
                             btnName="Next"
                             fontSize="inherit"
+                            paddingTop=".5rem"
+                            paddingRight="1rem"
+                            paddingBottom=".5rem"
+                            paddingLeft="1rem"
+                            background=""
                             onClick={() => setStep(step + 1)}
                             className={styles.actionButton}
                         />
@@ -157,6 +172,11 @@ const WalkthroughModal = ({ isOpen, onRequestClose = false }) => {
                         <Button
                             btnName="Finish Walkthrough"
                             fontSize="inherit"
+                            paddingTop=".5rem"
+                            paddingRight="1rem"
+                            paddingBottom=".5rem"
+                            paddingLeft="1rem"
+                            background=""
                             onClick={onRequestClose}
                             className={styles.finishButton}
                         />
@@ -184,6 +204,11 @@ const WalkthroughModal = ({ isOpen, onRequestClose = false }) => {
                     btnName="X"
                     onClick={onRequestClose}
                     fontSize="10px"
+                    paddingTop=".5rem"
+                    paddingRight="1rem"
+                    paddingBottom=".5rem"
+                    paddingLeft="1rem"
+                    background=""
                     className={styles.closeButton}
                     isActive={false}
                 />

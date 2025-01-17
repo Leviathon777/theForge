@@ -17,8 +17,8 @@
     border-radius: 1rem;
     padding: 20px;
     width: 90%;
-    max-width: 600px;
-    max-height: 90vh;
+    max-width: 400px;
+    max-height: 90%;
     border-radius: 1rem;
     background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
     box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
@@ -63,18 +63,25 @@
   .continueButton:hover {
     background-color: #0056b3;
   }
-  
-  @media (max-width: 400px) {
-    .modalContent h2 {
-      font-size: 1.25rem;
-    }
-  
-    .modalContent p {
-      font-size: 0.9rem;
-    }
-  
-    .continueButton {
-      font-size: 0.9rem;
-      padding: 10px 15px;
-    }
+
+
+
+
+/* For screens up to 480px wide */
+@media (max-width: 480px) {  
+
+  .modalContent h2 {
+    font-size: 1.25rem;
   }
+
+  .modalContent p {
+    font-size: 0.9rem;
+  }
+
+  .continueButton {
+    font-size: 0.9rem;
+    padding: 10px 15px;
+  }
+}
+
+
