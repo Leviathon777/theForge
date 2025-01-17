@@ -15,9 +15,9 @@ const Button = ({
   fontSize,
   paddingRight = "0",
   paddingLeft = "0",
-  padding = "0px 0px",
+  paddingTop = "0",
+  paddingBottom = "0",
   title = "",
-  // NEW PROP
   background, 
 }) => {
   const playClickSound = () => {
@@ -41,8 +41,8 @@ const Button = ({
     <div className={`${Style.box} ${isActive ? Style.active : ""}`}>
       <button
         id={id}
-        className={`btn ${classStyle} ${isActive ? "active" : ""}`}
-        style={{
+        className={`${Style.btn} ${classStyle} ${isActive ? "active" : ""}`}
+        style={{         
           fontSize,
           ...(background && { background }),
         }}
@@ -63,7 +63,7 @@ const Button = ({
         <div className={Style.btnName}>
           <span
             className={Style.buttonName}
-            style={{ paddingRight, paddingLeft, padding }}
+            style={{ paddingTop, paddingRight, paddingBottom, paddingLeft }}
           >
             {btnName}
           </span>

@@ -141,6 +141,11 @@ const KYCPage = () => {
                 onClick={() => router.push('/TheForge')}
                 className={styles.kycButton}
                 fontSize="inherit"
+                paddingTop=".5rem"
+                paddingRight="1rem"
+                paddingBottom=".5rem"
+                paddingLeft="1rem"
+                background=""
               />
             </div>
           </div>
@@ -160,6 +165,11 @@ const KYCPage = () => {
               onClick={handleBeginKYC}
               className={styles.kycButton}
               fontSize="inherit"
+              paddingTop=".5rem"
+              paddingRight="1rem"
+              paddingBottom=".5rem"
+              paddingLeft="1rem"
+              background=""
               disabled={loading}
             />
           ) : formUrl ? (

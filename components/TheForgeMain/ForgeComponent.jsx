@@ -209,7 +209,7 @@ const ForgeComponent = () => {
         try {
           const userData = await getForger(address);
           if (userData && userData.fullName && userData.email) {
-            setUserInfo(userData);         
+            setUserInfo(userData);
             const hasShownWelcome = localStorage.getItem("hasShownWelcome");
             if (!hasShownWelcome) {
               setIsWelcomeModalVisible(true);
@@ -485,7 +485,7 @@ const ForgeComponent = () => {
       const transaction = await forgeFunction(ipfsHash, {
         value: price,
       });
-      
+
       const receipt = await transaction.wait();
       if (receipt.status === 1) {
         toast.success("Your Medal Of Honor was forged successfully!");
@@ -663,8 +663,8 @@ const ForgeComponent = () => {
           revenuePercent: revenueAccess,
           xdripBonusPercent: xdripBonus,
         };
-        await trackDetailedTransaction(address, medalType, transactionData); 
-        fetchDots();     
+        await trackDetailedTransaction(address, medalType, transactionData);
+        fetchDots();
       } else {
         toast.error("Transaction failed. Please try again.");
       }
@@ -716,7 +716,7 @@ const ForgeComponent = () => {
   useEffect(() => {
     if (address) {
       setCurrentAccount(address);
-      fetchMedalCount(address); 
+      fetchMedalCount(address);
     } else {
       setCurrentAccount("");
     }
@@ -972,18 +972,24 @@ const handleForgeClick = (medal) => {
                         </div>
                         <div
                           style={{
-                            marginLeft: "10px",
+                            marginLeft: "1rem",
                             display: "flex",
                             alignItems: "center",
-                            paddingLeft: "5px",
+                            paddingLeft: "1rem",
+                            paddingRight: ".3rem",
                             marginBottom: "0px",
+                            borderRadius: ".5rem"
                           }}
                         >
                           <Image
                             src="/img/mohwallet-logo.png"
                             alt="MOH"
-                            width="30"
-                            height="30"
+                            width="35"
+                            height="35"
+                            style={{
+                              borderRadius: "50%",
+                              
+                            }}
                           />
                         </div>
                       </div>
@@ -1031,7 +1037,7 @@ const handleForgeClick = (medal) => {
                       closeDropdown();
                     }}
                   >
-                    HOW TO INVEST WITH XDRIP
+                    INVESTING TUTORIAL
                   </div>
                   <div
                     className={Style.dropdownMenuItem}
@@ -1050,11 +1056,13 @@ const handleForgeClick = (medal) => {
                             userInfo: JSON.stringify(userInfo),
                           },
                         });
+                        closeDropdown();
                       } else {
                         router.push({
                           pathname: "/InvestorProfile",
                           query: { address, xdripBalance, bnbBalance, },
                         });
+                        closeDropdown();
                       }
                     }}
                   >
@@ -1072,8 +1080,10 @@ const handleForgeClick = (medal) => {
                             address,
                           },
                         });
+                        closeDropdown();
                       } else {
                         toast.info("To access investor areas, please connect your wallet.");
+                        closeDropdown();
                       }
                     }}
                   >
@@ -1150,9 +1160,12 @@ const handleForgeClick = (medal) => {
                               <Button
                                 btnName="FORGE"
                                 onClick={() => handleForgeClick(item)}
-                                classStyle="size1"
-                                fontSize="12px"
-                                padding="0px 0px"
+                                fontSize=".8rem"
+                                paddingTop=".5rem"
+                                paddingRight="1rem"
+                                paddingBottom=".5rem"
+                                paddingLeft="1rem"
+                                background=""
                                 isActive={false}
                                 setIsActive={() => { }}
                                 title={item.title === "ETERNAL" && userInfo?.kycStatus !== "approved"
@@ -1183,15 +1196,15 @@ const handleForgeClick = (medal) => {
                               <Button
                                 btnName="DETAILS"
                                 onClick={() => handleMedalDetails(item)}
-                                paddingLeft="default"
-                                paddingRight="default"
-                                fontSize="12px"
+                                fontSize=".8rem"
+                                paddingTop=".5rem"
+                                paddingRight="1rem"
+                                paddingBottom=".5rem"
+                                paddingLeft="1rem"
+                                background=""
                                 isActive={false}
                                 setIsActive={() => { }}
                                 title="Medal Details"
-                                imageWidth={50}
-                                imageHeight={50}
-                                icon=""
                               />
                             </div>
                           </div>
@@ -1223,8 +1236,12 @@ const handleForgeClick = (medal) => {
               <Button
                 btnName="⟵"
                 onClick={() => handleArrowClick("right")}
-                classStyle={Style.arrowButton}
                 fontSize="1.75rem"
+                paddingTop=".25rem"
+                paddingRight="1rem"
+                paddingBottom=".25rem"
+                paddingLeft="1rem"
+                background=""
                 isActive={false}
                 title="Go Left"
                 icon=""
@@ -1232,8 +1249,12 @@ const handleForgeClick = (medal) => {
               <Button
                 btnName="⟶"
                 onClick={() => handleArrowClick("left")}
-                classStyle={Style.arrowButton}
                 fontSize="1.75rem"
+                paddingTop=".25rem"
+                paddingRight="1rem"
+                paddingBottom=".25rem"
+                paddingLeft="1rem"
+                background=""
                 isActive={false}
                 title="Go Right"
                 icon=""
@@ -1252,10 +1273,10 @@ const handleForgeClick = (medal) => {
         )}
 
         {isConfirmationModalVisible && (
-          <div className={Style.confirmation_modal} onClick={(e) => e.target === e.currentTarget && setIsConfirmationModalVisible(false)}>
-            <div className={Style.confirmation_modal_content}>
+          <div className={Style.welcome_modal} onClick={(e) => e.target === e.currentTarget && setIsConfirmationModalVisible(false)}>
+           <div className={Style.welcome_modal_content}>
               <h2>Confirm Forging</h2>
-              <p>Are you sure you want to forge the {currentMedal.title} medal for {currentMedal.price}?</p>
+              <p>Are you sure you want to forge the {selectedMedalForForge?.name} medal for {selectedMedalForForge?.price}?</p>
               <div className={Style.modal_buttons}>
                 <button onClick={confirmForge} className={Style.confirm_button}>Confirm</button>
                 <button onClick={() => setIsConfirmationModalVisible(false)} className={Style.cancel_button}>Cancel</button>
@@ -1274,11 +1295,14 @@ const handleForgeClick = (medal) => {
                 <Button
                   btnName="Close"
                   onClick={() => setIsWelcomeModalVisible(false)}
-                  classStyle={Style.close_button}
-                  fontSize="inherit"
+                  fontSize="1rem"
                   isActive={false}
                   title="Close Welcome Modal"
-                  icon=""
+                  paddingTop=".5rem"
+                  paddingRight="1rem"
+                  paddingBottom=".5rem"
+                  paddingLeft="1rem"
+                  background=""
                 />
               </div>
             </div>
@@ -1299,12 +1323,22 @@ const handleForgeClick = (medal) => {
                 <Button
                   btnName="Create Profile"
                   onClick={handleProfileRedirect}
-                  fontSize="inherit"
+                  fontSize="1rem"
+                  paddingTop=".5rem"
+                  paddingRight="1rem"
+                  paddingBottom=".5rem"
+                  paddingLeft="1rem"
+                  background=""
                 />
                 <Button
                   btnName="Later"
                   onClick={() => setIsReminderPopupVisible(false)}
-                  fontSize="inherit"
+                  fontSize="1rem"
+                  paddingTop=".5rem"
+                  paddingRight="1rem"
+                  paddingBottom=".5rem"
+                  paddingLeft="1rem"
+                  background=""
                 />
               </div>
             </div>
@@ -1382,7 +1416,12 @@ const handleForgeClick = (medal) => {
                           onClick={() => {
                             setModalStep("paymentOptions");
                           }}
-                          fontSize="inherit"
+                                            fontSize="1rem"
+                  paddingTop=".5rem"
+                  paddingRight="1rem"
+                  paddingBottom=".5rem"
+                  paddingLeft="1rem"
+                  background=""
                         />
                         <Button
                           btnName="Go to KYC Page"
@@ -1393,7 +1432,12 @@ const handleForgeClick = (medal) => {
                             });
                             setIsPaymentModalVisible(false);
                           }}
-                          fontSize="inherit"
+                                           fontSize="1rem"
+                  paddingTop=".5rem"
+                  paddingRight="1rem"
+                  paddingBottom=".5rem"
+                  paddingLeft="1rem"
+                  background=""
                         />
                       </div>
                     </div>
@@ -1417,14 +1461,24 @@ const handleForgeClick = (medal) => {
                       onClick={() => {
                         setModalStep("kycPrompt");
                       }}
-                      fontSize="inherit"
+                                       fontSize="1rem"
+                  paddingTop=".5rem"
+                  paddingRight="1rem"
+                  paddingBottom=".5rem"
+                  paddingLeft="1rem"
+                  background=""
                     />
                     <Button
                       btnName="Pay with Transak"
                       onClick={() => {
                         proceedWithTransak(selectedMedalForForge);
                       }}
-                      fontSize="inherit"
+                                       fontSize="1rem"
+                  paddingTop=".5rem"
+                  paddingRight="1rem"
+                  paddingBottom=".5rem"
+                  paddingLeft="1rem"
+                  background=""
                     />
                   </div>
                 </>

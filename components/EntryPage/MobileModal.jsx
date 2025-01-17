@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./MobileModal.module.css";
-
+import {Button} from "../componentsindex"
 const MobileModal = ({ onDismiss }) => {
   return (
     <div className={styles.modalOverlay}>
@@ -15,9 +15,16 @@ const MobileModal = ({ onDismiss }) => {
         <p>
           Detailed instructions will be found on mobile site if you choose to continue on mobile.
         </p>
-        <button className={styles.continueButton} onClick={onDismiss}>
-          Continue on Mobile
-        </button>
+        <Button
+              btnName=" Continue on Mobile"
+              onClick={onDismiss}
+              className={styles.continueButton}
+              fontSize="1rem"
+              paddingTop=".5rem"
+              paddingRight=".75rem"
+              paddingBottom=".5rem"
+              paddingLeft=".75rem"
+            />
       </div>
     </div>
   );

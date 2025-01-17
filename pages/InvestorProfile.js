@@ -32,6 +32,15 @@ const InvestorProfile = () => {
     const [otherTerritory, setOtherTerritory] = useState("");
     const [ukFCAAgreed, setUKFCAAgreed] = useState(false);
     const [isUKComplianceModalOpen, setIsUKComplianceModalOpen] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
+
+    const closeWithAnimation = (closeFunction) => {
+        setIsClosing(true);
+        setTimeout(() => {
+            closeFunction();
+            setIsClosing(false);
+        }, 500);
+    };
 
 
     useEffect(() => {
@@ -91,10 +100,10 @@ const InvestorProfile = () => {
             dob,
             agreed,
             kyc: {
-            kycStatus: "not submitted",
-            kycCompletedAt: "N/A",
-            kycSubmittedAt: "N/A",
-            kycVerified: "false",
+                kycStatus: "not submitted",
+                kycCompletedAt: "N/A",
+                kycSubmittedAt: "N/A",
+                kycVerified: "false",
             },
             ukFCAAgreed: territory === "UK" ? ukFCAAgreed : null,
             dateOfJoin: new Date().toISOString(),
@@ -480,14 +489,24 @@ const InvestorProfile = () => {
 
                     <div className={Style.buttonGroup}>
                         <Button
-                            btnName="Confirm Profile"
+                            btnName="Submit Profile"
                             onClick={handleSubmit}
                             fontSize="14px"
+                            paddingTop=".5rem"
+                            paddingRight="1rem"
+                            paddingBottom=".5rem"
+                            paddingLeft="1rem"
+                            background=""
                             isActive={false}
                         />
                         <Button
                             btnName="Back to Forge"
                             onClick={handleBackToForge}
+                            paddingTop=".5rem"
+                            paddingRight="1rem"
+                            paddingBottom=".5rem"
+                            paddingLeft="1rem"
+                            background=""
                             fontSize="14px"
                             isActive={false}
                         />
@@ -496,20 +515,24 @@ const InvestorProfile = () => {
             </div>
 
             <TermsOfService
-                isOpen={isTermsModalOpen}
-                onRequestClose={() => setIsTermsModalOpen(false)}
+              isOpen={isTermsModalOpen}
+              onRequestClose={() => closeWithAnimation(() => setIsTermsModalOpen(false))}
+              isClosing={isClosing}
             />
             <UserAgreement
-                isOpen={isUserAgreementModalOpen}
-                onRequestClose={() => setIsUserAgreementModalOpen(false)}
+              isOpen={isUserAgreementModalOpen}
+              onRequestClose={() => closeWithAnimation(() => setIsUserAgreementModalOpen(false))}
+              isClosing={isClosing}
             />
             <PrivacyPolicy
-                isOpen={isPrivacyPolicyModalOpen}
-                onRequestClose={() => setIsPrivacyPolicyModalOpen(false)}
+              isOpen={isPrivacyPolicyModalOpen}
+              onRequestClose={() => closeWithAnimation(() => setIsPrivacyPolicyModalOpen(false))}
+              isClosing={isClosing}
             />
             <UKCompliance
                 isOpen={isUKComplianceModalOpen}
-                onRequestClose={() => setIsUKComplianceModalOpen(false)}
+                onRequestClose={() => closeWithAnimation(() => setIsUKComplianceModalOpen(false))}
+                isClosing={isClosing}
             />
 
         </div>

@@ -185,6 +185,45 @@
 
 /* Tablet (768px and below) */
 @media (max-width: 768px) {
+
+}
+
+/* Extra Small Devices (Portrait Smartphones) */
+@media (max-width: 480px) {
+  .title {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
+
+  .walkthrough h2 {
+    font-size: 1.2rem;
+    margin-top: 15px;
+    margin-bottom: 8px;
+  }
+
+  .walkthrough p,
+  .walkthrough ul,
+  .walkthrough ol {
+    margin-bottom: 10px;
+  }
+
+  .button_wrapper {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #sumsub-websdk-container {
+    min-height: 400px;
+  }
+}
+
+/* Small Devices (Smartphones) */
+@media (min-width: 481px) and (max-width: 600px) {
+  /* Add styles for regular smartphones here */
+}
+
+/* Medium Devices (Tablets and Larger Smartphones) */
+@media (min-width: 601px) and (max-width: 768px) {
   .container {
     position: relative; /* Fixes background scrolling issue */
     height: auto;
@@ -214,29 +253,5 @@
 
 /* Mobile (480px and below) */
 @media (max-width: 480px) {
-  .title {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-  }
 
-  .walkthrough h2 {
-    font-size: 1.2rem;
-    margin-top: 15px;
-    margin-bottom: 8px;
-  }
-
-  .walkthrough p,
-  .walkthrough ul,
-  .walkthrough ol {
-    margin-bottom: 10px;
-  }
-
-  .button_wrapper {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  #sumsub-websdk-container {
-    min-height: 400px;
-  }
 }

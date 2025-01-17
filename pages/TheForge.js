@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, memo, forwardRef, useContext } from "react";
 import { motion } from "framer-motion";
 import DotWallet from "../components/DotWallets/DotWallet";
-import { Button, SocialButtons, ForgeComponent, TermsOfService, UserAgreement, FlipBook, EmailFormPopup } from "../components/componentsindex";
+import { Button, SocialButtons, ForgeComponent, TermsOfService, UserAgreement, PrivacyPolicy, FlipBook, EmailFormPopup } from "../components/componentsindex";
 import MyDotData from "../Context/MyDotDataContext";
 import Style from "../styles/theForge.module.css";
 import { useSigner, useAddress } from '@thirdweb-dev/react';
@@ -46,6 +46,7 @@ const PwaInstructionsModal = ({ onClose }) => (
 const TheForge = () => {
   const [bnbPrice, setBnbPrice] = useState(null);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [isPrivacyPolicyModalOpen, setIsPrivacyPolicyModalOpen] = useState(false);
   const [isUserAgreementModalOpen, setIsUserAgreementModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
@@ -56,6 +57,15 @@ const TheForge = () => {
   const [isPwaModalOpen, setIsPwaModalOpen] = useState(false);
   const { setActivatePayload } = usePayload();
   const [isEmailFormOpen, setIsEmailFormOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const closeWithAnimation = (closeFunction) => {
+    setIsClosing(true);
+    setTimeout(() => {
+      closeFunction();
+      setIsClosing(false);
+    }, 500);
+  };
 
   useEffect(() => {
     setActivatePayload(true);
@@ -201,65 +211,77 @@ const TheForge = () => {
             <FlipBook />
           </div>
 
-          <div className={Style.glowingDivider}></div>
+          <div className={Style.footerGlowingDivider}></div>
           <div className={Style.fifth_component}>
-            <SocialButtons />
-            <div className={Style.button_botton_box}>
-              <Button
-                btnName="Terms of Service"
+            <div className={Style.socialRow}>
+              <SocialButtons />
+            </div>
+            <div className={Style.socialRow}>
+              2024 XDRIP Digital Management LLC
+            </div>
+            <div className={Style.linkRow}>
+              |
+              <span
+                className={Style.footerLink}
                 onClick={() => setIsTermsModalOpen(true)}
-                fontSize="inherit"
-                paddingLeft="0"
-                paddingRight="0"
-                isActive={false}
-                setIsActive={() => { }}
-                title="Terms of Service"
-              />
-              <Button
-                btnName="Contact Us"
-                onClick={() => setIsEmailFormOpen(true)}
-                fontSize="inherit"
-                paddingLeft="0"
-                paddingRight="0"
-                isActive={false}
-                setIsActive={() => { }}
-                title="Contact Us"
-              />
-              <Button
-                btnName="User Agreement"
+              >
+                Terms of Service
+              </span>
+              |
+              <span
+                className={Style.footerLink}
                 onClick={() => setIsUserAgreementModalOpen(true)}
-                fontSize="inherit"
-                paddingLeft="0"
-                paddingRight="0"
-                isActive={false}
-                setIsActive={() => { }}
-                title="User Agreement"
-              />
+              >
+                User Agreement
+              </span>
+              |
+              <span
+                className={Style.footerLink}
+                onClick={() => setIsPrivacyPolicyModalOpen(true)}
+              >
+                Privacy Policy
+              </span>
+              |
+              <span
+                className={Style.footerLink}
+                onClick={() => setIsEmailFormOpen(true)}
+              >
+                Contact Us
+              </span>
+              |
               {isOwner && (
-                <Button
-                  btnName="Owner Operations"
-                  onClick={handleNavigation}
-                  fontSize="inherit"
-                  paddingLeft=".5rem"
-                  paddingRight=".5rem"
-                  isActive={false}
-                  setIsActive={() => { }}
-                  title="Go to OwnerOps"
-                />
+                <>
+                  <span
+                    className={Style.footerLink}
+                    onClick={handleNavigation}
+                  >
+                    Owner Operations
+                  </span>
+                  |
+                </>
               )}
+
             </div>
             <TermsOfService
               isOpen={isTermsModalOpen}
-              onRequestClose={() => setIsTermsModalOpen(false)}
+              onRequestClose={() => closeWithAnimation(() => setIsTermsModalOpen(false))}
+              isClosing={isClosing}
             />
             <UserAgreement
               isOpen={isUserAgreementModalOpen}
-              onRequestClose={() => setIsUserAgreementModalOpen(false)}
+              onRequestClose={() => closeWithAnimation(() => setIsUserAgreementModalOpen(false))}
+              isClosing={isClosing}
+            />
+            <PrivacyPolicy
+              isOpen={isPrivacyPolicyModalOpen}
+              onRequestClose={() => closeWithAnimation(() => setIsPrivacyPolicyModalOpen(false))}
+              isClosing={isClosing}
             />
             {isEmailFormOpen && (
               <EmailFormPopup
                 isVisible={isEmailFormOpen}
-                onClose={() => setIsEmailFormOpen(false)}
+                onClose={() => closeWithAnimation(() => setIsEmailFormOpen(false))}
+                isClosing={isClosing}
               />
             )}
           </div>

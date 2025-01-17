@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import styles from "./EmailFormPopup.module.css";
 import Modal from "react-modal";
 import { sendContactUsEmail } from "../../firebase/forgeServices.js";
+import { Button } from "../componentsindex";
 
-const EmailFormPopup = ({ isVisible, onClose }) => {
+const EmailFormPopup = ({ isVisible, onClose, isClosing }) => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,7 +37,7 @@ const EmailFormPopup = ({ isVisible, onClose }) => {
         setSuccessMessage("");
         setIsSuccess(false);
         onClose();
-      }, 2000); // 2 seconds timeout
+      }, 2000);
       return () => clearTimeout(timeout);
     }
   }, [isSuccess, onClose]);
@@ -47,13 +48,24 @@ const EmailFormPopup = ({ isVisible, onClose }) => {
       onRequestClose={onClose}
       contentLabel="Contact Us"
       className={styles.modal}
-      overlayClassName={styles.modalOverlay}
+      overlayClassName={`${styles.modalOverlay} ${isClosing ? styles.slideDown : ""}`}
     >
       <div className={styles.modalWrapper}>
-        <button className={styles.closeButton} onClick={onClose}>
-          &times;
-        </button>
-        <h2 className={styles.title}>Send Us an Email</h2>
+        <div className={styles.close_buttonContainer}>
+          <Button
+            btnName="X"
+            onClick={onClose}
+            fontSize="10px"
+            paddingTop=".5rem"
+            paddingRight="1rem"
+            paddingBottom=".5rem"
+            paddingLeft="1rem"
+            background=""
+            className={styles.closeButton}
+            isActive={false}
+          />
+        </div>
+        <h2 className={styles.title}>Contact XDRIP Digital Management</h2>
         {successMessage && <p className={styles.success}>{successMessage}</p>}
         {!isSuccess && (
           <form onSubmit={handleSubmit} className={styles.form}>
@@ -78,13 +90,16 @@ const EmailFormPopup = ({ isVisible, onClose }) => {
               required
               className={styles.textarea}
             />
-            <button
-              type="submit"
-              className={styles.submitButton}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Sending..." : "Send"}
-            </button>
+            <Button
+              btnName="Submit"
+              onClick={handleSubmit}
+              fontSize=".8rem"
+              paddingTop=".5rem"
+              paddingRight=".75rem"
+              paddingBottom=".5rem"
+              paddingLeft=".75rem"
+              background=""
+            />
           </form>
         )}
       </div>

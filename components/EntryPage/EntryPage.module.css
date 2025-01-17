@@ -112,6 +112,8 @@
   gap: 2rem;
 }
 
+
+
 @media (max-width: 599px) {
   .entryPageContainer {
     align-items: center;

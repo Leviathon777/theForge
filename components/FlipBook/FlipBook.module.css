@@ -514,48 +514,42 @@
 }
 
 
-
-
-@media ( max-width: 768px) {
-    .flipbookwrapper {
-        height: auto;
-        padding: 0;
-    }
-
+@media (max-width: 768px) {
     .cover .imagePage {
         width: 100%;
         height: auto;
         margin: 0 auto;
     }
 
-    .cover .pageContent_title {
-        font-size: 1.5rem;
-    }
-
     .dedicationContainer {
-        padding: .25rem;
+        padding: .25rem .5rem .5rem .5rem;
         border-bottom-left-radius: 0rem;
         border-top-left-radius: 0rem;
         border-bottom-right-radius: 1rem;
         border-top-right-radius: 1rem;
+    }
 
+    .dedicationContent {
+        padding: 1rem;
+        margin: 0rem;
     }
 
     .dedicationTitle {
-        font-size: 0.6rem;
+        font-size: 0.7rem;
         margin-bottom: 0rem;
     }
 
     .dedicationParagraph {
-        font-size: 0.55rem;
-        margin-bottom: 0em;
-        line-height: 1;
+        font-size: 0.6rem;
+        margin-bottom: 0.2rem;
+        line-height: 1.1;
         text-indent: 1rem;
     }
 
-
     .dedicationSignature {
-        font-size: 0.5rem;
+        font-size: 0.6rem;
+        margin: 0rem;
+        padding: 0rem;
     }
 
     .contentsContainer {
@@ -563,20 +557,20 @@
     }
 
     .contentsContent {
-        padding: .5rem;
+        padding: .25rem .5rem .5rem .5rem;
         border-radius: .5rem;
     }
 
     .contentsTitle {
-        font-size: 1.2rem;
+        font-size: 1rem;
     }
 
     .contentsList {
-        gap: 1px;
+        gap: .1rem;
     }
 
     .contentsItem {
-        padding: 2px 10px 2px 10px;
+        padding: .1rem .5rem .1rem .5rem;
         font-size: .65rem;
     }
 
@@ -599,6 +593,10 @@
     .value {
         font-size: 14px;
         font-weight: bold;
+    }
+
+    .proposalContent {
+        padding: .5rem;
     }
 
     .proposalTitle {

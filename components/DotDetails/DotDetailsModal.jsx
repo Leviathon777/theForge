@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useMemo } from "react";
 import Modal from "react-modal";
 import PropTypes from "prop-types";
-import { VideoPlayer } from "../componentsindex";
+import { VideoPlayer, Button } from "../componentsindex";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Style from "./DotDetailsModal.module.css";
@@ -45,19 +45,19 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, address
   }, []);
 
   const handleForgeClick = () => {
-        if (!address) {
-          toast.info("Please connect your wallet to proceed with Forging.");
-          return;
-        }
-        if (!userInfo) {
-          setIsReminderPopupVisible(true);
-          return;
-        }
+    if (!address) {
+      toast.info("Please connect your wallet to proceed with Forging.");
+      return;
+    }
+    if (!userInfo) {
+      setIsReminderPopupVisible(true);
+      return;
+    }
     forge(medal.title, medal.ipfsHash, medal.revenueAccess, medal.xdripBonus);
   };
-  
-  
-  
+
+
+
 
 
 
@@ -73,13 +73,18 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, address
       <div className={Style.MedalDetailsModal_content}>
         <div className={Style.MedalDetailsModal_header}>
           <h1>#{medal.id}</h1>
-          <button
-            className={Style.MedalDetailsModal_closeButton}
+          <Button
+            btnName="Close"
             onClick={onClose}
-            aria-label="Close Medal Details Modal"
-          >
-            Close
-          </button>
+            fontSize=".8rem"
+            paddingTop=".25rem"
+            paddingRight="1rem"
+            paddingBottom=".25rem"
+            paddingLeft="1rem"
+            background=""
+            title="Close Medal Details Modal"
+          />
+
         </div>
 
         <div className={Style.MedalDetailsModal_body}>
@@ -103,13 +108,18 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, address
 
             <div className={Style.detailsOverlay}>
               <div className={Style.detailsContent}>
-                <button
+              <div className={Style.buttonContainer}>
+                <Button
+                  btnName="Forge"
                   onClick={handleForgeClick}
-                  className={`${Style.forgeButton} ${Style.detailsButtonStyle}`}
-                >
-                  Forge
-                </button>
-
+                  fontSize=".8rem"
+                  paddingTop=".5rem"
+                  paddingRight="1rem"
+                  paddingBottom=".5rem"
+                  paddingLeft="1rem"
+                  background=""
+                />
+                </div>
                 <div className={Style.MedalDetailsModal_description}>
 
                   <h1>{medal.title || "NO DATA AVAILABLE"}</h1>
@@ -164,7 +174,7 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, address
       <div className={Style.fixedForgeButtonContainer}>
       </div>
 
-      
+
     </Modal>
   );
 });
@@ -175,11 +185,11 @@ MedalDetailsModal.propTypes = {
     ipfsHash: PropTypes.string.isRequired,
     revenueAccess: PropTypes.string.isRequired,
     xdripBonus: PropTypes.string.isRequired,
-    
+
   }).isRequired,
   onClose: PropTypes.func.isRequired,
   forge: PropTypes.func.isRequired,
-  userInfo: PropTypes.object, 
+  userInfo: PropTypes.object,
   isUserInfoModalOpen: PropTypes.bool,
   setIsUserInfoModalOpen: PropTypes.func,
 };

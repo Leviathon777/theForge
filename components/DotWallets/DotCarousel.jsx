@@ -90,6 +90,11 @@ const Carousel = ({ medals = [] }) => {
           btnName="⟵"
           onClick={prevVideo}
           fontSize="1.25rem"
+          paddingTop=".25rem"
+          paddingRight="1rem"
+          paddingBottom=".25rem"
+          paddingLeft="1rem"
+          background=""
           isActive={false}
           title="Go Left"
           icon=""
@@ -150,6 +155,11 @@ const Carousel = ({ medals = [] }) => {
           btnName="⟶"
           onClick={nextVideo}
           fontSize="1.25rem"
+          paddingTop=".25rem"
+          paddingRight="1rem"
+          paddingBottom=".25rem"
+          paddingLeft="1rem"
+          background=""
           isActive={false}
           title="Go Right"
           icon=""

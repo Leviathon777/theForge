@@ -14,7 +14,7 @@ import Head from "next/head";
 import Cookies from "js-cookie";
 import { MOHProvider } from "../Context/MOHProviderContext";
 import "../styles/globals.css";
-import { CookieManager, MobileModal } from "../components/componentsindex";
+import { CookieManager, MobileModal, Button } from "../components/componentsindex";
 import { ChainId } from "@thirdweb-dev/sdk";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -30,7 +30,7 @@ const AuthHandler = () => {
   const address = useAddress();
   const signer = useSigner();
   const disconnectWallet = useDisconnect();
-  
+
   const generateGenericPayloadMessage = (userAddress) => {
     if (!userAddress) {
       throw new Error("Wallet address is required to generate the generic payload message");
@@ -72,20 +72,30 @@ For support or assistance, contact our team at support@xdrip.io
           <div style={{ whiteSpace: "pre-line", textAlign: "left", padding: "10px" }}>
             <p className={Style.popupText}>{message}</p>
             <div className={Style.modalButtons}>
-              <button
+              <Button
+                btnName="Accept"
                 onClick={handleAccept}
                 onTouchStart={(e) => e.preventDefault() || handleAccept()}
                 className={Style.signatureButton}
-              >
-                Accept
-              </button>
-              <button
+                fontSize="1rem"
+                paddingTop=".5rem"
+                paddingRight="1rem"
+                paddingBottom=".5rem"
+                paddingLeft="1rem"
+                background="rgba(0, 255, 0, 0.5)"
+              />
+              <Button
+                btnName="Decline"
                 onClick={handleDecline}
                 onTouchStart={(e) => e.preventDefault() || handleDecline()}
                 className={Style.signatureButton}
-              >
-                Decline
-              </button>
+                fontSize="1rem"
+                paddingTop=".5rem"
+                paddingRight="1rem"
+                paddingBottom=".5rem"
+                paddingLeft="1rem"
+                background="rgba(255, 0, 0, 0.5)"
+              />
             </div>
           </div>
         </div>
@@ -277,7 +287,7 @@ const MyApp = ({ Component, pageProps }) => {
           content="The Medals of Honor Collection by XdRiP Digital Management, LLC"
         />
       </Head>
-      
+
       {isPwaModalVisible && isMobile ? (
         <MobileModal onDismiss={handleDismissPwaModal} />
       ) : isLoading ? (
@@ -313,64 +323,64 @@ const MyApp = ({ Component, pageProps }) => {
         </div>
       ) : (
         <PayloadProvider>
-        <ThirdwebProvider
-          activeChain={ChainId.BinanceSmartChainTestnet}
-          clientId={process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
-          //autoConnect={false}
-          modalConfig={{
-            disableBuyButton: true,
-          }}
-          supportedWallets={[
-            inAppWallet(),
-            metamaskWallet({ recommended: true }),
-            trustWallet(),
-            walletConnect(),
-            localWallet(),
+          <ThirdwebProvider
+            activeChain={ChainId.BinanceSmartChainTestnet}
+            clientId={process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
+            //autoConnect={false}
+            modalConfig={{
+              disableBuyButton: true,
+            }}
+            supportedWallets={[
+              inAppWallet(),
+              metamaskWallet({ recommended: true }),
+              trustWallet(),
+              walletConnect(),
+              localWallet(),
 
-          ]}
-        >
-          <ToastContainer
-            position="top-center"
-            autoClose={3000}
-            hideProgressBar={true}
-            closeOnClick={true}
-            pauseOnHover={true}
-            draggable={false}
-            style={{
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              zIndex: 9999,
-              maxWidth: "600px",
-              width: "auto",
-            }}
-            toastStyle={{
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              borderRadius: "16px",
-              boxShadow: "0 8px 15px rgba(0, 0, 0, 0.5)",
-              padding: "20px",
-              color: "#ffffff",
-              fontFamily: "'Saira', sans-serif",
-              textAlign: "center",
-              backdropFilter: "blur(8px)",
-            }}
-          />
-          <AuthHandler />
-          <MOHProvider>
-            {isCookieModalVisible && (
-              <CookieManager
-                preferences={cookiePreferences}
-                updatePreferences={updatePreferences}
-                handleAcceptCookies={handleAcceptCookies}
-                handleDeclineCookies={handleDeclineCookies}
-              />
-            )}
-            <Component
-              {...pageProps}
+            ]}
+          >
+            <ToastContainer
+              position="top-center"
+              autoClose={3000}
+              hideProgressBar={true}
+              closeOnClick={true}
+              pauseOnHover={true}
+              draggable={false}
+              style={{
+                position: "fixed",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                zIndex: 9999,
+                maxWidth: "600px",
+                width: "auto",
+              }}
+              toastStyle={{
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                borderRadius: "16px",
+                boxShadow: "0 8px 15px rgba(0, 0, 0, 0.5)",
+                padding: "20px",
+                color: "#ffffff",
+                fontFamily: "'Saira', sans-serif",
+                textAlign: "center",
+                backdropFilter: "blur(8px)",
+              }}
             />
-          </MOHProvider>
-        </ThirdwebProvider>
+            <AuthHandler />
+            <MOHProvider>
+              {isCookieModalVisible && (
+                <CookieManager
+                  preferences={cookiePreferences}
+                  updatePreferences={updatePreferences}
+                  handleAcceptCookies={handleAcceptCookies}
+                  handleDeclineCookies={handleDeclineCookies}
+                />
+              )}
+              <Component
+                {...pageProps}
+              />
+            </MOHProvider>
+          </ThirdwebProvider>
         </PayloadProvider>
       )}
     </>
