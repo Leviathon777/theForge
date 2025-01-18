@@ -255,7 +255,7 @@ const InvestorWallet = () => {
                           </>
                         );
 
-                      case "Other":
+                        default:
                         return (
                           <>
                             <div className={Style.infoRow}>
@@ -274,18 +274,8 @@ const InvestorWallet = () => {
                               <span className={Style.infoData}>{zipCode || "N/A"}</span>
                             </div>
                           </>
-                        );
+                        );                    
 
-                      default:
-                        // Just in case the territory is some unexpected value
-                        return (
-                          <div className={Style.infoRow}>
-                            <span className={Style.infoTitle}>Territory</span>
-                            <span className={Style.infoData}>
-                              {userInfo.territory || "N/A"}
-                            </span>
-                          </div>
-                        );
                     }
                   })()}
                 </div>
@@ -349,7 +339,7 @@ const InvestorWallet = () => {
                     },
 
                     {
-                      title: "Profile Agreement",
+                      title: "XDRIP User Agreement",
                       value: userInfo?.agreed ? "Agreed" : "Not Agreed",
                     },
                     { title: "Date of Joining", value: formatDate(userInfo?.dateOfJoin) },

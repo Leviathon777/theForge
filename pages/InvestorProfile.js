@@ -39,6 +39,8 @@ const InvestorProfile = () => {
     const [isUKComplianceModalOpen, setIsUKComplianceModalOpen] = useState(false);
     const [isEUComplianceModalOpen, setIsEUComplianceModalOpen] = useState(false);
 
+    const Exempt = "Exempt";
+
     const closeWithAnimation = (closeFunction) => {
         setIsClosing(true);
         setTimeout(() => {
