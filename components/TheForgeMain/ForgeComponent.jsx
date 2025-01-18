@@ -155,6 +155,8 @@ const ForgeComponent = () => {
   const [bnbBalance, setBnbBalance] = useState(null);
   const [bnbToUsd, setBnbToUsd] = useState(null);
   const [xdripBalance, setXdripBalance] = useState(null);
+  const [dripPercent, setDripPercent] = useState(null);
+  const [bonusQualification, setBonusQualification] = useState(null); 
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] = useState(false);
   const { fetchDots } = useContext(MyDotDataContext);
   const [isBNBPrice, setIsBNBPrice] = useState(true);
@@ -174,8 +176,7 @@ const ForgeComponent = () => {
   const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
   const [isKYCReminderVisible, setIsKYCReminderVisible] = useState(false);
   const [medalToForge, setMedalToForge] = useState(null);
-  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);  
   const [isTransakActive, setIsTransakActive] = useState(false);
   const [medalCount, setMedalCount] = useState(0);
   const [modalStep, setModalStep] = useState("kycPrompt");
@@ -204,32 +205,54 @@ const ForgeComponent = () => {
 
   useEffect(() => {
     const handleWalletConnect = async () => {
+      console.log("handleWalletConnect triggered. Address:", address);
+  
       if (address) {
         setCurrentAccount(address);
+  
         try {
+          console.log("Fetching user data for address:", address);
           const userData = await getForger(address);
+          console.log("Fetched user data:", userData);
+  
           if (userData && userData.fullName && userData.email) {
+            console.log("User data is complete. Setting user info.");
             setUserInfo(userData);
-            const hasShownWelcome = localStorage.getItem("hasShownWelcome");
-            if (!hasShownWelcome) {
-              setIsWelcomeModalVisible(true);
-              localStorage.setItem("hasShownWelcome", "true");
-            }
-            // Fetch the latest XDRIP balance
-            const fetchedBalance = await fetchXDRIPBalance();
-            if (userData.drip?.dripCount !== fetchedBalance) {
-              const dripPercent = ((fetchedBalance / 1_000_000_000) * 100).toFixed(2);
+            setIsWelcomeModalVisible(true);
+  
+            console.log("Calling fetchAndUpdateXDRIPBalance for address:", address);
+            const { finalDisplayBalance, formattedPercentage, qualifiesForBonus } =
+              await fetchAndUpdateXDRIPBalance(address);
+  
+            console.log("fetchAndUpdateXDRIPBalance returned:", {
+              finalDisplayBalance,
+              formattedPercentage,
+              qualifiesForBonus,
+            });
+  
+            // Check if dripCount or dripPercent has changed
+            if (
+              userData.drip?.dripCount !== finalDisplayBalance ||
+              userData.drip?.dripPercent !== formattedPercentage ||
+              userData.drip?.qualifiesForBonus !== qualifiesForBonus
+            ) {
+              console.log("User's drip data is outdated. Updating user data in Firestore.");
               const updatedUserData = {
                 ...userData,
                 drip: {
-                  dripCount: fetchedBalance,
-                  dripPercent: `${dripPercent}%`,
+                  dripCount: finalDisplayBalance,
+                  dripPercent: formattedPercentage,
+                  qualifiesForBonus,
                   DateLastLogged: new Date().toISOString(),
                 },
               };
               await updateForger(address, updatedUserData);
+              console.log("User data updated successfully.");
+            } else {
+              console.log("User's drip data is up-to-date. No update needed.");
             }
           } else {
+            console.log("User data is incomplete. Showing reminder popup.");
             setIsReminderPopupVisible(true);
           }
         } catch (error) {
@@ -237,42 +260,70 @@ const ForgeComponent = () => {
           setIsReminderPopupVisible(true);
         }
       } else {
+        console.log("No wallet connected. Clearing user info.");
         setCurrentAccount("");
         setUserInfo(null);
       }
     };
+  
     handleWalletConnect();
   }, [address]);
+  
+  
 
 
-  const fetchXDRIPBalance = async () => {
+  const fetchAndUpdateXDRIPBalance = async (address) => {
     try {
       const balance = await XdRiPContract.methods.balanceOf(address).call();
       const balanceString = balance.toString();
       const formattedBalance = web3.utils.fromWei(balanceString, 'gwei');
       const finalDisplayBalance = parseFloat(formattedBalance).toFixed(0);
-
+      const totalSupply = 1_000_000_000;
+      const percentage = (finalDisplayBalance / totalSupply) * 100;
+  
+      // Determine if the percentage qualifies for holder bonus
+      const qualifiesForBonus = percentage >= 0.005;
+      console.log("qualifies 1:", qualifiesForBonus);
+      // Format the percentage for small values
+      const formattedPercentage =
+        percentage >= 0.01
+          ? percentage.toFixed(2) 
+          : percentage.toFixed(4);
+  
       setXdripBalance(finalDisplayBalance);
+      setDripPercent(formattedPercentage);
+      setBonusQualification(formattedPercentage);
+      console.log("xdripBalance:", finalDisplayBalance);
+      console.log("dripPercent:", formattedPercentage);
+      console.log("qualifies:", qualifiesForBonus);
+  
+      return { finalDisplayBalance, formattedPercentage, qualifiesForBonus };
     } catch (error) {
       console.error("Error retrieving XDRIP balance:", error);
       setXdripBalance("0");
+      return { finalDisplayBalance: "0", formattedPercentage: "0.0000", qualifiesForBonus: false };
     }
   };
-
+  
   useEffect(() => {
-    if (address) {
-      fetchXDRIPBalance();
-      fetchDots();
-    }
+    const fetchData = async () => {
+      if (address) {
+        await fetchAndUpdateXDRIPBalance(address);
+        await fetchDots(); 
+      }
+    };  
+    fetchData();
   }, [address]);
+  
 
   const handleProfileRedirect = () => {
     router.push({
       pathname: "/InvestorProfile",
       query: {
-        address,
+        address, 
         xdripBalance,
-
+        dripPercent, 
+        bonusQualification,
       },
     });
   };
@@ -1053,6 +1104,9 @@ const handleForgeClick = (medal) => {
                           query: {
                             address,
                             bnbBalance,
+                            dripPercent,
+                            bonusQualification,
+                            xdripBalance,
                             userInfo: JSON.stringify(userInfo),
                           },
                         });
@@ -1060,7 +1114,7 @@ const handleForgeClick = (medal) => {
                       } else {
                         router.push({
                           pathname: "/InvestorProfile",
-                          query: { address, xdripBalance, bnbBalance, },
+                          query: { address, xdripBalance, dripPercent, bonusQualification},
                         });
                         closeDropdown();
                       }

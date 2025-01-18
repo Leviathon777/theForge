@@ -8,7 +8,7 @@ import { addForger } from "../firebase/forgeServices";
 
 const InvestorProfile = () => {
     const router = useRouter();
-    const { address, xdripBalance } = router.query;
+    const { address, dripPercent, xdripBalance, bonusQualification } = router.query;
     const [walletAddress, setWalletAddress] = useState("");
     const [firstName, setFirstName] = useState("");
     const [middleInitial, setMiddleInitial] = useState("");
@@ -82,8 +82,8 @@ const InvestorProfile = () => {
             return;
         }
 
-        const totalSupply = 1_000_000_000;
-        const dripPercent = ((xdripBalance / totalSupply) * 100).toFixed(2);
+        
+
         const profileData = {
             fullName: `${firstName} ${middleInitial ? middleInitial + " " : ""}${lastName}${surname ? " " + surname : ""}`,
             email,
@@ -108,9 +108,10 @@ const InvestorProfile = () => {
             ukFCAAgreed: territory === "UK" ? ukFCAAgreed : null,
             dateOfJoin: new Date().toISOString(),
             drip: {
-                dripHeld: xdripBalance,
-                supplyPercent: `${dripPercent}%`,
-                dateLastLogged: new Date().toISOString(),
+                dripCount: xdripBalance,
+                dripPercent: dripPercent,
+                qualifiesForBonus: bonusQualification,
+                DateLastLogged: new Date().toISOString(),
             },
         };
 

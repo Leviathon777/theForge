@@ -31,7 +31,7 @@ export const addForger = async (profileData) => {
     territory = null,
     dob = null,
     ukFCAAgreed = null,
-    drip: { dripHeld, supplyPercent, dateLastLogged },
+    drip: { dripCount, dripPercent,  DateLastLogged, qualifiesForBonus},
   } = profileData;
   const firestore = getFirestore();
   const forgerRef = collection(firestore, "forgerAccount");
@@ -81,9 +81,10 @@ export const addForger = async (profileData) => {
         kycVerified,
       },
       drip: {
-        dripHeld,
-        supplyPercent,
-        dateLastLogged,
+        dripCount,
+        dripPercent,
+        DateLastLogged,
+        qualifiesForBonus,
       },
     };
     await setDoc(doc(forgerRef, walletAddress), forgerDocData);
