@@ -31,6 +31,7 @@ export const addForger = async (profileData) => {
     territory = null,
     dob = null,
     ukFCAAgreed = null,
+    euAgreed = null,
     drip: { dripCount, dripPercent,  DateLastLogged, qualifiesForBonus},
   } = profileData;
   const firestore = getFirestore();
@@ -73,6 +74,7 @@ export const addForger = async (profileData) => {
       dob,
       agreed,
       ukFCAAgreed,
+      euAgreed,
       dateOfJoin: dateOfJoin || new Date().toISOString(),
       kyc: {
         kycStatus,

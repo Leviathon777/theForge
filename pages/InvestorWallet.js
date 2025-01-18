@@ -3,13 +3,37 @@ import { useEffect, useState } from "react";
 import DotWallet from "../components/DotWallets/DotWallet";
 import Style from "../styles/InvestorWallet.module.css";
 import MyDotData from "../Context/MyDotDataContext";
+import { ethers } from "ethers";
+import mohCA_ABI from "../Context/mohCA_ABI.json";
+import ipfsHashes from "../Context/ipfsHashes.js";
+import Web3 from "web3";
+import xdripCA_ABI from "../Context/xdripCA_ABI.json";
+import {
+  ConnectWallet,
+  darkTheme,
+  useAddress,
+  useConnect,
+  useWallet,
+  localWallet,
+  useSigner,
+} from "@thirdweb-dev/react";
+const MohAddress = mohCA_ABI.address;
+const MohABI = mohCA_ABI.abi;
+const fetchMohContract = (signerOrProvider) =>
+  new ethers.Contract(MohAddress, MohABI, signerOrProvider);
+const XdRiPContractAddress = xdripCA_ABI.address;
+const XdRiPContractABI = xdripCA_ABI.abi;
+const web3 = new Web3("https://bsc-dataseed1.binance.org/");
+const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
+
+
 
 const InvestorWallet = () => {
   const router = useRouter();
-  const { address, bnbBalance, dripPercent, xdripBalance, userInfo: userInfoString } = router.query;
-
+  const { address, dripPercent, xdripBalance, userInfo: userInfoString } = router.query;
+  const signer = useSigner();
   const [userInfo, setUserInfo] = useState(null);
-
+  const [bnbBalance, setBnbBalance] = useState(null);
   useEffect(() => {
     if (userInfoString) {
       try {
@@ -19,13 +43,33 @@ const InvestorWallet = () => {
         console.error("Error parsing userInfoString:", error);
       }
     }
-  }, [userInfoString, address, bnbBalance, dripPercent, xdripBalance, router.query]);
+  }, [userInfoString, address, dripPercent, xdripBalance, router.query]);
 
   const formatDate = (isoDate) => {
     if (!isoDate) return "N/A";
     const date = new Date(isoDate);
     return date.toLocaleDateString();
   };
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (signer && address) {
+        const provider = signer.provider;
+        if (!provider) {
+          console.error("Provider is missing!");
+          return;
+        }
+        try {
+          const balance = await provider.getBalance(address);
+          const formattedBalance = ethers.utils.formatEther(balance);
+          setBnbBalance(formattedBalance);
+        } catch (error) {
+          console.error("Error fetching BNB balance:", error);
+        }
+      }
+    };
+    fetchBalance();
+  }, [signer, address]);
 
   return (
     <div className={Style.container}>
@@ -89,7 +133,6 @@ const InvestorWallet = () => {
           </div>
         </div>
 
-
         {userInfo && (
           <div className={Style.cardsWrapper}>
             <div className={Style.cardsContainer}>
@@ -113,30 +156,138 @@ const InvestorWallet = () => {
                 </div>
               </div>
 
-              {/* Mailing Address */}
+              {/* Mailing Address (Conditionally Rendered Labels) */}
               <div className={Style.card}>
                 <div className={Style.titleBox}>
                   <h3 className={Style.cardTitle}>Mailing Address</h3>
                 </div>
                 <div className={Style.infoBox}>
-                  {[
-                    {
-                      title: "Address",
-                      value: `${userInfo?.mailingAddress?.streetAddress || "N/A"}${userInfo?.mailingAddress?.apartment ? `, Apt: ${userInfo.mailingAddress.apartment}` : ""
-                        }`,
-                    },
-                    {
-                      title: "City & State",
-                      value: `${userInfo?.mailingAddress?.city || "N/A"}, ${userInfo?.mailingAddress?.state || "N/A"
-                        }`,
-                    },
-                    { title: "ZIP Code", value: userInfo?.mailingAddress?.zipCode || "N/A" },
-                  ].map((item, index) => (
-                    <div key={index} className={Style.infoRow}>
-                      <span className={Style.infoTitle}>{item.title}</span>
-                      <span className={Style.infoData}>{item.value}</span>
-                    </div>
-                  ))}
+                  {(() => {
+                    // We'll destructure for convenience
+                    const {
+                      streetAddress,
+                      apartment,
+                      city,
+                      state,
+                      zipCode,
+                    } = userInfo?.mailingAddress || {};
+
+                    if (!userInfo?.territory) {
+                      return (
+                        <div className={Style.infoRow}>
+                          <span className={Style.infoTitle}>Territory</span>
+                          <span className={Style.infoData}>N/A</span>
+                        </div>
+                      );
+                    }
+
+                    switch (userInfo.territory) {
+                      case "US":
+                        return (
+                          <>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>Address</span>
+                              <span className={Style.infoData}>
+                                {streetAddress || "N/A"}
+                                {apartment ? `, Apt: ${apartment}` : ""}
+                              </span>
+                            </div>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>City, State</span>
+                              <span className={Style.infoData}>
+                                {city || "N/A"}, {state || "N/A"}
+                              </span>
+                            </div>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>ZIP Code</span>
+                              <span className={Style.infoData}>{zipCode || "N/A"}</span>
+                            </div>
+                          </>
+                        );
+
+                      case "UK":
+                        return (
+                          <>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>Address</span>
+                              <span className={Style.infoData}>
+                                {streetAddress || "N/A"}
+                                {apartment ? `, Apt: ${apartment}` : ""}
+                              </span>
+                            </div>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>City or Town</span>
+                              <span className={Style.infoData}>{city || "N/A"}</span>
+                            </div>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>County</span>
+                              <span className={Style.infoData}>{state || "N/A"}</span>
+                            </div>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>Postcode</span>
+                              <span className={Style.infoData}>{zipCode || "N/A"}</span>
+                            </div>
+                          </>
+                        );
+
+                      case "EU":
+                        return (
+                          <>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>Address</span>
+                              <span className={Style.infoData}>
+                                {streetAddress || "N/A"}
+                                {apartment ? `, Apt: ${apartment}` : ""}
+                              </span>
+                            </div>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>City</span>
+                              <span className={Style.infoData}>{city || "N/A"}</span>
+                            </div>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>Region/Province/State</span>
+                              <span className={Style.infoData}>{state || "N/A"}</span>
+                            </div>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>Postal Code</span>
+                              <span className={Style.infoData}>{zipCode || "N/A"}</span>
+                            </div>
+                          </>
+                        );
+
+                      case "Other":
+                        return (
+                          <>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>Address</span>
+                              <span className={Style.infoData}>
+                                {streetAddress || "N/A"}
+                                {apartment ? `, Apt: ${apartment}` : ""}
+                              </span>
+                            </div>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>City or Region</span>
+                              <span className={Style.infoData}>{city || "N/A"}</span>
+                            </div>
+                            <div className={Style.infoRow}>
+                              <span className={Style.infoTitle}>Postal Code</span>
+                              <span className={Style.infoData}>{zipCode || "N/A"}</span>
+                            </div>
+                          </>
+                        );
+
+                      default:
+                        // Just in case the territory is some unexpected value
+                        return (
+                          <div className={Style.infoRow}>
+                            <span className={Style.infoTitle}>Territory</span>
+                            <span className={Style.infoData}>
+                              {userInfo.territory || "N/A"}
+                            </span>
+                          </div>
+                        );
+                    }
+                  })()}
                 </div>
               </div>
 
@@ -152,17 +303,15 @@ const InvestorWallet = () => {
                     {
                       title: "KYC Submitted On",
                       value:
-                        userInfo?.kyc?.kycSubmittedAt &&
-                          userInfo?.kyc?.kycSubmittedAt !== "N/A"
-                          ? formatDate(userInfo?.kyc?.kycSubmittedAt)
+                        userInfo?.kyc?.kycSubmittedAt && userInfo?.kyc?.kycSubmittedAt !== "N/A"
+                          ? formatDate(userInfo.kyc.kycSubmittedAt)
                           : "N/A",
                     },
                     {
                       title: "KYC Approved On",
                       value:
-                        userInfo?.kyc?.kycCompletedAt &&
-                          userInfo?.kyc?.kycCompletedAt !== "N/A"
-                          ? formatDate(userInfo?.kyc?.kycCompletedAt)
+                        userInfo?.kyc?.kycCompletedAt && userInfo?.kyc?.kycCompletedAt !== "N/A"
+                          ? formatDate(userInfo.kyc.kycCompletedAt)
                           : "N/A",
                     },
                   ].map((item, index) => (
@@ -182,8 +331,27 @@ const InvestorWallet = () => {
                 <div className={Style.infoBox}>
                   {[
                     { title: "Territory", value: userInfo?.territory || "N/A" },
-                    { title: "UK FCA Agreement", value: userInfo?.ukFCAAgreed ? "Agreed" : "Not Agreed" },
-                    { title: "Profile Agreement", value: userInfo?.agreed ? "Agreed" : "Not Agreed" },
+                    {
+                      title: "UK FCA Agreement",
+                      value: userInfo?.ukFCAAgreed === "Exempt"
+                        ? "Exempt"
+                        : userInfo?.ukFCAAgreed
+                          ? "Agreed"
+                          : "Not Agreed",
+                    },
+                    {
+                      title: "EU Compliance Agreement",
+                      value: userInfo?.euAgreed === "Exempt"
+                        ? "Exempt"
+                        : userInfo?.euAgreed
+                          ? "Agreed"
+                          : "Not Agreed",
+                    },
+
+                    {
+                      title: "Profile Agreement",
+                      value: userInfo?.agreed ? "Agreed" : "Not Agreed",
+                    },
                     { title: "Date of Joining", value: formatDate(userInfo?.dateOfJoin) },
                   ].map((item, index) => (
                     <div key={index} className={Style.infoRow}>

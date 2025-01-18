@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
-import Style from "./UserAgreement.module.css";
+import Style from "./Agreements.module.css";
 import { Button } from "../componentsindex";
 
 const UserAgreement = ({ isOpen, onRequestClose, isClosing }) => (
@@ -121,17 +121,19 @@ const UserAgreement = ({ isOpen, onRequestClose, isClosing }) => (
           If you have a dispute regarding your use of the platform, please contact us at <a href="mailto:contact@moh.xdrip.io">contact@moh.xdrip.io</a>. Disputes will be governed by the laws of <strong>COLORADO, USA</strong>.
         </p>
       </div>
-          <Button
+      <div className={Style.closeButtonBox}>
+        <Button
             btnName="Close"
             onClick={onRequestClose}
             fontSize="1rem"
-            paddingTop=".25rem"
+            paddingTop=".5rem"
             paddingRight="1rem"
-            paddingBottom=".25rem"
+            paddingBottom=".5rem"
             paddingLeft="1rem"
             background=""
             title="Close Modal"
           />
+          </div>
     </div>
   </Modal>
 );

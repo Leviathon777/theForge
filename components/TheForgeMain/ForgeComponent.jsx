@@ -156,7 +156,7 @@ const ForgeComponent = () => {
   const [bnbToUsd, setBnbToUsd] = useState(null);
   const [xdripBalance, setXdripBalance] = useState(null);
   const [dripPercent, setDripPercent] = useState(null);
-  const [bonusQualification, setBonusQualification] = useState(null); 
+  const [bonusQualification, setBonusQualification] = useState(null);
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] = useState(false);
   const { fetchDots } = useContext(MyDotDataContext);
   const [isBNBPrice, setIsBNBPrice] = useState(true);
@@ -176,7 +176,7 @@ const ForgeComponent = () => {
   const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
   const [isKYCReminderVisible, setIsKYCReminderVisible] = useState(false);
   const [medalToForge, setMedalToForge] = useState(null);
-  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);  
+  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
   const [isTransakActive, setIsTransakActive] = useState(false);
   const [medalCount, setMedalCount] = useState(0);
   const [modalStep, setModalStep] = useState("kycPrompt");
@@ -206,30 +206,30 @@ const ForgeComponent = () => {
   useEffect(() => {
     const handleWalletConnect = async () => {
       console.log("handleWalletConnect triggered. Address:", address);
-  
+
       if (address) {
         setCurrentAccount(address);
-  
+
         try {
           console.log("Fetching user data for address:", address);
           const userData = await getForger(address);
           console.log("Fetched user data:", userData);
-  
+
           if (userData && userData.fullName && userData.email) {
             console.log("User data is complete. Setting user info.");
             setUserInfo(userData);
             setIsWelcomeModalVisible(true);
-  
+
             console.log("Calling fetchAndUpdateXDRIPBalance for address:", address);
             const { finalDisplayBalance, formattedPercentage, qualifiesForBonus } =
               await fetchAndUpdateXDRIPBalance(address);
-  
+
             console.log("fetchAndUpdateXDRIPBalance returned:", {
               finalDisplayBalance,
               formattedPercentage,
               qualifiesForBonus,
             });
-  
+
             // Check if dripCount or dripPercent has changed
             if (
               userData.drip?.dripCount !== finalDisplayBalance ||
@@ -265,12 +265,9 @@ const ForgeComponent = () => {
         setUserInfo(null);
       }
     };
-  
+
     handleWalletConnect();
   }, [address]);
-  
-  
-
 
   const fetchAndUpdateXDRIPBalance = async (address) => {
     try {
@@ -280,23 +277,21 @@ const ForgeComponent = () => {
       const finalDisplayBalance = parseFloat(formattedBalance).toFixed(0);
       const totalSupply = 1_000_000_000;
       const percentage = (finalDisplayBalance / totalSupply) * 100;
-  
-      // Determine if the percentage qualifies for holder bonus
+
       const qualifiesForBonus = percentage >= 0.005;
       console.log("qualifies 1:", qualifiesForBonus);
-      // Format the percentage for small values
       const formattedPercentage =
         percentage >= 0.01
-          ? percentage.toFixed(2) 
+          ? percentage.toFixed(2)
           : percentage.toFixed(4);
-  
+
       setXdripBalance(finalDisplayBalance);
       setDripPercent(formattedPercentage);
       setBonusQualification(formattedPercentage);
       console.log("xdripBalance:", finalDisplayBalance);
       console.log("dripPercent:", formattedPercentage);
       console.log("qualifies:", qualifiesForBonus);
-  
+
       return { finalDisplayBalance, formattedPercentage, qualifiesForBonus };
     } catch (error) {
       console.error("Error retrieving XDRIP balance:", error);
@@ -304,25 +299,25 @@ const ForgeComponent = () => {
       return { finalDisplayBalance: "0", formattedPercentage: "0.0000", qualifiesForBonus: false };
     }
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       if (address) {
         await fetchAndUpdateXDRIPBalance(address);
-        await fetchDots(); 
+        await fetchDots();
       }
-    };  
+    };
     fetchData();
   }, [address]);
-  
+
 
   const handleProfileRedirect = () => {
     router.push({
       pathname: "/InvestorProfile",
       query: {
-        address, 
+        address,
         xdripBalance,
-        dripPercent, 
+        dripPercent,
         bonusQualification,
       },
     });
@@ -332,13 +327,13 @@ const ForgeComponent = () => {
     if (!userInfo) {
       return "Please connect your wallet and provide user information to proceed.";
     }
-    if (userInfo.kycStatus === "approved") {
+    if (userInfo.kyc?.kycVerified === true) {
       return "KYC approved! You can forge any medal, including the Eternal Medal.";
     }
-    if (userInfo.kycStatus === "rejected") {
-      return "Your KYC application was rejected. Please contact support for assistance.";
+    if (userInfo.kyc?.kycStatus === "not submitted") {
+      return "Your KYC application has not been submitted yet.";
     }
-    if (userInfo.kycStatus === "inReview") {
+    if (userInfo.kyc?.kycStatus === "pending") {
       return "Your KYC application is under review. Please wait for approval before forging the Eternal Medal.";
     }
     return "KYC is optional for most medals but required for the Eternal Medal.";
@@ -581,6 +576,12 @@ const ForgeComponent = () => {
     if (!userInfo) {
       setIsReminderPopupVisible(true);
       return;
+    }
+
+    const requiredBnb = parseFloat(medal.price.split(" ")[0]);
+    if (!bnbBalance || parseFloat(bnbBalance) < requiredBnb) {
+      toast.info(`Insufficient BNB balance to forge the ${medal.title} medal.`);
+      return; // Stop here
     }
     if (medal.title === "ETERNAL" && userInfo?.kycStatus !== "approved") {
       setIsKYCReminderVisible(true);
@@ -872,7 +873,7 @@ const handleForgeClick = (medal) => {
    */
 
 
-  
+
   const triggerEasterEgg = () => {
     const url = `${window.location.origin}/misc/ChessEgg.html`;
     const options = "width=1024,height=768";
@@ -1039,7 +1040,7 @@ const handleForgeClick = (medal) => {
                             height="35"
                             style={{
                               borderRadius: "50%",
-                              
+
                             }}
                           />
                         </div>
@@ -1114,7 +1115,7 @@ const handleForgeClick = (medal) => {
                       } else {
                         router.push({
                           pathname: "/InvestorProfile",
-                          query: { address, xdripBalance, dripPercent, bonusQualification},
+                          query: { address, xdripBalance, dripPercent, bonusQualification },
                         });
                         closeDropdown();
                       }
@@ -1328,7 +1329,7 @@ const handleForgeClick = (medal) => {
 
         {isConfirmationModalVisible && (
           <div className={Style.welcome_modal} onClick={(e) => e.target === e.currentTarget && setIsConfirmationModalVisible(false)}>
-           <div className={Style.welcome_modal_content}>
+            <div className={Style.welcome_modal_content}>
               <h2>Confirm Forging</h2>
               <p>Are you sure you want to forge the {selectedMedalForForge?.name} medal for {selectedMedalForForge?.price}?</p>
               <div className={Style.modal_buttons}>

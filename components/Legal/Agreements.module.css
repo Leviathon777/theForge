@@ -55,7 +55,7 @@
 }
 
 .modalWrapper {
-  padding: 1.5rem;
+  padding: 1.5rem 1.5rem 0rem 1.5rem;
   font-family: Arial, sans-serif;
   color: white;
 }
@@ -100,6 +100,10 @@
   margin-bottom: 5px;
   list-style: disc;
   color: #757575;
+}
+
+.closeButtonBox {
+  margin-top: 1rem;
 }
 
 .closeButton {

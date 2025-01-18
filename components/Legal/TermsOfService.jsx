@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
-import Style from "./TermsOfService.module.css";
+import Style from "./Agreements.module.css";
 import { Button } from "../componentsindex";
 
 const TermsOfService = ({ isOpen, onRequestClose, isClosing }) => (
@@ -99,18 +99,19 @@ const TermsOfService = ({ isOpen, onRequestClose, isClosing }) => (
           These Terms are governed by and construed in accordance with the laws of <strong>COLORADO, USA</strong>. Disputes will be resolved under the exclusive jurisdiction of the courts of <strong>COLORADO, USA</strong>.
         </p>
       </div>
-
-          <Button
+      <div className={Style.closeButtonBox}>
+        <Button
             btnName="Close"
             onClick={onRequestClose}
             fontSize="1rem"
-            paddingTop=".25rem"
+            paddingTop=".5rem"
             paddingRight="1rem"
-            paddingBottom=".25rem"
+            paddingBottom=".5rem"
             paddingLeft="1rem"
             background=""
             title="Close Modal"
           />
+          </div>
     </div>
   </Modal>
 );

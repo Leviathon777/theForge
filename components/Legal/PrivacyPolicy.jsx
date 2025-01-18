@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
-import Style from "./PrivacyPolicy.module.css";
+import Style from "./Agreements.module.css";
 import { Button } from "../componentsindex";
 
 const PrivacyPolicy = ({ isOpen, onRequestClose, isClosing }) => (
@@ -100,17 +100,19 @@ const PrivacyPolicy = ({ isOpen, onRequestClose, isClosing }) => (
       <div className={Style.lastUpdated}>
         <p>Last Updated: 1/5/2025</p>
       </div>
-      <Button
-        btnName="Close"
-        onClick={onRequestClose}
-        fontSize="1rem"
-        paddingTop=".25rem"
-        paddingRight="1rem"
-        paddingBottom=".25rem"
-        paddingLeft="1rem"
-        background=""
-        title="Close Modal"
-      />
+      <div className={Style.closeButtonBox}>
+        <Button
+            btnName="Close"
+            onClick={onRequestClose}
+            fontSize="1rem"
+            paddingTop=".5rem"
+            paddingRight="1rem"
+            paddingBottom=".5rem"
+            paddingLeft="1rem"
+            background=""
+            title="Close Modal"
+          />
+          </div>
     </div>
   </Modal>
 );
