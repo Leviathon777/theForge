@@ -96,7 +96,7 @@ const InvestorWallet = () => {
                   {
                     title: "XDRIP Supply Percent",
                     value: userInfo?.drip?.dripPercent
-                      ? `${(parseFloat(userInfo.drip.dripPercent) * 100).toFixed(2)}%`
+                      ? `${userInfo.drip.dripPercent}%`
                       : "N/A",
                   },
                   {
@@ -255,7 +255,7 @@ const InvestorWallet = () => {
                           </>
                         );
 
-                        default:
+                      default:
                         return (
                           <>
                             <div className={Style.infoRow}>
@@ -274,7 +274,7 @@ const InvestorWallet = () => {
                               <span className={Style.infoData}>{zipCode || "N/A"}</span>
                             </div>
                           </>
-                        );                    
+                        );
 
                     }
                   })()}
@@ -288,7 +288,11 @@ const InvestorWallet = () => {
                 </div>
                 <div className={Style.infoBox}>
                   {[
-                    { title: "KYC Verified", value: userInfo?.kyc?.kycVerified || "N/A" },
+                    {
+                      title: "KYC Verified",
+                      value: typeof userInfo?.kyc?.kycVerified === "boolean" ? userInfo.kyc.kycVerified.toString() : "N/A"
+                    },
+
                     { title: "KYC Status", value: userInfo?.kyc?.kycStatus || "N/A" },
                     {
                       title: "KYC Submitted On",

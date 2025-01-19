@@ -3,7 +3,7 @@ import Modal from "react-modal";
 import Style from "./Agreements.module.css";
 import { Button } from "../componentsindex";
 
-const UserAgreement = ({ isOpen, onRequestClose, isClosing }) => (
+const UserAgreement = ({ isOpen, onRequestClose, isClosing, openModal }) => (
   <Modal
     isOpen={isOpen}
     onRequestClose={onRequestClose}
@@ -116,11 +116,24 @@ const UserAgreement = ({ isOpen, onRequestClose, isClosing }) => (
       </div>
 
       <div className={Style.modalSection}>
-        <h3 className={Style.sectionTitle}>12. Dispute Resolution</h3>
-        <p className={Style.sectionContent}>
-          If you have a dispute regarding your use of the platform, please contact us at <a href="mailto:contact@moh.xdrip.io">contact@moh.xdrip.io</a>. Disputes will be governed by the laws of <strong>COLORADO, USA</strong>.
-        </p>
-      </div>
+  <h3 className={Style.sectionTitle}>12. Dispute Resolution</h3>
+  <p className={Style.sectionContent}>
+    If you have a dispute regarding your use of the platform, please contact us at{" "}
+    <button
+      className={Style.emailButton}
+      onClick={() => {
+        onRequestClose(); 
+        setTimeout(() => {
+          openModal("isEmailFormOpen"); 
+        }, 500); 
+      }}
+    >
+      contact@moh.xdrip.io
+    </button>
+    . Disputes will be governed by the laws of <strong>COLORADO, USA</strong>.
+  </p>
+</div>
+
       <div className={Style.closeButtonBox}>
         <Button
             btnName="Close"

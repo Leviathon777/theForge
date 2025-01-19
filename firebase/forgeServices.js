@@ -285,7 +285,7 @@ border-radius: 8px;
                   </a>
                 </td>
                 <td class="email-section-text-container">
-                  <h2 class="email-section-heading" style="margin-left: 3rem;">Peice Of Mind</h2>
+                  <h2 class="email-section-heading" style="margin-left: 3rem;">Peace Of Mind</h2>
                   <p class="email-section-paragraph" class="email-section-paragraph" style="margin-left: 3rem;">Tools to manage and track your investments efficiently.</p>
                 </td>
               </tr>
@@ -856,7 +856,7 @@ export const sendReceiptEmail = async (address, email, fullName, medalType, pric
 /************************************************************************************
                           EMAIL FROM FORGER TO US 
 *************************************************************************************/
-export const sendContactUsEmail = async (senderEmail, message, address) => {
+export const sendContactUsEmail = async (senderEmail, message, address, name) => {
   const firestore = getFirestore();
   const mailRef = collection(firestore, "forgerEmails");
   address = address || "123456789123456789123456789123456789123456";
@@ -914,7 +914,8 @@ export const sendContactUsEmail = async (senderEmail, message, address) => {
 <body>
     <div class="container">
         <h1>New Contact Us Message</h1>
-        <p><strong>From:</strong> ${senderEmail}</p>
+        <p><strong>From:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${senderEmail}</p>
         <p><strong>Message:</strong></p>
         <p>${message}</p>
         <div class="footer">

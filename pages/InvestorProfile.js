@@ -3,15 +3,13 @@ import { useRouter } from "next/router";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Style from "../styles/InvestorProfile.module.css";
-import { TermsOfService, UserAgreement, PrivacyPolicy, UKCompliance, EUCompliance, Button } from "../components/componentsindex";
+import { Button } from "../components/componentsindex";
 import { addForger } from "../firebase/forgeServices";
 
-const InvestorProfile = () => {
+const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
     const router = useRouter();
     const { address, dripPercent, xdripBalance, bonusQualification } = router.query;
 
-    const [mailingAddress, setMailingAddress] = useState("");
-    const [isClosing, setIsClosing] = useState(false);
     const [walletAddress, setWalletAddress] = useState("");
     const [firstName, setFirstName] = useState("");
     const [middleInitial, setMiddleInitial] = useState("");
@@ -41,13 +39,7 @@ const InvestorProfile = () => {
 
     const Exempt = "Exempt";
 
-    const closeWithAnimation = (closeFunction) => {
-        setIsClosing(true);
-        setTimeout(() => {
-            closeFunction();
-            setIsClosing(false);
-        }, 500);
-    };
+
 
     useEffect(() => {
         if (address) {
@@ -81,12 +73,21 @@ const InvestorProfile = () => {
 
     const validateForm = () => {
         const newErrors = {};
+        const today = new Date();
+        const enteredDob = new Date(dob);
+        const age = today.getFullYear() - enteredDob.getFullYear();
+        const is18OrOlder = age > 18 || (age === 18 && today >= new Date(enteredDob.setFullYear(enteredDob.getFullYear() + 18)));
+
         if (!firstName.trim()) newErrors.firstName = "First Name is required.";
         if (!lastName.trim()) newErrors.lastName = "Last Name is required.";
         if (!email.trim() || !/\S+@\S+\.\S+/.test(email))
             newErrors.email = "Valid Email Address is required.";
         if (!territory) newErrors.territory = "Please select your territory.";
-        if (!dob) newErrors.dob = "Date of Birth is required.";
+        if (!dob) {
+            newErrors.dob = "Date of Birth is required.";
+        } else if (!is18OrOlder) {
+            newErrors.dob = "You must be at least 18 years old.";
+        }
         if (!walletAddress) newErrors.walletAddress = "Wallet connection is required.";
         if (!agreed) newErrors.agreed = "You must agree to the Terms, User Agreement, and Privacy Policy.";
 
@@ -109,60 +110,62 @@ const InvestorProfile = () => {
 
     const handleSubmit = async () => {
         if (!validateForm()) {
-          toast.error("Please fill out all required fields before submitting.");
-          return;
+            // Display all errors in the toast
+            Object.values(errors).forEach((error) => {
+                toast.error(error); // Show each error as a separate toast notification
+            });
+            return;
         }
-    
+
         // Construct the territory to store; "Other" => user input
         const finalTerritory = territory === "Other" ? otherTerritory : territory;
-    
+
         // Build the profileData object to send to Firebase
         const profileData = {
-          fullName: `${firstName} ${middleInitial ? middleInitial + " " : ""}${lastName}${
-            surname ? " " + surname : ""
-          }`,
-          email,
-          phone: phone || null,
-          territory: finalTerritory,
-          mailingAddress: {
-            streetAddress: streetAddress || null,
-            apartment: apartment || null,
-            city: city || null,
-            state: state || null,
-            zipCode: zipCode || null,
-          },
-          walletAddress,
-          dob,
-          agreed,
-          kyc: {
-            kycStatus: "not submitted",
-            kycCompletedAt: "N/A",
-            kycSubmittedAt: "N/A",
-            kycVerified: false,
-          },
-          // Only set these if needed
-          ukFCAAgreed: requiresUKCompliance ? ukFCAAgreed : Exempt,
-          euAgreed: requiresEUCompliance ? euAgreed : Exempt,
-          dateOfJoin: new Date().toISOString(),
-          drip: {
-            dripCount: parseFloat(xdripBalance || 0),
-            dripPercent: `${parseFloat(dripPercent || 0).toFixed(2)}%`,
-            qualifiesForBonus: bonusQualification === "true" || bonusQualification === true,
-            DateLastLogged: new Date().toISOString(),
-          },
+            fullName: `${firstName} ${middleInitial ? middleInitial + " " : ""}${lastName}${surname ? " " + surname : ""
+                }`,
+            email,
+            phone: phone || null,
+            territory: finalTerritory,
+            mailingAddress: {
+                streetAddress: streetAddress || null,
+                apartment: apartment || null,
+                city: city || null,
+                state: state || null,
+                zipCode: zipCode || null,
+            },
+            walletAddress,
+            dob,
+            agreed,
+            kyc: {
+                kycStatus: "not submitted",
+                kycCompletedAt: "N/A",
+                kycSubmittedAt: "N/A",
+                kycVerified: false,
+            },
+            // Only set these if needed
+            ukFCAAgreed: requiresUKCompliance ? ukFCAAgreed : Exempt,
+            euAgreed: requiresEUCompliance ? euAgreed : Exempt,
+            dateOfJoin: new Date().toISOString(),
+            drip: {
+                dripCount: parseFloat(xdripBalance || 0),
+                dripPercent: `${parseFloat(dripPercent || 0).toFixed(2)}%`,
+                qualifiesForBonus: bonusQualification === "true" || bonusQualification === true,
+                DateLastLogged: new Date().toISOString(),
+            },
         };
-    
+
         try {
-          await addForger(profileData);
-          toast.success("Profile submitted successfully!");
-          setTimeout(() => {
-            router.push("/TheForge");
-          }, 3000);
+            await addForger(profileData);
+            toast.success("Profile submitted successfully!");
+            setTimeout(() => {
+                router.push("/TheForge");
+            }, 3000);
         } catch (error) {
-          console.error("Error submitting profile:", error);
-          toast.error("Failed to submit your profile. Please try again.");
+            console.error("Error submitting profile:", error);
+            toast.error("Failed to submit your profile. Please try again.");
         }
-      };
+    };
 
     const handleBackToForge = () => {
         router.push("/TheForge");
@@ -546,7 +549,7 @@ const InvestorProfile = () => {
                             <button
                                 type="button"
                                 className={Style.linkButton}
-                                onClick={() => setIsTermsModalOpen(true)}
+                                onClick={() => openModal("isTermsModalOpen")}
                             >
                                 Terms of Use
                             </button>
@@ -554,7 +557,7 @@ const InvestorProfile = () => {
                             <button
                                 type="button"
                                 className={Style.linkButton}
-                                onClick={() => setIsUserAgreementModalOpen(true)}
+                                onClick={() => openModal("isUserAgreementModalOpen")}
                             >
                                 User Agreement
                             </button>
@@ -562,7 +565,7 @@ const InvestorProfile = () => {
                             <button
                                 type="button"
                                 className={Style.linkButton}
-                                onClick={() => setIsPrivacyPolicyModalOpen(true)}
+                                onClick={() => openModal("isPrivacyPolicyModalOpen")}
                             >
                                 Privacy Policy
                             </button>
@@ -584,7 +587,7 @@ const InvestorProfile = () => {
                                 <button
                                     type="button"
                                     className={Style.linkButton}
-                                    onClick={() => setIsUKComplianceModalOpen(true)}
+                                    onClick={() => openModal("isUKComplianceModalOpen")}
                                 >
                                     FCA Disclosures and Agreement
                                 </button>{" "}
@@ -607,7 +610,7 @@ const InvestorProfile = () => {
                                 <button
                                     type="button"
                                     className={Style.linkButton}
-                                    onClick={() => setIsEUComplianceModalOpen(true)}
+                                    onClick={() => openModal("isEUComplianceModalOpen")}
                                 >
                                     EU Compliance Notice
                                 </button>
@@ -641,34 +644,6 @@ const InvestorProfile = () => {
                     </div>
                 </div>
             </div>
-
-            <TermsOfService
-                isOpen={isTermsModalOpen}
-                onRequestClose={() => closeWithAnimation(() => setIsTermsModalOpen(false))}
-                isClosing={isClosing}
-            />
-            <UserAgreement
-                isOpen={isUserAgreementModalOpen}
-                onRequestClose={() => closeWithAnimation(() => setIsUserAgreementModalOpen(false))}
-                isClosing={isClosing}
-            />
-            <PrivacyPolicy
-                isOpen={isPrivacyPolicyModalOpen}
-                onRequestClose={() => closeWithAnimation(() => setIsPrivacyPolicyModalOpen(false))}
-                isClosing={isClosing}
-            />
-            <UKCompliance
-                isOpen={isUKComplianceModalOpen}
-                onRequestClose={() => closeWithAnimation(() => setIsUKComplianceModalOpen(false))}
-                isClosing={isClosing}
-            />
-
-            <EUCompliance
-                isOpen={isEUComplianceModalOpen}
-                onRequestClose={() => closeWithAnimation(() => setIsEUComplianceModalOpen(false))}
-                isClosing={isClosing}
-            />
-
         </div>
     );
 };

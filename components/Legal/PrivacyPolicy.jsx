@@ -3,9 +3,9 @@ import Modal from "react-modal";
 import Style from "./Agreements.module.css";
 import { Button } from "../componentsindex";
 
-const PrivacyPolicy = ({ isOpen, onRequestClose, isClosing }) => (
+const PrivacyPolicy = ({ isOpen, onRequestClose, isClosing, openModal }) => (
 
-  
+
   <Modal
     isOpen={isOpen}
     onRequestClose={onRequestClose}
@@ -86,7 +86,19 @@ const PrivacyPolicy = ({ isOpen, onRequestClose, isClosing }) => (
       <div className={Style.modalSection}>
         <h3 className={Style.sectionTitle}>8. Contact Us</h3>
         <p className={Style.sectionContent}>
-          If you have any questions or concerns regarding this Privacy Policy or our data practices, please contact us at <strong>privacy@medalsofhonor.io</strong>.
+          If you have any questions or concerns regarding this Privacy Policy or our data practices, please contact us at{" "}
+          <button
+            className={Style.emailButton}
+            onClick={() => {
+              onRequestClose();
+              setTimeout(() => {
+                openModal("isEmailFormOpen");
+              }, 500);
+            }}
+          >
+            contact@moh.xdrip.io
+          </button>
+          .
         </p>
       </div>
 
@@ -102,17 +114,17 @@ const PrivacyPolicy = ({ isOpen, onRequestClose, isClosing }) => (
       </div>
       <div className={Style.closeButtonBox}>
         <Button
-            btnName="Close"
-            onClick={onRequestClose}
-            fontSize="1rem"
-            paddingTop=".5rem"
-            paddingRight="1rem"
-            paddingBottom=".5rem"
-            paddingLeft="1rem"
-            background=""
-            title="Close Modal"
-          />
-          </div>
+          btnName="Close"
+          onClick={onRequestClose}
+          fontSize="1rem"
+          paddingTop=".5rem"
+          paddingRight="1rem"
+          paddingBottom=".5rem"
+          paddingLeft="1rem"
+          background=""
+          title="Close Modal"
+        />
+      </div>
     </div>
   </Modal>
 );

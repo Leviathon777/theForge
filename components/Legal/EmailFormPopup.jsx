@@ -4,7 +4,8 @@ import Modal from "react-modal";
 import { sendContactUsEmail } from "../../firebase/forgeServices.js";
 import { Button } from "../componentsindex";
 
-const EmailFormPopup = ({ isVisible, onClose, isClosing }) => {
+const EmailFormPopup = ({ isVisible, onClose, isClosing, address }) => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -13,12 +14,13 @@ const EmailFormPopup = ({ isVisible, onClose, isClosing }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting form with:", { name, email, message });
     setIsSubmitting(true);
     setSuccessMessage("");
     setIsSuccess(false);
 
     try {
-      await sendContactUsEmail(email, message);
+      await sendContactUsEmail(email, message, address, name);
       setSuccessMessage("Your message has been sent successfully!");
       setIsSuccess(true);
       setEmail("");
@@ -66,9 +68,20 @@ const EmailFormPopup = ({ isVisible, onClose, isClosing }) => {
           />
         </div>
         <h2 className={styles.title}>Contact XDRIP Digital Management</h2>
-        {successMessage && <p className={styles.success}>{successMessage}</p>}
+        {successMessage && <p className={styles.success}>{"Your message has been sent successfully!"}</p>}
         {!isSuccess && (
           <form onSubmit={handleSubmit} className={styles.form}>
+            <label htmlFor="name" className={styles.label}>
+              Your Name:
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className={styles.input}
+            />
             <label htmlFor="email" className={styles.label}>
               Your Email:
             </label>

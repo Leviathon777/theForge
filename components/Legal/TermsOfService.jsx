@@ -3,13 +3,14 @@ import Modal from "react-modal";
 import Style from "./Agreements.module.css";
 import { Button } from "../componentsindex";
 
-const TermsOfService = ({ isOpen, onRequestClose, isClosing }) => (
+const TermsOfService = ({ isOpen, onRequestClose, isClosing, openModal }) => (
   <Modal
     isOpen={isOpen}
     onRequestClose={onRequestClose}
     contentLabel="XDRIP Terms of Service"
     className={Style.modal}
     overlayClassName={`${Style.modalOverlay} ${isClosing ? Style.slideDown : ""}`}
+    ariaHideApp={false}
   >
     <div className={Style.modalWrapper}>
       <h2 className={Style.modalTitle}>XDRIP Terms of Service</h2>
@@ -82,9 +83,22 @@ const TermsOfService = ({ isOpen, onRequestClose, isClosing }) => (
       <div className={Style.modalSection}>
         <h3 className={Style.sectionTitle}>8. Dispute Resolution</h3>
         <p className={Style.sectionContent}>
-          If you have a dispute, please contact us at <a href="mailto:contact@moh.xdrip.io">contact@moh.xdrip.io</a>. We will attempt to resolve disputes amicably.
+          If you have a dispute, please contact us at{" "}
+          <button
+            className={Style.emailButton}
+            onClick={() => {
+              onRequestClose();
+              setTimeout(() => {
+                openModal("isEmailFormOpen");
+              }, 500);
+            }}
+          >
+            contact@moh.xdrip.io
+          </button>
+          . We will attempt to resolve disputes amicably.
         </p>
       </div>
+
 
       <div className={Style.modalSection}>
         <h3 className={Style.sectionTitle}>9. Changes to Terms</h3>
@@ -101,17 +115,17 @@ const TermsOfService = ({ isOpen, onRequestClose, isClosing }) => (
       </div>
       <div className={Style.closeButtonBox}>
         <Button
-            btnName="Close"
-            onClick={onRequestClose}
-            fontSize="1rem"
-            paddingTop=".5rem"
-            paddingRight="1rem"
-            paddingBottom=".5rem"
-            paddingLeft="1rem"
-            background=""
-            title="Close Modal"
-          />
-          </div>
+          btnName="Close"
+          onClick={onRequestClose}
+          fontSize=".9rem"
+          paddingTop=".5rem"
+          paddingRight="1rem"
+          paddingBottom=".5rem"
+          paddingLeft="1rem"
+          background=""
+          title="Close Modal"
+        />
+      </div>
     </div>
   </Modal>
 );

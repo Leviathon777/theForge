@@ -119,7 +119,7 @@ const FlipBook = () => {
         // DEDICATION PAGE
         {
             title: (
-                <>
+     
                     <div className={Style.dedicationContainer}>
                         <div className={Style.dedicationContent}>
                             <p className={Style.dedicationTitle}>To Our Unbreakable Community,</p>
@@ -148,8 +148,7 @@ const FlipBook = () => {
                                 Brad, Jim, Flo, & Jordi
                             </p>
                         </div>
-                    </div>
-                </>
+                    </div>      
             )
         },
 
