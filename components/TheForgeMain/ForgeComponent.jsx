@@ -278,7 +278,7 @@ const ForgeComponent = () => {
       const totalSupply = 1_000_000_000;
       const percentage = (finalDisplayBalance / totalSupply) * 100;
 
-      const qualifiesForBonus = percentage >= 0.005;
+      const qualifiesForBonus = percentage >= 0.5;
       console.log("qualifies 1:", qualifiesForBonus);
       const formattedPercentage =
         percentage >= 0.01
