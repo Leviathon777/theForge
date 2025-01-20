@@ -154,11 +154,16 @@ const VideoPlayer = forwardRef(({
         Your browser does not support the video tag.
       </video>
 
+
+      {/*
       {!isPlaying && !isHovered && !alwaysShowControls && !hideControls && (
         <div className={Style.playIcon} onClick={!disableClickModal ? openModal : undefined}>
           <FaPlay size={50} />
         </div>
       )}
+        */}
+
+        
       {(!hideControls && (isHovered || alwaysShowControls)) && (
         <div className={Style.controls}>
           <div onClick={handlePlayPauseClick} className={Style.controlButton}>

@@ -121,12 +121,19 @@ const Carousel = ({ medals = [] }) => {
                   <VideoPlayer
                     videoSrc={videoSrc}
                     isMuted={true}
-                    hoverPlay={true}
+                    hoverPlay={false}
                     autoPlay={true}
                     loop={true}
                     videoStyles={videoStyles}
                     hoverGrow={false}
+                    alwaysShowControls={false}
+                    //hideControls={true}
                   />
+
+
+
+
+                  
                 ) : (
                   <Image
                     src={item.metadata.image_url}

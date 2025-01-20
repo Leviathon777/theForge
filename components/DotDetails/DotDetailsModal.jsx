@@ -44,6 +44,8 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, address
       .catch(() => toast.error("Could not copy text"));
   }, []);
 
+  
+  /*
   const handleForgeClick = () => {
     if (!address) {
       toast.info("Please connect your wallet to proceed with Forging.");
@@ -55,9 +57,7 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, address
     }
     forge(medal.title, medal.ipfsHash, medal.revenueAccess, medal.xdripBonus);
   };
-
-
-
+  */
 
 
 
@@ -109,6 +109,8 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, address
             <div className={Style.detailsOverlay}>
               <div className={Style.detailsContent}>
               <div className={Style.buttonContainer}>
+                
+                {/*
                 <Button
                   btnName="Forge"
                   onClick={handleForgeClick}
@@ -119,6 +121,9 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, address
                   paddingLeft="1rem"
                   background=""
                 />
+                */}
+
+
                 </div>
                 <div className={Style.MedalDetailsModal_description}>
 
