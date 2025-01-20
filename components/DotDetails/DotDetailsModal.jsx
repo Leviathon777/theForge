@@ -138,7 +138,7 @@ const MedalDetailsModal = React.memo(({ medal, onClose, forge, userInfo, address
                 </div>
                 <div className={Style.MedalDetailsModal_price}>
                   <h2 className={Style.MedalDetailsModal_description_font}>CREATED BY THE XDRIP EXECUTIVE STAFF:</h2>
-                  <p>Brad Messier ~ Jim Carney ~ Flo Righetti ~ Jordi</p>
+                  <p>Brad Messier ~ Jim Carney ~ Flo Righetti ~ Jordi ~ Amos</p>
                 </div>
                 <div className={Style.MedalDetailsModal_price}>
                   <h2 className={Style.MedalDetailsModal_description_font}>DIGITAL OWNERSHIP TOKEN COLLECTION:</h2>

@@ -145,7 +145,7 @@ const FlipBook = () => {
                             </div>
                             <p className={Style.dedicationSignature}>
                                 With all our love, gratitude, and admiration,<br />
-                                Brad, Jim, Flo, & Jordi
+                                Brad, Jim, Flo, Jordi, & Amos
                             </p>
                         </div>
                     </div>      
