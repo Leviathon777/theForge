@@ -11,7 +11,6 @@
 }
 
 
-
 .flipBookOpen {
     transform: translateX(0);
     transition: transform 1s ease;
@@ -74,9 +73,9 @@
 }
 
 .dedicationTitle {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;
 }
 
 .dedicationParagraph {
@@ -92,7 +91,7 @@
     text-align: right;
     font-style: italic;
     color: var(--color-light);
-    padding-top: 10px;
+    padding-top: 0.625rem; /* 10px */
 }
 
 
@@ -143,8 +142,8 @@
     padding: 4px 15px 4px 15px;
     background: var(--background-gradient-light);
     border-radius: .5rem;
-    border: 1px solid rgba(255, 255, 255, 0.144);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    border: 0.0625rem solid rgba(255, 255, 255, 0.144);
+    box-shadow: 0rem 0.25rem 0.625rem rgba(0, 0, 0, 0.3);
     transition: background-color 0.3s ease;
     font-size: .85rem;
 }
@@ -169,7 +168,7 @@
     background-color: black;
     border-top-left-radius: 1rem;
     border-bottom-left-radius: 1rem;
-    border-right: 1px solid rgba(255, 255, 255, 0.144);
+    border-right: 0.0625rem solid rgba(255, 255, 255, 0.144);
     padding: 1rem;
     margin: 0rem;
     width: 100%;
@@ -184,13 +183,13 @@
     height: 100%;
     background: var(--background-gradient-light);
     border-radius: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.144);
+    border: 0.0625rem solid rgba(255, 255, 255, 0.144);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
     cursor: pointer;
 }
 
 .tierInnerImage {
-    border: 2px solid rgba(255, 255, 255, 0.144);
+    border: 0.1250rem solid rgba(255, 255, 255, 0.144);
     border-radius: 40px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
@@ -590,13 +589,13 @@
     }
 
     .label {
-        font-size: 14px;
+        font-size: .85rem;
         margin-bottom: 5px;
         text-decoration: underline;
     }
 
     .value {
-        font-size: 14px;
+        font-size: .85rem;
         font-weight: bold;
     }
 

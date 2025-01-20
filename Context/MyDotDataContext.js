@@ -6,7 +6,7 @@ export const MyDotDataContext = createContext();
 const MyDotData = ({ children }) => {
   const address = useAddress();
   const [dots, setDots] = useState([]);
-  const bscRpcUrl = "https://data-seed-prebsc-1-s1.binance.org:8545/";
+  const bscRpcUrl = "https://bsc-dataseed1.binance.org/";
 
   
   const fetchDots = async () => {
