@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const API_TOKEN = process.env.KYCAID_SANDBOX_API_KEY;
+  const API_TOKEN = process.env.KYCAID_PRODUCTION_API_KEY;
   const { form_id, external_applicant_id } = req.body;
 
   if (req.method !== 'POST') {
