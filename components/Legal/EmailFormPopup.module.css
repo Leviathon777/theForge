@@ -68,20 +68,21 @@
   display: flex;
   justify-content: flex-end;
   padding: 0rem;
-  margin: 0rem;
+  margin: 0rem 0rem 0rem 0rem;
 }
 
 .title {
   font-size: 1.75rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   color: white;
   text-align: center;
 }
 
 .success {
+  text-align: center;
   color: green;
-  font-size: 1rem;
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  margin: 8rem 0rem;
 }
 
 .form {
@@ -108,4 +109,29 @@
 .textarea {
   resize: none;
   height: 100px;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .modalTitle {
+    font-size: 20px;
+  }
+
+  .sectionTitle {
+    font-size: 16px;
+  }
+
+  .sectionContent,
+  .listItem {
+    font-size: 13px;
+  }
+
+  .closeButton {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
 }

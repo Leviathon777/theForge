@@ -4,7 +4,7 @@ import styles from "./CookieManager.module.css";
 import { PrivacyPolicy, TermsOfService, UserAgreement, Button } from "../componentsindex";
 
 
-const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, handleDeclineCookies }) => {
+const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, handleDeclineCookies, openModal  }) => {
     const [showPreferencesModal, setShowPreferencesModal] = useState(false);
     const closePreferencesModal = () => setShowPreferencesModal(false);
     const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
@@ -81,21 +81,21 @@ const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, ha
                         <p>
                             <button
                                 className={styles.linkButton}
-                                onClick={() => setIsTermsModalOpen(true)}
+                                onClick={() => openModal("isTermsModalOpen")}
                             >
                                 Terms of Service
                             </button>{" "}
                             |{" "}
                             <button
                                 className={styles.linkButton}
-                                onClick={() => setIsPrivacyPolicyModalOpen(true)}
+                                onClick={() => openModal("isPrivacyPolicyModalOpen")}
                             >
                                 Privacy Policy
                             </button>{" "}
                             | {" "}
                             <button
                                 className={styles.linkButton}
-                                onClick={() => setIsUserAgreementModalOpen(true)}
+                                onClick={() => openModal("isUserAgreementModalOpen")}
                             >
                                 User Agreement
                             </button>
@@ -139,36 +139,7 @@ const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, ha
                     </div>
                 </div>
             </div>
-            {
-                isTermsModalOpen && (
-                    <div className={styles.modal}>
-                        <TermsOfService
-                            isOpen={isTermsModalOpen}
-                            onRequestClose={() => setIsTermsModalOpen(false)}
-                        />
-                    </div>
-                )
-            }
-            {
-                isPrivacyPolicyModalOpen && (
-                    <PrivacyPolicy
-                        isOpen={isPrivacyPolicyModalOpen}
-                        onRequestClose={() => setIsPrivacyPolicyModalOpen(false)}
-                    />
-                )
-            }
-            {
-                isUserAgreementModalOpen && (
-                    <div className={styles.modal}>
-                        <UserAgreement
-                            isOpen={isUserAgreementModalOpen}
-                            onRequestClose={() => setIsUserAgreementModalOpen(false)}
-                        />
-
-                    </div>
-                )
-            }
-            {
+             {
                 showPreferencesModal && (
                     <div
                         style={{
@@ -235,7 +206,7 @@ const CookieManager = ({ preferences, updatePreferences, handleAcceptCookies, ha
                                     paddingRight="1rem"
                                     paddingBottom=".5rem"
                                     paddingLeft="1rem"
-                                   background="rgba(0, 255, 0, 0.5)"
+                                    background="rgba(0, 255, 0, 0.5)"
                                 />
                                 <Button
                                     btnName="Close"

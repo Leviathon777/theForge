@@ -14,7 +14,7 @@ import Head from "next/head";
 import Cookies from "js-cookie";
 import { MOHProvider } from "../Context/MOHProviderContext";
 import "../styles/globals.css";
-import { CookieManager, MobileModal, Button } from "../components/componentsindex";
+import { CookieManager, MobileModal, Button, TermsOfService, UserAgreement, PrivacyPolicy, EmailFormPopup, EUCompliance, UKCompliance } from "../components/componentsindex";
 import { ChainId } from "@thirdweb-dev/sdk";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -69,7 +69,7 @@ For support or assistance, contact our team at support@xdrip.io
     setPopupContent(
       <div className={Style.modalOverlay}>
         <div className={Style.modalContent}>
-          <div style={{ whiteSpace: "pre-line", textAlign: "left", padding: "10px" }}>
+          <div className={Style.modalWrapper} style={{ whiteSpace: "pre-line", textAlign: "left", padding: "10px" }}>
             <p className={Style.popupText}>{message}</p>
             <div className={Style.modalButtons}>
               <Button
@@ -176,14 +176,49 @@ const MyApp = ({ Component, pageProps }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCookieModalVisible, setIsCookieModalVisible] = useState(false);
   const [splashVideo, setSplashVideo] = useState("/videos/splash.mp4");
-  const [hasEntered, setHasEntered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isPwaModalVisible, setIsPwaModalVisible] = useState(false);
+  const [isEmailFormOpen, setIsEmailFormOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [cookiePreferences, setCookiePreferences] = useState({
     essential: true,
     analytics: false,
     marketing: false,
   });
+  const [modals, setModals] = useState({
+    isTermsModalOpen: false,
+    isPrivacyPolicyModalOpen: false,
+    isUserAgreementModalOpen: false,
+    isEmailFormOpen: false,
+    isUKComplianceModalOpen: false,
+    setIsUKComplianceModalOpen: false,
+    isEUComplianceModalOpen: false,
+  });
+
+  const [userInfo, setUserInfo] = useState(null);
+
+  const popUpUserInfo = (info) => {
+    setUserInfo(info);
+    console.log("Updated user info:", info);
+  };
+
+  const openModal = (modalName) => {
+    setModals((prev) => ({ ...prev, [modalName]: true }));
+  };
+
+  const closeModal = (modalName) => {
+    setModals((prev) => ({ ...prev, [modalName]: false }));
+  };
+
+  const closeWithAnimation = (closeFunction) => {
+    setIsClosing(true);
+    setTimeout(() => {
+      closeFunction();
+      setIsClosing(false);
+    }, 500);
+  };
 
   useEffect(() => {
     const detectMobile = () => {
@@ -375,11 +410,59 @@ const MyApp = ({ Component, pageProps }) => {
                   updatePreferences={updatePreferences}
                   handleAcceptCookies={handleAcceptCookies}
                   handleDeclineCookies={handleDeclineCookies}
+                  openModal={openModal}
                 />
               )}
+
               <Component
                 {...pageProps}
+                openModal={openModal}
+
               />
+
+              <TermsOfService
+                isOpen={modals.isTermsModalOpen}
+                onRequestClose={() => closeWithAnimation(() => closeModal("isTermsModalOpen"))}
+                isClosing={isClosing}
+                openModal={openModal}
+              />
+
+              <PrivacyPolicy
+                isOpen={modals.isPrivacyPolicyModalOpen}
+                onRequestClose={() => closeWithAnimation(() => closeModal("isPrivacyPolicyModalOpen"))}
+                isClosing={isClosing}
+                openModal={openModal}
+              />
+
+              <UserAgreement
+                isOpen={modals.isUserAgreementModalOpen}
+                onRequestClose={() => closeWithAnimation(() => closeModal("isUserAgreementModalOpen"))}
+                isClosing={isClosing}
+                openModal={openModal}
+              />
+
+              <EmailFormPopup
+                isVisible={modals.isEmailFormOpen}
+                onClose={() => closeWithAnimation(() => closeModal("isEmailFormOpen"))}
+                isClosing={isClosing}
+                openModal={openModal}
+
+              />
+
+              <UKCompliance
+                isOpen={modals.isUKComplianceModalOpen}
+                onRequestClose={() => closeWithAnimation(() => closeModal("isUKComplianceModalOpen"))}
+                isClosing={isClosing}
+                openModal={openModal}
+              />
+
+              <EUCompliance
+                isOpen={modals.isEUComplianceModalOpen}
+                onRequestClose={() => closeWithAnimation(() => closeModal("isEUComplianceModalOpen"))}
+                isClosing={isClosing}
+                openModal={openModal}
+              />
+
             </MOHProvider>
           </ThirdwebProvider>
         </PayloadProvider>

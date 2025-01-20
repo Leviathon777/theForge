@@ -43,7 +43,8 @@
 
 .cookieContent {
   padding: 1.5rem;
-  border-radius: .8rem;
+  border-top-left-radius: .8rem;
+  border-top-right-radius: .8rem;
   background: var(--background-gradient-dark);
   box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
   max-width: 75rem;

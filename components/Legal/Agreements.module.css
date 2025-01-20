@@ -41,36 +41,44 @@
 }
 
 .modal {
-  max-width: 650px;
   padding: 20px;
   position: relative;
-  border-top-left-radius: .5rem;
+  border-top-left-radius: .8rem;
+  border-top-right-radius: .8rem;
   justify-content: center;
   align-items: flex-end;
   background: var(--background-gradient-dark);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  overflow-y: auto;
-  max-height: 90vh;
+  box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+  max-width: 75rem;
+  max-height: 34rem;
   z-index: 9999;
 }
 
 .modalWrapper {
-  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: left;
+  padding: 1.5rem 1.5rem 0rem 1.5rem;
   font-family: Arial, sans-serif;
   color: white;
+  max-height: calc(33.75rem - 2rem); 
+  overflow-y: auto; 
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent; 
 }
 
+
 .modalTitle {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 15px;
   text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .modalIntro {
-  font-size: 16px;
-  line-height: 1.6;
-  margin-bottom: 15px;
+  font-size: .9rem;
+  line-height: 1.2;
+  margin-bottom: 1rem;
 }
 
 .modalSection {
@@ -78,46 +86,45 @@
 }
 
 .sectionTitle {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 10px;
+  font-size: 1rem;
+  margin-bottom: 0rem;
 }
 
 .sectionContent {
   font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 10px;
+  line-height: 1.4;
+  margin-bottom: 0rem;
   color: #757575;
 }
 
 .sectionList {
   padding-left: 20px;
-  margin: 10px 0;
+  margin: 5px 0;
 }
 
 .listItem {
   font-size: 14px;
-  margin-bottom: 5px;
+  margin-bottom: 1px;
   list-style: disc;
   color: #757575;
 }
 
-.closeButton {
-  background-color: #333;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  font-size: 14px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 20px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.closeButtonBox {
+  margin: 1rem 0rem 1rem 0rem;
 }
 
-.closeButton:hover {
-  background-color: #555;
+.emailButton {
+  background: none;
+  color: #007bff;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: inherit;
+  padding: 0;
+}
+
+.emailButton:hover {
+  color: #0056b3;
 }
 
 @media (max-width: 768px) {

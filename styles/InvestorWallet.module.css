@@ -46,8 +46,8 @@
   /* Four cards in a row with gaps */
   background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
   box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
-  padding: 20px;
-  border-radius: 10px;
+  padding: 0rem;
+  border-radius: .5rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -56,9 +56,25 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
+.titleBox {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.432);
+  border-top-left-radius: .5rem;
+  border-top-right-radius: .5rem;
+}
+
+.infoBox {
+  display: flex;
+  flex-direction: column;
+  margin: .5rem;  
+}
+
 .cardTitle {
   font-size: 1.4rem;
-  margin-bottom: 15px;
+  margin-bottom: 0px;
 }
 
 .card p {
@@ -119,6 +135,54 @@
 .walletInfoValue {
   font-size: 16px;
 }
+
+.infoBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0rem 0.25rem 0rem 0.25rem ;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Optional separator */
+  padding: 0.5rem 0;
+}
+
+.infoTitle {
+  flex: 1;
+  font-size: .9rem;
+  font-weight: bold;
+  text-align: left;
+}
+
+.infoData {
+  flex: 1;
+  font-size: .9rem;
+  text-align: right;
+  color: #ccc; 
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.3s ease-in-out;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+
+.hoverExpand:hover {
+  text-overflow: clip;
+  overflow: visible;
+  white-space: normal;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  z-index: 10;
+}
+
 
 @media (max-width: 768px) {
   .walletInfoContainer {

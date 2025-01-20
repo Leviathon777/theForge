@@ -216,6 +216,15 @@
     color: #fff;
 }
 
+.euDropdown {
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #121212;
+    color: #fff;
+    margin-top: 1rem;
+}
+
 .checkboxWrapper {
     margin: 0rem 0;
     text-align: center;
@@ -278,9 +287,11 @@
 }
 
 .notice {
+    flex: 1;
     font-size: 1rem;
     line-height: 1.5;
     text-align: left;
+    align-content: center;
     background: radial-gradient(circle at 24.1% 68.8%, rgba(50, 50, 50, 0.8) 0%, rgba(0, 0, 0, 0.8) 99.4%);
     box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
     padding: 25px;
@@ -289,6 +300,7 @@
 }
 
 .notice ul {
+
     margin: 1rem;
     padding-left: 20px;
 }

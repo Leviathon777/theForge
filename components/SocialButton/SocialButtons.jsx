@@ -35,7 +35,7 @@ const SocialButtons = () => {
             <span className={styles.BG}></span>
           </button>
         </a>
-        {/* X Community Button */}
+        {/* X Community Button 
         <a href={"https://x.com/i/communities/1829518910087180378"} target="_blank" rel="noopener noreferrer" title="X Community">
           <button className={styles.Btntwit}>
             <span className={styles.svgContainertwit}>
@@ -45,7 +45,7 @@ const SocialButtons = () => {
             </span>
             <span className={styles.BGtwit}></span>
           </button>
-        </a>
+        </a>*/}
 
         {/* X Button */}
         <a href={"https://x.com/XDRIP"} target="_blank" rel="noopener noreferrer" title="X Main">

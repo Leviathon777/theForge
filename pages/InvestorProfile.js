@@ -3,44 +3,42 @@ import { useRouter } from "next/router";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Style from "../styles/InvestorProfile.module.css";
-import { TermsOfService, UserAgreement, PrivacyPolicy, UKCompliance, Button } from "../components/componentsindex";
+import { Button } from "../components/componentsindex";
 import { addForger } from "../firebase/forgeServices";
 
-const InvestorProfile = () => {
+const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
     const router = useRouter();
-    const { address, xdripBalance } = router.query;
+    const { address, dripPercent, xdripBalance, bonusQualification } = router.query;
+
     const [walletAddress, setWalletAddress] = useState("");
     const [firstName, setFirstName] = useState("");
     const [middleInitial, setMiddleInitial] = useState("");
     const [lastName, setLastName] = useState("");
     const [surname, setSurname] = useState("");
     const [email, setEmail] = useState("");
+    const [phoneCode, setPhoneCode] = useState("");
     const [phone, setPhone] = useState("");
     const [territory, setTerritory] = useState("");
-    const [mailingAddress, setMailingAddress] = useState("");
-    const [agreed, setAgreed] = useState(false);
-    const [errors, setErrors] = useState({});
-    const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
-    const [isUserAgreementModalOpen, setIsUserAgreementModalOpen] = useState(false);
-    const [isPrivacyPolicyModalOpen, setIsPrivacyPolicyModalOpen] = useState(false);
+    const [otherTerritory, setOtherTerritory] = useState("");
     const [streetAddress, setStreetAddress] = useState("");
+    const [apartment, setApartment] = useState("");
     const [city, setCity] = useState("");
     const [state, setState] = useState("");
     const [zipCode, setZipCode] = useState("");
-    const [apartment, setApartment] = useState("");
     const [dob, setDob] = useState("");
-    const [otherTerritory, setOtherTerritory] = useState("");
+    const [agreed, setAgreed] = useState(false);
     const [ukFCAAgreed, setUKFCAAgreed] = useState(false);
-    const [isUKComplianceModalOpen, setIsUKComplianceModalOpen] = useState(false);
-    const [isClosing, setIsClosing] = useState(false);
+    const [euAgreed, setEUAgreed] = useState(false);
+    const [errors, setErrors] = useState({});
 
-    const closeWithAnimation = (closeFunction) => {
-        setIsClosing(true);
-        setTimeout(() => {
-            closeFunction();
-            setIsClosing(false);
-        }, 500);
-    };
+    const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+    const [isUserAgreementModalOpen, setIsUserAgreementModalOpen] = useState(false);
+    const [isPrivacyPolicyModalOpen, setIsPrivacyPolicyModalOpen] = useState(false);
+    const [isUKComplianceModalOpen, setIsUKComplianceModalOpen] = useState(false);
+    const [isEUComplianceModalOpen, setIsEUComplianceModalOpen] = useState(false);
+
+    const Exempt = "Exempt";
+
 
 
     useEffect(() => {
@@ -56,18 +54,52 @@ const InvestorProfile = () => {
         return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
     };
 
+    const requiresUKCompliance = territory === "UK";
+    const requiresEUCompliance = territory === "EU";
+
+    // Helper for phone code
+    const getPhoneCode = () => {
+        switch (territory) {
+            case "US":
+                return "+1";
+            case "UK":
+                return "+44";
+            case "EU":
+                return "+3x or +4x";
+            default:
+                return "";
+        }
+    };
+
     const validateForm = () => {
         const newErrors = {};
+        const today = new Date();
+        const enteredDob = new Date(dob);
+        const age = today.getFullYear() - enteredDob.getFullYear();
+        const is18OrOlder = age > 18 || (age === 18 && today >= new Date(enteredDob.setFullYear(enteredDob.getFullYear() + 18)));
+
         if (!firstName.trim()) newErrors.firstName = "First Name is required.";
         if (!lastName.trim()) newErrors.lastName = "Last Name is required.";
         if (!email.trim() || !/\S+@\S+\.\S+/.test(email))
             newErrors.email = "Valid Email Address is required.";
         if (!territory) newErrors.territory = "Please select your territory.";
-        if (!dob) newErrors.dob = "Date of Birth is required.";
+        if (!dob) {
+            newErrors.dob = "Date of Birth is required.";
+        } else if (!is18OrOlder) {
+            newErrors.dob = "You must be at least 18 years old.";
+        }
         if (!walletAddress) newErrors.walletAddress = "Wallet connection is required.";
         if (!agreed) newErrors.agreed = "You must agree to the Terms, User Agreement, and Privacy Policy.";
-        if (territory === "UK" && !ukFCAAgreed)
+
+        // UK compliance
+        if (requiresUKCompliance && !ukFCAAgreed) {
             newErrors.ukFCAAgreed = "You must agree to the FCA Disclosures and Agreement.";
+        }
+
+        // EU compliance
+        if (requiresEUCompliance && !euAgreed) {
+            newErrors.euAgreed = "You must confirm EU-related compliance to proceed.";
+        }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -78,17 +110,23 @@ const InvestorProfile = () => {
 
     const handleSubmit = async () => {
         if (!validateForm()) {
-            toast.error("Please fill out all required fields before submitting.");
+            // Display all errors in the toast
+            Object.values(errors).forEach((error) => {
+                toast.error(error); // Show each error as a separate toast notification
+            });
             return;
         }
 
-        const totalSupply = 1_000_000_000;
-        const dripPercent = ((xdripBalance / totalSupply) * 100).toFixed(2);
+        // Construct the territory to store; "Other" => user input
+        const finalTerritory = territory === "Other" ? otherTerritory : territory;
+
+        // Build the profileData object to send to Firebase
         const profileData = {
-            fullName: `${firstName} ${middleInitial ? middleInitial + " " : ""}${lastName}${surname ? " " + surname : ""}`,
+            fullName: `${firstName} ${middleInitial ? middleInitial + " " : ""}${lastName}${surname ? " " + surname : ""
+                }`,
             email,
             phone: phone || null,
-            territory: territory === "Other" ? otherTerritory : territory,
+            territory: finalTerritory,
             mailingAddress: {
                 streetAddress: streetAddress || null,
                 apartment: apartment || null,
@@ -103,17 +141,19 @@ const InvestorProfile = () => {
                 kycStatus: "not submitted",
                 kycCompletedAt: "N/A",
                 kycSubmittedAt: "N/A",
-                kycVerified: "false",
+                kycVerified: false,
             },
-            ukFCAAgreed: territory === "UK" ? ukFCAAgreed : null,
+            // Only set these if needed
+            ukFCAAgreed: requiresUKCompliance ? ukFCAAgreed : Exempt,
+            euAgreed: requiresEUCompliance ? euAgreed : Exempt,
             dateOfJoin: new Date().toISOString(),
             drip: {
-                dripHeld: xdripBalance,
-                supplyPercent: `${dripPercent}%`,
-                dateLastLogged: new Date().toISOString(),
+                dripCount: parseFloat(xdripBalance || 0),
+                dripPercent: `${parseFloat(dripPercent || 0).toFixed(2)}%`,
+                qualifiesForBonus: bonusQualification === "true" || bonusQualification === true,
+                DateLastLogged: new Date().toISOString(),
             },
         };
-
 
         try {
             await addForger(profileData);
@@ -126,8 +166,6 @@ const InvestorProfile = () => {
             toast.error("Failed to submit your profile. Please try again.");
         }
     };
-
-
 
     const handleBackToForge = () => {
         router.push("/TheForge");
@@ -227,6 +265,7 @@ const InvestorProfile = () => {
 
                     </div>
 
+                    {/* Territory */}
                     <div className={`${Style.territorySection} ${errors.territory ? Style.errorSection : ""}`}>
                         <label
                             className={`${Style.territoryLabel} ${errors.territory ? Style.errorLabel : ""}`}
@@ -240,9 +279,9 @@ const InvestorProfile = () => {
                                     name="territory"
                                     value="US"
                                     checked={territory === "US"}
-                                    onChange={() => handleTerritoryChange("US")}
+                                    onChange={() => setTerritory("US")}
                                 />
-                                United States
+                                USA
                             </label>
                             <label className={Style.territoryOption}>
                                 <input
@@ -250,9 +289,20 @@ const InvestorProfile = () => {
                                     name="territory"
                                     value="UK"
                                     checked={territory === "UK"}
-                                    onChange={() => handleTerritoryChange("UK")}
+                                    onChange={() => setTerritory("UK")}
                                 />
-                                United Kingdom
+                                UK
+                            </label>
+                            {/* NEW: EU territory */}
+                            <label className={Style.territoryOption}>
+                                <input
+                                    type="radio"
+                                    name="territory"
+                                    value="EU"
+                                    checked={territory === "EU"}
+                                    onChange={() => setTerritory("EU")}
+                                />
+                                EU
                             </label>
                             <label className={Style.territoryOption}>
                                 <input
@@ -260,14 +310,14 @@ const InvestorProfile = () => {
                                     name="territory"
                                     value="Other"
                                     checked={territory === "Other"}
-                                    onChange={() => handleTerritoryChange("Other")}
+                                    onChange={() => setTerritory("Other")}
                                 />
                                 Other
                                 {territory === "Other" && (
                                     <input
                                         type="text"
                                         placeholder="Specify"
-                                        value={otherTerritory || ""}
+                                        value={otherTerritory}
                                         onChange={(e) => setOtherTerritory(e.target.value)}
                                         className={Style.inlineInputField}
                                     />
@@ -276,16 +326,24 @@ const InvestorProfile = () => {
                         </div>
                     </div>
 
+                    {/* Address And Phone */}
                     <div className={Style.addressSection}>
                         <div className={Style.phoneField}>
                             <select
-                                value={territory}
-                                onChange={(e) => setTerritory(e.target.value)}
+                                value={phoneCode}
+                                onChange={(e) => setPhoneCode(e.target.value)}
                                 className={Style.territorySelect}
                             >
-                                <option value="US">🇺🇸 +1 (US)</option>
-                                <option value="UK">🇬🇧 +44 (UK)</option>
-                                <option value="Other">🌍 Other</option>
+                                <option value="">Select a Code</option>
+                                <option value="+1">🇺🇸 +1 (US)</option>
+                                <option value="+44">🇬🇧 +44 (UK)</option>
+                                <option value="+33">🇫🇷 +33 (France)</option>
+                                <option value="+49">🇩🇪 +49 (Germany)</option>
+                                <option value="+34">🇪🇸 +34 (Spain)</option>
+                                <option value="+39">🇮🇹 +39 (Italy)</option>
+                                <option value="+31">🇳🇱 +31 (Netherlands)</option>
+                                <option value="+41">🇨🇭 +41 (Switzerland)</option>
+                                <option value="Custom">🌍 Other</option>
                             </select>
                             <input
                                 type="tel"
@@ -295,6 +353,8 @@ const InvestorProfile = () => {
                                 className={Style.phoneInput}
                             />
                         </div>
+
+                        {/* Street address fields */}
                         <input
                             type="text"
                             placeholder="Residential address"
@@ -309,6 +369,8 @@ const InvestorProfile = () => {
                             onChange={(e) => setApartment(e.target.value)}
                             className={Style.inputField}
                         />
+
+                        {/* US */}
                         {territory === "US" && (
                             <div className={Style.cityStateZip}>
                                 <input
@@ -385,6 +447,7 @@ const InvestorProfile = () => {
                             </div>
                         )}
 
+                        {/* UK */}
                         {territory === "UK" && (
                             <div className={Style.cityCountyPostcode}>
                                 <input
@@ -411,6 +474,48 @@ const InvestorProfile = () => {
                             </div>
                         )}
 
+                        {/* EU */}
+                        {territory === "EU" && (
+                            <div className={Style.cityRegionPostal}>
+                                <input
+                                    type="text"
+                                    placeholder="City"
+                                    value={city}
+                                    onChange={(e) => setCity(e.target.value)}
+                                    className={Style.inputField}
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Region/Province/State"
+                                    value={state}
+                                    onChange={(e) => setState(e.target.value)}
+                                    className={Style.inputField}
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Postal Code"
+                                    value={zipCode}
+                                    onChange={(e) => setZipCode(e.target.value)}
+                                    className={Style.inputField}
+                                />
+
+                                <select
+                                    value={otherTerritory}
+                                    onChange={(e) => setOtherTerritory(e.target.value)}
+                                    className={Style.euDropdown}
+                                >
+                                    <option value="">Select EU Country</option>
+                                    <option value="France">France</option>
+                                    <option value="Germany">Germany</option>
+                                    <option value="Spain">Spain</option>
+                                    <option value="Italy">Italy</option>
+                                    <option value="Netherlands">Netherlands</option>
+                                </select>
+                            </div>
+                        )}
+
+
+                        {/* Other */}
                         {territory === "Other" && (
                             <div className={Style.cityRegionPostal}>
                                 <input
@@ -430,6 +535,8 @@ const InvestorProfile = () => {
                             </div>
                         )}
                     </div>
+
+                    {/* Agreements */}
                     <div className={Style.checkboxWrapper}>
                         <input
                             type="checkbox"
@@ -442,7 +549,7 @@ const InvestorProfile = () => {
                             <button
                                 type="button"
                                 className={Style.linkButton}
-                                onClick={() => setIsTermsModalOpen(true)}
+                                onClick={() => openModal("isTermsModalOpen")}
                             >
                                 Terms of Use
                             </button>
@@ -450,7 +557,7 @@ const InvestorProfile = () => {
                             <button
                                 type="button"
                                 className={Style.linkButton}
-                                onClick={() => setIsUserAgreementModalOpen(true)}
+                                onClick={() => openModal("isUserAgreementModalOpen")}
                             >
                                 User Agreement
                             </button>
@@ -458,34 +565,58 @@ const InvestorProfile = () => {
                             <button
                                 type="button"
                                 className={Style.linkButton}
-                                onClick={() => setIsPrivacyPolicyModalOpen(true)}
+                                onClick={() => openModal("isPrivacyPolicyModalOpen")}
                             >
                                 Privacy Policy
                             </button>
                             .
                         </label>
-                        {territory === "UK" && (
-                            <div className={Style.ukFCAWrapper}>
-                                <input
-                                    type="checkbox"
-                                    id="ukFCAAgreement"
-                                    checked={ukFCAAgreed}
-                                    onChange={(e) => setUKFCAAgreed(e.target.checked)}
-                                />
-                                <label htmlFor="ukFCAAgreement">
-                                    I agree to the{" "}
-                                    <button
-                                        type="button"
-                                        className={Style.linkButton}
-                                        onClick={() => setIsUKComplianceModalOpen(true)}
-                                    >
-                                        FCA Disclosures and Agreement
-                                    </button>{" "}
-                                    specific to UK investors.
-                                </label>
-                            </div>
-                        )}
                     </div>
+
+                    {/* UK compliance */}
+                    {requiresUKCompliance && (
+                        <div className={Style.checkboxWrapper}>
+                            <input
+                                type="checkbox"
+                                id="ukFCAAgreement"
+                                checked={ukFCAAgreed}
+                                onChange={(e) => setUKFCAAgreed(e.target.checked)}
+                            />
+                            <label htmlFor="ukFCAAgreement">
+                                I agree to the{" "}
+                                <button
+                                    type="button"
+                                    className={Style.linkButton}
+                                    onClick={() => openModal("isUKComplianceModalOpen")}
+                                >
+                                    FCA Disclosures and Agreement
+                                </button>{" "}
+                                specific to UK investors.
+                            </label>
+                        </div>
+                    )}
+
+                    {/* EU compliance */}
+                    {requiresEUCompliance && (
+                        <div className={Style.checkboxWrapper}>
+                            <input
+                                type="checkbox"
+                                id="euAgreement"
+                                checked={euAgreed}
+                                onChange={(e) => setEUAgreed(e.target.checked)}
+                            />
+                            <label htmlFor="euAgreement">
+                                I confirm that I have read the{" "}
+                                <button
+                                    type="button"
+                                    className={Style.linkButton}
+                                    onClick={() => openModal("isEUComplianceModalOpen")}
+                                >
+                                    EU Compliance Notice
+                                </button>
+                            </label>
+                        </div>
+                    )}
 
                     <div className={Style.buttonGroup}>
                         <Button
@@ -513,28 +644,6 @@ const InvestorProfile = () => {
                     </div>
                 </div>
             </div>
-
-            <TermsOfService
-              isOpen={isTermsModalOpen}
-              onRequestClose={() => closeWithAnimation(() => setIsTermsModalOpen(false))}
-              isClosing={isClosing}
-            />
-            <UserAgreement
-              isOpen={isUserAgreementModalOpen}
-              onRequestClose={() => closeWithAnimation(() => setIsUserAgreementModalOpen(false))}
-              isClosing={isClosing}
-            />
-            <PrivacyPolicy
-              isOpen={isPrivacyPolicyModalOpen}
-              onRequestClose={() => closeWithAnimation(() => setIsPrivacyPolicyModalOpen(false))}
-              isClosing={isClosing}
-            />
-            <UKCompliance
-                isOpen={isUKComplianceModalOpen}
-                onRequestClose={() => closeWithAnimation(() => setIsUKComplianceModalOpen(false))}
-                isClosing={isClosing}
-            />
-
         </div>
     );
 };

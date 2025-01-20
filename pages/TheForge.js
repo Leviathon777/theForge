@@ -43,7 +43,7 @@ const PwaInstructionsModal = ({ onClose }) => (
   </div>
 );
 
-const TheForge = () => {
+const TheForge = ({openModal}) => {
   const [bnbPrice, setBnbPrice] = useState(null);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isPrivacyPolicyModalOpen, setIsPrivacyPolicyModalOpen] = useState(false);
@@ -223,30 +223,30 @@ const TheForge = () => {
               |
               <span
                 className={Style.footerLink}
-                onClick={() => setIsTermsModalOpen(true)}
+                onClick={() => openModal("isTermsModalOpen")}
               >
                 Terms of Service
               </span>
               |
               <span
                 className={Style.footerLink}
-                onClick={() => setIsUserAgreementModalOpen(true)}
+                onClick={() => openModal("isUserAgreementModalOpen")}
               >
                 User Agreement
               </span>
               |
               <span
                 className={Style.footerLink}
-                onClick={() => setIsPrivacyPolicyModalOpen(true)}
+                onClick={() => openModal("isPrivacyPolicyModalOpen")}
               >
                 Privacy Policy
               </span>
               |
               <span
                 className={Style.footerLink}
-                onClick={() => setIsEmailFormOpen(true)}
+                onClick={() => openModal("isEmailFormOpen")}
               >
-                Contact Us
+                Contact XDRIP
               </span>
               |
               {isOwner && (
@@ -262,28 +262,6 @@ const TheForge = () => {
               )}
 
             </div>
-            <TermsOfService
-              isOpen={isTermsModalOpen}
-              onRequestClose={() => closeWithAnimation(() => setIsTermsModalOpen(false))}
-              isClosing={isClosing}
-            />
-            <UserAgreement
-              isOpen={isUserAgreementModalOpen}
-              onRequestClose={() => closeWithAnimation(() => setIsUserAgreementModalOpen(false))}
-              isClosing={isClosing}
-            />
-            <PrivacyPolicy
-              isOpen={isPrivacyPolicyModalOpen}
-              onRequestClose={() => closeWithAnimation(() => setIsPrivacyPolicyModalOpen(false))}
-              isClosing={isClosing}
-            />
-            {isEmailFormOpen && (
-              <EmailFormPopup
-                isVisible={isEmailFormOpen}
-                onClose={() => closeWithAnimation(() => setIsEmailFormOpen(false))}
-                isClosing={isClosing}
-              />
-            )}
           </div>
         </MyDotData>
       </div >

@@ -22,7 +22,9 @@ import MobileModal from "./EntryPage/MobileModal";
 import UKCompliance from "./Legal/UKCompliance";
 import CookieManager from "./Legal/CookieManager";
 import EmailFormPopup from "./Legal/EmailFormPopup";
+import EUCompliance from "./Legal/EUCompliance";
 export {
+  EUCompliance,
   UKCompliance,
   EmailFormPopup,
   CookieManager,
