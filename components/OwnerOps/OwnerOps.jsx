@@ -1479,7 +1479,7 @@ const OwnerOps = () => {
   const handleAddressClick = useCallback((e, targetAddress) => {
     if (e.ctrlKey || e.metaKey) {
       // open in new tab
-      window.open(`https://testnet.bscscan.com/address/${targetAddress}`, "_blank");
+      window.open(`https://bscscan.com/address/${targetAddress}`, "_blank");
     } else {
       copyToClipboard(targetAddress);
     }

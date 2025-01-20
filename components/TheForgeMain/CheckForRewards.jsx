@@ -4,7 +4,7 @@ import Web3 from "web3";
 import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
 
 // Replace with the correct network URL
-const web3 = new Web3("https://bsc-dataseed.binance.org/");  // or the testnet URL for test environment
+const web3 = new Web3("https://bsc-dataseed.binance.org/");  
 
 const XdRiPContractAddress = xdripCA_ABI.address;
 const XdRiPContractABI = xdripCA_ABI.abi;

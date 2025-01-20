@@ -62,7 +62,7 @@ const KYCPage = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          form_id: '3cb68f2c002d714c821b92b0765545f633ad',
+          form_id: 'ff9c2a36075ff142b3183c95493e3262835d',
           external_applicant_id: userData.walletAddress,
           redirect_url: '',
         }),

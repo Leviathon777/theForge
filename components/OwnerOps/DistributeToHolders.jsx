@@ -70,7 +70,7 @@ const address = useAddress();
         await window.ethereum.request({ method: "eth_requestAccounts" });
         
         // *** Use dedicated testnet RPC for MOH and Distribution contracts ***
-        const TESTNET_RPC = "https://data-seed-prebsc-1-s1.binance.org:8545/";
+        const TESTNET_RPC = "https://bsc-dataseed1.binance.org/";
         const testnetProvider = new ethers.providers.JsonRpcProvider(TESTNET_RPC);
         const testnetSigner = testnetProvider.getSigner();
   
@@ -571,7 +571,7 @@ const address = useAddress();
                   <td>{event.blockNumber}</td>
                   <td>
                     <a
-                      href={`https://testnet.bscscan.com/tx/${event.transactionHash}`}
+                      href={`https://bscscan.com/tx/${event.transactionHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -1481,7 +1481,7 @@ const DistributeRevShare = ({ onBack }) => {
         await window.ethereum.request({ method: "eth_requestAccounts" });
   
         // *** Using dedicated testnet RPC for MOH and Distribution contracts ***
-        const TESTNET_RPC = "https://data-seed-prebsc-1-s1.binance.org:8545/";
+        const TESTNET_RPC = "https://bsc-dataseed1.binance.org/";
         const testnetProvider = new ethers.providers.JsonRpcProvider(TESTNET_RPC);
         const balance = await testnetProvider.getBalance(distributeCA_ABI.address);
         console.log("Testnet contract balance:", ethers.utils.formatEther(balance));

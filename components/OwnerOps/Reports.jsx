@@ -786,7 +786,7 @@ const Reports = ({ onClose }) => {
   // Unified address click: ctrl/cmd => open block explorer, else copy
   const handleAddressClick = useCallback((e, targetAddress) => {
     if (e.ctrlKey || e.metaKey) {
-      window.open(`https://testnet.bscscan.com/address/${targetAddress}`, "_blank");
+      window.open(`https://bscscan.com/address/${targetAddress}`, "_blank");
     } else {
       navigator.clipboard
         .writeText(targetAddress)

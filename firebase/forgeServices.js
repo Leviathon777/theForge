@@ -763,7 +763,7 @@ export const sendReceiptEmail = async (address, email, fullName, medalType, pric
                                          BlockChain Link:
                                         </td>
                                               <td style="padding: 10px; border: 1px solid #ddd;">
-                                        <a href="https://testnet.bscscan.com/tx/${transactionHash}" 
+                                        <a href="https://bscscan.com/tx/${transactionHash}" 
                                         style=" text-decoration: none; font-weight: bold;" 
                                         target="_blank">
                                          View Transaction

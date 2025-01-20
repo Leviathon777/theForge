@@ -360,7 +360,7 @@ const MyApp = ({ Component, pageProps }) => {
       ) : (
         <PayloadProvider>
           <ThirdwebProvider
-            activeChain={ChainId.BinanceSmartChainTestnet}
+            activeChain={ChainId.BinanceSmartChainMainnet}
             clientId={process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
             //autoConnect={false}
             modalConfig={{
