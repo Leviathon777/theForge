@@ -22,6 +22,69 @@ import Style from "../styles/app.module.css";
 import { PayloadProvider } from "../Context/PayloadContext";
 import { usePayload } from "../Context/PayloadContext";
 
+
+const ChatWidget = () => {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-embedded-agent.js';
+    script.async = true;
+
+    script.onload = () => {
+      if (window.AgentInitializer) {
+        window.AgentInitializer.init({
+          // Required properties
+          rootId: "JotformAgent-01948024dc7e734fb48bf0d5848947577441",
+          formID: "01948024dc7e734fb48bf0d5848947577441",
+          queryParams: ["skipWelcome=1", "maximizable=1"],
+          
+          // Domain and URL properties
+          domain: "https://agent.jotform.com", // changed to match your custom domain
+          agentRenderURL: "https://agent.jotform.com/01948024dc7e734fb48bf0d5848947577441",
+          
+          // Appearance and behavior settings
+          isInitialOpen: false,
+          isDraggable: false, // setting to false as per customizations
+          background: "linear-gradient(180deg, #424757 0%, #424757 100%)",
+          buttonBackgroundColor: "#11111B",
+          buttonIconColor: "#FFF",
+          variant: false,
+          
+          // Customizations object
+          customizations: {
+            greeting: "Yes",
+            greetingMessage: "Hi! How can I assist you?",
+            pulse: "Yes",
+            position: "right",
+          },
+          
+          // Optionally include other settings (if needed)
+          isVoice: undefined,
+        });
+      } else {
+        console.error('AgentInitializer is not available');
+      }
+    };
+
+    script.onerror = () => {
+      console.error('Failed to load the JotForm agent script');
+    };
+
+    document.body.appendChild(script);
+
+    return () => {
+      // Cleanup the script tag on unmount
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  return (
+    <div id="JotformAgent-01948024dc7e734fb48bf0d5848947577441" />
+  );
+};
+
+
+
+
 const AuthHandler = () => {
   const { activatePayload } = usePayload();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -30,6 +93,8 @@ const AuthHandler = () => {
   const address = useAddress();
   const signer = useSigner();
   const disconnectWallet = useDisconnect();
+
+  
 
   const generateGenericPayloadMessage = (userAddress) => {
     if (!userAddress) {
@@ -282,6 +347,68 @@ const MyApp = ({ Component, pageProps }) => {
     }
   }, []);
 
+
+const ChatWidget = () => {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-embedded-agent.js';
+    script.async = true;
+
+    script.onload = () => {
+      if (window.AgentInitializer) {
+        window.AgentInitializer.init({
+          // Required properties
+          rootId: "JotformAgent-01948024dc7e734fb48bf0d5848947577441",
+          formID: "01948024dc7e734fb48bf0d5848947577441",
+          queryParams: ["skipWelcome=1", "maximizable=1"],
+          
+          // Domain and URL properties
+          domain: "https://agent.jotform.com", // changed to match your custom domain
+          agentRenderURL: "https://agent.jotform.com/01948024dc7e734fb48bf0d5848947577441",
+          
+          // Appearance and behavior settings
+          isInitialOpen: false,
+          isDraggable: false, // setting to false as per customizations
+          background: "linear-gradient(180deg, #424757 0%, #424757 100%)",
+          buttonBackgroundColor: "#11111B",
+          buttonIconColor: "#FFF",
+          variant: false,
+          
+          // Customizations object
+          customizations: {
+            greeting: "Yes",
+            greetingMessage: "Hi! How can I assist you?",
+            pulse: "Yes",
+            position: "right",
+          },
+          
+          // Optionally include other settings (if needed)
+          isVoice: undefined,
+        });
+      } else {
+        console.error('AgentInitializer is not available');
+      }
+    };
+
+    script.onerror = () => {
+      console.error('Failed to load the JotForm agent script');
+    };
+
+    document.body.appendChild(script);
+
+    return () => {
+      // Cleanup the script tag on unmount
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  return (
+    <div id="JotformAgent-01948024dc7e734fb48bf0d5848947577441" />
+  );
+};
+
+
+
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
@@ -307,6 +434,7 @@ const MyApp = ({ Component, pageProps }) => {
 
   return (
     <>
+    <ChatWidget />
       <Head>
         <title>Medals of HONOR by XdRiP</title>
         <link rel="icon" href="/favicon.ico" />

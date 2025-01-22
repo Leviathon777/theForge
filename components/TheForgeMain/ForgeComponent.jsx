@@ -40,7 +40,7 @@ const web3 = new Web3("https://bsc-dataseed1.binance.org/");
 const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
 
 
-/*https://www.jotform.com/agent/build/01946c5bcc597753bf32b6dab0266c4e4772/publish */
+/*https://www.jotform.com/agent/build/01946c5bcc597753bf32b6dab0266c4e4772/publish *//*
 
 const ChatWidget = () => {
   useEffect(() => {
@@ -77,6 +77,8 @@ const ChatWidget = () => {
 
   return <div id="JotformAgent-01948024dc7e734fb48bf0d5848947577441" />;
 };
+*/
+
 
 
 
@@ -855,7 +857,11 @@ const handleForgeClick = (medal) => {
 
   return (
     <div className={Style.the_forge}>
+      
+      {/*
       <ChatWidget />
+      */}
+      
       <div className={Style.the_forge_wrapper}>
         <div className={Style.forge_button_upper}>
           <h1 className={Style.lore_text}>
