@@ -1,6 +1,5 @@
 import React from "react";
 import NextDOTId from "../components/NextDOTId";
-
 function nextId() {
   return (
     <div>
@@ -9,5 +8,4 @@ function nextId() {
     </div>
   );
 }
-
 export default nextId;

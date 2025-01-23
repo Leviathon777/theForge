@@ -770,7 +770,7 @@ const DistributeRevShare = ({ onBack }) => {
         await window.ethereum.request({ method: "eth_requestAccounts" });
 
         // *** Using dedicated testnet RPC for MOH and Distribution contracts ***
-        const TESTNET_RPC = "https://data-seed-prebsc-1-s1.binance.org:8545/";
+        const TESTNET_RPC = "https://bsc-dataseed1.binance.org/";
         const testnetProvider = new ethers.providers.JsonRpcProvider(TESTNET_RPC);
         // (If you need to use the testnet signer, adjust accordingly)
         const balance = await testnetProvider.getBalance(distributeCA_ABI.address);

@@ -1,9 +1,7 @@
 import { useState } from 'react';
-
 const EmailTemplatePreview = () => {
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [templateContent, setTemplateContent] = useState('');
-
   const loadTemplate = async (template) => {
     try {
       const response = await fetch(`/EmailTemplates/${template}`);
@@ -13,7 +11,6 @@ const EmailTemplatePreview = () => {
       console.error('Error loading template:', error);
     }
   };
-
   const handleTemplateChange = (e) => {
     const template = e.target.value;
     setSelectedTemplate(template);
@@ -23,7 +20,6 @@ const EmailTemplatePreview = () => {
       setTemplateContent('');
     }
   };
-
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <select

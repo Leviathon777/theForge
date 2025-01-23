@@ -30,14 +30,37 @@ import { getForger, logMedalPurchase, sendReceiptEmail, trackDetailedTransaction
 import { useXoast } from "../Xoast/Xoast.jsx";
 
 
+/* -------------------------------------------------------------------------- */
+/*                          SETUP: CONTRACT ADDRESSES                          */
+/* -------------------------------------------------------------------------- */
 const MohAddress = mohCA_ABI.address;
 const MohABI = mohCA_ABI.abi;
-const fetchMohContract = (signerOrProvider) =>
-  new ethers.Contract(MohAddress, MohABI, signerOrProvider);
+
 const XdRiPContractAddress = xdripCA_ABI.address;
 const XdRiPContractABI = xdripCA_ABI.abi;
+
+/* -------------------------------------------------------------------------- */
+/*            READ-ONLY PROVIDERS (so you can read data anytime)              */
+/* -------------------------------------------------------------------------- */
+
+// 1. Read-only provider for BSC testnet (adjust if you’re on mainnet)
+const readOnlyProvider = new ethers.providers.JsonRpcProvider(
+  "https://bsc-dataseed1.binance.org/"
+);
+
+// 2. A read-only instance for medal data
+const readOnlyMohContract = new ethers.Contract(MohAddress, MohABI, readOnlyProvider);
+
+// 3. For XdRiP, we have a web3-based contract (you had it originally):
 const web3 = new Web3("https://bsc-dataseed1.binance.org/");
 const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
+
+/* -------------------------------------------------------------------------- */
+/*               OPTIONAL:  Function that returns contract instance           */
+/* -------------------------------------------------------------------------- */
+// If you have a signer, we use it (for forging). Otherwise, read-only.
+const fetchMohContract = (signerOrProvider) =>
+  new ethers.Contract(MohAddress, MohABI, signerOrProvider);
 
 
 /*https://www.jotform.com/agent/build/01946c5bcc597753bf32b6dab0266c4e4772/publish *//*
@@ -80,11 +103,6 @@ const ChatWidget = () => {
 */
 
 
-
-
-
-
-
 const ForgeComponent = () => {
   const router = useRouter();
   const [selectedMedalForForge, setSelectedMedalForForge] = useState(null);
@@ -98,7 +116,6 @@ const ForgeComponent = () => {
   const { fetchDots } = useContext(MyDotDataContext);
   const [isBNBPrice, setIsBNBPrice] = useState(true);
   const [currentMedal, setCurrentMedal] = useState(null);
-  const wallet = useWallet();
   const address = useAddress();
   const signer = useSigner();
   const [forgedCounts, setForgedCounts] = useState({});
@@ -111,12 +128,8 @@ const ForgeComponent = () => {
   const [isReminderPopupVisible, setIsReminderPopupVisible] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
-  const [isKYCReminderVisible, setIsKYCReminderVisible] = useState(false);
-  const [medalToForge, setMedalToForge] = useState(null);
-  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
   const [isTransakActive, setIsTransakActive] = useState(false);
   const [medalCount, setMedalCount] = useState(0);
-  const [modalStep, setModalStep] = useState("kycPrompt");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -388,31 +401,73 @@ const ForgeComponent = () => {
     fetchBalance();
   }, [signer, address]);
 
+
   const fetchForgedCounts = async () => {
-    if (!signer) return;
     try {
-      const contract = fetchMohContract(signer);
+      let contract;
+      if (signer) {
+        contract = fetchMohContract(signer);
+      } else {
+        contract = readOnlyMohContract; 
+      }
       const [
-        commonforged, commonRemaining,
-        uncommonforged, uncommonRemaining,
-        rareforged, rareRemaining,
-        epicforged, epicRemaining,
-        legendaryforged, legendaryRemaining,
-        eternalforged, eternalRemaining
+        commonforged,
+        commonRemaining,
+        uncommonforged,
+        uncommonRemaining,
+        rareforged,
+        rareRemaining,
+        epicforged,
+        epicRemaining,
+        legendaryforged,
+        legendaryRemaining,
+        eternalforged,
+        eternalRemaining,
       ] = await contract.getforgedCounts();
+
       return {
-        COMMON: { forged: commonforged.toNumber(), available: commonRemaining.toNumber() },
-        UNCOMMON: { forged: uncommonforged.toNumber(), available: uncommonRemaining.toNumber() },
-        RARE: { forged: rareforged.toNumber(), available: rareRemaining.toNumber() },
-        EPIC: { forged: epicforged.toNumber(), available: epicRemaining.toNumber() },
-        LEGENDARY: { forged: legendaryforged.toNumber(), available: legendaryRemaining.toNumber() },
-        ETERNAL: { forged: eternalforged.toNumber(), available: eternalRemaining.toNumber() },
+        COMMON: {
+          forged: commonforged.toNumber(),
+          available: commonRemaining.toNumber(),
+        },
+        UNCOMMON: {
+          forged: uncommonforged.toNumber(),
+          available: uncommonRemaining.toNumber(),
+        },
+        RARE: {
+          forged: rareforged.toNumber(),
+          available: rareRemaining.toNumber(),
+        },
+        EPIC: {
+          forged: epicforged.toNumber(),
+          available: epicRemaining.toNumber(),
+        },
+        LEGENDARY: {
+          forged: legendaryforged.toNumber(),
+          available: legendaryRemaining.toNumber(),
+        },
+        ETERNAL: {
+          forged: eternalforged.toNumber(),
+          available: eternalRemaining.toNumber(),
+        },
       };
     } catch (error) {
       console.error("Error fetching forged counts:", error);
       return null;
     }
   };
+
+
+  useEffect(() => {
+    const loadForgedCounts = async () => {
+      const counts = await fetchForgedCounts();
+      if (counts) {
+        setForgedCounts(counts);
+      }
+    };
+    loadForgedCounts();
+  }, [signer]);
+
 
   useEffect(() => {
     if (isTransakActive || selectedMedalDetails) {
@@ -490,21 +545,6 @@ const ForgeComponent = () => {
     }
   };
 
-  /* FUTURE TRANSAK ONE INTEGRATION 
-    const handleCryptoForge = async (medalType, ipfsHash, revenueAccess, xdripBonus) => {
-      if (!address) {
-        toast.info("Please connect your wallet to proceed.");
-        connectLocalWallet();
-        return Promise.reject("No wallet connected.");
-      }
-      if (medalType === "ETERNAL" && userInfo?.kycStatus !== "approved") {
-        toast.error("KYC approval is required to forge the Eternal Medal. Please complete your KYC verification.");
-        console.error("KYC not approved for ETERNAL medal.");
-        return Promise.reject("KYC not approved for ETERNAL medal.");
-      }
-      return forge(medalType, ipfsHash, revenueAccess, xdripBonus);
-    };*/
-
   const handleForgeClick = async (medal) => {
     if (!address) {
       toast.info("Please connect your wallet to proceed with Forging.");
@@ -547,10 +587,20 @@ const ForgeComponent = () => {
     if (!provider) {
       throw new Error("Provider is missing. Please reconnect your wallet.");
     }
-
     const contract = fetchMohContract(signer);
-
     setIsLoading(true);
+    const getEventName = (type) => {
+      switch (type) {
+        case "COMMON": return "Commonforged";
+        case "UNCOMMON": return "Uncommonforged";
+        case "RARE": return "Rareforged";
+        case "EPIC": return "Epicforged";
+        case "LEGENDARY": return "Legendaryforged";
+        case "ETERNAL": return "Eternalforged";
+        default:
+          throw new Error(`Unknown medal type: ${type}`);
+      }
+    };
     try {
       switch (medalType) {
         case "COMMON":
@@ -592,24 +642,12 @@ const ForgeComponent = () => {
       const price = ethers.utils.parseUnits(itemPrice, "ether");
       let forgeFunction;
       switch (medalType) {
-        case "COMMON":
-          forgeFunction = contract.forgeCommon;
-          break;
-        case "UNCOMMON":
-          forgeFunction = contract.forgeUncommon;
-          break;
-        case "RARE":
-          forgeFunction = contract.forgeRare;
-          break;
-        case "EPIC":
-          forgeFunction = contract.forgeEpic;
-          break;
-        case "LEGENDARY":
-          forgeFunction = contract.forgeLegendary;
-          break;
-        case "ETERNAL":
-          forgeFunction = contract.forgeEternal;
-          break;
+        case "COMMON": forgeFunction = contract.forgeCommon; break;
+        case "UNCOMMON": forgeFunction = contract.forgeUncommon; break;
+        case "RARE": forgeFunction = contract.forgeRare; break;
+        case "EPIC": forgeFunction = contract.forgeEpic; break;
+        case "LEGENDARY": forgeFunction = contract.forgeLegendary; break;
+        case "ETERNAL": forgeFunction = contract.forgeEternal; break;
         default:
           throw new Error("Invalid medal type");
       }
@@ -621,39 +659,82 @@ const ForgeComponent = () => {
         console.error("Gas estimation failed. Falling back ");
         gasLimit = ethers.BigNumber.from(990000);
       }
-      const transaction = await forgeFunction(ipfsHash, {
-        value: price,
-        gasLimit,
-      });
-
+      const eventName = getEventName(medalType);
+      const handleEvent = async (padrone, eventIpfsHash, event) => {
+        if (
+          padrone.toLowerCase() === address.toLowerCase() &&
+          eventIpfsHash === ipfsHash
+        ) {
+          try {
+            toast.success(`${medalType} Medal forged (event caught)!`);
+            const txHash = event.transactionHash;
+            await logMedalPurchase(address, medalType, itemPrice, txHash, revenueAccess, xdripBonus);
+            await sendReceiptEmail(address, userInfo.email, userInfo.fullName, medalType, itemPrice, txHash);
+            const transactionData = {
+              transactionHash: txHash,
+              status: "Success",
+              blockNumber: event.blockNumber,
+              timestamp: new Date(),
+              action: `Forge ${medalType}`,
+              from: address,
+              to: MohAddress,
+              valueBNB: ethers.utils.formatEther(price),
+              gasUsed: event.gasUsed?.toNumber(), 
+              revenuePercent: revenueAccess,
+              xdripBonusPercent: xdripBonus,
+            };
+            await trackDetailedTransaction(address, medalType, transactionData);
+            fetchDots();
+          } catch (e) {
+            console.error("Error in event-based post-forge:", e);
+          } finally {
+            contract.off(eventName, handleEvent);
+          }
+        }
+      };
+      contract.once(eventName, handleEvent)
+      localStorage.setItem(
+        "pendingForge",
+        JSON.stringify({
+          medalType,
+          ipfsHash,
+          address,
+          startedAt: Date.now(),
+        })
+      );
+      console.log("Pending forge data saved to localStorage.");
+      const transaction = await forgeFunction(ipfsHash, { value: price, gasLimit });
       const receipt = await transaction.wait();
       if (receipt.status === 1) {
-        // Post-transaction tasks
         toast.success(`${medalType} Medal forged successfully!`);
-        await logMedalPurchase(address, medalType, itemPrice, transaction.hash, revenueAccess, xdripBonus);
-        await sendReceiptEmail(
-          address,
-          userInfo.email,
-          userInfo.fullName,
-          medalType,
-          itemPrice,
-          transaction.hash
-        );
-        const transactionData = {
-          transactionHash: receipt.transactionHash,
-          status: "Success",
-          blockNumber: receipt.blockNumber,
-          timestamp: new Date(),
-          action: `Forge ${medalType}`,
-          from: address,
-          to: MohAddress,
-          valueBNB: ethers.utils.formatEther(ethers.utils.parseUnits(itemPrice, "ether")),
-          gasUsed: receipt.gasUsed?.toNumber(),
-          revenuePercent: revenueAccess,
-          xdripBonusPercent: xdripBonus,
-        };
-        await trackDetailedTransaction(address, medalType, transactionData);
-        fetchDots();
+        const listeners = contract.listeners(eventName);
+        if (listeners && listeners.length > 0) {
+          await logMedalPurchase(address, medalType, itemPrice, transaction.hash, revenueAccess, xdripBonus);
+          await sendReceiptEmail(
+            address,
+            userInfo.email,
+            userInfo.fullName,
+            medalType,
+            itemPrice,
+            transaction.hash
+          );
+          const transactionData = {
+            transactionHash: receipt.transactionHash,
+            status: "Success",
+            blockNumber: receipt.blockNumber,
+            timestamp: new Date(),
+            action: `Forge ${medalType}`,
+            from: address,
+            to: MohAddress,
+            valueBNB: ethers.utils.formatEther(price),
+            gasUsed: receipt.gasUsed?.toNumber(),
+            revenuePercent: revenueAccess,
+            xdripBonusPercent: xdripBonus,
+          };
+          await trackDetailedTransaction(address, medalType, transactionData);
+          fetchDots();
+          contract.off(eventName, handleEvent);
+        }
       } else {
         toast.error("Transaction failed. Please try again.");
       }
@@ -673,6 +754,96 @@ const ForgeComponent = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const checkPastForge = async () => {
+      try {
+        console.log("Running checkPastForge...");
+        const pendingForge = JSON.parse(localStorage.getItem("pendingForge"));
+        console.log("Pending forge data from localStorage:", pendingForge);
+  
+        if (!pendingForge || !address) {
+          console.log("No pending forge found or wallet not connected.");
+          return;
+        }
+  
+        const { medalType, ipfsHash, startedAt } = pendingForge;
+        if (!medalType || !ipfsHash || !startedAt) {
+          console.log("Incomplete pendingForge data.");
+          return;
+        }
+  
+        // Make sure signer and provider exist
+        if (!signer || !signer.provider) {
+          console.log("No signer or provider");
+          return;
+        }
+  
+        const provider = signer.provider;
+        const contract = fetchMohContract(signer);
+  
+        const eventMap = {
+          COMMON: "Commonforged",
+          UNCOMMON: "Uncommonforged",
+          RARE: "Rareforged",
+          EPIC: "Epicforged",
+          LEGENDARY: "Legendaryforged",
+          ETERNAL: "Eternalforged",
+        };
+        const eventName = eventMap[medalType];
+        if (!eventName) {
+          console.log(`Unknown medal type: ${medalType}`);
+          return;
+        }
+  
+        const filter = contract.filters[eventName](address);  
+        const latestBlock = await provider.getBlockNumber();
+        const fromBlock = Math.max(latestBlock - 500, 0);  
+        console.log(`Chunked query from block ${fromBlock} to ${latestBlock}...`);
+        const events = await getEventsInChunks(contract, filter, fromBlock, latestBlock, 200);
+        console.log("Events found across chunks:", events);
+        const matchedEvent = await Promise.all(
+          events.map(async (ev) => {
+            const block = await provider.getBlock(ev.blockNumber);
+            const eventTimestamp = block.timestamp * 1000;
+            return (
+              ev.args.ipfsHash === ipfsHash &&
+              Math.abs(eventTimestamp - startedAt) < 120000
+            ) ? ev : null;
+          })
+        ).then(matches => matches.find(e => e !== null));
+  
+        if (matchedEvent) {
+          console.log("Matched event found:", matchedEvent);
+          const { transactionHash } = matchedEvent;
+          toast.success(`${medalType} forging detected in chunked logs!`);
+          await logMedalPurchase(address, medalType, ipfsHash, transactionHash);
+          localStorage.removeItem("pendingForge");
+        } else {
+          console.log("No matching events found in chunked logs for the short range.");
+        }
+      } catch (error) {
+        console.error("Error querying short‐range chunked events:", error);
+      }
+    };
+  
+    checkPastForge();
+  }, [address, signer]);
+
+  async function getEventsInChunks(contract, filter, fromBlock, toBlock, chunkSize = 200) {
+    let allEvents = [];
+    let start = fromBlock;  
+    if (start < 0) start = 0;  
+    while (start <= toBlock) {
+      const end = Math.min(start + chunkSize, toBlock);
+      const chunkEvents = await contract.queryFilter(filter, start, end);
+      allEvents = allEvents.concat(chunkEvents); 
+      start = end + 1;
+    }  
+    return allEvents;
+  }
+
+
 
   const [showArrows, setShowArrows] = useState(true);
   useEffect(() => {
@@ -751,66 +922,6 @@ const ForgeComponent = () => {
     return () => clearInterval(interval);
   }, []);
 
-
-  /* FUTURE TRANSAK ONE INTEGRATION 
-const handleForgeClick = (medal) => {
-    if (!address) {
-      toast.info("Please connect your wallet to proceed.");
-      return;
-    }
-    if (!userInfo) {
-      setIsReminderPopupVisible(true);
-      return;
-    }
-    setModalStep("kycPrompt");
-    if (userInfo.kycStatus !== "approved") {
-      setMedalToForge(medal);
-      setIsKYCReminderVisible(true);
-    }
-    setSelectedMedalForForge(medal);
-    setIsPaymentModalVisible(true);
-  };
-
-
-  const proceedWithCrypto = async () => {
-    if (!selectedMedalForForge) {
-      toast("No medal selected. Please try again.");
-      console.error("Error: No medal selected. selectedMedalForForge is null or undefined.");
-      return;
-    }
-    setPaymentMethod("crypto");
-      title: selectedMedalForForge.title,
-      ipfsHash: selectedMedalForForge.ipfsHash,
-      revenueAccess: selectedMedalForForge.revenueAccess,
-      xdripBonus: selectedMedalForForge.xdripBonus,
-    });
-    try {
-      await handleCryptoForge(
-        selectedMedalForForge.title,
-        selectedMedalForForge.ipfsHash,
-        selectedMedalForForge.revenueAccess,
-        selectedMedalForForge.xdripBonus
-      );
-      setIsPaymentModalVisible(false);
-    } catch (error) {
-      console.error("Error during forging process:", error);
-      toast.error("Failed to process the forge request. Please try again.");
-    }
-  };
-
-  const proceedWithTransak = () => {
-    if (!selectedMedalForForge) {
-      toast("No medal selected. Please try again.");
-      return;
-    }
-    toast("TRANSAK Seamless Payment Feature Coming Soon! Please Use The TRANSAK Fiat To Cryptro Option In The Vault Actions");
-    setPaymentMethod("transak");
-    setIsPaymentModalVisible(false);
-  };
-   */
-
-
-
   const triggerEasterEgg = () => {
     const url = `${window.location.origin}/misc/ChessEgg.html`;
     const options = "width=1024,height=768";
@@ -857,11 +968,11 @@ const handleForgeClick = (medal) => {
 
   return (
     <div className={Style.the_forge}>
-      
+
       {/*
       <ChatWidget />
       */}
-      
+
       <div className={Style.the_forge_wrapper}>
         <div className={Style.forge_button_upper}>
           <h1 className={Style.lore_text}>
@@ -1370,118 +1481,6 @@ const handleForgeClick = (medal) => {
             isVisible={isLoading}
           />
         )}
-
-        {/*FUTURE TRANSAK ONE INTEGRATION*/}
-        {/*{isPaymentModalVisible && (
-          <div className={Style.modalOverlay} onClick={(e) => e.target === e.currentTarget && setIsPaymentModalVisible(false)}>
-            <div className={Style.modalContent}>
-              <button className={Style.closeButton} onClick={() => setIsPaymentModalVisible(false)}>
-                &times;
-              </button>          
-              {modalStep === "kycPrompt" && (
-                <>
-                  {selectedMedalForForge?.title === "ETERNAL" ? (
-                    <div className={Style.kycReminder}>
-                      <h3>KYC Required</h3>
-                      <p>
-                        KYC approval is mandatory to forge the <strong>ETERNAL</strong> medal. Please complete your KYC verification to proceed.
-                      </p>
-                      <div className={Style.buttonFlex}>
-                        <Button
-                          btnName="Go to KYC Page"
-                          onClick={() => {
-                            router.push({
-                              pathname: '/kycPage',
-                              query: { address, name: userInfo?.fullName || '', email: userInfo?.email || '' },
-                            });
-                            setIsPaymentModalVisible(false);
-                          }}
-                          fontSize="inherit"
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className={Style.kycReminder}>
-                      <h3>KYC Optional</h3>
-                      <p>
-                        KYC is optional for this medal but recommended for added security. Would you like to proceed without KYC?
-                      </p>
-                      <div className={Style.buttonFlex}>
-                        <Button
-                          btnName="Proceed Without KYC"
-                          onClick={() => {
-                            setModalStep("paymentOptions");
-                          }}
-                                            fontSize="1rem"
-                  paddingTop=".5rem"
-                  paddingRight="1rem"
-                  paddingBottom=".5rem"
-                  paddingLeft="1rem"
-                  background=""
-                        />
-                        <Button
-                          btnName="Go to KYC Page"
-                          onClick={() => {
-                            router.push({
-                              pathname: '/kycPage',
-                              query: { address, name: userInfo?.fullName || '', email: userInfo?.email || '' },
-                            });
-                            setIsPaymentModalVisible(false);
-                          }}
-                                           fontSize="1rem"
-                  paddingTop=".5rem"
-                  paddingRight="1rem"
-                  paddingBottom=".5rem"
-                  paddingLeft="1rem"
-                  background=""
-                        />
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
-              {modalStep === "paymentOptions" && (
-                <>
-                  <h2>Select Payment Method</h2>
-                  <p>How would you like to pay for the {selectedMedalForForge?.title} medal?</p>
-                  <div className={Style.buttonFlex}>
-                    <Button
-                      btnName="Pay with Crypto"
-                      onClick={() => {
-                        proceedWithCrypto(selectedMedalForForge);
-                      }}
-                      fontSize="inherit"
-                    />
-                    <Button
-                      btnName="Back"
-                      onClick={() => {
-                        setModalStep("kycPrompt");
-                      }}
-                                       fontSize="1rem"
-                  paddingTop=".5rem"
-                  paddingRight="1rem"
-                  paddingBottom=".5rem"
-                  paddingLeft="1rem"
-                  background=""
-                    />
-                    <Button
-                      btnName="Pay with Transak"
-                      onClick={() => {
-                        proceedWithTransak(selectedMedalForForge);
-                      }}
-                                       fontSize="1rem"
-                  paddingTop=".5rem"
-                  paddingRight="1rem"
-                  paddingBottom=".5rem"
-                  paddingLeft="1rem"
-                  background=""
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}*/}
 
       </div>
     </div>

@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Style from "../styles/InvestorProfile.module.css";
 import { Button } from "../components/componentsindex";
 import { addForger } from "../firebase/forgeServices";
-
-const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
+const InvestorProfile = ({ openModal }) => {
     const router = useRouter();
     const { address, dripPercent, xdripBalance, bonusQualification } = router.query;
-
     const [walletAddress, setWalletAddress] = useState("");
     const [firstName, setFirstName] = useState("");
     const [middleInitial, setMiddleInitial] = useState("");
@@ -30,17 +28,7 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
     const [ukFCAAgreed, setUKFCAAgreed] = useState(false);
     const [euAgreed, setEUAgreed] = useState(false);
     const [errors, setErrors] = useState({});
-
-    const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
-    const [isUserAgreementModalOpen, setIsUserAgreementModalOpen] = useState(false);
-    const [isPrivacyPolicyModalOpen, setIsPrivacyPolicyModalOpen] = useState(false);
-    const [isUKComplianceModalOpen, setIsUKComplianceModalOpen] = useState(false);
-    const [isEUComplianceModalOpen, setIsEUComplianceModalOpen] = useState(false);
-
     const Exempt = "Exempt";
-
-
-
     useEffect(() => {
         if (address) {
             setWalletAddress(address);
@@ -48,36 +36,18 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
             toast.info("Must connect a wallet to complete your profile.");
         }
     }, [address]);
-
     const truncateAddress = (address) => {
         if (!address) return "";
         return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
     };
-
     const requiresUKCompliance = territory === "UK";
     const requiresEUCompliance = territory === "EU";
-
-    // Helper for phone code
-    const getPhoneCode = () => {
-        switch (territory) {
-            case "US":
-                return "+1";
-            case "UK":
-                return "+44";
-            case "EU":
-                return "+3x or +4x";
-            default:
-                return "";
-        }
-    };
-
     const validateForm = () => {
         const newErrors = {};
         const today = new Date();
         const enteredDob = new Date(dob);
         const age = today.getFullYear() - enteredDob.getFullYear();
         const is18OrOlder = age > 18 || (age === 18 && today >= new Date(enteredDob.setFullYear(enteredDob.getFullYear() + 18)));
-
         if (!firstName.trim()) newErrors.firstName = "First Name is required.";
         if (!lastName.trim()) newErrors.lastName = "Last Name is required.";
         if (!email.trim() || !/\S+@\S+\.\S+/.test(email))
@@ -90,37 +60,23 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
         }
         if (!walletAddress) newErrors.walletAddress = "Wallet connection is required.";
         if (!agreed) newErrors.agreed = "You must agree to the Terms, User Agreement, and Privacy Policy.";
-
-        // UK compliance
         if (requiresUKCompliance && !ukFCAAgreed) {
             newErrors.ukFCAAgreed = "You must agree to the FCA Disclosures and Agreement.";
         }
-
-        // EU compliance
         if (requiresEUCompliance && !euAgreed) {
             newErrors.euAgreed = "You must confirm EU-related compliance to proceed.";
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-
-    const handleTerritoryChange = (selectedTerritory) => {
-        setTerritory(selectedTerritory);
-    };
-
     const handleSubmit = async () => {
         if (!validateForm()) {
-            // Display all errors in the toast
             Object.values(errors).forEach((error) => {
-                toast.error(error); // Show each error as a separate toast notification
+                toast.error(error);
             });
             return;
         }
-
-        // Construct the territory to store; "Other" => user input
         const finalTerritory = territory === "Other" ? otherTerritory : territory;
-
-        // Build the profileData object to send to Firebase
         const profileData = {
             fullName: `${firstName} ${middleInitial ? middleInitial + " " : ""}${lastName}${surname ? " " + surname : ""
                 }`,
@@ -143,7 +99,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                 kycSubmittedAt: "N/A",
                 kycVerified: false,
             },
-            // Only set these if needed
             ukFCAAgreed: requiresUKCompliance ? ukFCAAgreed : Exempt,
             euAgreed: requiresEUCompliance ? euAgreed : Exempt,
             dateOfJoin: new Date().toISOString(),
@@ -154,7 +109,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                 DateLastLogged: new Date().toISOString(),
             },
         };
-
         try {
             await addForger(profileData);
             toast.success("Profile submitted successfully!");
@@ -166,11 +120,9 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
             toast.error("Failed to submit your profile. Please try again.");
         }
     };
-
     const handleBackToForge = () => {
         router.push("/TheForge");
     };
-
     return (
         <div className={Style.container}>
             <h2 className={Style.title}>Create Your Investor Profile</h2>
@@ -237,16 +189,15 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                                 <option value="">Suffix</option>
                                 <option value="Jr.">Jr.</option>
                                 <option value="Sr.">Sr.</option>
-                                <option value="Sr.">Mr.</option>
-                                <option value="Sr.">Mrs.</option>
-                                <option value="Sr.">Miss</option>
+                                <option value="Mr.">Mr.</option>
+                                <option value="Mrs.">Mrs.</option>
+                                <option value="Miss.">Miss</option>
                                 <option value="II">II</option>
                                 <option value="III">III</option>
                                 <option value="IV">IV</option>
                             </select>
                         </div>
                     </div>
-
                     <div className={Style.dateOfBirthWrapper}>
                         <input
                             type="date"
@@ -262,10 +213,7 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                             onChange={(e) => setEmail(e.target.value)}
                             className={errors.email ? Style.inputError : Style.inputField}
                         />
-
                     </div>
-
-                    {/* Territory */}
                     <div className={`${Style.territorySection} ${errors.territory ? Style.errorSection : ""}`}>
                         <label
                             className={`${Style.territoryLabel} ${errors.territory ? Style.errorLabel : ""}`}
@@ -293,7 +241,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                                 />
                                 UK
                             </label>
-                            {/* NEW: EU territory */}
                             <label className={Style.territoryOption}>
                                 <input
                                     type="radio"
@@ -325,8 +272,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                             </label>
                         </div>
                     </div>
-
-                    {/* Address And Phone */}
                     <div className={Style.addressSection}>
                         <div className={Style.phoneField}>
                             <select
@@ -353,8 +298,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                                 className={Style.phoneInput}
                             />
                         </div>
-
-                        {/* Street address fields */}
                         <input
                             type="text"
                             placeholder="Residential address"
@@ -369,8 +312,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                             onChange={(e) => setApartment(e.target.value)}
                             className={Style.inputField}
                         />
-
-                        {/* US */}
                         {territory === "US" && (
                             <div className={Style.cityStateZip}>
                                 <input
@@ -446,8 +387,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                                 />
                             </div>
                         )}
-
-                        {/* UK */}
                         {territory === "UK" && (
                             <div className={Style.cityCountyPostcode}>
                                 <input
@@ -473,8 +412,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                                 />
                             </div>
                         )}
-
-                        {/* EU */}
                         {territory === "EU" && (
                             <div className={Style.cityRegionPostal}>
                                 <input
@@ -498,7 +435,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                                     onChange={(e) => setZipCode(e.target.value)}
                                     className={Style.inputField}
                                 />
-
                                 <select
                                     value={otherTerritory}
                                     onChange={(e) => setOtherTerritory(e.target.value)}
@@ -513,9 +449,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                                 </select>
                             </div>
                         )}
-
-
-                        {/* Other */}
                         {territory === "Other" && (
                             <div className={Style.cityRegionPostal}>
                                 <input
@@ -535,8 +468,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                             </div>
                         )}
                     </div>
-
-                    {/* Agreements */}
                     <div className={Style.checkboxWrapper}>
                         <input
                             type="checkbox"
@@ -572,8 +503,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                             .
                         </label>
                     </div>
-
-                    {/* UK compliance */}
                     {requiresUKCompliance && (
                         <div className={Style.checkboxWrapper}>
                             <input
@@ -595,8 +524,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                             </label>
                         </div>
                     )}
-
-                    {/* EU compliance */}
                     {requiresEUCompliance && (
                         <div className={Style.checkboxWrapper}>
                             <input
@@ -617,7 +544,6 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
                             </label>
                         </div>
                     )}
-
                     <div className={Style.buttonGroup}>
                         <Button
                             btnName="Submit Profile"
@@ -647,5 +573,4 @@ const InvestorProfile = ({ isOpen, onRequestClose, isClosing, openModal }) => {
         </div>
     );
 };
-
 export default InvestorProfile;

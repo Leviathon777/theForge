@@ -4,7 +4,6 @@ import { Button } from "../components/componentsindex";
 import { useRouter } from 'next/router';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 const KYCPage = () => {
   const [formUrl, setFormUrl] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,12 +19,7 @@ const KYCPage = () => {
     '/img/KYC2.png',
     '/img/KYC3.png',
     '/img/KYC4.png',
-    '/img/KYC5.png',
-    '/img/KYC6.png',
-    '/img/KYC7.png',
-    '/img/KYC8.png',
   ];
-
   useEffect(() => {
     if (router.isReady) {
       if (router.query.userInfo) {
@@ -47,14 +41,12 @@ const KYCPage = () => {
       }
     }
   }, [router.isReady, router.query.userInfo, router.query.address]);
-
   useEffect(() => {
     if (kycStatus === "completed") {
       const randomIndex = Math.floor(Math.random() * imagePaths.length);
       setRandomImage(imagePaths[randomIndex]);
     }
   }, [kycStatus]);
-
   const fetchFormUrl = async () => {
     setLoading(true);
     try {
@@ -82,7 +74,6 @@ const KYCPage = () => {
       setLoading(false);
     }
   };
-
   const handleBeginKYC = () => {
     if (!userData) {
       setIsReminderPopupVisible(true);
@@ -90,7 +81,6 @@ const KYCPage = () => {
     }
     fetchFormUrl();
   };
-
   const handleProfileRedirect = () => {
     if (walletAddress) {
       router.push({
@@ -101,7 +91,6 @@ const KYCPage = () => {
       toast.error("Wallet address not available. Please connect your wallet.");
     }
   };
-
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
@@ -117,7 +106,6 @@ const KYCPage = () => {
                   At XDRIP Digital Management, your security and privacy are at the core of everything we do. To ensure a safe and trusted environment, we partner with KYCAID for seamless identity verification.
                 </p>
               </div>
-
               <h2>Why Verify Your Identity?</h2>
               <ul>
                 <li>

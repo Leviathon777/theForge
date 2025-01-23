@@ -9,12 +9,6 @@ import ipfsHashes from "../Context/ipfsHashes.js";
 import Web3 from "web3";
 import xdripCA_ABI from "../Context/xdripCA_ABI.json";
 import {
-  ConnectWallet,
-  darkTheme,
-  useAddress,
-  useConnect,
-  useWallet,
-  localWallet,
   useSigner,
 } from "@thirdweb-dev/react";
 const MohAddress = mohCA_ABI.address;
@@ -25,9 +19,6 @@ const XdRiPContractAddress = xdripCA_ABI.address;
 const XdRiPContractABI = xdripCA_ABI.abi;
 const web3 = new Web3("https://bsc-dataseed1.binance.org/");
 const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
-
-
-
 const InvestorWallet = () => {
   const router = useRouter();
   const { address, dripPercent, xdripBalance, userInfo: userInfoString } = router.query;
@@ -44,13 +35,11 @@ const InvestorWallet = () => {
       }
     }
   }, [userInfoString, address, dripPercent, xdripBalance, router.query]);
-
   const formatDate = (isoDate) => {
     if (!isoDate) return "N/A";
     const date = new Date(isoDate);
     return date.toLocaleDateString();
   };
-
   useEffect(() => {
     const fetchBalance = async () => {
       if (signer && address) {
@@ -70,15 +59,12 @@ const InvestorWallet = () => {
     };
     fetchBalance();
   }, [signer, address]);
-
   return (
     <div className={Style.container}>
       <MyDotData>
         <h1 className={Style.title}>MOH Investor Portal</h1>
-
         <div className={Style.walletInfoWrapper}>
           <div className={Style.walletInfoContainer}>
-            {/* Wallet Information */}
             <div className={Style.card}>
               <div className={Style.titleBox}>
                 <h3 className={Style.cardTitle}>Wallet Information</h3>
@@ -132,11 +118,9 @@ const InvestorWallet = () => {
             </div>
           </div>
         </div>
-
         {userInfo && (
           <div className={Style.cardsWrapper}>
             <div className={Style.cardsContainer}>
-              {/* Personal Information */}
               <div className={Style.card}>
                 <div className={Style.titleBox}>
                   <h3 className={Style.cardTitle}>Personal Information</h3>
@@ -155,15 +139,12 @@ const InvestorWallet = () => {
                   ))}
                 </div>
               </div>
-
-              {/* Mailing Address (Conditionally Rendered Labels) */}
               <div className={Style.card}>
                 <div className={Style.titleBox}>
                   <h3 className={Style.cardTitle}>Mailing Address</h3>
                 </div>
                 <div className={Style.infoBox}>
                   {(() => {
-                    // We'll destructure for convenience
                     const {
                       streetAddress,
                       apartment,
@@ -180,7 +161,6 @@ const InvestorWallet = () => {
                         </div>
                       );
                     }
-
                     switch (userInfo.territory) {
                       case "US":
                         return (
@@ -204,7 +184,6 @@ const InvestorWallet = () => {
                             </div>
                           </>
                         );
-
                       case "UK":
                         return (
                           <>
@@ -229,7 +208,6 @@ const InvestorWallet = () => {
                             </div>
                           </>
                         );
-
                       case "EU":
                         return (
                           <>
@@ -254,7 +232,6 @@ const InvestorWallet = () => {
                             </div>
                           </>
                         );
-
                       default:
                         return (
                           <>
@@ -275,13 +252,10 @@ const InvestorWallet = () => {
                             </div>
                           </>
                         );
-
                     }
                   })()}
                 </div>
               </div>
-
-              {/* KYC Information */}
               <div className={Style.card}>
                 <div className={Style.titleBox}>
                   <h3 className={Style.cardTitle}>KYC Information</h3>
@@ -316,8 +290,6 @@ const InvestorWallet = () => {
                   ))}
                 </div>
               </div>
-
-              {/* Other Details */}
               <div className={Style.card}>
                 <div className={Style.titleBox}>
                   <h3 className={Style.cardTitle}>Other Details</h3>
@@ -341,7 +313,6 @@ const InvestorWallet = () => {
                           ? "Agreed"
                           : "Not Agreed",
                     },
-
                     {
                       title: "XDRIP User Agreement",
                       value: userInfo?.agreed ? "Agreed" : "Not Agreed",
@@ -358,7 +329,6 @@ const InvestorWallet = () => {
             </div>
           </div>
         )}
-
         <div className={Style.glowingDivider}></div>
         <div className={Style.thirdComponent}>
           <h1 className={Style.componentTitle}>MEDALS OF HONOR WALLET</h1>
@@ -368,5 +338,4 @@ const InvestorWallet = () => {
     </div>
   );
 };
-
 export default InvestorWallet;

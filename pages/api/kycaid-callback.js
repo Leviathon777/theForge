@@ -1,10 +1,8 @@
 import { updateApplicantStatusInFirebase, createKYCFolder } from "../../firebase/forgeServices";
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
   const {
     type,
     request_id,
@@ -22,10 +20,7 @@ export default async function handler(req, res) {
     verification_statuses,
     verification_attempts_left,
   } = req.body;
-
   const resolvedExternalApplicantId = external_applicant_id || (applicant ? applicant.external_applicant_id : null);
-
-
   try {
     if (type === 'VERIFICATION_STATUS_CHANGED') {
       const kycData = {
@@ -39,7 +34,6 @@ export default async function handler(req, res) {
         verification_status,
         verification_attempts_left,
       };
-
       const updateData = {
         kyc: {
           kycStatus: verification_status || 'unknown',
@@ -49,7 +43,6 @@ export default async function handler(req, res) {
       await updateApplicantStatusInFirebase(external_applicant_id || applicant_id, updateData);
       return res.status(200).json({ message: 'Callback processed successfully.' });
     }
-
     if (type === 'VERIFICATION_COMPLETED') {
       const kycData = {
         request_id,
@@ -67,9 +60,7 @@ export default async function handler(req, res) {
         verification_statuses,
         verification_attempts_left,
       };
-
       await createKYCFolder(resolvedExternalApplicantId, kycData);
-
       const updateData = {
         kyc: {
           kycStatus: status,

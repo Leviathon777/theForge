@@ -1,6 +1,5 @@
 import React from 'react';
 import styles from '../styles/SiteFlow.module.css';
-
 const SiteFlow = () => {
     return (
         <div className={styles.container}>
@@ -8,8 +7,6 @@ const SiteFlow = () => {
                 <h1 className={styles.heading}>Site Flow ReadMe</h1>
                 <p className={styles.description}>
                     This document provides a comprehensive explanation of the user journey, features, and interactions on our site, detailing the flow from user onboarding to the forging of medals. Each section has been expanded to ensure clarity and to include all relevant checks, processes, and modals involved in the experience.      </p>
-
-                {/* Accessing the Website */}
                 <section className={styles.section}>
                     <h2 className={styles.subheading}>Step 1: Accessing the Website</h2>
                     <div className={styles.stepContent}>
@@ -25,8 +22,6 @@ const SiteFlow = () => {
                         </ul>
                     </div>
                 </section>
-
-                {/* Wallet Connection */}
                 <section className={styles.section}>
                     <h2 className={styles.subheading}>Step 2: Wallet Connection</h2>
                     <div className={styles.stepContent}>
@@ -77,8 +72,6 @@ const SiteFlow = () => {
                         </ul>
                     </div>
                 </section>
-
-                {/* Profile Creation and Verification */}
                 <section className={styles.section}>
                     <h2 className={styles.subheading}>Step 3: Profile Creation and Verification</h2>
                     <div className={styles.stepContent}>
@@ -138,9 +131,6 @@ const SiteFlow = () => {
                         </ul>
                     </div>
                 </section>
-
-
-                {/* Accessing Features */}
                 <section className={styles.section}>
                     <h2 className={styles.subheading}>Step 4: Accessing Features</h2>
                     <div className={styles.stepContent}>
@@ -177,9 +167,6 @@ const SiteFlow = () => {
                         </ul>
                     </div>
                 </section>
-
-
-                {/* Forging Medals */}
                 <section className={styles.section}>
                     <h2 className={styles.subheading}>Step 5: Forging Medals</h2>
                     <div className={styles.stepContent}>
@@ -253,9 +240,6 @@ const SiteFlow = () => {
                         </ul>
                     </div>
                 </section>
-
-
-                {/* Transak Integration */}
                 <section className={styles.section}>
                     <h2 className={styles.subheading}>Step 6: Transak Integration</h2>
                     <div className={styles.stepContent}>
@@ -398,9 +382,6 @@ const SiteFlow = () => {
                         </ul>
                     </div>
                 </section>
-
-
-                {/* Compliance Modals */}
                 <section className={styles.section}>
                     <h2 className={styles.subheading}>Compliance Modals</h2>
                     <div className={styles.stepContent}>
@@ -427,9 +408,6 @@ const SiteFlow = () => {
                         </ul>
                     </div>
                 </section>
-
-
-                {/* Error Handling */}
                 <section className={styles.section}>
                     <h2 className={styles.subheading}>Error Handling</h2>
                     <div className={styles.stepContent}>
@@ -462,9 +440,6 @@ const SiteFlow = () => {
                         </ul>
                     </div>
                 </section>
-
-
-                {/* Additional Notes */}
                 <section className={styles.section}>
                     <h2 className={styles.subheading}>Additional Notes</h2>
                     <div className={styles.stepContent}>
@@ -488,5 +463,4 @@ const SiteFlow = () => {
         </div>
     );
 };
-
 export default SiteFlow;

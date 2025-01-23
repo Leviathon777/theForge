@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef, memo, forwardRef, useContext } from "react";
 import { motion } from "framer-motion";
 import DotWallet from "../components/DotWallets/DotWallet";
-import { Button, SocialButtons, ForgeComponent, TermsOfService, UserAgreement, PrivacyPolicy, FlipBook, EmailFormPopup } from "../components/componentsindex";
+import { SocialButtons, ForgeComponent, FlipBook } from "../components/componentsindex";
 import MyDotData from "../Context/MyDotDataContext";
 import Style from "../styles/theForge.module.css";
 import { useSigner, useAddress } from '@thirdweb-dev/react';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 import { usePayload } from "../Context/PayloadContext";
-
 const PwaInstructionsModal = ({ onClose }) => (
   <div className={Style.modalOverlay}>
     <div className={Style.modalContent}>
@@ -42,12 +41,8 @@ const PwaInstructionsModal = ({ onClose }) => (
     </div>
   </div>
 );
-
 const TheForge = ({openModal}) => {
   const [bnbPrice, setBnbPrice] = useState(null);
-  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
-  const [isPrivacyPolicyModalOpen, setIsPrivacyPolicyModalOpen] = useState(false);
-  const [isUserAgreementModalOpen, setIsUserAgreementModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const signer = useSigner();
@@ -56,27 +51,14 @@ const TheForge = ({openModal}) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isPwaModalOpen, setIsPwaModalOpen] = useState(false);
   const { setActivatePayload } = usePayload();
-  const [isEmailFormOpen, setIsEmailFormOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-
-  const closeWithAnimation = (closeFunction) => {
-    setIsClosing(true);
-    setTimeout(() => {
-      closeFunction();
-      setIsClosing(false);
-    }, 500);
-  };
-
   useEffect(() => {
     setActivatePayload(true);
     return () => setActivatePayload(false);
   }, [setActivatePayload]);
-
   useEffect(() => {
     const mobileCheck = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     setIsMobile(mobileCheck);
   }, []);
-
   useEffect(() => {
     const fetchBNBPrice = async () => {
       try {
@@ -89,16 +71,16 @@ const TheForge = ({openModal}) => {
     };
     fetchBNBPrice();
   }, []);
-
   useEffect(() => {
     const checkOwner = async () => {
       if (!signer || !address) return;
       try {
         const contract = new ethers.Contract(
           process.env.NEXT_PUBLIC_MEDAL_CONTRACT_ADDRESS,
-          require('../Context/mohCA_ABI.json').abi,
+          require('../Context/mohCA_ABI-testnet.json').abi,
           signer
         );
+        
         const contractOwner = await contract.owner();
         const authorizedAddresses = process.env.NEXT_PUBLIC_OWNER_ADDRESSES?.split(",").map(addr => addr.trim().toLowerCase()) || [];
 
