@@ -1,0 +1,122 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: url('/img/background.png') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.content {
+  text-align: center;
+  color: #e0e0e0;
+  padding: 2rem;
+  max-width: 500px;
+  background: linear-gradient(145deg, #141414, #1a1a1a);
+  border-radius: 1rem;
+  box-shadow: inset 0px -5px 10px rgba(255, 255, 255, 0.1), 0 5px 25px rgba(0, 0, 0, 0.8);
+  border: 1px solid #1c1c1c;
+}
+
+.iconWrapper {
+  margin-bottom: 2rem;
+}
+
+.icon {
+  width: 80px;
+  height: 80px;
+  color: #017afe;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-family: 'Saira', sans-serif;
+  font-weight: 700;
+  color: #e0e0e0;
+  text-shadow: 1px 1px 0px #000000,
+    1px 2px 0px #000000,
+    1px 3px 0px #000000,
+    1px 10px 5px rgba(16, 16, 16, 0.5);
+}
+
+.message {
+  font-size: 1.1rem;
+  color: #b0b0b0;
+  line-height: 1.6;
+  font-family: 'Lora', serif;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 2rem;
+}
+
+.loader span {
+  width: 12px;
+  height: 12px;
+  background: #017afe;
+  border-radius: 50%;
+  animation: bounce 1.4s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(1, 122, 254, 0.5);
+}
+
+.loader span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loader span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loader span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .message {
+    font-size: 1rem;
+  }
+
+  .icon {
+    width: 60px;
+    height: 60px;
+  }
+}

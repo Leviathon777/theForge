@@ -21,6 +21,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Style from "../styles/app.module.css";
 import { PayloadProvider } from "../Context/PayloadContext";
 import { usePayload } from "../Context/PayloadContext";
+import MaintenancePage from "../components/MaintenancePage/MaintenancePage";
 
 
 const ChatWidget = () => {
@@ -76,6 +77,7 @@ const ChatWidget = () => {
       document.body.removeChild(script);
     };
   }, []);
+
 
   return (
     <div id="JotformAgent-01948024dc7e734fb48bf0d5848947577441" />
@@ -198,6 +200,7 @@ For support or assistance, contact our team at support@xdrip.io
   }, [activatePayload, address, signer]);
 
 
+
   return (
     <>
       {isPopupVisible && (
@@ -245,6 +248,8 @@ const MyApp = ({ Component, pageProps }) => {
   const [isPwaModalVisible, setIsPwaModalVisible] = useState(false);
   const [isEmailFormOpen, setIsEmailFormOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [isMaintenanceMode, setIsMaintenanceMode] = useState(null);
+  const [maintenanceMessage, setMaintenanceMessage] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cookiePreferences, setCookiePreferences] = useState({
@@ -276,6 +281,19 @@ const MyApp = ({ Component, pageProps }) => {
   const closeModal = (modalName) => {
     setModals((prev) => ({ ...prev, [modalName]: false }));
   };
+
+  // Check maintenance mode
+  useEffect(() => {
+    fetch("/maintenance-config.json")
+      .then((res) => res.json())
+      .then((config) => {
+        setIsMaintenanceMode(config.enabled);
+        setMaintenanceMessage(config.message);
+      })
+      .catch(() => {
+        setIsMaintenanceMode(false);
+      });
+  }, []);
 
   const closeWithAnimation = (closeFunction) => {
     setIsClosing(true);
@@ -350,6 +368,7 @@ const MyApp = ({ Component, pageProps }) => {
 
 const ChatWidget = () => {
   useEffect(() => {
+    if (isMaintenanceMode) return;
     const script = document.createElement('script');
     script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-embedded-agent.js';
     script.async = true;
@@ -400,7 +419,8 @@ const ChatWidget = () => {
       // Cleanup the script tag on unmount
       document.body.removeChild(script);
     };
-  }, []);
+  }, [isMaintenanceMode]);
+
 
   return (
     <div id="JotformAgent-01948024dc7e734fb48bf0d5848947577441" />
@@ -432,9 +452,19 @@ const ChatWidget = () => {
     };
   }, []);
 
+  // Wait for maintenance check to complete
+  if (isMaintenanceMode === null) {
+    return null;
+  }
+
+  // Show maintenance page if enabled
+  if (isMaintenanceMode) {
+    return <MaintenancePage message={maintenanceMessage} />;
+  }
+
   return (
     <>
-    <ChatWidget />
+    {!isMaintenanceMode && <ChatWidget />}
       <Head>
         <title>Medals of HONOR by XdRiP</title>
         <link rel="icon" href="/favicon.ico" />
