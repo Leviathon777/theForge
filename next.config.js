@@ -29,6 +29,31 @@ module.exports = {
     ],
     formats: ["image/webp"],
   },
+  experimental: {
+    outputFileTracingExcludes: {
+      '/api/*': [
+        './node_modules/@walletconnect/**',
+        './node_modules/@reown/**',
+        './node_modules/viem/**',
+        './node_modules/wagmi/**',
+        './node_modules/@wagmi/**',
+        './node_modules/framer-motion/**',
+        './node_modules/@fortawesome/**',
+        './node_modules/react-dom/**',
+        './node_modules/@tanstack/**',
+        './node_modules/ethers/**',
+        './node_modules/@noble/**',
+        './node_modules/@scure/**',
+        './node_modules/react-toastify/**',
+        './node_modules/react-modal/**',
+        './node_modules/react-slick/**',
+        './node_modules/react-pageflip/**',
+        './node_modules/react-swipeable/**',
+        './node_modules/react-beautiful-dnd/**',
+        './node_modules/@openzeppelin/**',
+      ],
+    },
+  },
   webpack: (config) => {
     // Ignore optional wagmi connectors that aren't installed
     config.resolve.fallback = {
