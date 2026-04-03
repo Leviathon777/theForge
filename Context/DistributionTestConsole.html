@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚡ MOH Distribution Test Console</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+    .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 24px; }
+    .header h1 { font-size: 26px; color: #F1C40F; margin-bottom: 6px; }
+    .header p { font-size: 13px; color: #888; }
+    .wallet-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 16px; background: #111; border-radius: 8px; margin-bottom: 16px; font-size: 13px;
+    }
+    .config-section {
+      background: #111; border: 1px solid #222; border-radius: 8px; padding: 16px; margin-bottom: 16px;
+    }
+    .config-section h3 { color: #F1C40F; font-size: 13px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .config-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .config-item label { display: block; font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+    .config-item .addr-display { font-family: monospace; font-size: 11px; color: #4CAF50; padding: 6px 8px; background: #0a0a0a; border: 1px solid #1a4a2a; border-radius: 4px; }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .btn {
+      padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;
+      font-weight: bold; font-size: 13px;
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-gold { background: #F1C40F; color: #000; }
+    .btn-blue { background: #3498DB; color: #fff; }
+    .btn-green { background: #27AE60; color: #fff; }
+    .btn-red { background: #E74C3C; color: #fff; }
+    .btn-gray { background: #333; color: #ccc; }
+    .status { padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 13px; display: none; }
+    .status.show { display: block; }
+    .status.success { background: #0d2818; color: #4CAF50; border: 1px solid #1a4a2a; }
+    .status.error { background: #2d0a0a; color: #E74C3C; border: 1px solid #4a1a1a; }
+    .status.warning { background: #2d1f0a; color: #F39C12; border: 1px solid #4a3a1a; }
+    .status.info { background: #0a1a2d; color: #5DADE2; border: 1px solid #1a2a4a; }
+    .info-bar {
+      display: flex; gap: 24px; padding: 12px 16px; background: #111; border-radius: 8px;
+      margin-bottom: 16px; font-size: 13px; border: 1px solid #222; flex-wrap: wrap;
+    }
+    .info-bar .val { color: #F1C40F; font-weight: bold; }
+    .section { background: #111; border: 1px solid #222; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+    .section h3 { color: #F1C40F; font-size: 15px; margin-bottom: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { text-align: left; padding: 8px 10px; background: #1a1a2e; color: #F1C40F; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    td { padding: 8px 10px; border-bottom: 1px solid #1a1a1a; }
+    tr:hover { background: #151515; }
+    .addr { font-family: monospace; font-size: 11px; }
+    .stolen-tag { background: #E74C3C; color: #fff; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: bold; }
+    .redirected-tag { background: #27AE60; color: #fff; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: bold; }
+    .tier-badge { padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: bold; color: #fff; display: inline-block; margin: 1px; }
+    .progress-bar { width: 100%; height: 6px; background: #222; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #F1C40F; border-radius: 3px; transition: width 0.3s; }
+    .log-box {
+      background: #050505; border: 1px solid #222; border-radius: 6px; padding: 12px;
+      max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 11px;
+      color: #888; margin-top: 12px; white-space: pre-wrap;
+    }
+    .stolen-section { border-color: #E74C3C40; }
+    .stolen-section h3 { color: #E74C3C; }
+    .input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .input-row input { flex: 1; padding: 8px 10px; background: #0a0a0a; border: 1px solid #333; border-radius: 4px; color: #e0e0e0; font-size: 13px; }
+    .input-row .btn { white-space: nowrap; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚡ MOH Distribution Test Console</h1>
+      <p>Standalone — fetch holders, check stolen flags, calculate weights, distribute</p>
+    </div>
+
+    <div class="wallet-bar">
+      <span id="walletAddr">Not connected</span>
+      <span><button class="btn btn-gold" onclick="initContracts()" style="padding:6px 16px;font-size:12px">Connect Wallet</button></span>
+      <span id="ownerStatus" style="color:#F39C12">⏳ Waiting...</span>
+    </div>
+
+    <!-- CONTRACT ADDRESSES (READ ONLY) -->
+    <div class="config-section">
+      <h3>Contracts (Hardcoded)</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="config-item">
+          <label>Original MOH</label>
+          <div class="addr-display">0x6Aa5...C5b</div>
+        </div>
+        <div class="config-item">
+          <label>Replacement DOTs</label>
+          <div class="addr-display">0xd4C0...080</div>
+        </div>
+        <div class="config-item">
+          <label>Distribution</label>
+          <div class="addr-display">0x8fFe...E38</div>
+        </div>
+        <div class="config-item">
+          <label>Router</label>
+          <div class="addr-display">0x0C63...bc5</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="statusBar" class="status"></div>
+
+    <!-- CONTRACT INFO -->
+    <div class="info-bar" id="infoBar" style="display:none">
+      <span>Balance: <span class="val" id="contractBal">0</span> BNB</span>
+      <span>Dist %: <span class="val" id="distPct">--</span>%</span>
+      <span>Total Distributed: <span class="val" id="totalDist">0</span> BNB</span>
+      <span>Stolen Flags: <span class="val" id="stolenCount">0</span></span>
+      <span>MOH Supply: <span class="val" id="mohSupply">--</span></span>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="btn-row">
+      <button class="btn btn-blue" onclick="fetchHolders()" id="fetchBtn" disabled>Fetch Medal Holders</button>
+      <button class="btn btn-green" onclick="updateWeightsAndDistribute()" id="distBtn" disabled>Update Weights & Distribute</button>
+      <button class="btn btn-gray" onclick="refreshInfo()">Refresh Info</button>
+    </div>
+
+    <!-- PROGRESS -->
+    <div id="progressSection" class="hidden">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div style="font-size:11px;color:#666;margin-top:4px" id="progressText"></div>
+    </div>
+
+    <!-- FLAG STOLEN SECTION -->
+    <div class="section stolen-section">
+      <h3>🚩 Flag Stolen Token</h3>
+      <div class="input-row">
+        <input id="flagTokenId" placeholder="Stolen Token ID" />
+        <input id="flagThief" placeholder="Thief Wallet 0x..." />
+        <input id="flagVictim" placeholder="Victim New Wallet 0x..." />
+      </div>
+      <div class="input-row">
+        <input id="flagReason" placeholder="Reason (e.g. wallet compromised)" />
+        <button class="btn btn-red" onclick="flagStolen()">🚩 Flag Stolen</button>
+      </div>
+      <div id="stolenList" style="margin-top:12px;font-size:12px;color:#666">Loading stolen flags...</div>
+    </div>
+
+    <!-- DEPOSIT -->
+    <div class="section">
+      <h3>💰 Deposit Test Funds</h3>
+      <div class="input-row">
+        <input id="depositAmt" placeholder="Amount in BNB (e.g. 0.001)" />
+        <button class="btn btn-gold" onclick="depositFunds()">Deposit</button>
+      </div>
+    </div>
+
+    <!-- HOLDERS TABLE -->
+    <div class="section" id="holdersSection" style="display:none">
+      <h3>Medal Holders & Weights <span id="holderCountBadge" style="font-size:12px;color:#888"></span></h3>
+      <div id="holdersTable"></div>
+    </div>
+
+    <!-- LOG -->
+    <div class="section">
+      <h3>📋 Log</h3>
+      <div class="log-box" id="logBox">Initializing...\n</div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // HARDCODED CONTRACT ADDRESSES
+    // ============================================================
+    const MOH_ADDRESS = "0x6Aa59b8ac2B4cE83588d95987D00b9f7c4C2aC5b";
+    const REPLACEMENT_ADDRESS = "0xd4C0DdDd49C2AB13F88aBA49FA39b9C84E210080";
+    const DIST_ADDRESS = "0x8fFeD2045947139a95B5C03634a0A39260874E38";
+    const ROUTER_ADDRESS = "0x0C631798bbe2D9F98D24A52E4f14DF5B703dFbc5";
+    const XDRIP_ADDRESS = "0x905a46de6f99b6efc5fa062ab398153048e121ea";
+
+    // ============================================================
+    // FULL ABIs FROM DEPLOYED CONTRACTS
+    // ============================================================
+    const MOH_ABI = [
+      {"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+      {"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"tokenByIndex","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"tokenOfOwnerByIndex","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getTokenIPFSHash","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+      {"inputs":[],"name":"getforgedCounts","outputs":[{"internalType":"uint256","name":"commonforged","type":"uint256"},{"internalType":"uint256","name":"commonRemaining","type":"uint256"},{"internalType":"uint256","name":"uncommonforged","type":"uint256"},{"internalType":"uint256","name":"uncommonRemaining","type":"uint256"},{"internalType":"uint256","name":"rareforged","type":"uint256"},{"internalType":"uint256","name":"rareRemaining","type":"uint256"},{"internalType":"uint256","name":"epicforged","type":"uint256"},{"internalType":"uint256","name":"epicRemaining","type":"uint256"},{"internalType":"uint256","name":"legendaryforged","type":"uint256"},{"internalType":"uint256","name":"legendaryRemaining","type":"uint256"},{"internalType":"uint256","name":"eternalforged","type":"uint256"},{"internalType":"uint256","name":"eternalRemaining","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}
+    ];
+
+    const DIST_ABI = [
+      {"inputs":[],"name":"distributeRevenue","outputs":[],"stateMutability":"nonpayable","type":"function"},
+      {"inputs":[{"internalType":"address[]","name":"investors","type":"address[]"},{"internalType":"uint256[]","name":"weights","type":"uint256[]"}],"name":"updateFinalWeights","outputs":[],"stateMutability":"nonpayable","type":"function"},
+      {"inputs":[{"internalType":"address[]","name":"investors","type":"address[]"},{"internalType":"uint256[]","name":"weights","type":"uint256[]"}],"name":"updateXdRiPWeights","outputs":[],"stateMutability":"nonpayable","type":"function"},
+      {"inputs":[{"internalType":"uint256","name":"_newPercentage","type":"uint256"}],"name":"updateDistributionPercentage","outputs":[],"stateMutability":"nonpayable","type":"function"},
+      {"inputs":[],"name":"distributionPercentage","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[],"name":"totalFundsDistributed","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getDistribution","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[],"name":"getDistributionCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[],"name":"mohContract","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+      {"inputs":[{"internalType":"address","name":"_newMOHContract","type":"address"}],"name":"updateMOHContract","outputs":[],"stateMutability":"nonpayable","type":"function"},
+      {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+      {"inputs":[],"name":"paused","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+      {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"finalWeights","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"xdripWeights","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"totalPaid","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"finalHolders","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+      {"stateMutability":"payable","type":"receive"}
+    ];
+
+    const ROUTER_ABI = [
+      {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"thiefWallet","type":"address"},{"internalType":"address","name":"rightfulOwner","type":"address"},{"internalType":"string","name":"reason","type":"string"}],"name":"flagStolen","outputs":[],"stateMutability":"nonpayable","type":"function"},
+      {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"removeStolenFlag","outputs":[],"stateMutability":"nonpayable","type":"function"},
+      {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"newOwner","type":"address"}],"name":"updateRightfulOwner","outputs":[],"stateMutability":"nonpayable","type":"function"},
+      {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"isTokenStolen","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+      {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getRightfulOwner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+      {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getStolenRecord","outputs":[{"components":[{"internalType":"bool","name":"isStolen","type":"bool"},{"internalType":"address","name":"thiefWallet","type":"address"},{"internalType":"address","name":"rightfulOwner","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"reason","type":"string"}],"internalType":"struct MOH_DistributionRouter.StolenRecord","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},
+      {"inputs":[],"name":"getAllStolenTokenIds","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},
+      {"inputs":[],"name":"getStolenCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+      {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}
+    ];
+
+    // XdRiP ABI - just balanceOf
+    const XDRIP_ABI = [{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"type":"function"}];
+
+    // ============================================================
+    // GLOBALS
+    // ============================================================
+    let provider, signer, account;
+    let mohContract, replacementContract, distContract, routerContract;
+    let holdersData = [];
+    let stolenMap = {};
+
+    const TIER_COLORS = { COMMON:"#8B7355", UNCOMMON:"#4A90D9", RARE:"#9B59B6", EPIC:"#E67E22", LEGENDARY:"#F1C40F" };
+    const DOT_WEIGHTS = { COMMON:10, UNCOMMON:25, RARE:45, EPIC:70, LEGENDARY:110 };
+    const MEDAL_ORDER = ["COMMON","UNCOMMON","RARE","EPIC","LEGENDARY"];
+    const TOKEN_RANGES = [
+      { start:1, end:10000, name:"COMMON" },
+      { start:10001, end:15000, name:"UNCOMMON" },
+      { start:15001, end:17500, name:"RARE" },
+      { start:17501, end:18500, name:"EPIC" },
+      { start:18501, end:20000, name:"LEGENDARY" },
+    ];
+
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    function log(msg) {
+      const box = document.getElementById("logBox");
+      const time = new Date().toLocaleTimeString();
+      box.textContent += `[${time}] ${msg}\n`;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function showStatus(msg, type) {
+      const el = document.getElementById("statusBar");
+      el.textContent = msg;
+      el.className = "status show " + type;
+    }
+
+    function shortAddr(addr) {
+      if (!addr) return "";
+      return addr.slice(0,6) + "..." + addr.slice(-4);
+    }
+
+    function setProgress(pct, text) {
+      document.getElementById("progressSection").classList.remove("hidden");
+      document.getElementById("progressFill").style.width = pct + "%";
+      document.getElementById("progressText").textContent = text;
+    }
+
+    function hideProgress() { document.getElementById("progressSection").classList.add("hidden"); }
+
+    // ============================================================
+    // WALLET PROVIDER
+    // ============================================================
+    function getWalletProvider() {
+      if (window.ethereum?.providers) {
+        const mm = window.ethereum.providers.find(p => p.isMetaMask);
+        if (mm) return mm;
+        return window.ethereum.providers[0];
+      }
+      if (window.ethereum) return window.ethereum;
+      return null;
+    }
+
+    // ============================================================
+    // CONNECT & INIT
+    // ============================================================
+    async function initContracts() {
+      try {
+        const eth = getWalletProvider();
+        if (!eth) {
+          showStatus("No web3 wallet detected. If using file://, go to chrome://extensions → MetaMask → Details → enable 'Allow access to file URLs', then refresh.", "error");
+          log("No wallet. window.ethereum = " + typeof window.ethereum);
+          document.getElementById("walletAddr").textContent = "Not connected";
+          document.getElementById("ownerStatus").textContent = "✗ No Wallet";
+          document.getElementById("ownerStatus").style.color = "#E74C3C";
+          return;
+        }
+
+        log("Wallet found: " + (eth.isMetaMask ? "MetaMask" : "Other"));
+
+        provider = new ethers.BrowserProvider(eth);
+        await provider.send("eth_requestAccounts", []);
+        signer = await provider.getSigner();
+        account = await signer.getAddress();
+
+        document.getElementById("walletAddr").textContent = shortAddr(account) + " (" + account + ")";
+        log("Connected: " + account);
+
+        // Load all contracts
+        mohContract = new ethers.Contract(MOH_ADDRESS, MOH_ABI, signer);
+        replacementContract = new ethers.Contract(REPLACEMENT_ADDRESS, MOH_ABI, signer);
+        distContract = new ethers.Contract(DIST_ADDRESS, DIST_ABI, signer);
+        routerContract = new ethers.Contract(ROUTER_ADDRESS, ROUTER_ABI, signer);
+
+        // Check ownership
+        const distOwner = await distContract.owner();
+        const isOwner = distOwner.toLowerCase() === account.toLowerCase();
+        document.getElementById("ownerStatus").textContent = isOwner ? "✓ Owner" : "✗ Not Owner (read only)";
+        document.getElementById("ownerStatus").style.color = isOwner ? "#4CAF50" : "#F39C12";
+        log("Distribution contract owner: " + shortAddr(distOwner) + (isOwner ? " (YOU)" : ""));
+
+        // Load info
+        await refreshInfo();
+        await loadStolenTokens();
+
+        document.getElementById("infoBar").style.display = "flex";
+        document.getElementById("fetchBtn").disabled = false;
+        showStatus("All contracts loaded — ready to fetch holders", "success");
+      } catch (err) {
+        showStatus("Init failed: " + err.message, "error");
+        log("ERROR init: " + err.message);
+        document.getElementById("walletAddr").textContent = "Connection failed";
+        document.getElementById("ownerStatus").textContent = "✗ Error";
+        document.getElementById("ownerStatus").style.color = "#E74C3C";
+      }
+    }
+
+    // ============================================================
+    // REFRESH CONTRACT INFO
+    // ============================================================
+    async function refreshInfo() {
+      try {
+        const bal = await provider.getBalance(DIST_ADDRESS);
+        document.getElementById("contractBal").textContent = ethers.formatEther(bal);
+
+        const pct = await distContract.distributionPercentage();
+        document.getElementById("distPct").textContent = pct.toString();
+
+        const totalDist = await distContract.totalFundsDistributed();
+        document.getElementById("totalDist").textContent = ethers.formatEther(totalDist);
+
+        const supply = await mohContract.totalSupply();
+        const replSupply = await replacementContract.totalSupply();
+        document.getElementById("mohSupply").textContent = supply.toString() + " + " + replSupply.toString() + " repl";
+
+        const stolenCt = await routerContract.getStolenCount();
+        document.getElementById("stolenCount").textContent = stolenCt.toString();
+
+        log("Info refreshed. Balance: " + ethers.formatEther(bal) + " BNB, Supply: " + supply.toString());
+      } catch (err) {
+        log("Refresh error: " + err.message);
+      }
+    }
+
+    // ============================================================
+    // LOAD STOLEN TOKENS FROM ROUTER
+    // ============================================================
+    async function loadStolenTokens() {
+      try {
+        const ids = await routerContract.getAllStolenTokenIds();
+        stolenMap = {};
+        let html = "";
+        for (const id of ids) {
+          const record = await routerContract.getStolenRecord(id);
+          if (record.isStolen) {
+            stolenMap[id.toString()] = record.rightfulOwner;
+            html += `<div style="padding:4px 0;border-bottom:1px solid #1a1a1a">
+              <span class="stolen-tag">STOLEN</span> Token #${id} — 
+              Thief: <span class="addr">${shortAddr(record.thiefWallet)}</span> → 
+              Victim: <span class="addr">${shortAddr(record.rightfulOwner)}</span>
+              <span style="color:#555"> (${record.reason})</span>
+            </div>`;
+            log("Stolen: Token #" + id + " → " + shortAddr(record.rightfulOwner));
+          }
+        }
+        document.getElementById("stolenList").innerHTML = html || '<span style="color:#555">No stolen tokens flagged</span>';
+      } catch (err) {
+        log("Error loading stolen: " + err.message);
+        document.getElementById("stolenList").innerHTML = '<span style="color:#E74C3C">Error loading stolen tokens</span>';
+      }
+    }
+
+    // ============================================================
+    // FETCH XDRIP BALANCE (via RPC)
+    // ============================================================
+    const bscProvider = new ethers.JsonRpcProvider("https://bsc-dataseed1.binance.org/");
+    const xdripReadContract = new ethers.Contract(XDRIP_ADDRESS, XDRIP_ABI, bscProvider);
+
+    async function fetchXdripBalance(address) {
+      try {
+        const balance = await xdripReadContract.balanceOf(address);
+        const formatted = parseFloat(ethers.formatUnits(balance, 9));
+        log("  XdRiP " + shortAddr(address) + ": raw=" + balance.toString() + " formatted=" + formatted);
+        return formatted;
+      } catch (err) {
+        log("  XdRiP ERROR for " + shortAddr(address) + ": " + err.message);
+        return 0;
+      }
+    }
+
+    // ============================================================
+    // FETCH HOLDERS
+    // ============================================================
+    async function fetchHolders() {
+      if (!mohContract) { showStatus("MOH contract not loaded", "error"); return; }
+      document.getElementById("fetchBtn").disabled = true;
+      holdersData = [];
+
+      try {
+        showStatus("Fetching medal holders from both MOH contracts...", "info");
+        log("Starting holder scan (Original MOH + Replacement DOTs)...");
+
+        const holderMap = {};
+        let totalTokensChecked = 0;
+
+        // Scan a single contract across all tier ranges
+        async function scanContract(contract, contractLabel) {
+          for (const range of TOKEN_RANGES) {
+            log("Scanning " + contractLabel + " " + range.name + " (" + range.start + "-" + range.end + ")...");
+            for (let tokenId = range.start; tokenId <= range.end; tokenId++) {
+              try {
+                let owner = await contract.ownerOf(tokenId);
+                totalTokensChecked++;
+
+                // ===== ROUTER CHECK =====
+                const idStr = tokenId.toString();
+                if (stolenMap[idStr]) {
+                  const victim = stolenMap[idStr];
+                  log("⚠ Token #" + tokenId + " STOLEN — redirect " + shortAddr(owner) + " → " + shortAddr(victim));
+                  owner = victim;
+                }
+
+                if (!holderMap[owner]) holderMap[owner] = { medals: [] };
+                holderMap[owner].medals.push({ tokenId, name: range.name, source: contractLabel });
+
+                if (totalTokensChecked % 5 === 0) {
+                  setProgress(
+                    Math.min(70, Math.floor((totalTokensChecked / 100) * 70)),
+                    "Scanned " + totalTokensChecked + " tokens... (" + contractLabel + " " + range.name + " #" + tokenId + ")"
+                  );
+                }
+              } catch (err) {
+                log(contractLabel + " " + range.name + " ended at #" + (tokenId - 1) + " (" + totalTokensChecked + " total found)");
+                break;
+              }
+              await new Promise(r => setTimeout(r, 50));
+            }
+          }
+        }
+
+        // Scan ORIGINAL MOH first (sequential IDs, break on gap is fine)
+        await scanContract(mohContract, "Original");
+
+        // Scan REPLACEMENT DOTs using tokenByIndex (IDs are sparse, can't iterate ranges)
+        log("Scanning Replacement DOTs contract...");
+        try {
+          const replSupply = await replacementContract.totalSupply();
+          const replCount = Number(replSupply);
+          log("Replacement contract has " + replCount + " tokens");
+          
+          for (let i = 0; i < replCount; i++) {
+            try {
+              const tokenId = await replacementContract.tokenByIndex(i);
+              let owner = await replacementContract.ownerOf(tokenId);
+              totalTokensChecked++;
+
+              // Figure out tier from token ID
+              const tokenNum = Number(tokenId);
+              let tierName = "COMMON";
+              for (const range of TOKEN_RANGES) {
+                if (tokenNum >= range.start && tokenNum <= range.end) {
+                  tierName = range.name;
+                  break;
+                }
+              }
+
+              // ===== ROUTER CHECK =====
+              const idStr = tokenId.toString();
+              if (stolenMap[idStr]) {
+                const victim = stolenMap[idStr];
+                log("⚠ Replacement Token #" + tokenId + " STOLEN — redirect " + shortAddr(owner) + " → " + shortAddr(victim));
+                owner = victim;
+              }
+
+              if (!holderMap[owner]) holderMap[owner] = { medals: [] };
+              holderMap[owner].medals.push({ tokenId: tokenNum, name: tierName, source: "Replacement" });
+
+              log("Replacement #" + tokenId + " (" + tierName + ") → " + shortAddr(owner));
+              setProgress(72, "Replacement token " + (i + 1) + "/" + replCount + " — #" + tokenId + " (" + tierName + ")");
+            } catch (err) {
+              log("Error reading replacement token index " + i + ": " + err.message);
+            }
+          }
+        } catch (err) {
+          log("Error scanning Replacement contract: " + err.message);
+        }
+
+        log("Scan done. " + totalTokensChecked + " tokens, " + Object.keys(holderMap).length + " wallets");
+        setProgress(75, "Calculating weights and XdRiP bonuses...");
+
+        // Calculate weights
+        const holders = Object.entries(holderMap).map(([addr, data]) => {
+          const tierCounts = {};
+          MEDAL_ORDER.forEach(t => tierCounts[t] = 0);
+          data.medals.forEach(m => { if (tierCounts[m.name] !== undefined) tierCounts[m.name]++; });
+
+          const fullRamps = Math.min(...MEDAL_ORDER.map(t => tierCounts[t]));
+          let weight = fullRamps * DOT_WEIGHTS.LEGENDARY;
+          const remaining = MEDAL_ORDER.filter(t => tierCounts[t] > fullRamps);
+          if (remaining.length > 0) weight += DOT_WEIGHTS[remaining[remaining.length - 1]];
+
+          return { address: addr, weight, medals: data.medals, tierCounts, fullRamps };
+        });
+
+        // XdRiP bonuses
+        const updatedHolders = [];
+        for (let i = 0; i < holders.length; i++) {
+          const h = holders[i];
+          setProgress(80 + Math.floor((i / holders.length) * 20), "XdRiP check: " + shortAddr(h.address));
+
+          const xdripBal = await fetchXdripBalance(h.address);
+          const xdripPct = (xdripBal / 1e9) * 100;
+          let bonus = 0;
+          if (xdripPct >= 1.48) bonus = 15;
+          else if (xdripPct >= 1.25) bonus = 10;
+          else if (xdripPct >= 1) bonus = 7;
+          else if (xdripPct >= 0.75) bonus = 5;
+          else if (xdripPct >= 0.5) bonus = 2;
+
+          const scaledBonus = h.weight * (bonus / 100);
+          const finalWeight = h.weight + scaledBonus;
+          const hasRedirected = h.medals.some(m => stolenMap[m.tokenId.toString()]);
+
+          updatedHolders.push({ ...h, xdripBalance: xdripBal, xdripPct, revshareBonus: bonus, scaledBonus, finalWeight, hasRedirected });
+          log(shortAddr(h.address) + ": wt=" + h.weight + " bonus=" + bonus + "% final=" + finalWeight.toFixed(1) + (hasRedirected ? " [REDIRECTED]" : ""));
+        }
+
+        holdersData = updatedHolders;
+        renderHoldersTable();
+        hideProgress();
+        document.getElementById("distBtn").disabled = false;
+        showStatus("Found " + updatedHolders.length + " holders (" + totalTokensChecked + " tokens). Review table then distribute.", "success");
+      } catch (err) {
+        showStatus("Fetch failed: " + err.message, "error");
+        log("ERROR: " + err.message);
+        hideProgress();
+      }
+      document.getElementById("fetchBtn").disabled = false;
+    }
+
+    // ============================================================
+    // RENDER TABLE
+    // ============================================================
+    function renderHoldersTable() {
+      const section = document.getElementById("holdersSection");
+      section.style.display = "block";
+      document.getElementById("holderCountBadge").textContent = "(" + holdersData.length + " holders)";
+
+      let totalWeight = 0;
+      holdersData.forEach(h => totalWeight += h.finalWeight);
+
+      let html = `<table><thead><tr>
+        <th>Holder</th><th>DOTs</th><th>Ramps</th><th>Base Wt</th>
+        <th>XdRiP</th><th>Bonus</th><th>Final Wt</th><th>Share %</th><th>Status</th>
+      </tr></thead><tbody>`;
+
+      const sorted = [...holdersData].sort((a, b) => b.finalWeight - a.finalWeight);
+      for (const h of sorted) {
+        const medals = MEDAL_ORDER.map(t => {
+          const c = h.tierCounts[t];
+          return c ? '<span class="tier-badge" style="background:' + TIER_COLORS[t] + '">' + t.charAt(0) + ':' + c + '</span>' : "";
+        }).filter(Boolean).join(" ");
+
+        const sharePct = totalWeight > 0 ? ((h.finalWeight / totalWeight) * 100).toFixed(2) : "0";
+        const status = h.hasRedirected
+          ? '<span class="redirected-tag">REDIRECTED</span>'
+          : '<span style="color:#555;font-size:10px">Normal</span>';
+
+        html += '<tr>' +
+          '<td class="addr">' + shortAddr(h.address) + '</td>' +
+          '<td>' + medals + '</td>' +
+          '<td>' + h.fullRamps + '</td>' +
+          '<td>' + h.weight + '</td>' +
+          '<td>' + h.xdripBalance.toFixed(0) + '</td>' +
+          '<td>' + h.revshareBonus + '%</td>' +
+          '<td style="color:#F1C40F;font-weight:bold">' + h.finalWeight.toFixed(1) + '</td>' +
+          '<td>' + sharePct + '%</td>' +
+          '<td>' + status + '</td></tr>';
+      }
+      html += "</tbody></table>";
+      document.getElementById("holdersTable").innerHTML = html;
+    }
+
+    // ============================================================
+    // UPDATE WEIGHTS & DISTRIBUTE
+    // ============================================================
+    async function updateWeightsAndDistribute() {
+      if (!distContract || holdersData.length === 0) return;
+      document.getElementById("distBtn").disabled = true;
+
+      const addresses = holdersData.map(h => h.address);
+      const weights = holdersData.map(h => Math.floor(h.finalWeight));
+      const bonuses = holdersData.map(h => Math.floor(h.scaledBonus));
+
+      log("=== DISTRIBUTION START ===");
+      log("Holders: " + addresses.length);
+      for (let i = 0; i < addresses.length; i++) {
+        log("  " + shortAddr(addresses[i]) + " → weight:" + weights[i] + " bonus:" + bonuses[i]);
+      }
+
+      let step1ok = false;
+      let step2ok = false;
+
+      // Step 1: Update final weights
+      try {
+        showStatus("Step 1/3: Updating final weights... confirm in MetaMask", "info");
+        log("Step 1: updateFinalWeights — CONFIRM IN METAMASK");
+        let tx = await distContract.updateFinalWeights(addresses, weights);
+        log("Step 1 tx sent: " + tx.hash + " — waiting for confirmation...");
+        showStatus("Step 1/3: Waiting for blockchain confirmation...", "info");
+        await tx.wait();
+        log("✓ Step 1 complete: final weights updated");
+        step1ok = true;
+      } catch (err) {
+        log("✗ Step 1 error: " + (err.reason || err.message));
+      }
+
+      // Step 2: Update XdRiP bonus weights
+      try {
+        showStatus("Step 2/3: Updating XdRiP bonus weights... confirm in MetaMask", "info");
+        log("Step 2: updateXdRiPWeights — CONFIRM IN METAMASK");
+        let tx = await distContract.updateXdRiPWeights(addresses, bonuses);
+        log("Step 2 tx sent: " + tx.hash + " — waiting for confirmation...");
+        showStatus("Step 2/3: Waiting for blockchain confirmation...", "info");
+        await tx.wait();
+        log("✓ Step 2 complete: XdRiP weights updated");
+        step2ok = true;
+      } catch (err) {
+        log("✗ Step 2 error: " + (err.reason || err.message));
+      }
+
+      // Step 3: Distribute revenue
+      try {
+        showStatus("Step 3/3: Distributing revenue... confirm in MetaMask", "info");
+        log("Step 3: distributeRevenue — CONFIRM IN METAMASK");
+        let tx = await distContract.distributeRevenue();
+        log("Step 3 tx sent: " + tx.hash + " — waiting for confirmation...");
+        showStatus("Step 3/3: Waiting for blockchain confirmation...", "info");
+        await tx.wait();
+        log("✓ Step 3 complete: Revenue distributed!");
+        showStatus("Distribution complete! Steps passed: " + 
+          (step1ok ? "1✓ " : "1✗ ") + (step2ok ? "2✓ " : "2✗ ") + "3✓", "success");
+        await refreshInfo();
+      } catch (err) {
+        showStatus("Step 3 FAILED: " + (err.reason || err.message), "error");
+        log("✗ Step 3 error: " + (err.reason || err.message));
+      }
+
+      document.getElementById("distBtn").disabled = false;
+    }
+
+    // ============================================================
+    // FLAG STOLEN
+    // ============================================================
+    async function flagStolen() {
+      if (!routerContract) { showStatus("Router not loaded", "error"); return; }
+      const tokenId = document.getElementById("flagTokenId").value.trim();
+      const thief = document.getElementById("flagThief").value.trim();
+      const victim = document.getElementById("flagVictim").value.trim();
+      const reason = document.getElementById("flagReason").value.trim() || "Wallet compromised";
+
+      if (!tokenId || !thief || !victim) { showStatus("Fill all stolen fields", "error"); return; }
+
+      try {
+        showStatus("Flagging token #" + tokenId + "...", "info");
+        const tx = await routerContract.flagStolen(tokenId, thief, victim, reason);
+        await tx.wait();
+        showStatus("Token #" + tokenId + " flagged ✓", "success");
+        log("Flagged #" + tokenId + ": " + shortAddr(thief) + " → " + shortAddr(victim));
+        await loadStolenTokens();
+        await refreshInfo();
+        document.getElementById("flagTokenId").value = "";
+        document.getElementById("flagThief").value = "";
+        document.getElementById("flagVictim").value = "";
+        document.getElementById("flagReason").value = "";
+      } catch (err) {
+        showStatus("Flag failed: " + (err.reason || err.message), "error");
+        log("ERROR flag: " + (err.reason || err.message));
+      }
+    }
+
+    // ============================================================
+    // DEPOSIT
+    // ============================================================
+    async function depositFunds() {
+      const amt = document.getElementById("depositAmt").value.trim();
+      if (!amt) { showStatus("Enter amount", "error"); return; }
+      try {
+        showStatus("Depositing " + amt + " BNB...", "info");
+        const tx = await signer.sendTransaction({ to: DIST_ADDRESS, value: ethers.parseEther(amt) });
+        await tx.wait();
+        showStatus(amt + " BNB deposited ✓", "success");
+        log("Deposited " + amt + " BNB");
+        document.getElementById("depositAmt").value = "";
+        await refreshInfo();
+      } catch (err) {
+        showStatus("Deposit failed: " + err.message, "error");
+      }
+    }
+
+    // ============================================================
+    // AUTO-CONNECT ON LOAD
+    // ============================================================
+    async function autoConnect() {
+      let attempts = 0;
+      while (!getWalletProvider() && attempts < 15) {
+        await new Promise(r => setTimeout(r, 400));
+        attempts++;
+        log("Waiting for wallet... attempt " + (attempts));
+      }
+      const eth = getWalletProvider();
+      if (eth) {
+        eth.on("accountsChanged", () => location.reload());
+        eth.on("chainChanged", () => location.reload());
+        await initContracts();
+      } else {
+        showStatus("No web3 wallet found after " + attempts + " attempts. Enable MetaMask file:// access (chrome://extensions → MetaMask → Allow access to file URLs) or use localhost.", "error");
+        log("FAILED: No wallet provider after " + attempts + " attempts");
+        document.getElementById("walletAddr").textContent = "Not connected";
+        document.getElementById("ownerStatus").textContent = "✗ No Wallet";
+        document.getElementById("ownerStatus").style.color = "#E74C3C";
+      }
+    }
+
+    window.addEventListener("load", autoConnect);
+  </script>
+</body>
+</html>
