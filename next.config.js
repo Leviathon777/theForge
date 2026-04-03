@@ -37,6 +37,7 @@ module.exports = {
       "porto/internal": false,
       "@coinbase/wallet-sdk": false,
       "@metamask/connect-evm": false,
+      "@base-org/account": false,
     };
     config.externals = config.externals || [];
     config.externals.push("porto", "porto/internal");
