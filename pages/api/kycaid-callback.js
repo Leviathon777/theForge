@@ -1,15 +1,6 @@
-import crypto from "crypto";
-import { createClient } from "@supabase/supabase-js";
+export const config = { runtime: "edge" };
 
-// --- Inline Supabase client (keeps API route isolated from page bundle) ---
-const getServiceSupabase = () => {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new Error("Supabase env vars not configured");
-  return createClient(url, key);
-};
-
-// --- Rate Limiting ---
+// --- Rate Limiting (in-memory, per-isolate) ---
 const rateLimit = new Map();
 const RATE_LIMIT_WINDOW = 60000;
 const MAX_REQUESTS = 10;
@@ -26,34 +17,27 @@ function checkRateLimit(ip) {
   return true;
 }
 
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, record] of rateLimit) {
-    if (now - record.timestamp > RATE_LIMIT_WINDOW) rateLimit.delete(ip);
+// --- Webhook Signature Verification (Web Crypto API) ---
+async function verifyWebhookSignature(body, signatureHeader, secret) {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, encoder.encode(body));
+  const expected = Array.from(new Uint8Array(sig))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+  // Constant-time comparison
+  if (expected.length !== signatureHeader.length) return false;
+  let result = 0;
+  for (let i = 0; i < expected.length; i++) {
+    result |= expected.charCodeAt(i) ^ signatureHeader.charCodeAt(i);
   }
-}, 5 * 60 * 1000);
-
-// --- Webhook Signature Verification ---
-function verifyWebhookSignature(req) {
-  const webhookSecret = process.env.KYCAID_WEBHOOK_SECRET;
-  if (!webhookSecret) {
-    console.error("[Security] KYCAID_WEBHOOK_SECRET not configured");
-    return false;
-  }
-  const signature = req.headers["x-kycaid-signature"] || "";
-  const payload = JSON.stringify(req.body);
-  const expectedSignature = crypto
-    .createHmac("sha256", webhookSecret)
-    .update(payload)
-    .digest("hex");
-  try {
-    return crypto.timingSafeEqual(
-      Buffer.from(signature, "utf8"),
-      Buffer.from(expectedSignature, "utf8")
-    );
-  } catch {
-    return false;
-  }
+  return result === 0;
 }
 
 // --- Input Validation ---
@@ -63,40 +47,56 @@ const WALLET_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 function validateCallbackInput(body) {
   if (!body || typeof body !== "object") return "Invalid request body";
   if (!VALID_CALLBACK_TYPES.includes(body.type)) return "Invalid callback type";
-  const externalId = body.external_applicant_id ||
+  const externalId =
+    body.external_applicant_id ||
     (body.applicant ? body.applicant.external_applicant_id : null);
   if (externalId && !WALLET_ADDRESS_REGEX.test(externalId)) {
     return "Invalid external_applicant_id format";
   }
   if (!body.applicant_id && !externalId) {
-    return "Missing required identifier (applicant_id or external_applicant_id)";
+    return "Missing required identifier";
   }
   return null;
 }
 
-// --- Inline DB operations ---
+// --- Supabase helper (inline, no shared imports) ---
+async function supabaseRequest(path, method, body) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const res = await fetch(`${url}/rest/v1/${path}`, {
+    method,
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+      Prefer: method === "POST" ? "resolution=merge-duplicates" : undefined,
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Supabase ${method} ${path} failed: ${err}`);
+  }
+  return res;
+}
+
 async function updateApplicantStatus(walletAddress, updateData) {
-  if (!walletAddress) throw new Error("walletAddress cannot be empty.");
-  const supabase = getServiceSupabase();
-  const mapped = {};
+  const mapped = { updated_at: new Date().toISOString() };
   if (updateData.kyc) {
     if (updateData.kyc.kycStatus !== undefined) mapped.kyc_status = updateData.kyc.kycStatus;
     if (updateData.kyc.kycVerified !== undefined) mapped.kyc_verified = updateData.kyc.kycVerified;
     if (updateData.kyc.kycCompletedAt !== undefined) mapped.kyc_completed_at = updateData.kyc.kycCompletedAt;
     if (updateData.kyc.kycSubmittedAt !== undefined) mapped.kyc_submitted_at = updateData.kyc.kycSubmittedAt;
   }
-  mapped.updated_at = new Date().toISOString();
-  const { error } = await supabase
-    .from("forger_accounts")
-    .update(mapped)
-    .eq("wallet_address", walletAddress);
-  if (error) throw new Error(`Failed to update: ${error.message}`);
+  await supabaseRequest(
+    `forger_accounts?wallet_address=eq.${walletAddress}`,
+    "PATCH",
+    mapped
+  );
 }
 
 async function createKYCFolder(externalApplicantId, kycData) {
-  if (!externalApplicantId) throw new Error("externalApplicantId required");
-  const supabase = getServiceSupabase();
-  const { error } = await supabase.from("forger_kyc").upsert({
+  await supabaseRequest("forger_kyc", "POST", {
     external_applicant_id: externalApplicantId,
     request_id: kycData.request_id,
     type: kycData.type,
@@ -108,54 +108,79 @@ async function createKYCFolder(externalApplicantId, kycData) {
     verification_attempts_left: kycData.verification_attempts_left,
     raw_data: kycData,
     timestamp: new Date().toISOString(),
-  }, { onConflict: "external_applicant_id" });
-  if (error) throw new Error(`Failed to create KYC folder: ${error.message}`);
+  });
 }
 
-// --- Handler ---
-export default async function handler(req, res) {
+// --- Edge Handler ---
+export default async function handler(req) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  const clientIp = req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "unknown";
+  const clientIp = req.headers.get("x-forwarded-for") || "unknown";
   if (!checkRateLimit(clientIp)) {
-    return res.status(429).json({ error: "Too many requests" });
+    return new Response(JSON.stringify({ error: "Too many requests" }), {
+      status: 429,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  if (process.env.KYCAID_WEBHOOK_SECRET) {
-    if (!verifyWebhookSignature(req)) {
+  const rawBody = await req.text();
+  let body;
+  try {
+    body = JSON.parse(rawBody);
+  } catch {
+    return new Response(JSON.stringify({ error: "Invalid JSON" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // Webhook signature verification
+  const webhookSecret = process.env.KYCAID_WEBHOOK_SECRET;
+  if (webhookSecret) {
+    const signature = req.headers.get("x-kycaid-signature") || "";
+    const valid = await verifyWebhookSignature(rawBody, signature, webhookSecret);
+    if (!valid) {
       console.error("[Security] Invalid webhook signature from IP:", clientIp);
-      return res.status(401).json({ error: "Unauthorized" });
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
     }
   } else {
-    console.warn("[Security] KYCAID_WEBHOOK_SECRET not set — skipping signature verification.");
+    console.warn("[Security] KYCAID_WEBHOOK_SECRET not set — skipping verification.");
   }
 
-  const validationError = validateCallbackInput(req.body);
+  const validationError = validateCallbackInput(body);
   if (validationError) {
-    return res.status(400).json({ error: validationError });
+    return new Response(JSON.stringify({ error: validationError }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const {
     type, request_id, verification_id, applicant_id, form_id, form_token,
     status, verified, comment, verifications, applicant, external_applicant_id,
     verification_status, verification_statuses, verification_attempts_left,
-  } = req.body;
+  } = body;
 
   const resolvedExternalApplicantId =
     external_applicant_id || (applicant ? applicant.external_applicant_id : null);
 
   try {
     if (type === "VERIFICATION_STATUS_CHANGED") {
-      const updateData = {
-        kyc: {
-          kycStatus: verification_status || "unknown",
-          kycSubmittedAt: new Date().toISOString(),
-        },
-      };
-      await updateApplicantStatus(external_applicant_id || applicant_id, updateData);
-      return res.status(200).json({ message: "Callback processed successfully." });
+      await updateApplicantStatus(external_applicant_id || applicant_id, {
+        kyc: { kycStatus: verification_status || "unknown", kycSubmittedAt: new Date().toISOString() },
+      });
+      return new Response(JSON.stringify({ message: "Callback processed successfully." }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     if (type === "VERIFICATION_COMPLETED") {
@@ -166,21 +191,28 @@ export default async function handler(req, res) {
         verification_statuses, verification_attempts_left,
       };
       await createKYCFolder(resolvedExternalApplicantId, kycData);
-      const updateData = {
+      await updateApplicantStatus(resolvedExternalApplicantId || applicant_id, {
         kyc: {
           kycStatus: status,
           kycVerified: verified,
           kycCompletedAt: status === "completed" ? new Date().toISOString() : null,
         },
-      };
-      await updateApplicantStatus(resolvedExternalApplicantId || applicant_id, updateData);
-      return res.status(200).json({ message: "Callback processed successfully." });
+      });
+      return new Response(JSON.stringify({ message: "Callback processed successfully." }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    console.warn("[Callback] Unhandled callback type:", type);
-    return res.status(400).json({ error: "Unsupported callback type." });
+    return new Response(JSON.stringify({ error: "Unsupported callback type." }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
-    console.error("[Callback] Error processing callback:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("[Callback] Error:", error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }

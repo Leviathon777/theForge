@@ -1,3 +1,5 @@
+export const config = { runtime: "edge" };
+
 // --- Rate Limiting ---
 const rateLimit = new Map();
 const WINDOW_MS = 60000;
@@ -19,38 +21,60 @@ function checkRateLimit(ip) {
 const FORM_ID_REGEX = /^[a-zA-Z0-9\-]{1,128}$/;
 const WALLET_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 
-// --- Handler ---
-export default async function handler(req, res) {
+// --- Edge Handler ---
+export default async function handler(req) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  // Rate limiting
-  const clientIp = req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "unknown";
+  const clientIp = req.headers.get("x-forwarded-for") || "unknown";
   if (!checkRateLimit(clientIp)) {
-    return res.status(429).json({ error: "Too many requests" });
+    return new Response(JSON.stringify({ error: "Too many requests" }), {
+      status: 429,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   // Origin check
-  const origin = req.headers.origin || req.headers.referer || "";
+  const origin = req.headers.get("origin") || req.headers.get("referer") || "";
   const allowedOrigins = ["medalsofhonor.io", "www.medalsofhonor.io", "localhost:3000", "localhost"];
-  const isAllowedOrigin = allowedOrigins.some(
-    (allowed) => origin.includes(allowed)
-  );
+  const isAllowedOrigin = allowedOrigins.some((allowed) => origin.includes(allowed));
   if (origin && !isAllowedOrigin) {
-    return res.status(403).json({ error: "Forbidden" });
+    return new Response(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(JSON.stringify({ error: "Invalid JSON" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const { form_id, external_applicant_id } = body;
+
+  if (!form_id || !FORM_ID_REGEX.test(form_id)) {
+    return new Response(JSON.stringify({ error: "Invalid form_id" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  if (!external_applicant_id || !WALLET_ADDRESS_REGEX.test(external_applicant_id)) {
+    return new Response(JSON.stringify({ error: "Invalid external_applicant_id" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const API_TOKEN = process.env.KYCAID_PRODUCTION_API_KEY;
-  const { form_id, external_applicant_id } = req.body;
-
-  // Input validation
-  if (!form_id || !FORM_ID_REGEX.test(form_id)) {
-    return res.status(400).json({ error: "Invalid form_id" });
-  }
-  if (!external_applicant_id || !WALLET_ADDRESS_REGEX.test(external_applicant_id)) {
-    return res.status(400).json({ error: "Invalid external_applicant_id" });
-  }
 
   try {
     const response = await fetch(`https://api.kycaid.com/forms/${form_id}/urls`, {
@@ -59,20 +83,27 @@ export default async function handler(req, res) {
         Authorization: `Token ${API_TOKEN}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        external_applicant_id,
-      }),
+      body: JSON.stringify({ external_applicant_id }),
     });
 
     if (!response.ok) {
       console.error("[KYC Handler] KYCAID API error:", response.status);
-      return res.status(response.status).json({ error: "KYC service error" });
+      return new Response(JSON.stringify({ error: "KYC service error" }), {
+        status: response.status,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const data = await response.json();
-    return res.status(200).json(data);
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     console.error("[KYC Handler] Error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
