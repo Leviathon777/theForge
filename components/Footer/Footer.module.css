@@ -1,0 +1,122 @@
+.footer {
+  position: relative;
+  padding: 3rem 1rem 1.5rem;
+  background-image: url('/img/background.png');
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 5, 8, 0.92);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.footerContent {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footerMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .footerMain {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
+
+.footerBrand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 200px;
+}
+
+.footerBrand p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: var(--color-text-tertiary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.footerLinksSection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .footerLinksSection {
+    grid-template-columns: repeat(4, auto);
+    gap: 3rem;
+  }
+}
+
+.footerLinkGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.footerLinkGroup h4 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.4rem 0;
+}
+
+.footerLink {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: var(--color-text-tertiary);
+  text-decoration: none;
+  border: none;
+  padding: 0.15rem 0;
+  text-align: left;
+  cursor: pointer;
+  background: linear-gradient(
+    90deg,
+    var(--forge-blue-200) 50%,
+    rgba(255, 255, 255, 0.55) 50%
+  );
+  background-size: 200% 100%;
+  background-position: right;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: background-position 0.4s ease;
+}
+
+.footerLink:hover {
+  background-position: left;
+}
+
+.footerBottom {
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: center;
+}
+
+.footerBottom p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}

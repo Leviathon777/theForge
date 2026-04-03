@@ -6,23 +6,33 @@ import MyDotData from "../Context/MyDotDataContext";
 import { ethers } from "ethers";
 import mohCA_ABI from "../Context/mohCA_ABI.json";
 import ipfsHashes from "../Context/ipfsHashes.js";
-import Web3 from "web3";
+import { publicClient as viemPublicClient } from "../lib/viemClient";
 import xdripCA_ABI from "../Context/xdripCA_ABI.json";
-import {
-  useSigner,
-} from "@thirdweb-dev/react";
+import { useAccount, useConfig } from "wagmi";
+import { getWalletClient } from "@wagmi/core";
+import { walletClientToSigner } from "../lib/walletClientToSigner";
 const MohAddress = mohCA_ABI.address;
 const MohABI = mohCA_ABI.abi;
 const fetchMohContract = (signerOrProvider) =>
   new ethers.Contract(MohAddress, MohABI, signerOrProvider);
 const XdRiPContractAddress = xdripCA_ABI.address;
 const XdRiPContractABI = xdripCA_ABI.abi;
-const web3 = new Web3("https://bsc-dataseed1.binance.org/");
-const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
+// XdRiP contract reads use viem publicClient
 const InvestorWallet = () => {
   const router = useRouter();
   const { address, dripPercent, xdripBalance, userInfo: userInfoString } = router.query;
-  const signer = useSigner();
+  const { isConnected } = useAccount();
+  const wagmiConfig = useConfig();
+  const [signer, setSigner] = useState(null);
+  useEffect(() => {
+    if (isConnected) {
+      getWalletClient(wagmiConfig).then((wc) => {
+        setSigner(walletClientToSigner(wc));
+      }).catch(() => setSigner(null));
+    } else {
+      setSigner(null);
+    }
+  }, [isConnected, wagmiConfig]);
   const [userInfo, setUserInfo] = useState(null);
   const [bnbBalance, setBnbBalance] = useState(null);
   useEffect(() => {

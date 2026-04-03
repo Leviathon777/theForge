@@ -1,1979 +1,890 @@
-/*
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { ethers } from "ethers";
 import distributeCA_ABI from "../../Context/distributeCA_ABI.json";
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
+import replacementCA_ABI from "../../Context/replacementCA_ABI.json";
+import routerCA_ABI from "../../Context/routerCA_ABI.json";
 import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
-import styles from "./Distribute.module.css"; // Import your CSS module
-import Web3 from "web3";
-import {
-  useAddress,
-  ConnectWallet,
-  useSigner,
-} from "@thirdweb-dev/react";
+import styles from "./Distribute.module.css";
+import { useAccount, useConfig } from "wagmi";
+import { getWalletClient } from "@wagmi/core";
+import { walletClientToSigner } from "../../lib/walletClientToSigner";
+import { publicClient } from "../../lib/viemClient";
 
-const DistributeRevShare = ({ onBack }) => {
-  const [holdersInfo, setHoldersInfo] = useState([]);
-  const [status, setStatus] = useState("");
-  const [contractBalance, setContractBalance] = useState("0");
-  const [depositAmount, setDepositAmount] = useState("");
-  const [distributePercentage, setDistributePercentage] = useState(20); // Default percentage
-  const [newPercentage, setNewPercentage] = useState("");
-  const [setDistributeContract] = useState(null);
-  const [setMohContract] = useState(null);
-  const [currentMOHContract, setCurrentMOHContract] = useState("Fetching...");
-  const [newMOHContract, setNewMOHContract] = useState(""); // For updating MOH contract in UI
-  const [fundsDistributedEvents, setFundsDistributedEvents] = useState([]);
-  const [fundsDepositedEvents, setFundsDepositedEvents] = useState([]);
-  const [investorPaidEvents, setInvestorPaidEvents] = useState([]);
-
-  // Setup Web3 for XdRiP calls.
-  const web3 = new Web3("https://bsc-dataseed1.binance.org/");
-  const XdRiPContractAddress = xdripCA_ABI.address;
-  const XdRiPContractABI = xdripCA_ABI.abi;
-  const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
-
-
-
-const address = useAddress();
-  const signer = useSigner();
-
-  const mohContract = useMemo(() => {
-    return signer
-      ? new ethers.Contract(
-          mohCA_ABI.address,
-          mohCA_ABI.abi,
-          signer
-        )
-      : null;
-  }, [signer]);
-
-  const distributeContract = useMemo(() => {
-    return signer
-      ? new ethers.Contract(
-        distributeCA_ABI.address,
-        distributeCA_ABI.abi,
-          signer
-        )
-      : null;
-  }, [signer]);
-
-
-  useEffect(() => {
-    const initializeContracts = async () => {
-      try {
-        if (!window.ethereum) {
-          setStatus("Please install a web3 wallet");
-          return;
-        }
-        // Request wallet access (ensure wallet is on testnet for MOH/Distribution)
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-        
-        // *** Use dedicated testnet RPC for MOH and Distribution contracts ***
-        const TESTNET_RPC = "https://bsc-dataseed1.binance.org/";
-        const testnetProvider = new ethers.providers.JsonRpcProvider(TESTNET_RPC);
-        const testnetSigner = testnetProvider.getSigner();
-  
-        
-        
-
-        
-
-        setDistributeContract(distributeInstance);
-  
-        // Get testnet contract balance (optional example)
-        const balance = await testnetProvider.getBalance(distributeCA_ABI.address);
-        console.log("Testnet contract balance:", ethers.utils.formatEther(balance));
-  
-        setStatus("Contracts initialized successfully on testnet.");
-  
-        // *** XdRiP is still handled via your existing mainnet Web3 instance ***
-        // (Your current code instantiates XdRiP like this:)
-        // const web3 = new Web3("https://bsc-dataseed1.binance.org/");
-        // const XdRiPContract = new web3.eth.Contract(xdripCA_ABI.abi, xdripCA_ABI.address);
-        // (This remains unchanged.)
-        
-      } catch (error) {
-        console.error("Error initializing contracts:", error);
-        setStatus("Error initializing contracts. See console for details.");
-      }
-    };
-  
-    initializeContracts();
-  }, []);
-  
-
-  // Function to fetch the XdRiP balance for an address using Web3
-  const fetchXDRIPBalance = async (address) => {
-    try {
-      const balance = await XdRiPContract.methods.balanceOf(address).call();
-      const formattedBalance = web3.utils.fromWei(balance, "gwei");
-      return parseFloat(formattedBalance);
-    } catch (error) {
-      console.error("Error retrieving XDRIP balance:", error);
-      return 0;
-    }
-  };
-
-  // Function to fetch the balance of the distribution contract
-  const fetchContractBalance = async () => {
-    if (!distributeContract) return;
-    try {
-      const balance = await distributeContract.provider.getBalance(distributeCA_ABI.address);
-      setContractBalance(ethers.utils.formatEther(balance));
-    } catch (error) {
-      console.error("Error fetching balance:", error);
-      setStatus("Error fetching balance.");
-    }
-  };
-
-  // Fetch holders info and compute final weight (baseWeight plus bonus)
-  const fetchHoldersInfo = async () => {
-    if (!mohContract) {
-      setStatus("MOH contract not loaded.");
-      return;
-    }
-
-    try {
-      setStatus("Fetching Medal holders...");
-      const holderMap = {};
-
-      const DOTWeights = {
-        COMMON: 10,
-        UNCOMMON: 25,
-        RARE: 45,
-        EPIC: 70,
-        LEGENDARY: 110,
-      };
-
-      const medalOrder = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY"];
-      const tokenRanges = [
-        { start: 1, end: 10000, weight: DOTWeights.COMMON, name: "COMMON" },
-        { start: 10001, end: 15000, weight: DOTWeights.UNCOMMON, name: "UNCOMMON" },
-        { start: 15001, end: 17500, weight: DOTWeights.RARE, name: "RARE" },
-        { start: 17501, end: 18500, weight: DOTWeights.EPIC, name: "EPIC" },
-        { start: 18501, end: 20000, weight: DOTWeights.LEGENDARY, name: "LEGENDARY" },
-      ];
-
-      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-      // Loop through token ranges to build holderMap
-      for (const range of tokenRanges) {
-        for (let tokenId = range.start; tokenId <= range.end; tokenId++) {
-          try {
-            const owner = await mohContract.ownerOf(tokenId);
-            if (owner) {
-              if (!holderMap[owner]) {
-                holderMap[owner] = { medals: [] };
-              }
-              holderMap[owner].medals.push({ tokenId, name: range.name });
-            }
-          } catch (error) {
-            // If the token doesn't exist, we skip further tokens in this range
-            console.warn(`Token ID ${tokenId} not found: ${error.message}`);
-            break;
-          }
-          await delay(100); // Slight delay to avoid rate limits
-        }
-      }
-
-      // Process holders and calculate weights
-      const holders = Object.entries(holderMap).map(([address, data]) => {
-        let totalWeight = 0;
-        const tierCounts = medalOrder.reduce((counts, tier) => {
-          counts[tier] = 0;
-          return counts;
-        }, {});
-
-        data.medals.forEach((medal) => {
-          if (tierCounts[medal.name] !== undefined) {
-            tierCounts[medal.name]++;
-          }
-        });
-
-        // Calculate full ramps (using the smallest count among tiers)
-        const fullRamps = Math.min(...medalOrder.map((tier) => tierCounts[tier]));
-        totalWeight += fullRamps * DOTWeights["LEGENDARY"];
-
-        // Add the weight for the highest tier that has extra medals
-        const remainingMedals = medalOrder.filter((tier) => tierCounts[tier] > fullRamps);
-        if (remainingMedals.length > 0) {
-          const highestRemainingTier = remainingMedals[remainingMedals.length - 1];
-          totalWeight += DOTWeights[highestRemainingTier];
-        }
-
-        console.log(`Address: ${address}, Tier Counts:`, tierCounts);
-        console.log(`Address: ${address}, Full Ramps: ${fullRamps}, Total Weight: ${totalWeight}`);
-
-        return { address, weight: totalWeight, medals: data.medals };
-      });
-
-      // For each holder, get XdRiP balance and compute revshare bonus
-      const updatedHolders = [];
-      for (const holder of holders) {
-        const xdripBal = await fetchXDRIPBalance(holder.address);
-        // Compute percentage (example: total supply assumed to be 1e9)
-        const xdripPercentage = (xdripBal / 1e9) * 100;
-        let revshareBonus = 0;
-        if (xdripPercentage >= 1.48) revshareBonus = 15;
-        else if (xdripPercentage >= 1.25) revshareBonus = 10;
-        else if (xdripPercentage >= 1) revshareBonus = 7;
-        else if (xdripPercentage >= 0.75) revshareBonus = 5;
-        else if (xdripPercentage >= 0.5) revshareBonus = 2;
-
-        console.log("XdRiP percentage:", xdripPercentage);
-
-        // Compute scaled bonus and final weight
-        const scaledBonus = holder.weight * (revshareBonus / 100);
-        const finalWeight = holder.weight + scaledBonus;
-        const bonusAmount = scaledBonus; // This value represents the bonus portion
-
-        updatedHolders.push({
-          ...holder,
-          xdripBalance: xdripBal,
-          revshareBonus,
-          bonusAmount,      // For display
-          scaledBonus,      // Scaled value used on-chain
-          finalWeight,      // Final computed weight
-        });
-      }
-
-      setHoldersInfo(updatedHolders);
-      setStatus("Medal holders, weights, and XdRiP balances fetched successfully.");
-    } catch (error) {
-      console.error("Error fetching Medal holders:", error);
-      setStatus("Error fetching Medal holders.");
-    }
-  };
-
-  // Update bonus weights on-chain and then trigger revenue distribution
-  const updateBonusWeightsAndDistribute = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
-      return;
-    }
-    if (holdersInfo.length === 0) {
-      setStatus("No holders info available.");
-      return;
-    }
-    try {
-      const addresses = [];
-      const bonusValues = [];
-      holdersInfo.forEach((holder) => {
-        addresses.push(holder.address);
-        bonusValues.push(holder.scaledBonus); // scaledBonus preserves the percentage bonus
-      });
-      
-      setStatus("Updating bonus weights on-chain...");
-      let tx = await distributeContract.updateXdRiPWeights(addresses, bonusValues);
-      await tx.wait();
-
-      console.log("Addresses being sent:", addresses);
-      console.log("Bonus weights being sent:", bonusValues);
-  
-      setStatus("Bonus weights updated. Distributing revenue...");
-      tx = await distributeContract.distributeRevenue();
-      await tx.wait();
-      setStatus("Revenue distributed successfully!");
-      fetchContractBalance();
-    } catch (error) {
-      console.error("Error updating bonus weights and distributing:", error);
-      setStatus("Error updating bonus weights or distributing revenue.");
-    }
-  };
-
-  const distributeRevenue = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
-      return;
-    }
-    try {
-      setStatus("Distributing revenue...");
-      const tx = await distributeContract.distributeRevenue();
-      await tx.wait();
-      setStatus("Revenue distributed successfully!");
-      fetchContractBalance();
-    } catch (error) {
-      console.error("Error distributing revenue:", error);
-      setStatus("Error distributing revenue.");
-    }
-  };
-
-  const updateDistributionPercentage = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
-      return;
-    }
-    const parsedPercentage = parseInt(newPercentage, 10);
-    if (isNaN(parsedPercentage) || parsedPercentage <= 0 || parsedPercentage > 100) {
-      setStatus("Enter a valid percentage (1-100).");
-      return;
-    }
-    try {
-      setStatus("Updating distribution percentage...");
-      const tx = await distributeContract.updateDistributionPercentage(parsedPercentage);
-      await tx.wait();
-      setDistributePercentage(parsedPercentage);
-      setNewPercentage("");
-      setStatus("Distribution percentage updated successfully.");
-    } catch (error) {
-      console.error("Error updating distribution percentage:", error);
-      setStatus("Error updating distribution percentage.");
-    }
-  };
-
-  const handleDepositFunds = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
-      return;
-    }
-    try {
-      setStatus("Depositing funds...");
-      const signer = distributeContract.provider.getSigner();
-      const tx = await signer.sendTransaction({
-        to: distributeCA_ABI.address,
-        value: ethers.utils.parseEther(depositAmount),
-      });
-      await tx.wait();
-      setDepositAmount("");
-      setStatus(`${depositAmount} BNB deposited successfully.`);
-      fetchContractBalance();
-    } catch (error) {
-      console.error("Error depositing funds:", error);
-      setStatus("Error depositing funds.");
-    }
-  };
-
-  const shortenAddress = (address) => {
-    if (!address) return "";
-    return address.substring(0, 6) + "..." + address.substring(address.length - 4);
-  };
-
-  // Update the MOH contract address in the distribution contract
-  const fetchCurrentMOHContract = async () => {
-    try {
-      if (!distributeContract) {
-        setStatus("Distribute contract not initialized.");
-        return;
-      }
-      const currentAddress = await distributeContract.mohContract();
-      setCurrentMOHContract(currentAddress);
-    } catch (error) {
-      console.error("Error fetching current MOH contract address:", error);
-      setCurrentMOHContract("Error fetching address");
-    }
-  };
-
-  const updateMOHContractInDistribute = async () => {
-    try {
-      if (!ethers.utils.isAddress(newMOHContract)) {
-        setStatus("Invalid Ethereum address.");
-        return;
-      }
-      setStatus("Updating MOH contract in the Distribute Contract...");
-      const tx = await distributeContract.updateMOHContract(newMOHContract);
-      await tx.wait();
-      const updatedAddress = await distributeContract.mohContract();
-      setCurrentMOHContract(updatedAddress);
-      setStatus("MOH contract updated successfully.");
-      setNewMOHContract("");
-    } catch (error) {
-      console.error("Error updating MOH contract:", error);
-      setStatus("Failed to update MOH contract. Check permissions.");
-    }
-  };
-
-  useEffect(() => {
-    fetchCurrentMOHContract();
-  }, [distributeContract]);
-
-  // Fetch events related to revenue distribution
-  const fetchAndDisplayEvents = async () => {
-    if (!distributeContract) {
-      setStatus("Distribute contract not loaded.");
-      return;
-    }
-    try {
-      setStatus("Fetching events...");
-      const startBlock = 46846649; // Replace with your deployment block
-      const latestBlock = await distributeContract.provider.getBlockNumber();
-      
-      // FundsDistributed events
-      const fundsFilter = distributeContract.filters.FundsDistributed();
-      const fundsEvents = await distributeContract.queryFilter(fundsFilter, startBlock, latestBlock);
-      const fundsDistributed = fundsEvents.map((event) => ({
-        totalDistributed: ethers.utils.formatEther(event.args.totalDistributed.toString()),
-        blockNumber: event.blockNumber,
-        transactionHash: event.transactionHash,
-      }));
-
-      // FundsDeposited events
-      const depositFilter = distributeContract.filters.FundsDeposited();
-      const depositEvents = await distributeContract.queryFilter(depositFilter, startBlock, latestBlock);
-      const fundsDeposited = depositEvents.map((event) => ({
-        depositor: event.args.depositor,
-        amount: ethers.utils.formatEther(event.args.amount.toString()),
-        blockNumber: event.blockNumber,
-        transactionHash: event.transactionHash,
-      }));
-
-      // InvestorPaid events
-      const investorFilter = distributeContract.filters.investorPaid();
-      const investorEvents = await distributeContract.queryFilter(investorFilter, startBlock, latestBlock);
-      const investorPaid = investorEvents.map((event) => ({
-        investor: event.args.investor,
-        amount: ethers.utils.formatEther(event.args.amount.toString()),
-        blockNumber: event.blockNumber,
-        transactionHash: event.transactionHash,
-      }));
-
-      console.log("FundsDistributed Events:", fundsDistributed);
-      console.log("FundsDeposited Events:", fundsDeposited);
-      console.log("InvestorPaid Events:", investorPaid);
-      setFundsDistributedEvents(fundsDistributed);
-      setFundsDepositedEvents(fundsDeposited);
-      setInvestorPaidEvents(investorPaid);
-      setStatus("Events fetched successfully.");
-    } catch (error) {
-      console.error("Error fetching events:", error);
-      setStatus("Error fetching events. Check console for details.");
-    }
-  };
-
-  // Example of fetching XdRiP Transfer events via Web3
-  const fetchXDRIPTransferEvents = async () => {
-    try {
-      console.log("Fetching XDRIP Transfer events with Web3...");
-      const XdRiPContractInstance = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
-      const events = await XdRiPContractInstance.getPastEvents("Transfer", {
-        fromBlock: 0,
-        toBlock: "latest",
-      });
-      if (events.length === 0) {
-        console.log("No Transfer events found for XDRIP.");
-      } else {
-        events.slice(0, 5).forEach((evt, idx) => {
-          console.log(`Transfer event #${idx}`, {
-            from: evt.returnValues.from,
-            to: evt.returnValues.to,
-            amount: evt.returnValues.value,
-            blockNumber: evt.blockNumber,
-            txHash: evt.transactionHash,
-          });
-        });
-        console.log(`Total Transfer events found: ${events.length}`);
-      }
-    } catch (error) {
-      console.error("Error fetching XDRIP Transfer events with Web3:", error);
-    }
-  };
-
-  return (
-    <div className={styles.container}>
-      <h2 className={styles.heading}>Revenue Distribution</h2>
-      <p className={styles.status}>{status}</p>
-
-      <div className={styles.buttonSection}>
-        <button onClick={fetchHoldersInfo} className={styles.button}>
-          Fetch Medal Holders
-        </button>
-        <button
-          onClick={distributeRevenue}
-          disabled={!holdersInfo.length}
-          className={styles.button}
-        >
-          Distribute Revenue
-        </button>
-      </div>
-
-      <button onClick={fetchXDRIPTransferEvents}>Fetch XDRIP Transfer Events</button>
-
-      <div className={styles.inputGroup}>
-        <input
-          type="text"
-          value={depositAmount}
-          onChange={(e) => setDepositAmount(e.target.value)}
-          placeholder="Deposit Amount in BNB"
-          className={styles.input}
-        />
-        <button onClick={handleDepositFunds} className={styles.buttonSmall}>
-          Deposit Funds
-        </button>
-      </div>
-
-      <div className={styles.infoSection}>
-        <p>
-          <strong>Available Balance:</strong> {contractBalance} BNB
-        </p>
-        <p>
-          <strong>Current Distribution Percentage:</strong> {distributePercentage}%
-        </p>
-      </div>
-
-      <div className={styles.inputGroup}>
-        <input
-          type="number"
-          value={newPercentage}
-          onChange={(e) => setNewPercentage(e.target.value)}
-          placeholder="Set New Percentage"
-          className={styles.input}
-        />
-        <button onClick={updateDistributionPercentage} className={styles.buttonSmall}>
-          Update Percentage
-        </button>
-      </div>
-
-      <div className={styles.section}>
-        <h2 className={styles.subheading}>Update MOH Contract</h2>
-        <div className={styles.updateMOHContract}>
-          <p>
-            <strong>Current MOH Contract:</strong>{" "}
-            <span
-              className={styles.copyableAddress}
-              onClick={() => navigator.clipboard.writeText(currentMOHContract)}
-              title={`Click to copy ${currentMOHContract}`}
-            >
-              {shortenAddress(currentMOHContract)}
-            </span>
-          </p>
-          <input
-            type="text"
-            value={newMOHContract}
-            onChange={(e) => setNewMOHContract(e.target.value)}
-            placeholder="Enter new MOH contract address"
-            className={styles.input}
-          />
-          <button onClick={updateMOHContractInDistribute} className={styles.updatePercentagesBtn}>
-            Update MOH Contract
-          </button>
-        </div>
-      </div>
-
-      <button onClick={fetchAndDisplayEvents} className={styles.button}>
-        Fetch Distribution Events
-      </button>
-
-      {fundsDistributedEvents.length > 0 && (
-        <div className={styles.tableContainer}>
-          <h3>FundsDistributed Events</h3>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Total Distributed (BNB)</th>
-                <th>Block Number</th>
-                <th>Transaction Hash</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fundsDistributedEvents.map((event, index) => (
-                <tr key={index}>
-                  <td>{event.totalDistributed}</td>
-                  <td>{event.blockNumber}</td>
-                  <td>
-                    <a
-                      href={`https://bscscan.com/tx/${event.transactionHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {event.transactionHash.substring(0, 10)}...
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {fundsDepositedEvents.length > 0 && (
-        <div className={styles.tableContainer}>
-          <h3>FundsDeposited Events</h3>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Depositor</th>
-                <th>Amount (BNB)</th>
-                <th>Block Number</th>
-                <th>Transaction Hash</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fundsDepositedEvents.map((event, index) => (
-                <tr key={index}>
-                  <td>{shortenAddress(event.depositor)}</td>
-                  <td>{event.amount}</td>
-                  <td>{event.blockNumber}</td>
-                  <td>
-                    <a
-                      href={`https://testnet.bscscan.com/tx/${event.transactionHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {event.transactionHash.substring(0, 10)}...
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {investorPaidEvents.length > 0 && (
-        <div className={styles.tableContainer}>
-          <h3>InvestorPaid Events</h3>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Investor</th>
-                <th>Amount (BNB)</th>
-                <th>Block Number</th>
-                <th>Transaction Hash</th>
-              </tr>
-            </thead>
-            <tbody>
-              {investorPaidEvents.map((event, index) => (
-                <tr key={index}>
-                  <td>{event.investor}</td>
-                  <td>{event.amount}</td>
-                  <td>{event.blockNumber}</td>
-                  <td>
-                    <a
-                      href={`https://testnet.bscscan.com/tx/${event.transactionHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {event.transactionHash.substring(0, 10)}...
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <button onClick={onBack} className={styles.backButton} aria-label="Back to Owner Operations">
-        &larr; Back
-      </button>
-
-      {holdersInfo.length > 0 && (
-        <div className={styles.tableContainer}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th className={styles.th}>Holder Address</th>
-                <th className={styles.th}>Final Weight</th>
-                <th className={styles.th}>Medals Owned</th>
-                <th className={styles.th}>XdRiP Balance</th>
-                <th className={styles.th}>Revshare Bonus (%)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {holdersInfo.map((holder, index) => (
-                <tr key={index} className={styles.tr}>
-                  <td className={styles.td}>
-                    <span className={styles.copyableAddress}>{shortenAddress(holder.address)}</span>
-                  </td>
-                  <td className={styles.td}>{holder.finalWeight}</td>
-                  <td className={styles.td}>
-                    {holder.medals.map((medal, i) => (
-                      <div key={i} style={{ marginBottom: "4px" }}>
-                        {medal.name} (Token ID: {medal.tokenId})
-                      </div>
-                    ))}
-                  </td>
-                  <td className={styles.td}>{holder.xdripBalance}</td>
-                  <td className={styles.td}>{holder.revshareBonus}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
+const DOT_WEIGHTS = {
+  COMMON: 10,
+  UNCOMMON: 25,
+  RARE: 45,
+  EPIC: 70,
+  LEGENDARY: 110,
 };
 
-export default DistributeRevShare;
-*/
+const MEDAL_ORDER = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY"];
 
-/* rev works w xdrip
-import React, { useState, useEffect, useMemo } from "react";
-import { ethers } from "ethers";
-import distributeCA_ABI from "../../Context/distributeCA_ABI.json";
-import mohCA_ABI from "../../Context/mohCA_ABI.json";
-import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
-import styles from "./Distribute.module.css"; // Import your CSS module
-import Web3 from "web3";
-import {
-  useAddress,
-  ConnectWallet,
-  useSigner,
-} from "@thirdweb-dev/react";
+const TOKEN_RANGES = [
+  { start: 1, end: 10000, name: "COMMON" },
+  { start: 10001, end: 15000, name: "UNCOMMON" },
+  { start: 15001, end: 17500, name: "RARE" },
+  { start: 17501, end: 18500, name: "EPIC" },
+  { start: 18501, end: 20000, name: "LEGENDARY" },
+];
 
-const DistributeRevShare = ({ onBack }) => {
-  // Local state definitions
-  const [holdersInfo, setHoldersInfo] = useState([]);
-  const [status, setStatus] = useState("");
-  const [contractBalance, setContractBalance] = useState("0");
-  const [depositAmount, setDepositAmount] = useState("");
-  const [distributePercentage, setDistributePercentage] = useState(20); // Default percentage
-  const [newPercentage, setNewPercentage] = useState("");
-  const [currentMOHContract, setCurrentMOHContract] = useState("Fetching...");
-  const [newMOHContract, setNewMOHContract] = useState("");
-  const [fundsDistributedEvents, setFundsDistributedEvents] = useState([]);
-  const [fundsDepositedEvents, setFundsDepositedEvents] = useState([]);
-  const [investorPaidEvents, setInvestorPaidEvents] = useState([]);
-
-  // Setup Web3 for XdRiP contract calls (this uses mainnet)
-  const web3 = new Web3("https://bsc-dataseed1.binance.org/");
-  const XdRiPContractAddress = xdripCA_ABI.address;
-  const XdRiPContract = new web3.eth.Contract(xdripCA_ABI.abi, XdRiPContractAddress);
-
-  // Get signer and address using Thirdweb hooks
-  const address = useAddress();
-  const signer = useSigner();
-
-  // Create MOH contract instance (for medals)
-  const mohContract = useMemo(() => {
-    return signer
-      ? new ethers.Contract(
-          mohCA_ABI.address,
-          mohCA_ABI.abi,
-          signer
-        )
-      : null;
-  }, [signer]);
-
-  // Create Distribution contract instance
-  const distributeContract = useMemo(() => {
-    return signer
-      ? new ethers.Contract(
-          distributeCA_ABI.address,
-          distributeCA_ABI.abi,
-          signer
-        )
-      : null;
-  }, [signer]);
-
-  // -------------------------
-  // Initialization (Optional)
-  // -------------------------
-  useEffect(() => {
-    const initializeContracts = async () => {
-      try {
-        if (!window.ethereum) {
-          setStatus("Please install a web3 wallet");
-          return;
-        }
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-
-        // *** Using dedicated testnet RPC for MOH and Distribution contracts ***
-        const TESTNET_RPC = "https://bsc-dataseed1.binance.org/";
-        const testnetProvider = new ethers.providers.JsonRpcProvider(TESTNET_RPC);
-        // (If you need to use the testnet signer, adjust accordingly)
-        const balance = await testnetProvider.getBalance(distributeCA_ABI.address);
-        console.log("Testnet contract balance:", ethers.utils.formatEther(balance));
-  
-        setStatus("Contracts initialized successfully on testnet.");
-      } catch (error) {
-        console.error("Error initializing contracts:", error);
-        setStatus("Error initializing contracts. See console for details.");
-      }
-    };
-    initializeContracts();
-  }, []);
-
-  // -------------------------
-  // Utility Functions
-  // -------------------------
-  // Fetch the XdRiP balance for a given address
-  const fetchXDRIPBalance = async (address) => {
-    try {
-      const balance = await XdRiPContract.methods.balanceOf(address).call();
-      const formattedBalance = web3.utils.fromWei(balance, "gwei");
-      return parseFloat(formattedBalance);
-    } catch (error) {
-      console.error("Error retrieving XDRIP balance:", error);
-      return 0;
-    }
-  };
-
-  // Fetch the Distribution contract's balance
-  const fetchContractBalance = async () => {
-    if (!distributeContract) return;
-    try {
-      const balance = await distributeContract.provider.getBalance(distributeCA_ABI.address);
-      setContractBalance(ethers.utils.formatEther(balance));
-    } catch (error) {
-      console.error("Error fetching balance:", error);
-      setStatus("Error fetching balance.");
-    }
-  };
-
-  // Shorten an address for display purposes
-  const shortenAddress = (address) => {
-    if (!address) return "";
-    return address.substring(0, 6) + "..." + address.substring(address.length - 4);
-  };
-
-  // -------------------------
-  // Main Functionality
-  // -------------------------
-  // Fetch holders' info, calculate base weight and bonus, and prepare final weight.
-  const fetchHoldersInfo = async () => {
-    if (!mohContract) {
-      setStatus("MOH contract not loaded.");
-      return;
-    }
-    try {
-      setStatus("Fetching Medal holders...");
-      const holderMap = {};
-
-      // Base weights for each medal type.
-      const DOTWeights = {
-        COMMON: 10,
-        UNCOMMON: 25,
-        RARE: 45,
-        EPIC: 70,
-        LEGENDARY: 110,
-      };
-      const medalOrder = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY"];
-      const tokenRanges = [
-        { start: 1, end: 10000, weight: DOTWeights.COMMON, name: "COMMON" },
-        { start: 10001, end: 15000, weight: DOTWeights.UNCOMMON, name: "UNCOMMON" },
-        { start: 15001, end: 17500, weight: DOTWeights.RARE, name: "RARE" },
-        { start: 17501, end: 18500, weight: DOTWeights.EPIC, name: "EPIC" },
-        { start: 18501, end: 20000, weight: DOTWeights.LEGENDARY, name: "LEGENDARY" },
-      ];
-
-      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-      // Build a holder map based on the token ranges.
-      for (const range of tokenRanges) {
-        for (let tokenId = range.start; tokenId <= range.end; tokenId++) {
-          try {
-            const owner = await mohContract.ownerOf(tokenId);
-            if (owner) {
-              if (!holderMap[owner]) {
-                holderMap[owner] = { medals: [] };
-              }
-              holderMap[owner].medals.push({ tokenId, name: range.name });
-            }
-          } catch (error) {
-            // Token not found: skip the rest in this range.
-            console.warn(`Token ID ${tokenId} not found: ${error.message}`);
-            break;
-          }
-          await delay(100);
-        }
-      }
-
-      // Process each holder to compute their base medal weight.
-      const holders = Object.entries(holderMap).map(([address, data]) => {
-        let totalWeight = 0;
-        // Count medals per tier.
-        const tierCounts = medalOrder.reduce((counts, tier) => {
-          counts[tier] = 0;
-          return counts;
-        }, {});
-        data.medals.forEach((medal) => {
-          if (tierCounts[medal.name] !== undefined) {
-            tierCounts[medal.name]++;
-          }
-        });
-        // Compute full ramps, etc.
-        const fullRamps = Math.min(...medalOrder.map((tier) => tierCounts[tier]));
-        totalWeight += fullRamps * DOTWeights["LEGENDARY"];
-        const remainingMedals = medalOrder.filter((tier) => tierCounts[tier] > fullRamps);
-        if (remainingMedals.length > 0) {
-          const highestRemainingTier = remainingMedals[remainingMedals.length - 1];
-          totalWeight += DOTWeights[highestRemainingTier];
-        }
-        console.log(`Address: ${address}, Full Ramps: ${fullRamps}, Total Weight: ${totalWeight}`);
-        return { address, weight: totalWeight, medals: data.medals };
-      });
-
-      // For each holder, fetch their XdRiP balance and compute their bonus percentage.
-      // Then compute a single bonus value ("scaledBonus") which is applied only once.
-      const updatedHolders = [];
-      for (const holder of holders) {
-        const xdripBal = await fetchXDRIPBalance(holder.address);
-        const xdripPercentage = (xdripBal / 1e9) * 100;
-        let revshareBonus = 0;
-        if (xdripPercentage >= 1.48) revshareBonus = 15;
-        else if (xdripPercentage >= 1.25) revshareBonus = 10;
-        else if (xdripPercentage >= 1) revshareBonus = 7;
-        else if (xdripPercentage >= 0.75) revshareBonus = 5;
-        else if (xdripPercentage >= 0.5) revshareBonus = 2;
-
-        // Compute the bonus value from the base weight. This is applied only once.
-        const scaledBonus = holder.weight * (revshareBonus / 100);
-        const finalWeight = holder.weight + scaledBonus;
-        updatedHolders.push({
-          ...holder,
-          xdripBalance: xdripBal,
-          revshareBonus,
-          scaledBonus, // This bonus value will be sent on-chain as is.
-          finalWeight,
-        });
-      }
-
-      setHoldersInfo(updatedHolders);
-      setStatus("Medal holders, weights, and XdRiP balances fetched successfully.");
-    } catch (error) {
-      console.error("Error fetching Medal holders:", error);
-      setStatus("Error fetching Medal holders.");
-    }
-  };
-
-  
-  
-  
-  const updateBonusWeightsAndDistribute = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
-      return;
-    }
-    if (holdersInfo.length === 0) {
-      setStatus("No holders info available.");
-      return;
-    }
-    // Create arrays for addresses and bonus values.
-    const addresses = [];
-    const bonusValues = [];
-    holdersInfo.forEach((holder) => {
-      addresses.push(holder.address);
-      // Convert computed bonus to an integer (e.g., using floor)
-      bonusValues.push(Math.floor(holder.scaledBonus));
-    });
-    
-    setStatus("Updating bonus weights on-chain...");
-    try {
-      // The contract multiplies the provided bonus by SCALE_FACTOR internally.
-      let tx = await distributeContract.updateXdRiPWeights(addresses, bonusValues);
-      await tx.wait();
-      console.log("Addresses being sent:", addresses);
-      console.log("Bonus weights being sent:", bonusValues);
-    
-      setStatus("Bonus weights updated. Distributing revenue...");
-      tx = await distributeContract.distributeRevenue();
-      await tx.wait();
-      setStatus("Revenue distributed successfully!");
-      fetchContractBalance();
-    } catch (error) {
-      console.error("Error updating bonus weights and distributing:", error);
-      setStatus("Error updating bonus weights or distributing revenue.");
-    }
-  };
-  
-
-  // -------------------------
-  // Other functions as provided (distributeRevenue, updateDistributionPercentage, etc.)
-  // -------------------------
-  const distributeRevenue = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
-      return;
-    }
-    try {
-      setStatus("Distributing revenue...");
-      const tx = await distributeContract.distributeRevenue();
-      await tx.wait();
-      setStatus("Revenue distributed successfully!");
-      fetchContractBalance();
-    } catch (error) {
-      console.error("Error distributing revenue:", error);
-      setStatus("Error distributing revenue.");
-    }
-  };
-
-  const updateDistributionPercentage = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
-      return;
-    }
-    const parsedPercentage = parseInt(newPercentage, 10);
-    if (isNaN(parsedPercentage) || parsedPercentage <= 0 || parsedPercentage > 100) {
-      setStatus("Enter a valid percentage (1-100).");
-      return;
-    }
-    try {
-      setStatus("Updating distribution percentage...");
-      const tx = await distributeContract.updateDistributionPercentage(parsedPercentage);
-      await tx.wait();
-      setDistributePercentage(parsedPercentage);
-      setNewPercentage("");
-      setStatus("Distribution percentage updated successfully.");
-    } catch (error) {
-      console.error("Error updating distribution percentage:", error);
-      setStatus("Error updating distribution percentage.");
-    }
-  };
-
-  const handleDepositFunds = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
-      return;
-    }
-    try {
-      setStatus("Depositing funds...");
-      const signer = distributeContract.provider.getSigner();
-      const tx = await signer.sendTransaction({
-        to: distributeCA_ABI.address,
-        value: ethers.utils.parseEther(depositAmount),
-      });
-      await tx.wait();
-      setDepositAmount("");
-      setStatus(`${depositAmount} BNB deposited successfully.`);
-      fetchContractBalance();
-    } catch (error) {
-      console.error("Error depositing funds:", error);
-      setStatus("Error depositing funds.");
-    }
-  };
-
-  const shortenAddressoRG = (address) => {
-    if (!address) return "";
-    return address.substring(0, 6) + "..." + address.substring(address.length - 4);
-  };
-
-  const fetchCurrentMOHContract = async () => {
-    try {
-      if (!distributeContract) {
-        setStatus("Distribute contract not initialized.");
-        return;
-      }
-      const currentAddress = await distributeContract.mohContract();
-      setCurrentMOHContract(currentAddress);
-    } catch (error) {
-      console.error("Error fetching current MOH contract address:", error);
-      setCurrentMOHContract("Error fetching address");
-    }
-  };
-
-  const updateMOHContractInDistribute = async () => {
-    try {
-      if (!ethers.utils.isAddress(newMOHContract)) {
-        setStatus("Invalid Ethereum address.");
-        return;
-      }
-      setStatus("Updating MOH contract in the Distribute Contract...");
-      const tx = await distributeContract.updateMOHContract(newMOHContract);
-      await tx.wait();
-      const updatedAddress = await distributeContract.mohContract();
-      setCurrentMOHContract(updatedAddress);
-      setStatus("MOH contract updated successfully.");
-      setNewMOHContract("");
-    } catch (error) {
-      console.error("Error updating MOH contract:", error);
-      setStatus("Failed to update MOH contract. Check permissions.");
-    }
-  };
-
-  useEffect(() => {
-    fetchCurrentMOHContract();
-  }, [distributeContract]);
-
-  const fetchXDRIPTransferEvents = async () => {
-    try {
-      console.log("Fetching XDRIP Transfer events with Web3...");
-      const XdRiPContractInstance = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
-      const events = await XdRiPContractInstance.getPastEvents("Transfer", {
-        fromBlock: 0,
-        toBlock: "latest",
-      });
-      if (events.length === 0) {
-        console.log("No Transfer events found for XDRIP.");
-      } else {
-        events.slice(0, 5).forEach((evt, idx) => {
-          console.log(`Transfer event #${idx}`, {
-            from: evt.returnValues.from,
-            to: evt.returnValues.to,
-            amount: evt.returnValues.value,
-            blockNumber: evt.blockNumber,
-            txHash: evt.transactionHash,
-          });
-        });
-        console.log(`Total Transfer events found: ${events.length}`);
-      }
-    } catch (error) {
-      console.error("Error fetching XDRIP Transfer events with Web3:", error);
-    }
-  };
-
-
-  const fetchAndDisplayEvents = async () => {
-    if (!distributeContract) {
-      setStatus("Distribute contract not loaded.");
-      return;
-    }
-  
-    const START_BLOCK = 46846649; // Replace with your contract's deployment block
-    const BATCH_SIZE = 5000; // Adjust batch size if needed
-    try {
-      setStatus("Fetching events...");
-      const latestBlock = await distributeContract.provider.getBlockNumber();
-  
-      // Function to fetch events in batches
-      const fetchEventsInBatch = async (filter, startBlock, endBlock) => {
-        let currentStartBlock = startBlock;
-        let currentEndBlock = Math.min(currentStartBlock + BATCH_SIZE, endBlock);
-        let allEvents = [];
-  
-        while (currentStartBlock <= endBlock) {
-          try {
-            console.log(`Fetching events from block ${currentStartBlock} to ${currentEndBlock}...`);
-            const events = await distributeContract.queryFilter(filter, currentStartBlock, currentEndBlock);
-            allEvents = allEvents.concat(events);
-            currentStartBlock = currentEndBlock + 1;
-            currentEndBlock = Math.min(currentStartBlock + BATCH_SIZE, endBlock);
-          } catch (err) {
-            console.error(`Error fetching events from ${currentStartBlock} to ${currentEndBlock}:`, err);
-            break; // Stop further fetching on error
-          }
-        }
-        return allEvents;
-      };
-  
-      // Filters for events
-      const fundsFilter = distributeContract.filters.FundsDistributed();
-      const depositFilter = distributeContract.filters.FundsDeposited();
-      const investorFilter = distributeContract.filters.InvestorPaid();
-  
-      // Fetch events
-      const fundsEvents = await fetchEventsInBatch(fundsFilter, START_BLOCK, latestBlock);
-      const depositEvents = await fetchEventsInBatch(depositFilter, START_BLOCK, latestBlock);
-      const investorEvents = await fetchEventsInBatch(investorFilter, START_BLOCK, latestBlock);
-  
-      // Process and format events
-      const processEvents = (events, formatter) => {
-        return events.map(formatter);
-      };
-  
-      const fundsDistributed = processEvents(fundsEvents, (event) => ({
-        totalDistributed: ethers.utils.formatEther(event.args.totalDistributed.toString()),
-        blockNumber: event.blockNumber,
-        transactionHash: event.transactionHash,
-      }));
-  
-      const fundsDeposited = processEvents(depositEvents, (event) => ({
-        depositor: event.args.depositor,
-        amount: ethers.utils.formatEther(event.args.amount.toString()),
-        blockNumber: event.blockNumber,
-        transactionHash: event.transactionHash,
-      }));
-  
-      const investorPaid = processEvents(investorEvents, (event) => ({
-        investor: event.args.investor,
-        amount: ethers.utils.formatEther(event.args.amount.toString()),
-        blockNumber: event.blockNumber,
-        transactionHash: event.transactionHash,
-      }));
-  
-      // Update state with fetched events
-      setFundsDistributedEvents(fundsDistributed);
-      setFundsDepositedEvents(fundsDeposited);
-      setInvestorPaidEvents(investorPaid);
-  
-      setStatus("Events fetched successfully.");
-    } catch (error) {
-      console.error("Error fetching events:", error);
-      setStatus("Error fetching events. Check console for details.");
-    }
-  };
-  
-
-
-
-
-  return (
-    <div className={styles.container}>
-      <h2 className={styles.heading}>Revenue Distribution</h2>
-      <p className={styles.status}>{status}</p>
-
-      <div className={styles.buttonSection}>
-        <button onClick={fetchHoldersInfo} className={styles.button}>
-          Fetch Medal Holders
-        </button>
-        
-        <button
-          onClick={updateBonusWeightsAndDistribute}
-          disabled={!holdersInfo.length}
-          className={styles.button}
-        >
-          Update Bonus & Distribute Revenue
-        </button>
-      </div>
-
-      <button onClick={fetchXDRIPTransferEvents}>Fetch XDRIP Transfer Events</button>
-
-      <div className={styles.inputGroup}>
-        <input
-          type="text"
-          value={depositAmount}
-          onChange={(e) => setDepositAmount(e.target.value)}
-          placeholder="Deposit Amount in BNB"
-          className={styles.input}
-        />
-        <button onClick={handleDepositFunds} className={styles.buttonSmall}>
-          Deposit Funds
-        </button>
-      </div>
-
-      <div className={styles.infoSection}>
-        <p>
-          <strong>Available Balance:</strong> {contractBalance} BNB
-        </p>
-        <p>
-          <strong>Current Distribution Percentage:</strong> {distributePercentage}%
-        </p>
-      </div>
-
-      <div className={styles.inputGroup}>
-        <input
-          type="number"
-          value={newPercentage}
-          onChange={(e) => setNewPercentage(e.target.value)}
-          placeholder="Set New Percentage"
-          className={styles.input}
-        />
-        <button onClick={updateDistributionPercentage} className={styles.buttonSmall}>
-          Update Percentage
-        </button>
-      </div>
-
-      <div className={styles.section}>
-        <h2 className={styles.subheading}>Update MOH Contract</h2>
-        <div className={styles.updateMOHContract}>
-          <p>
-            <strong>Current MOH Contract:</strong>{" "}
-            <span
-              className={styles.copyableAddress}
-              onClick={() => navigator.clipboard.writeText(currentMOHContract)}
-              title={`Click to copy ${currentMOHContract}`}
-            >
-              {shortenAddress(currentMOHContract)}
-            </span>
-          </p>
-          <input
-            type="text"
-            value={newMOHContract}
-            onChange={(e) => setNewMOHContract(e.target.value)}
-            placeholder="Enter new MOH contract address"
-            className={styles.input}
-          />
-          <button onClick={updateMOHContractInDistribute} className={styles.updatePercentagesBtn}>
-            Update MOH Contract
-          </button>
-        </div>
-      </div>
-
-      <button onClick={fetchAndDisplayEvents} className={styles.button}>
-        Fetch Distribution Events
-      </button>
-
-      {fundsDistributedEvents.length > 0 && (
-        <div className={styles.tableContainer}>
-          <h3>FundsDistributed Events</h3>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Total Distributed (BNB)</th>
-                <th>Block Number</th>
-                <th>Transaction Hash</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fundsDistributedEvents.map((event, index) => (
-                <tr key={index}>
-                  <td>{event.totalDistributed}</td>
-                  <td>{event.blockNumber}</td>
-                  <td>
-                    <a
-                      href={`https://testnet.bscscan.com/tx/${event.transactionHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {event.transactionHash.substring(0, 10)}...
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {fundsDepositedEvents.length > 0 && (
-        <div className={styles.tableContainer}>
-          <h3>FundsDeposited Events</h3>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Depositor</th>
-                <th>Amount (BNB)</th>
-                <th>Block Number</th>
-                <th>Transaction Hash</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fundsDepositedEvents.map((event, index) => (
-                <tr key={index}>
-                  <td>{shortenAddress(event.depositor)}</td>
-                  <td>{event.amount}</td>
-                  <td>{event.blockNumber}</td>
-                  <td>
-                    <a
-                      href={`https://testnet.bscscan.com/tx/${event.transactionHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {event.transactionHash.substring(0, 10)}...
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {investorPaidEvents.length > 0 && (
-        <div className={styles.tableContainer}>
-          <h3>InvestorPaid Events</h3>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Investor</th>
-                <th>Amount (BNB)</th>
-                <th>Block Number</th>
-                <th>Transaction Hash</th>
-              </tr>
-            </thead>
-            <tbody>
-              {investorPaidEvents.map((event, index) => (
-                <tr key={index}>
-                  <td>{event.investor}</td>
-                  <td>{event.amount}</td>
-                  <td>{event.blockNumber}</td>
-                  <td>
-                    <a
-                      href={`https://testnet.bscscan.com/tx/${event.transactionHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {event.transactionHash.substring(0, 10)}...
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <button onClick={onBack} className={styles.backButton} aria-label="Back to Owner Operations">
-        &larr; Back
-      </button>
-
-      {holdersInfo.length > 0 && (
-        <div className={styles.tableContainer}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th className={styles.th}>Holder Address</th>
-                <th className={styles.th}>Final Weight</th>
-                <th className={styles.th}>Medals Owned</th>
-                <th className={styles.th}>XdRiP Balance</th>
-                <th className={styles.th}>Revshare Bonus (%)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {holdersInfo.map((holder, index) => (
-                <tr key={index} className={styles.tr}>
-                  <td className={styles.td}>
-                    <span className={styles.copyableAddress}>{shortenAddress(holder.address)}</span>
-                  </td>
-                  <td className={styles.td}>{holder.finalWeight}</td>
-                  <td className={styles.td}>
-                    {holder.medals.map((medal, i) => (
-                      <div key={i} style={{ marginBottom: "4px" }}>
-                        {medal.name} (Token ID: {medal.tokenId})
-                      </div>
-                    ))}
-                  </td>
-                  <td className={styles.td}>{holder.xdripBalance}</td>
-                  <td className={styles.td}>{holder.revshareBonus}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
+const TIER_COLORS = {
+  COMMON: "#8B7355",
+  UNCOMMON: "#4A90D9",
+  RARE: "#9B59B6",
+  EPIC: "#E67E22",
+  LEGENDARY: "#F1C40F",
 };
 
-export default DistributeRevShare;
-*/
-
-import React, { useState, useEffect, useMemo } from "react";
-import { ethers } from "ethers";
-import distributeCA_ABI from "../../Context/distributeCA_ABI.json";
-import mohCA_ABI from "../../Context/mohCA_ABI.json";
-import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
-import styles from "./Distribute.module.css"; // Import your CSS module
-import Web3 from "web3";
-import { useAddress, ConnectWallet, useSigner } from "@thirdweb-dev/react";
-
 const DistributeRevShare = ({ onBack }) => {
-  // Local state definitions
   const [holdersInfo, setHoldersInfo] = useState([]);
   const [status, setStatus] = useState("");
+  const [statusType, setStatusType] = useState("info");
   const [contractBalance, setContractBalance] = useState("0");
+  const [totalDistributed, setTotalDistributed] = useState("0");
+  const [distributionPct, setDistributionPct] = useState("--");
+  const [mohSupply, setMohSupply] = useState("--");
+  const [replSupply, setReplSupply] = useState("--");
+  const [stolenCount, setStolenCount] = useState("0");
   const [depositAmount, setDepositAmount] = useState("");
-  const [distributePercentage, setDistributePercentage] = useState(20); // Default percentage
   const [newPercentage, setNewPercentage] = useState("");
-  const [currentMOHContract, setCurrentMOHContract] = useState("Fetching...");
-  const [newMOHContract, setNewMOHContract] = useState("");
-  const [fundsDistributedEvents, setFundsDistributedEvents] = useState([]);
-  const [fundsDepositedEvents, setFundsDepositedEvents] = useState([]);
-  const [investorPaidEvents, setInvestorPaidEvents] = useState([]);
-  
-  // New state for distributions
-  const [distributions, setDistributions] = useState([]);
+  const [logMessages, setLogMessages] = useState(["Initializing...\n"]);
+  const [progress, setProgress] = useState({ pct: 0, text: "", visible: false });
+  const [isScanning, setIsScanning] = useState(false);
+  const [isDistributing, setIsDistributing] = useState(false);
+  const [stolenMap, setStolenMap] = useState({});
+  const [stolenRecords, setStolenRecords] = useState([]);
 
-  // Setup Web3 for XdRiP contract calls (this uses mainnet)
-  const web3 = new Web3("https://bsc-dataseed1.binance.org/");
-  const XdRiPContractAddress = xdripCA_ABI.address;
-  const XdRiPContract = new web3.eth.Contract(xdripCA_ABI.abi, XdRiPContractAddress);
+  // Stolen token flagging
+  const [flagTokenId, setFlagTokenId] = useState("");
+  const [flagThief, setFlagThief] = useState("");
+  const [flagVictim, setFlagVictim] = useState("");
+  const [flagReason, setFlagReason] = useState("");
 
-  // Get signer and address using Thirdweb hooks
-  const address = useAddress();
-  const signer = useSigner();
+  const { address, isConnected } = useAccount();
+  const wagmiConfig = useConfig();
+  const [signer, setSigner] = useState(null);
 
-  // Create MOH contract instance (for medals)
-  const mohContract = useMemo(() => {
-    return signer
-      ? new ethers.Contract(mohCA_ABI.address, mohCA_ABI.abi, signer)
-      : null;
-  }, [signer]);
-
-  // Create Distribution contract instance
-  const distributeContract = useMemo(() => {
-    return signer
-      ? new ethers.Contract(distributeCA_ABI.address, distributeCA_ABI.abi, signer)
-      : null;
-  }, [signer]);
-
-  // -------------------------
-  // Initialization (Optional)
-  // -------------------------
   useEffect(() => {
-    const initializeContracts = async () => {
-      try {
-        if (!window.ethereum) {
-          setStatus("Please install a web3 wallet");
-          return;
-        }
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-  
-        // *** Using dedicated testnet RPC for MOH and Distribution contracts ***
-        const TESTNET_RPC = "https://bsc-dataseed1.binance.org/";
-        const testnetProvider = new ethers.providers.JsonRpcProvider(TESTNET_RPC);
-        const balance = await testnetProvider.getBalance(distributeCA_ABI.address);
-        console.log("Testnet contract balance:", ethers.utils.formatEther(balance));
-  
-        setStatus("Contracts initialized successfully on testnet.");
-      } catch (error) {
-        console.error("Error initializing contracts:", error);
-        setStatus("Error initializing contracts. See console for details.");
-      }
-    };
-    initializeContracts();
+    if (isConnected) {
+      getWalletClient(wagmiConfig).then((wc) => {
+        setSigner(walletClientToSigner(wc));
+      }).catch(() => setSigner(null));
+    } else {
+      setSigner(null);
+    }
+  }, [isConnected, wagmiConfig]);
+
+  const readProvider = useMemo(
+    () => new ethers.providers.JsonRpcProvider("https://bsc-dataseed1.binance.org/"),
+    []
+  );
+
+  // XdRiP reads use viem publicClient
+  // XdRiP reads via viem (no more web3)
+
+  // Read-only contract instances
+  const mohRead = useMemo(
+    () => new ethers.Contract(mohCA_ABI.address, mohCA_ABI.abi, readProvider),
+    [readProvider]
+  );
+
+  const replacementRead = useMemo(
+    () => new ethers.Contract(replacementCA_ABI.address, replacementCA_ABI.abi, readProvider),
+    [readProvider]
+  );
+
+  const routerRead = useMemo(
+    () => new ethers.Contract(routerCA_ABI.address, routerCA_ABI.abi, readProvider),
+    [readProvider]
+  );
+
+  // Signer-attached contracts for write operations
+  const distributeContract = useMemo(
+    () =>
+      signer
+        ? new ethers.Contract(distributeCA_ABI.address, distributeCA_ABI.abi, signer)
+        : null,
+    [signer]
+  );
+
+  const routerWrite = useMemo(
+    () =>
+      signer
+        ? new ethers.Contract(routerCA_ABI.address, routerCA_ABI.abi, signer)
+        : null,
+    [signer]
+  );
+
+  // Logging
+  const log = useCallback((msg) => {
+    const time = new Date().toLocaleTimeString();
+    setLogMessages((prev) => [...prev, `[${time}] ${msg}\n`]);
   }, []);
 
-  // -------------------------
-  // Utility Functions
-  // -------------------------
-  // Fetch the XdRiP balance for a given address
-  const fetchXDRIPBalance = async (address) => {
+  const showStatus = useCallback((msg, type = "info") => {
+    setStatus(msg);
+    setStatusType(type);
+  }, []);
+
+  const shortenAddress = (addr) => {
+    if (!addr) return "";
+    return addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
+  };
+
+  // Refresh contract info
+  const refreshInfo = useCallback(async () => {
     try {
-      const balance = await XdRiPContract.methods.balanceOf(address).call();
-      const formattedBalance = web3.utils.fromWei(balance, "gwei");
-      return parseFloat(formattedBalance);
-    } catch (error) {
-      console.error("Error retrieving XDRIP balance:", error);
+      const [bal, pct, totalDist, supply, replSup, stolen] = await Promise.all([
+        readProvider.getBalance(distributeCA_ABI.address),
+        distributeContract ? distributeContract.distributionPercentage() : Promise.resolve("--"),
+        distributeContract ? distributeContract.totalFundsDistributed() : Promise.resolve(0),
+        mohRead.totalSupply(),
+        replacementRead.totalSupply(),
+        routerRead.getStolenCount(),
+      ]);
+
+      setContractBalance(ethers.utils.formatEther(bal));
+      setDistributionPct(pct.toString());
+      setTotalDistributed(ethers.utils.formatEther(totalDist));
+      setMohSupply(supply.toString());
+      setReplSupply(replSup.toString());
+      setStolenCount(stolen.toString());
+      log("Info refreshed. Balance: " + ethers.utils.formatEther(bal) + " BNB");
+    } catch (err) {
+      log("Refresh error: " + err.message);
+    }
+  }, [readProvider, distributeContract, mohRead, replacementRead, routerRead, log]);
+
+  // Load stolen tokens from Router
+  const loadStolenTokens = useCallback(async () => {
+    try {
+      const ids = await routerRead.getAllStolenTokenIds();
+      const map = {};
+      const records = [];
+
+      for (const id of ids) {
+        const record = await routerRead.getStolenRecord(id);
+        if (record.isStolen) {
+          map[id.toString()] = record.rightfulOwner;
+          records.push({
+            tokenId: id.toString(),
+            thiefWallet: record.thiefWallet,
+            rightfulOwner: record.rightfulOwner,
+            reason: record.reason,
+          });
+          log("Stolen: Token #" + id + " -> " + shortenAddress(record.rightfulOwner));
+        }
+      }
+
+      setStolenMap(map);
+      setStolenRecords(records);
+    } catch (err) {
+      log("Error loading stolen tokens: " + err.message);
+    }
+  }, [routerRead, log]);
+
+  // Initialize on mount
+  useEffect(() => {
+    if (distributeContract) {
+      refreshInfo();
+      loadStolenTokens();
+    }
+  }, [distributeContract]);
+
+  // Fetch XdRiP balance
+  const fetchXdripBalance = async (addr) => {
+    try {
+      const balance = await publicClient.readContract({
+        address: xdripCA_ABI.address,
+        abi: xdripCA_ABI.abi,
+        functionName: "balanceOf",
+        args: [addr],
+      });
+      const formatted = parseFloat((Number(balance) / 1e9).toString());
+      return formatted;
+    } catch (err) {
+      log("XdRiP error for " + shortenAddress(addr) + ": " + err.message);
       return 0;
     }
   };
 
-  // Fetch the Distribution contract's balance
-  const fetchContractBalance = async () => {
-    if (!distributeContract) return;
-    try {
-      const balance = await distributeContract.provider.getBalance(distributeCA_ABI.address);
-      setContractBalance(ethers.utils.formatEther(balance));
-    } catch (error) {
-      console.error("Error fetching balance:", error);
-      setStatus("Error fetching balance.");
-    }
-  };
+  // Scan a single contract for holders
+  const scanContract = async (contract, label, holderMap, currentStolenMap) => {
+    let tokensFound = 0;
 
-  // Shorten an address for display purposes
-  const shortenAddress = (address) => {
-    if (!address) return "";
-    return address.substring(0, 6) + "..." + address.substring(address.length - 4);
-  };
+    for (const range of TOKEN_RANGES) {
+      log("Scanning " + label + " " + range.name + " (" + range.start + "-" + range.end + ")...");
 
-  // -------------------------
-  // Main Functionality (existing code for fetching holders, bonus, etc.)
-  // -------------------------
-  const fetchHoldersInfo = async () => {
-    if (!mohContract) {
-      setStatus("MOH contract not loaded.");
-      return;
-    }
-    try {
-      setStatus("Fetching Medal holders...");
-      const holderMap = {};
-      const DOTWeights = {
-        COMMON: 10,
-        UNCOMMON: 25,
-        RARE: 45,
-        EPIC: 70,
-        LEGENDARY: 110,
-      };
-      const medalOrder = ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY"];
-      const tokenRanges = [
-        { start: 1, end: 10000, weight: DOTWeights.COMMON, name: "COMMON" },
-        { start: 10001, end: 15000, weight: DOTWeights.UNCOMMON, name: "UNCOMMON" },
-        { start: 15001, end: 17500, weight: DOTWeights.RARE, name: "RARE" },
-        { start: 17501, end: 18500, weight: DOTWeights.EPIC, name: "EPIC" },
-        { start: 18501, end: 20000, weight: DOTWeights.LEGENDARY, name: "LEGENDARY" },
-      ];
+      for (let tokenId = range.start; tokenId <= range.end; tokenId++) {
+        try {
+          let owner = await contract.ownerOf(tokenId);
+          tokensFound++;
 
-      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-      for (const range of tokenRanges) {
-        for (let tokenId = range.start; tokenId <= range.end; tokenId++) {
-          try {
-            const owner = await mohContract.ownerOf(tokenId);
-            if (owner) {
-              if (!holderMap[owner]) {
-                holderMap[owner] = { medals: [] };
-              }
-              holderMap[owner].medals.push({ tokenId, name: range.name });
-            }
-          } catch (error) {
-            console.warn(`Token ID ${tokenId} not found: ${error.message}`);
-            break;
+          // Router stolen check
+          const idStr = tokenId.toString();
+          if (currentStolenMap[idStr]) {
+            const victim = currentStolenMap[idStr];
+            log("! Token #" + tokenId + " STOLEN - redirect " + shortenAddress(owner) + " -> " + shortenAddress(victim));
+            owner = victim;
           }
-          await delay(100);
+
+          if (!holderMap[owner]) holderMap[owner] = { medals: [] };
+          holderMap[owner].medals.push({ tokenId, name: range.name, source: label });
+
+          if (tokensFound % 5 === 0) {
+            setProgress({
+              visible: true,
+              pct: Math.min(60, Math.floor((tokensFound / 50) * 60)),
+              text: `Scanned ${tokensFound} tokens... (${label} ${range.name} #${tokenId})`,
+            });
+          }
+        } catch {
+          log(label + " " + range.name + " ended at #" + (tokenId - 1) + " (" + tokensFound + " found)");
+          break;
+        }
+        // Small delay to avoid rate limiting
+        await new Promise((r) => setTimeout(r, 50));
+      }
+    }
+
+    return tokensFound;
+  };
+
+  // Scan replacement contract using tokenByIndex (sparse IDs)
+  const scanReplacementContract = async (holderMap, currentStolenMap) => {
+    let tokensFound = 0;
+    try {
+      const replSupply = await replacementRead.totalSupply();
+      const replCount = Number(replSupply);
+      log("Replacement contract has " + replCount + " tokens");
+
+      for (let i = 0; i < replCount; i++) {
+        try {
+          const tokenId = await replacementRead.tokenByIndex(i);
+          let owner = await replacementRead.ownerOf(tokenId);
+          tokensFound++;
+
+          const tokenNum = Number(tokenId);
+          let tierName = "COMMON";
+          for (const range of TOKEN_RANGES) {
+            if (tokenNum >= range.start && tokenNum <= range.end) {
+              tierName = range.name;
+              break;
+            }
+          }
+
+          const idStr = tokenId.toString();
+          if (currentStolenMap[idStr]) {
+            const victim = currentStolenMap[idStr];
+            log("! Replacement #" + tokenId + " STOLEN - redirect " + shortenAddress(owner) + " -> " + shortenAddress(victim));
+            owner = victim;
+          }
+
+          if (!holderMap[owner]) holderMap[owner] = { medals: [] };
+          holderMap[owner].medals.push({ tokenId: tokenNum, name: tierName, source: "Replacement" });
+
+          log("Replacement #" + tokenId + " (" + tierName + ") -> " + shortenAddress(owner));
+          setProgress({
+            visible: true,
+            pct: 65,
+            text: `Replacement token ${i + 1}/${replCount} - #${tokenId} (${tierName})`,
+          });
+        } catch (err) {
+          log("Error reading replacement token index " + i + ": " + err.message);
         }
       }
+    } catch (err) {
+      log("Error scanning Replacement contract: " + err.message);
+    }
+    return tokensFound;
+  };
 
-      const holders = Object.entries(holderMap).map(([address, data]) => {
-        let totalWeight = 0;
-        const tierCounts = medalOrder.reduce((counts, tier) => {
-          counts[tier] = 0;
-          return counts;
-        }, {});
-        data.medals.forEach((medal) => {
-          if (tierCounts[medal.name] !== undefined) {
-            tierCounts[medal.name]++;
-          }
+  // Main fetch holders function
+  const fetchHolders = async () => {
+    if (!mohRead) {
+      showStatus("MOH contract not loaded", "error");
+      return;
+    }
+
+    setIsScanning(true);
+    setHoldersInfo([]);
+    const holderMap = {};
+
+    try {
+      showStatus("Fetching medal holders from both contracts...", "info");
+      log("Starting holder scan (Original MOH + Replacement DOTs)...");
+
+      // Scan Original MOH
+      const originalCount = await scanContract(mohRead, "Original", holderMap, stolenMap);
+
+      // Scan Replacement DOTs
+      const replacementCount = await scanReplacementContract(holderMap, stolenMap);
+
+      const totalTokens = originalCount + replacementCount;
+      log("Scan done. " + totalTokens + " tokens, " + Object.keys(holderMap).length + " wallets");
+
+      setProgress({ visible: true, pct: 75, text: "Calculating weights and XdRiP bonuses..." });
+
+      // Calculate weights
+      const holders = Object.entries(holderMap).map(([addr, data]) => {
+        const tierCounts = {};
+        MEDAL_ORDER.forEach((t) => (tierCounts[t] = 0));
+        data.medals.forEach((m) => {
+          if (tierCounts[m.name] !== undefined) tierCounts[m.name]++;
         });
-        const fullRamps = Math.min(...medalOrder.map((tier) => tierCounts[tier]));
-        totalWeight += fullRamps * DOTWeights["LEGENDARY"];
-        const remainingMedals = medalOrder.filter((tier) => tierCounts[tier] > fullRamps);
-        if (remainingMedals.length > 0) {
-          const highestRemainingTier = remainingMedals[remainingMedals.length - 1];
-          totalWeight += DOTWeights[highestRemainingTier];
-        }
-        console.log(`Address: ${address}, Full Ramps: ${fullRamps}, Total Weight: ${totalWeight}`);
-        return { address, weight: totalWeight, medals: data.medals };
+
+        const fullRamps = Math.min(...MEDAL_ORDER.map((t) => tierCounts[t]));
+        let weight = fullRamps * DOT_WEIGHTS.LEGENDARY;
+        const remaining = MEDAL_ORDER.filter((t) => tierCounts[t] > fullRamps);
+        if (remaining.length > 0) weight += DOT_WEIGHTS[remaining[remaining.length - 1]];
+
+        return { address: addr, weight, medals: data.medals, tierCounts, fullRamps };
       });
 
+      // XdRiP bonuses
       const updatedHolders = [];
-      for (const holder of holders) {
-        const xdripBal = await fetchXDRIPBalance(holder.address);
-        const xdripPercentage = (xdripBal / 1e9) * 100;
-        let revshareBonus = 0;
-        if (xdripPercentage >= 1.48) revshareBonus = 15;
-        else if (xdripPercentage >= 1.25) revshareBonus = 10;
-        else if (xdripPercentage >= 1) revshareBonus = 7;
-        else if (xdripPercentage >= 0.75) revshareBonus = 5;
-        else if (xdripPercentage >= 0.5) revshareBonus = 2;
+      for (let i = 0; i < holders.length; i++) {
+        const h = holders[i];
+        setProgress({
+          visible: true,
+          pct: 80 + Math.floor((i / holders.length) * 20),
+          text: "XdRiP check: " + shortenAddress(h.address),
+        });
 
-        const scaledBonus = holder.weight * (revshareBonus / 100);
-        const finalWeight = holder.weight + scaledBonus;
+        const xdripBal = await fetchXdripBalance(h.address);
+        const xdripPct = (xdripBal / 1e9) * 100;
+        let bonus = 0;
+        if (xdripPct >= 1.48) bonus = 15;
+        else if (xdripPct >= 1.25) bonus = 10;
+        else if (xdripPct >= 1) bonus = 7;
+        else if (xdripPct >= 0.75) bonus = 5;
+        else if (xdripPct >= 0.5) bonus = 2;
+
+        const scaledBonus = h.weight * (bonus / 100);
+        const finalWeight = h.weight + scaledBonus;
+        const hasRedirected = h.medals.some((m) => stolenMap[m.tokenId.toString()]);
+
         updatedHolders.push({
-          ...holder,
+          ...h,
           xdripBalance: xdripBal,
-          revshareBonus,
+          xdripPct,
+          revshareBonus: bonus,
           scaledBonus,
           finalWeight,
+          hasRedirected,
         });
+
+        log(
+          shortenAddress(h.address) +
+            ": wt=" + h.weight +
+            " bonus=" + bonus +
+            "% final=" + finalWeight.toFixed(1) +
+            (hasRedirected ? " [REDIRECTED]" : "")
+        );
       }
 
       setHoldersInfo(updatedHolders);
-      setStatus("Medal holders, weights, and XdRiP balances fetched successfully.");
-    } catch (error) {
-      console.error("Error fetching Medal holders:", error);
-      setStatus("Error fetching Medal holders.");
+      setProgress({ visible: false, pct: 0, text: "" });
+      showStatus(
+        "Found " + updatedHolders.length + " holders (" + totalTokens + " tokens). Review table then distribute.",
+        "success"
+      );
+    } catch (err) {
+      showStatus("Fetch failed: " + err.message, "error");
+      log("ERROR: " + err.message);
     }
+    setIsScanning(false);
   };
 
-  const updateBonusWeightsAndDistribute = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
-      return;
-    }
-    if (holdersInfo.length === 0) {
-      setStatus("No holders info available.");
-      return;
-    }
-    const addresses = [];
-    const bonusValues = [];
-    holdersInfo.forEach((holder) => {
-      addresses.push(holder.address);
-      bonusValues.push(Math.floor(holder.scaledBonus));
-    });
-    
-    setStatus("Updating bonus weights on-chain...");
-    try {
-      let tx = await distributeContract.updateXdRiPWeights(addresses, bonusValues);
-      await tx.wait();
-      console.log("Addresses being sent:", addresses);
-      console.log("Bonus weights being sent:", bonusValues);
-  
-      setStatus("Bonus weights updated. Distributing revenue...");
-      tx = await distributeContract.distributeRevenue();
-      await tx.wait();
-      setStatus("Revenue distributed successfully!");
-      fetchContractBalance();
-    } catch (error) {
-      console.error("Error updating bonus weights and distributing:", error);
-      setStatus("Error updating bonus weights or distributing revenue.");
-    }
-  };
+  // 3-Step Distribution
+  const updateWeightsAndDistribute = async () => {
+    if (!distributeContract || holdersInfo.length === 0) return;
+    setIsDistributing(true);
 
-  // Other functions (distributeRevenue, updateDistributionPercentage, handleDepositFunds, etc.) remain unchanged.
-  const distributeRevenue = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
-      return;
-    }
+    const addresses = holdersInfo.map((h) => h.address);
+    const weights = holdersInfo.map((h) => Math.floor(h.finalWeight));
+    const bonuses = holdersInfo.map((h) => Math.floor(h.scaledBonus));
+
+    log("=== DISTRIBUTION START ===");
+    log("Holders: " + addresses.length);
+
+    let step1ok = false;
+    let step2ok = false;
+
+    // Step 1: Update final weights
     try {
-      setStatus("Distributing revenue...");
+      showStatus("Step 1/3: Updating final weights... confirm in wallet", "info");
+      log("Step 1: updateFinalWeights - CONFIRM IN WALLET");
+      const tx = await distributeContract.updateFinalWeights(addresses, weights);
+      log("Step 1 tx sent: " + tx.hash);
+      showStatus("Step 1/3: Waiting for confirmation...", "info");
+      await tx.wait();
+      log("Step 1 complete: final weights updated");
+      step1ok = true;
+    } catch (err) {
+      log("Step 1 error: " + (err.reason || err.message));
+      showStatus("Step 1 failed: " + (err.reason || err.message), "error");
+    }
+
+    // Step 2: Update XdRiP bonus weights
+    try {
+      showStatus("Step 2/3: Updating XdRiP bonus weights... confirm in wallet", "info");
+      log("Step 2: updateXdRiPWeights - CONFIRM IN WALLET");
+      const tx = await distributeContract.updateXdRiPWeights(addresses, bonuses);
+      log("Step 2 tx sent: " + tx.hash);
+      showStatus("Step 2/3: Waiting for confirmation...", "info");
+      await tx.wait();
+      log("Step 2 complete: XdRiP weights updated");
+      step2ok = true;
+    } catch (err) {
+      log("Step 2 error: " + (err.reason || err.message));
+      showStatus("Step 2 failed: " + (err.reason || err.message), "error");
+    }
+
+    // Step 3: Distribute revenue
+    try {
+      showStatus("Step 3/3: Distributing revenue... confirm in wallet", "info");
+      log("Step 3: distributeRevenue - CONFIRM IN WALLET");
       const tx = await distributeContract.distributeRevenue();
+      log("Step 3 tx sent: " + tx.hash);
+      showStatus("Step 3/3: Waiting for confirmation...", "info");
       await tx.wait();
-      setStatus("Revenue distributed successfully!");
-      fetchContractBalance();
-    } catch (error) {
-      console.error("Error distributing revenue:", error);
-      setStatus("Error distributing revenue.");
+      log("Step 3 complete: Revenue distributed!");
+      showStatus(
+        "Distribution complete! " +
+          (step1ok ? "1 pass " : "1 fail ") +
+          (step2ok ? "2 pass " : "2 fail ") +
+          "3 pass",
+        "success"
+      );
+      await refreshInfo();
+    } catch (err) {
+      showStatus("Step 3 FAILED: " + (err.reason || err.message), "error");
+      log("Step 3 error: " + (err.reason || err.message));
     }
+
+    setIsDistributing(false);
   };
 
-  const updateDistributionPercentage = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
+  // Flag stolen token
+  const handleFlagStolen = async () => {
+    if (!routerWrite) {
+      showStatus("Router not loaded", "error");
       return;
     }
-    const parsedPercentage = parseInt(newPercentage, 10);
-    if (isNaN(parsedPercentage) || parsedPercentage <= 0 || parsedPercentage > 100) {
-      setStatus("Enter a valid percentage (1-100).");
+    if (!flagTokenId || !flagThief || !flagVictim) {
+      showStatus("Fill all stolen fields", "error");
       return;
     }
     try {
-      setStatus("Updating distribution percentage...");
-      const tx = await distributeContract.updateDistributionPercentage(parsedPercentage);
+      showStatus("Flagging token #" + flagTokenId + "...", "info");
+      const reason = flagReason || "Wallet compromised";
+      const tx = await routerWrite.flagStolen(flagTokenId, flagThief, flagVictim, reason);
       await tx.wait();
-      setDistributePercentage(parsedPercentage);
-      setNewPercentage("");
-      setStatus("Distribution percentage updated successfully.");
-    } catch (error) {
-      console.error("Error updating distribution percentage:", error);
-      setStatus("Error updating distribution percentage.");
+      showStatus("Token #" + flagTokenId + " flagged", "success");
+      log("Flagged #" + flagTokenId + ": " + shortenAddress(flagThief) + " -> " + shortenAddress(flagVictim));
+      setFlagTokenId("");
+      setFlagThief("");
+      setFlagVictim("");
+      setFlagReason("");
+      await loadStolenTokens();
+      await refreshInfo();
+    } catch (err) {
+      showStatus("Flag failed: " + (err.reason || err.message), "error");
+      log("ERROR flag: " + (err.reason || err.message));
     }
   };
 
-  const handleDepositFunds = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
-      return;
-    }
+  // Deposit funds
+  const handleDeposit = async () => {
+    if (!depositAmount || !signer) return;
     try {
-      setStatus("Depositing funds...");
-      const signer = distributeContract.provider.getSigner();
+      showStatus("Depositing " + depositAmount + " BNB...", "info");
       const tx = await signer.sendTransaction({
         to: distributeCA_ABI.address,
         value: ethers.utils.parseEther(depositAmount),
       });
       await tx.wait();
+      showStatus(depositAmount + " BNB deposited", "success");
+      log("Deposited " + depositAmount + " BNB");
       setDepositAmount("");
-      setStatus(`${depositAmount} BNB deposited successfully.`);
-      fetchContractBalance();
-    } catch (error) {
-      console.error("Error depositing funds:", error);
-      setStatus("Error depositing funds.");
+      await refreshInfo();
+    } catch (err) {
+      showStatus("Deposit failed: " + err.message, "error");
     }
   };
 
-  const shortenAddressoRG = (address) => {
-    if (!address) return "";
-    return address.substring(0, 6) + "..." + address.substring(address.length - 4);
-  };
-
-  const fetchCurrentMOHContract = async () => {
-    try {
-      if (!distributeContract) {
-        setStatus("Distribute contract not initialized.");
-        return;
-      }
-      const currentAddress = await distributeContract.mohContract();
-      setCurrentMOHContract(currentAddress);
-    } catch (error) {
-      console.error("Error fetching current MOH contract address:", error);
-      setCurrentMOHContract("Error fetching address");
-    }
-  };
-
-  const updateMOHContractInDistribute = async () => {
-    try {
-      if (!ethers.utils.isAddress(newMOHContract)) {
-        setStatus("Invalid Ethereum address.");
-        return;
-      }
-      setStatus("Updating MOH contract in the Distribute Contract...");
-      const tx = await distributeContract.updateMOHContract(newMOHContract);
-      await tx.wait();
-      const updatedAddress = await distributeContract.mohContract();
-      setCurrentMOHContract(updatedAddress);
-      setStatus("MOH contract updated successfully.");
-      setNewMOHContract("");
-    } catch (error) {
-      console.error("Error updating MOH contract:", error);
-      setStatus("Failed to update MOH contract. Check permissions.");
-    }
-  };
-
-  useEffect(() => {
-    fetchCurrentMOHContract();
-  }, [distributeContract]);
-
-  const fetchDistributions = async () => {
-    if (!distributeContract) {
-      setStatus("Distribution contract not loaded.");
+  // Update distribution percentage
+  const handleUpdatePercentage = async () => {
+    if (!distributeContract || !newPercentage) return;
+    const parsed = parseInt(newPercentage, 10);
+    if (isNaN(parsed) || parsed <= 0 || parsed > 100) {
+      showStatus("Enter a valid percentage (1-100).", "error");
       return;
     }
     try {
-      // First, get the count of distribution records.
-      const countBN = await distributeContract.getDistributionCount();
-      const count = countBN.toNumber();
-      // If there are no records, update status.
-      if(count === 0){
-        setStatus("No distribution records found.");
-        setDistributions([]);
-        return;
-      }
-      
-      // Loop over each index to retrieve each distribution.
-      const records = [];
-      for (let i = 0; i < count; i++) {
-        // getDistribution returns a tuple: [amount, timestamp]
-        const record = await distributeContract.getDistribution(i);
-        // Note: record is an array of two BigNumbers.
-        const amount = ethers.utils.formatEther(record[0]);
-        // Assume timestamp is in seconds so multiply by 1000 for Date().
-        const timestamp = new Date(record[1].toNumber() * 1000).toLocaleString();
-        records.push({ amount, timestamp });
-      }
-      setDistributions(records);
-      setStatus("Distributions fetched successfully.");
-      console.log("Distributions:", records);
-    } catch (error) {
-      console.error("Error fetching distributions:", error);
-      setStatus("Error fetching distributions.");
-    }
-  };
-  
-
-  const fetchXDRIPTransferEvents = async () => {
-    try {
-      console.log("Fetching XDRIP Transfer events with Web3...");
-      const XdRiPContractInstance = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
-      const events = await XdRiPContractInstance.getPastEvents("Transfer", {
-        fromBlock: 0,
-        toBlock: "latest",
-      });
-      if (events.length === 0) {
-        console.log("No Transfer events found for XDRIP.");
-      } else {
-        events.slice(0, 5).forEach((evt, idx) => {
-          console.log(`Transfer event #${idx}`, {
-            from: evt.returnValues.from,
-            to: evt.returnValues.to,
-            amount: evt.returnValues.value,
-            blockNumber: evt.blockNumber,
-            txHash: evt.transactionHash,
-          });
-        });
-        console.log(`Total Transfer events found: ${events.length}`);
-      }
-    } catch (error) {
-      console.error("Error fetching XDRIP Transfer events with Web3:", error);
+      showStatus("Updating distribution percentage...", "info");
+      const tx = await distributeContract.updateDistributionPercentage(parsed);
+      await tx.wait();
+      setNewPercentage("");
+      showStatus("Distribution percentage updated to " + parsed + "%", "success");
+      await refreshInfo();
+    } catch (err) {
+      showStatus("Error: " + (err.reason || err.message), "error");
     }
   };
 
+  // Compute total weight for share %
+  const totalWeight = holdersInfo.reduce((sum, h) => sum + h.finalWeight, 0);
 
-  
+  const statusColors = {
+    success: { background: "#0d2818", color: "#4CAF50", border: "1px solid #1a4a2a" },
+    error: { background: "#2d0a0a", color: "#E74C3C", border: "1px solid #4a1a1a" },
+    warning: { background: "#2d1f0a", color: "#F39C12", border: "1px solid #4a3a1a" },
+    info: { background: "#0a1a2d", color: "#5DADE2", border: "1px solid #1a2a4a" },
+  };
 
-  
-  
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>Revenue Distribution</h2>
-      <p className={styles.status}>{status}</p>
+      <button onClick={onBack} className={styles.backButton}>
+        &larr; Back to Dashboard
+      </button>
+
+      <h2 className={styles.heading}>Distribution Console</h2>
+
+      {/* Status Bar */}
+      {status && (
+        <div
+          style={{
+            padding: "10px 14px",
+            borderRadius: "6px",
+            marginBottom: "16px",
+            fontSize: "13px",
+            ...(statusColors[statusType] || statusColors.info),
+          }}
+        >
+          {status}
+        </div>
+      )}
+
+      {/* Info Bar */}
+      <div
+        style={{
+          display: "flex",
+          gap: "24px",
+          padding: "12px 16px",
+          background: "#111",
+          borderRadius: "8px",
+          marginBottom: "16px",
+          fontSize: "13px",
+          border: "1px solid #222",
+          flexWrap: "wrap",
+        }}
+      >
+        <span>Balance: <strong style={{ color: "#F1C40F" }}>{contractBalance}</strong> BNB</span>
+        <span>Dist %: <strong style={{ color: "#F1C40F" }}>{distributionPct}</strong>%</span>
+        <span>Total Distributed: <strong style={{ color: "#F1C40F" }}>{totalDistributed}</strong> BNB</span>
+        <span>Stolen Flags: <strong style={{ color: "#F1C40F" }}>{stolenCount}</strong></span>
+        <span>MOH Supply: <strong style={{ color: "#F1C40F" }}>{mohSupply} + {replSupply} repl</strong></span>
+      </div>
+
+      {/* Action Buttons */}
       <div className={styles.buttonSection}>
-        <button onClick={fetchHoldersInfo} className={styles.button}>
-          Fetch Medal Holders
-        </button>
         <button
-          onClick={updateBonusWeightsAndDistribute}
-          disabled={!holdersInfo.length}
+          onClick={fetchHolders}
+          disabled={isScanning}
           className={styles.button}
         >
-          Update Bonus & Distribute Revenue
+          {isScanning ? "Scanning..." : "Fetch Medal Holders"}
+        </button>
+        <button
+          onClick={updateWeightsAndDistribute}
+          disabled={!holdersInfo.length || isDistributing}
+          className={styles.button}
+          style={{ backgroundColor: "#27AE60" }}
+        >
+          {isDistributing ? "Distributing..." : "Update Weights & Distribute"}
+        </button>
+        <button onClick={refreshInfo} className={styles.button} style={{ backgroundColor: "#333" }}>
+          Refresh Info
         </button>
       </div>
-      <button onClick={fetchXDRIPTransferEvents}>Fetch XDRIP Transfer Events</button>
-      <div className={styles.inputGroup}>
-        <input
-          type="text"
-          value={depositAmount}
-          onChange={(e) => setDepositAmount(e.target.value)}
-          placeholder="Deposit Amount in BNB"
-          className={styles.input}
-        />
-        <button onClick={handleDepositFunds} className={styles.buttonSmall}>
-          Deposit Funds
-        </button>
-      </div>
-      <div className={styles.infoSection}>
-        <p>
-          <strong>Available Balance:</strong> {contractBalance} BNB
-        </p>
-        <p>
-          <strong>Current Distribution Percentage:</strong> {distributePercentage}%
-        </p>
-      </div>
-      <div className={styles.inputGroup}>
-        <input
-          type="number"
-          value={newPercentage}
-          onChange={(e) => setNewPercentage(e.target.value)}
-          placeholder="Set New Percentage"
-          className={styles.input}
-        />
-        <button onClick={updateDistributionPercentage} className={styles.buttonSmall}>
-          Update Percentage
-        </button>
-      </div>
-      <div className={styles.section}>
-        <h2 className={styles.subheading}>Update MOH Contract</h2>
-        <div className={styles.updateMOHContract}>
-          <p>
-            <strong>Current MOH Contract:</strong>{" "}
-            <span
-              className={styles.copyableAddress}
-              onClick={() => navigator.clipboard.writeText(currentMOHContract)}
-              title={`Click to copy ${currentMOHContract}`}
-            >
-              {shortenAddress(currentMOHContract)}
-            </span>
-          </p>
+
+      {/* Progress Bar */}
+      {progress.visible && (
+        <div style={{ marginBottom: "16px" }}>
+          <div
+            style={{
+              width: "100%",
+              height: "6px",
+              background: "#222",
+              borderRadius: "3px",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                height: "100%",
+                background: "#F1C40F",
+                borderRadius: "3px",
+                width: progress.pct + "%",
+                transition: "width 0.3s",
+              }}
+            />
+          </div>
+          <div style={{ fontSize: "11px", color: "#666", marginTop: "4px" }}>
+            {progress.text}
+          </div>
+        </div>
+      )}
+
+      {/* Flag Stolen Section */}
+      <div
+        style={{
+          background: "#111",
+          border: "1px solid #E74C3C40",
+          borderRadius: "8px",
+          padding: "16px",
+          marginBottom: "16px",
+        }}
+      >
+        <h3 style={{ color: "#E74C3C", fontSize: "15px", marginBottom: "12px" }}>
+          Flag Stolen Token
+        </h3>
+        <div className={styles.inputGroup} style={{ marginBottom: "8px" }}>
           <input
-            type="text"
-            value={newMOHContract}
-            onChange={(e) => setNewMOHContract(e.target.value)}
-            placeholder="Enter new MOH contract address"
             className={styles.input}
+            placeholder="Stolen Token ID"
+            value={flagTokenId}
+            onChange={(e) => setFlagTokenId(e.target.value)}
           />
-          <button onClick={updateMOHContractInDistribute} className={styles.updatePercentagesBtn}>
-            Update MOH Contract
+          <input
+            className={styles.input}
+            placeholder="Thief Wallet 0x..."
+            value={flagThief}
+            onChange={(e) => setFlagThief(e.target.value)}
+          />
+          <input
+            className={styles.input}
+            placeholder="Victim New Wallet 0x..."
+            value={flagVictim}
+            onChange={(e) => setFlagVictim(e.target.value)}
+          />
+        </div>
+        <div className={styles.inputGroup}>
+          <input
+            className={styles.input}
+            placeholder="Reason (e.g. wallet compromised)"
+            value={flagReason}
+            onChange={(e) => setFlagReason(e.target.value)}
+            style={{ flex: 1 }}
+          />
+          <button
+            onClick={handleFlagStolen}
+            className={styles.buttonSmall}
+            style={{ backgroundColor: "#E74C3C" }}
+          >
+            Flag Stolen
+          </button>
+        </div>
+        {stolenRecords.length > 0 && (
+          <div style={{ marginTop: "12px", fontSize: "12px" }}>
+            {stolenRecords.map((rec) => (
+              <div
+                key={rec.tokenId}
+                style={{
+                  padding: "4px 0",
+                  borderBottom: "1px solid #1a1a1a",
+                }}
+              >
+                <span
+                  style={{
+                    background: "#E74C3C",
+                    color: "#fff",
+                    padding: "1px 6px",
+                    borderRadius: "3px",
+                    fontSize: "10px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  STOLEN
+                </span>{" "}
+                Token #{rec.tokenId} — Thief: {shortenAddress(rec.thiefWallet)} -&gt; Victim:{" "}
+                {shortenAddress(rec.rightfulOwner)}{" "}
+                <span style={{ color: "#555" }}>({rec.reason})</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {stolenRecords.length === 0 && (
+          <div style={{ marginTop: "8px", fontSize: "12px", color: "#555" }}>
+            No stolen tokens flagged
+          </div>
+        )}
+      </div>
+
+      {/* Deposit Section */}
+      <div
+        style={{
+          background: "#111",
+          border: "1px solid #222",
+          borderRadius: "8px",
+          padding: "16px",
+          marginBottom: "16px",
+        }}
+      >
+        <h3 style={{ color: "#F1C40F", fontSize: "15px", marginBottom: "12px" }}>
+          Deposit Distribution Funds
+        </h3>
+        <div className={styles.inputGroup}>
+          <input
+            className={styles.input}
+            placeholder="Amount in BNB (e.g. 0.001)"
+            value={depositAmount}
+            onChange={(e) => setDepositAmount(e.target.value)}
+          />
+          <button onClick={handleDeposit} className={styles.buttonSmall} style={{ backgroundColor: "#F1C40F", color: "#000" }}>
+            Deposit
           </button>
         </div>
       </div>
-      
-      <button onClick={fetchDistributions} className={styles.button}>
-  Fetch All Distribution Records
-</button>
-{distributions.length > 0 && (
-  <div className={styles.tableContainer}>
-    <h3>Distribution Records</h3>
-    <table className={styles.table}>
-      <thead>
-        <tr>
-          <th>Amount (BNB)</th>
-          <th>Timestamp</th>
-        </tr>
-      </thead>
-      <tbody>
-        {distributions.map((record, index) => (
-          <tr key={index}>
-            <td>{record.amount}</td>
-            <td>{record.timestamp}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)}
 
-      
-    
-      <button onClick={onBack} className={styles.backButton} aria-label="Back to Owner Operations">
-        &larr; Back
-      </button>
+      {/* Update Distribution Percentage */}
+      <div
+        style={{
+          background: "#111",
+          border: "1px solid #222",
+          borderRadius: "8px",
+          padding: "16px",
+          marginBottom: "16px",
+        }}
+      >
+        <h3 style={{ color: "#F1C40F", fontSize: "15px", marginBottom: "12px" }}>
+          Distribution Percentage
+        </h3>
+        <div className={styles.inputGroup}>
+          <input
+            className={styles.input}
+            type="number"
+            placeholder="New percentage (1-100)"
+            value={newPercentage}
+            onChange={(e) => setNewPercentage(e.target.value)}
+          />
+          <button onClick={handleUpdatePercentage} className={styles.buttonSmall}>
+            Update %
+          </button>
+        </div>
+      </div>
+
+      {/* Holders Table */}
       {holdersInfo.length > 0 && (
         <div className={styles.tableContainer}>
+          <h3 style={{ color: "#F1C40F", marginBottom: "12px" }}>
+            Medal Holders &amp; Weights ({holdersInfo.length} holders)
+          </h3>
           <table className={styles.table}>
             <thead>
               <tr>
-                <th className={styles.th}>Holder Address</th>
-                <th className={styles.th}>Final Weight</th>
-                <th className={styles.th}>Medals Owned</th>
-                <th className={styles.th}>XdRiP Balance</th>
-                <th className={styles.th}>Revshare Bonus (%)</th>
+                <th className={styles.th}>Holder</th>
+                <th className={styles.th}>DOTs</th>
+                <th className={styles.th}>Ramps</th>
+                <th className={styles.th}>Base Wt</th>
+                <th className={styles.th}>XdRiP</th>
+                <th className={styles.th}>Bonus</th>
+                <th className={styles.th}>Final Wt</th>
+                <th className={styles.th}>Share %</th>
+                <th className={styles.th}>Status</th>
               </tr>
             </thead>
             <tbody>
-              {holdersInfo.map((holder, index) => (
-                <tr key={index} className={styles.tr}>
-                  <td className={styles.td}>
-                    <span className={styles.copyableAddress}>{shortenAddress(holder.address)}</span>
-                  </td>
-                  <td className={styles.td}>{holder.finalWeight}</td>
-                  <td className={styles.td}>
-                    {holder.medals.map((medal, i) => (
-                      <div key={i} style={{ marginBottom: "4px" }}>
-                        {medal.name} (Token ID: {medal.tokenId})
-                      </div>
-                    ))}
-                  </td>
-                  <td className={styles.td}>{holder.xdripBalance}</td>
-                  <td className={styles.td}>{holder.revshareBonus}</td>
-                </tr>
-              ))}
+              {[...holdersInfo]
+                .sort((a, b) => b.finalWeight - a.finalWeight)
+                .map((h, idx) => {
+                  const sharePct =
+                    totalWeight > 0
+                      ? ((h.finalWeight / totalWeight) * 100).toFixed(2)
+                      : "0";
+                  return (
+                    <tr key={idx} className={styles.tr}>
+                      <td className={styles.td} style={{ fontFamily: "monospace", fontSize: "11px" }}>
+                        {shortenAddress(h.address)}
+                      </td>
+                      <td className={styles.td}>
+                        {MEDAL_ORDER.map((t) => {
+                          const c = h.tierCounts[t];
+                          return c > 0 ? (
+                            <span
+                              key={t}
+                              style={{
+                                background: TIER_COLORS[t],
+                                color: "#fff",
+                                padding: "1px 6px",
+                                borderRadius: "3px",
+                                fontSize: "10px",
+                                fontWeight: "bold",
+                                display: "inline-block",
+                                margin: "1px",
+                              }}
+                            >
+                              {t.charAt(0)}:{c}
+                            </span>
+                          ) : null;
+                        })}
+                      </td>
+                      <td className={styles.td}>{h.fullRamps}</td>
+                      <td className={styles.td}>{h.weight}</td>
+                      <td className={styles.td}>{h.xdripBalance?.toFixed(0) || "0"}</td>
+                      <td className={styles.td}>{h.revshareBonus}%</td>
+                      <td className={styles.td} style={{ color: "#F1C40F", fontWeight: "bold" }}>
+                        {h.finalWeight.toFixed(1)}
+                      </td>
+                      <td className={styles.td}>{sharePct}%</td>
+                      <td className={styles.td}>
+                        {h.hasRedirected ? (
+                          <span
+                            style={{
+                              background: "#27AE60",
+                              color: "#fff",
+                              padding: "1px 6px",
+                              borderRadius: "3px",
+                              fontSize: "10px",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            REDIRECTED
+                          </span>
+                        ) : (
+                          <span style={{ color: "#555", fontSize: "10px" }}>Normal</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>
       )}
+
+      {/* Log */}
+      <div
+        style={{
+          background: "#050505",
+          border: "1px solid #222",
+          borderRadius: "6px",
+          padding: "12px",
+          maxHeight: "300px",
+          overflowY: "auto",
+          fontFamily: "monospace",
+          fontSize: "11px",
+          color: "#888",
+          marginTop: "16px",
+          whiteSpace: "pre-wrap",
+        }}
+      >
+        {logMessages.join("")}
+      </div>
     </div>
   );
 };

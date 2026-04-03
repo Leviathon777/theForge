@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { useAddress } from "@thirdweb-dev/react";
-import Web3 from "web3";
+import { useAccount } from "wagmi";
+import { publicClient } from "../../lib/viemClient";
 import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
-
-// Replace with the correct network URL
-const web3 = new Web3("https://bsc-dataseed.binance.org/");  
 
 const XdRiPContractAddress = xdripCA_ABI.address;
 const XdRiPContractABI = xdripCA_ABI.abi;
-const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
 
 const XdRiPRewardsChecker = () => {
-  const address = useAddress();
+  const { address } = useAccount();
   const [xdripBalance, setXdripBalance] = useState(null);
   const [rewardStatus, setRewardStatus] = useState(null);
 
   const checkRewardDistribution = async () => {
     try {
-      const lastRewardBlock = await XdRiPContract.methods.lastRewardBlock().call();
-      const currentBlock = await web3.eth.getBlockNumber();
+      const lastRewardBlock = await publicClient.readContract({
+        address: XdRiPContractAddress,
+        abi: XdRiPContractABI,
+        functionName: "lastRewardBlock",
+      });
+      const currentBlock = await publicClient.getBlockNumber();
        if (currentBlock > lastRewardBlock) {
         setRewardStatus("Distributed");
       } else {
@@ -32,8 +32,13 @@ const XdRiPRewardsChecker = () => {
 
   const fetchXDRIPBalance = async () => {
     try {
-      const balance = await XdRiPContract.methods.balanceOf(address).call();
-      const formattedBalance = web3.utils.fromWei(balance, "ether");
+      const balance = await publicClient.readContract({
+        address: XdRiPContractAddress,
+        abi: XdRiPContractABI,
+        functionName: "balanceOf",
+        args: [address],
+      });
+      const formattedBalance = (Number(balance) / 1e18).toString();
       setXdripBalance(formattedBalance);
     } catch (error) {
       console.error("Error retrieving XDRIP balance:", error);

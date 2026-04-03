@@ -4,9 +4,11 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Style from "../styles/InvestorProfile.module.css";
 import { Button } from "../components/componentsindex";
-import { addForger } from "../firebase/forgeServices";
+import { addForger } from "../supabase/forgeServices";
+import { useAuth } from "../Context/AuthContext";
 const InvestorProfile = ({ openModal }) => {
     const router = useRouter();
+    const { signUp, verifyOTP, isAuthenticated } = useAuth();
     const { address, dripPercent, xdripBalance, bonusQualification } = router.query;
     const [walletAddress, setWalletAddress] = useState("");
     const [firstName, setFirstName] = useState("");
@@ -14,6 +16,12 @@ const InvestorProfile = ({ openModal }) => {
     const [lastName, setLastName] = useState("");
     const [surname, setSurname] = useState("");
     const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [otpCode, setOtpCode] = useState("");
+    const [showOTPInput, setShowOTPInput] = useState(false);
+    const [pendingProfileData, setPendingProfileData] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [phoneCode, setPhoneCode] = useState("");
     const [phone, setPhone] = useState("");
     const [territory, setTerritory] = useState("");
@@ -58,6 +66,8 @@ const InvestorProfile = ({ openModal }) => {
         } else if (!is18OrOlder) {
             newErrors.dob = "You must be at least 18 years old.";
         }
+        if (!password || password.length < 8) newErrors.password = "Password must be at least 8 characters.";
+        if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match.";
         if (!walletAddress) newErrors.walletAddress = "Wallet connection is required.";
         if (!agreed) newErrors.agreed = "You must agree to the Terms, User Agreement, and Privacy Policy.";
         if (requiresUKCompliance && !ukFCAAgreed) {
@@ -76,6 +86,7 @@ const InvestorProfile = ({ openModal }) => {
             });
             return;
         }
+        setIsSubmitting(true);
         const finalTerritory = territory === "Other" ? otherTerritory : territory;
         const profileData = {
             fullName: `${firstName} ${middleInitial ? middleInitial + " " : ""}${lastName}${surname ? " " + surname : ""
@@ -109,16 +120,41 @@ const InvestorProfile = ({ openModal }) => {
                 DateLastLogged: new Date().toISOString(),
             },
         };
+
         try {
-            await addForger(profileData);
-            toast.success("Profile submitted successfully!");
+            // Step 1: Create Supabase Auth account — sends OTP code to email
+            await signUp(email, password);
+            toast.success("Verification code sent to your email!");
+            setPendingProfileData(profileData);
+            setShowOTPInput(true);
+        } catch (error) {
+            console.error("Error creating account:", error);
+            toast.error(error.message || "Failed to create account. Please try again.");
+        }
+        setIsSubmitting(false);
+    };
+
+    const handleVerifyOTP = async () => {
+        if (!otpCode || otpCode.length !== 6) {
+            toast.error("Please enter the 6-digit verification code.");
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+            // Step 2: Verify the OTP code — this authenticates the user
+            await verifyOTP(email, otpCode, "signup");
+
+            // Step 3: Now authenticated — create the profile (RLS will work)
+            await addForger(pendingProfileData);
+            toast.success("Profile verified and created successfully!");
             setTimeout(() => {
                 router.push("/TheForge");
             }, 3000);
         } catch (error) {
-            console.error("Error submitting profile:", error);
-            toast.error("Failed to submit your profile. Please try again.");
+            console.error("Error verifying code:", error);
+            toast.error(error.message || "Invalid verification code. Please try again.");
         }
+        setIsSubmitting(false);
     };
     const handleBackToForge = () => {
         router.push("/TheForge");
@@ -212,6 +248,20 @@ const InvestorProfile = ({ openModal }) => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className={errors.email ? Style.inputError : Style.inputField}
+                        />
+                        <input
+                            type="password"
+                            placeholder="Create Password (min 8 characters)"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className={errors.password ? Style.inputError : Style.inputField}
+                        />
+                        <input
+                            type="password"
+                            placeholder="Confirm Password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className={errors.confirmPassword ? Style.inputError : Style.inputField}
                         />
                     </div>
                     <div className={`${Style.territorySection} ${errors.territory ? Style.errorSection : ""}`}>
@@ -544,18 +594,47 @@ const InvestorProfile = ({ openModal }) => {
                             </label>
                         </div>
                     )}
+                    {showOTPInput && (
+                        <div className={Style.groupedFields} style={{ marginTop: "1rem", padding: "1rem", background: "rgba(255,255,255,0.05)", borderRadius: "8px", border: "1px solid rgba(241,196,15,0.3)" }}>
+                            <p style={{ color: "#F1C40F", marginBottom: "0.5rem", fontSize: "14px" }}>
+                                A 6-digit verification code has been sent to <strong>{email}</strong>
+                            </p>
+                            <input
+                                type="text"
+                                placeholder="Enter 6-digit code"
+                                value={otpCode}
+                                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                                className={Style.inputField}
+                                style={{ textAlign: "center", fontSize: "1.5rem", letterSpacing: "0.5rem" }}
+                                maxLength={6}
+                            />
+                            <Button
+                                btnName={isSubmitting ? "Verifying..." : "Verify & Create Profile"}
+                                onClick={handleVerifyOTP}
+                                fontSize="14px"
+                                paddingTop=".5rem"
+                                paddingRight="1rem"
+                                paddingBottom=".5rem"
+                                paddingLeft="1rem"
+                                background=""
+                                isActive={false}
+                            />
+                        </div>
+                    )}
                     <div className={Style.buttonGroup}>
-                        <Button
-                            btnName="Submit Profile"
-                            onClick={handleSubmit}
-                            fontSize="14px"
-                            paddingTop=".5rem"
-                            paddingRight="1rem"
-                            paddingBottom=".5rem"
-                            paddingLeft="1rem"
-                            background=""
-                            isActive={false}
-                        />
+                        {!showOTPInput && (
+                            <Button
+                                btnName={isSubmitting ? "Creating Account..." : "Submit Profile"}
+                                onClick={handleSubmit}
+                                fontSize="14px"
+                                paddingTop=".5rem"
+                                paddingRight="1rem"
+                                paddingBottom=".5rem"
+                                paddingLeft="1rem"
+                                background=""
+                                isActive={false}
+                            />
+                        )}
                         <Button
                             btnName="Back to Forge"
                             onClick={handleBackToForge}

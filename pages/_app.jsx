@@ -1,26 +1,17 @@
 import React, { useEffect, useState, useCallback } from "react";
-import {
-  ThirdwebProvider,
-  inAppWallet,
-  metamaskWallet,
-  trustWallet,
-  walletConnect,
-  localWallet,
-  useAddress,
-  useSigner,
-  useDisconnect,
-} from "@thirdweb-dev/react";
+import { useAccount, useDisconnect, useSignMessage } from "wagmi";
+import { AppKitProvider } from "../lib/AppKitProvider";
 import Head from "next/head";
 import Cookies from "js-cookie";
 import { MOHProvider } from "../Context/MOHProviderContext";
 import "../styles/globals.css";
 import { CookieManager, MobileModal, Button, TermsOfService, UserAgreement, PrivacyPolicy, EmailFormPopup, EUCompliance, UKCompliance } from "../components/componentsindex";
-import { ChainId } from "@thirdweb-dev/sdk";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Style from "../styles/app.module.css";
 import { PayloadProvider } from "../Context/PayloadContext";
 import { usePayload } from "../Context/PayloadContext";
+import { AuthProvider } from "../Context/AuthContext";
 import MaintenancePage from "../components/MaintenancePage/MaintenancePage";
 
 
@@ -92,9 +83,9 @@ const AuthHandler = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [popupContent, setPopupContent] = useState("");
   const [mohvat, setMohvat] = useState("");
-  const address = useAddress();
-  const signer = useSigner();
-  const disconnectWallet = useDisconnect();
+  const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { signMessageAsync } = useSignMessage();
 
   
 
@@ -172,32 +163,37 @@ For support or assistance, contact our team at support@xdrip.io
   };
 
   const handleAccept = async () => {
-    if (signer && address) {
+    if (isConnected && address) {
       const payload = generateGenericPayloadMessage(address);
-      const signature = await signer.signMessage(payload);
+      const signature = await signMessageAsync({ message: payload });
       const expirationTime = Date.now() + 4 * 60 * 60 * 1000;
-      localStorage.setItem(
-        "mohvat",
-        JSON.stringify({ address, signature, payload, expirationTime })
-      );
+      const tokenData = { address, signature, payload, expirationTime };
+      tokenData.integrity = btoa(JSON.stringify({ a: address, e: expirationTime }));
+      localStorage.setItem("mohvat", JSON.stringify(tokenData));
       setIsPopupVisible(false);
     }
   };
 
   const handleDecline = () => {
     setIsPopupVisible(false);
-    disconnectWallet();
+    disconnect();
   };
 
   useEffect(() => {
-    if (activatePayload && address && signer) {
+    if (activatePayload && address && isConnected) {
       const storedVAT = JSON.parse(localStorage.getItem("mohvat"));
       if (storedVAT && storedVAT.address === address) {
-        if (Date.now() < storedVAT.expirationTime) return;
+        // Verify integrity to detect client-side tampering
+        const expectedIntegrity = btoa(JSON.stringify({ a: storedVAT.address, e: storedVAT.expirationTime }));
+        if (storedVAT.integrity !== expectedIntegrity) {
+          localStorage.removeItem("mohvat");
+        } else if (Date.now() < storedVAT.expirationTime) {
+          return;
+        }
       }
       handleGenericPayloadPopup(address);
     }
-  }, [activatePayload, address, signer]);
+  }, [activatePayload, address, isConnected]);
 
 
 
@@ -516,23 +512,9 @@ const ChatWidget = () => {
           />
         </div>
       ) : (
+        <AuthProvider>
         <PayloadProvider>
-          <ThirdwebProvider
-            activeChain={ChainId.BinanceSmartChainMainnet}
-            clientId={process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
-            //autoConnect={false}
-            modalConfig={{
-              disableBuyButton: true,
-            }}
-            supportedWallets={[
-              inAppWallet(),
-              metamaskWallet({ recommended: true }),
-              trustWallet(),
-              walletConnect(),
-              localWallet(),
-
-            ]}
-          >
+          <AppKitProvider>
             <ToastContainer
               position="top-center"
               autoClose={3000}
@@ -622,8 +604,9 @@ const ChatWidget = () => {
               />
 
             </MOHProvider>
-          </ThirdwebProvider>
+          </AppKitProvider>
         </PayloadProvider>
+        </AuthProvider>
       )}
     </>
   );

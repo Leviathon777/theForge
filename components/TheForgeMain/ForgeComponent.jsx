@@ -1,18 +1,12 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from 'next/router';
 import { motion, useAnimation } from "framer-motion";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {
-  ConnectWallet,
-  darkTheme,
-  useAddress,
-  useConnect,
-  useWallet,
-  localWallet,
-  useSigner,
-} from "@thirdweb-dev/react";
+import { useAccount, useConfig } from "wagmi";
+import { getWalletClient } from "@wagmi/core";
+import { walletClientToSigner } from "../../lib/walletClientToSigner";
 import { MyDotDataContext } from "../../Context/MyDotDataContext.js";
 import Style from "./ForgeComponent.module.css";
 import moreStyles from "../Button/Button.module.css";
@@ -21,12 +15,12 @@ import { Button, VideoPlayer, DotDetailsModal, WalkthroughModal, TransakButton, 
 import { ethers } from "ethers";
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
 import ipfsHashes from "../../Context/ipfsHashes.js";
-import Web3 from "web3";
+import { publicClient } from "../../lib/viemClient";
 import xdripCA_ABI from "../../Context/xdripCA_ABI.json";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
-import { getForger, logMedalPurchase, sendReceiptEmail, trackDetailedTransaction, updateForger } from "../../firebase/forgeServices.js";
+import { getForger, logMedalPurchase, sendReceiptEmail, trackDetailedTransaction, updateForger } from "../../supabase/forgeServices.js";
 import { useXoast } from "../Xoast/Xoast.jsx";
 
 
@@ -51,9 +45,8 @@ const readOnlyProvider = new ethers.providers.JsonRpcProvider(
 // 2. A read-only instance for medal data
 const readOnlyMohContract = new ethers.Contract(MohAddress, MohABI, readOnlyProvider);
 
-// 3. For XdRiP, we have a web3-based contract (you had it originally):
-const web3 = new Web3("https://bsc-dataseed1.binance.org/");
-const XdRiPContract = new web3.eth.Contract(XdRiPContractABI, XdRiPContractAddress);
+// 3. XdRiP contract address for viem reads
+// (contract reads now use publicClient from viemClient.js)
 
 /* -------------------------------------------------------------------------- */
 /*               OPTIONAL:  Function that returns contract instance           */
@@ -116,10 +109,21 @@ const ForgeComponent = () => {
   const { fetchDots } = useContext(MyDotDataContext);
   const [isBNBPrice, setIsBNBPrice] = useState(true);
   const [currentMedal, setCurrentMedal] = useState(null);
-  const address = useAddress();
-  const signer = useSigner();
+  const { address, isConnected } = useAccount();
+  const wagmiConfig = useConfig();
+  const [signer, setSigner] = useState(null);
   const [forgedCounts, setForgedCounts] = useState({});
-  const connectLocalWallet = useConnect(localWallet);
+
+  // Get ethers5 signer from wagmi wallet client for contract calls
+  useEffect(() => {
+    if (isConnected) {
+      getWalletClient(wagmiConfig).then((wc) => {
+        setSigner(walletClientToSigner(wc));
+      }).catch(() => setSigner(null));
+    } else {
+      setSigner(null);
+    }
+  }, [isConnected, wagmiConfig]);
   const carouselRef = useRef();
   const cardRefs = useRef([]);
   const controls = useAnimation();
@@ -221,9 +225,15 @@ const ForgeComponent = () => {
 
   const fetchAndUpdateXDRIPBalance = async (address) => {
     try {
-      const balance = await XdRiPContract.methods.balanceOf(address).call();
+      const balance = await publicClient.readContract({
+        address: XdRiPContractAddress,
+        abi: XdRiPContractABI,
+        functionName: "balanceOf",
+        args: [address],
+      });
       const balanceString = balance.toString();
-      const formattedBalance = web3.utils.fromWei(balanceString, 'gwei');
+      // XdRiP uses 9 decimals (gwei), so divide by 1e9
+      const formattedBalance = (Number(balanceString) / 1e9).toString();
       const finalDisplayBalance = parseFloat(formattedBalance).toFixed(0);
       const totalSupply = 1_000_000_000;
       const percentage = (finalDisplayBalance / totalSupply) * 100;
@@ -989,140 +999,7 @@ const ForgeComponent = () => {
               title={randomTitle}
               style={{ display: 'inline-block' }}
             >
-              <ConnectWallet
-                btnTitle={"Connect Wallet"}
-                style={{
-                  background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
-                  color: 'white',
-                  border: '2px solid #1c1c1c',
-                  borderRadius: '12px',
-                  boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
-                  transition: 'all 0.3s ease',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  textTransform: 'uppercase',
-                  fontSize: '16px',
-                  textShadow: '0px 0px 2px black',
-                  backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 'auto',
-                  height: 'auto',
-                  margin: '0.25rem',
-                  padding: '10px 20px',
-                  zIndex: 1,
-                }}
-                detailsBtn={() => {
-                  return (
-                    <button
-                      className={Style.genericInfoBox}
-                      style={{ backgroundColor: "transparent" }}
-                    >
-                      <div
-                        style={{
-                          background: 'linear-gradient(145deg, #0d0d0d, #1a1a1a)',
-                          color: 'white',
-                          border: '2px solid #1c1c1c',
-                          borderRadius: '12px',
-                          boxShadow: 'inset 0px 0px 10px rgba(255, 255, 255, 0.1), 0px 5px 15px rgba(0, 0, 0, 0.7)',
-                          transition: 'all 0.3s ease',
-                          padding: '10px, 20px',
-                          width: 'auto',
-                          height: '42px',
-                          cursor: 'pointer',
-                          textAlign: 'center',
-                          textTransform: 'uppercase',
-                          fontSize: '16px',
-                          textShadow: '0px 0px 2px black',
-                          backgroundImage: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.7))',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <div>
-                          <p style={{ fontSize: "small", color: "lightgray", marginTop: "14px", marginLeft: "20px", padding: '4px 0px 0px 0px', }}>
-                            {`${medalCount} Medals Found`}
-                          </p>
-                          <div style={{ display: "flex", alignItems: "center" }}>
-                            <p
-                              style={{
-                                fontSize: "medium",
-                                marginBottom: "2px",
-                                marginTop: "1px",
-                                maxWidth: "auto",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                                color: "white",
-                              }}
-                            >
-                            </p>
-                          </div>
-                          <p
-                            style={{
-                              color: "white",
-                              fontSize: "10px",
-                              marginTop: "-14px",
-                              padding: '0px 0px 2px 0px',
-                              marginLeft: "18px",
-                            }}
-                          >
-                            {currentAccount.slice(0, 4) +
-                              " . . . . " +
-                              currentAccount.slice(-4)}
-                          </p>
-                        </div>
-                        <div
-                          style={{
-                            marginLeft: "1rem",
-                            display: "flex",
-                            alignItems: "center",
-                            paddingLeft: "1rem",
-                            paddingRight: ".3rem",
-                            marginBottom: "0px",
-                            borderRadius: ".5rem"
-                          }}
-                        >
-                          <Image
-                            src="/img/mohwallet-logo.png"
-                            alt="MOH"
-                            width="35"
-                            height="35"
-                            style={{
-                              borderRadius: "50%",
-
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </button>
-                  );
-                }}
-                className={`${moreStyles.btn}`}
-                modalTitle="ACCESS  OPTIONS"
-                theme={darkTheme({
-                  colors: {
-                    modalBg: "linear-gradient(145deg, rgba(42, 42, 42, 0.4), rgba(28, 28, 28, 0.4))",
-                  },
-                })}
-                modalSize={"compact"}
-                switchToActiveChain={true}
-                titleIconUrl={"/img/mohwalletmodal.png"}
-                termsOfServiceUrl="/components/Legal/TermsOfService.jsx"
-                privacyPolicyUrl="/components/Legal/UserAgreement.jsx"
-                ThirdwebBranding={false}
-                welcomeScreen={{
-                  title: " ",
-                  subtitle: " ",
-                  img: {
-                    src: "/img/mohwalletmodal.png",
-                    width: 420,
-                    height: 420,
-                  },
-                }}
-              />
+              <appkit-button />
             </div>
 
             <div ref={dropdownRef} className={Style.dropdownContainer}>

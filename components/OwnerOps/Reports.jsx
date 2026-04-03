@@ -2,9 +2,9 @@
 /*
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { ethers } from "ethers";
-import { useAddress, ConnectWallet } from "@thirdweb-dev/react";
+import { useAccount } from "wagmi";
 
-import Web3 from "web3";
+import { publicClient } from "../../lib/viemClient";
 
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
 import distributeCA_ABI from "../../Context/distributeCA_ABI.json";
@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 
 
 const Reports = ({ onClose }) => {
-    const address = useAddress();
+    const { address } = useAccount();
     const [status, setStatus] = useState("");
     const [mohContract, setMohContract] = useState(null);
     const [distributeContract, setDistributeContract] = useState(null);
@@ -645,8 +645,9 @@ export default Reports;
 // Reports.jsx
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { ethers } from "ethers";
-import { useAddress, ConnectWallet, useSigner } from "@thirdweb-dev/react";
-import Web3 from "web3";
+import { useAccount } from "wagmi";
+// thirdweb removed — using wagmi/viem now
+import { publicClient } from "../../lib/viemClient";
 
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
 import distributeCA_ABI from "../../Context/distributeCA_ABI.json";
@@ -656,7 +657,7 @@ import styles from "./Reports.module.css";
 import { toast } from "react-toastify";
 
 const Reports = ({ onClose }) => {
-  const address = useAddress();
+  const { address } = useAccount();
   const [status, setStatus] = useState("");
 
   // Contract states

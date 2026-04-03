@@ -1,4 +1,17 @@
 import { useState } from 'react';
+
+// Basic HTML sanitizer — strips script tags, event handlers, and dangerous elements
+function sanitizeHTML(html) {
+  if (!html) return '';
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
+    .replace(/<embed\b[^>]*>/gi, '')
+    .replace(/\bon\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '')
+    .replace(/javascript\s*:/gi, 'blocked:');
+}
+
 const EmailTemplatePreview = () => {
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [templateContent, setTemplateContent] = useState('');
@@ -40,7 +53,7 @@ const EmailTemplatePreview = () => {
           minHeight: '500px',
           overflow: 'auto',
         }}
-        dangerouslySetInnerHTML={{ __html: templateContent }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHTML(templateContent) }}
       />
     </div>
   );

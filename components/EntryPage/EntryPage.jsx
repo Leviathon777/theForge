@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 import styles from "./EntryPage.module.css";
 import videos from "../../public/videos";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { VideoPlayer, Button } from "../componentsindex";
 import { useRouter } from "next/router";
 

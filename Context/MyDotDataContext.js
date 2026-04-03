@@ -1,67 +1,101 @@
 import React, { createContext, useState, useEffect } from 'react';
-import Web3 from 'web3';
-import { useAddress } from "@thirdweb-dev/react";
+import { useAccount } from "wagmi";
+import { publicClient } from "../lib/viemClient";
 import mohCA_ABI from "./mohCA_ABI.json";
-export const MyDotDataContext = createContext();
-const MyDotData = ({ children }) => {
-  const address = useAddress();
-  const [dots, setDots] = useState([]);
-  const bscRpcUrl = "https://bsc-dataseed1.binance.org/";
+import replacementCA_ABI from "./replacementCA_ABI.json";
 
-  
+export const MyDotDataContext = createContext();
+
+const MyDotData = ({ children }) => {
+  const { address } = useAccount();
+  const [dots, setDots] = useState([]);
+
+  const fetchDotsFromContract = async (contractABI, contractAddress, source) => {
+    try {
+      const tokenCount = await publicClient.readContract({
+        address: contractAddress,
+        abi: contractABI,
+        functionName: "balanceOf",
+        args: [address],
+      });
+      console.log(`[${source}] Token count for ${address}: ${tokenCount}`);
+
+      if (Number(tokenCount) === 0) {
+        return [];
+      }
+
+      const tokenIds = await Promise.all(
+        Array.from({ length: Number(tokenCount) }).map((_, i) =>
+          publicClient.readContract({
+            address: contractAddress,
+            abi: contractABI,
+            functionName: "tokenOfOwnerByIndex",
+            args: [address, BigInt(i)],
+          })
+        )
+      );
+
+      console.log(`[${source}] Token IDs:`, tokenIds);
+
+      const results = await Promise.all(
+        tokenIds.map(async (tokenId) => {
+          try {
+            const tokenURI = await publicClient.readContract({
+              address: contractAddress,
+              abi: contractABI,
+              functionName: "tokenURI",
+              args: [tokenId],
+            });
+            const response = await fetch(tokenURI);
+            const metadata = await response.json();
+            console.log(`[${source}] Token #${tokenId} metadata:`, metadata);
+            return {
+              tokenId,
+              metadata,
+              contractAddress,
+              source,
+            };
+          } catch (err) {
+            console.error(`[${source}] Error fetching token #${tokenId}:`, err);
+            return null;
+          }
+        })
+      );
+
+      return results.filter(Boolean);
+    } catch (err) {
+      console.error(`[${source}] Error fetching dots:`, err);
+      return [];
+    }
+  };
+
   const fetchDots = async () => {
     if (!address) {
       console.warn("No address provided. Skipping fetchDots.");
       return;
     }
-    
+
     console.log(`Fetching dots for address: ${address}`);
-    
-    const web3 = new Web3(bscRpcUrl);
-    const mohABI = mohCA_ABI.abi;
-    const mohContractAddress = mohCA_ABI.address;
-    const mohDotContract = new web3.eth.Contract(mohABI, mohContractAddress);
-  
-    try {
-      const tokenCount = await mohDotContract.methods.balanceOf(address).call();
-      console.log(`Token count for address ${address}: ${tokenCount}`);
-  
-      if (tokenCount === "0") {
-        console.warn("No tokens found for this address.");
-        setDots([]);
-        return;
-      }
-  
-      const tokenIds = await Promise.all(
-        Array.from({ length: tokenCount }).map((_, i) =>
-          mohDotContract.methods.tokenOfOwnerByIndex(address, i).call()
-        )
-      );
-  
-      console.log("Fetched token IDs:", tokenIds);
-  
 
-      const fetchedDots = await Promise.all(
-        tokenIds.map(async (tokenId) => {
-          try {
-            const tokenURI = await mohDotContract.methods.tokenURI(tokenId).call();
-            const response = await fetch(tokenURI);
-            const metadata = await response.json();
-            console.log(`Fetched metadata for token ID ${tokenId}:`, metadata);
-            return { tokenId, metadata, contractAddress: mohContractAddress };
-          } catch (err) {
-            console.error(`Error fetching data for token ID ${tokenId}:`, err);
-            return null;
-          }
-        })
-      );  
-      setDots(fetchedDots.filter(Boolean));
-      console.log("Fetched dots:", fetchedDots);
-    } catch (err) {
-      console.error("Error fetching dots:", err);
-    }
+    // Fetch from both contracts in parallel using viem
+    const [originalDots, replacementDots] = await Promise.all([
+      fetchDotsFromContract(
+        mohCA_ABI.abi,
+        mohCA_ABI.address,
+        "Original"
+      ),
+      fetchDotsFromContract(
+        replacementCA_ABI.abi,
+        replacementCA_ABI.address,
+        "Replacement"
+      ),
+    ]);
+
+    const allDots = [...originalDots, ...replacementDots];
+    console.log(`Fetched ${originalDots.length} original + ${replacementDots.length} replacement = ${allDots.length} total dots`);
+
+    setDots(allDots);
   };
-
 
   useEffect(() => {
     if (address) {
@@ -69,14 +103,10 @@ const MyDotData = ({ children }) => {
     }
   }, [address]);
 
-
-
   const renderMedia = (metadata) => {
     if (!metadata || !metadata.animation_url) {
       return <p>No media found</p>;
     }
-
-
 
     const fileExtension = metadata.animation_url.split('.').pop().toLowerCase();
     if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
@@ -87,8 +117,6 @@ const MyDotData = ({ children }) => {
       return <p>Unsupported file type: {fileExtension}</p>;
     }
   };
-
-
 
   return (
     <MyDotDataContext.Provider value={{ dots, renderMedia, fetchDots }}>

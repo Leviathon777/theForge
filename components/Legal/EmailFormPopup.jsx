@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./EmailFormPopup.module.css";
 import Modal from "react-modal";
-import { sendContactUsEmail } from "../../firebase/forgeServices.js";
+import { sendContactUsEmail } from "../../supabase/forgeServices.js";
 import { Button } from "../componentsindex";
 
 const EmailFormPopup = ({ isVisible, onClose, isClosing, address }) => {

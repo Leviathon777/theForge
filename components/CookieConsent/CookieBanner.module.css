@@ -1,0 +1,117 @@
+.banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 998;
+  background: linear-gradient(135deg, rgba(5, 8, 18, 0.97) 0%, rgba(15, 38, 98, 0.92) 50%, rgba(5, 8, 18, 0.97) 100%);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-top: 1px solid var(--glass-border-medium);
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.4);
+  padding: 1rem 2rem;
+  animation: slideUp 0.4s ease forwards;
+}
+
+.bannerInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.bannerText {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  flex: 1;
+  margin: 0;
+}
+
+.bannerText a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.bannerActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.btnAccept {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border-accent);
+  background: linear-gradient(135deg, var(--forge-blue-600) 0%, var(--forge-blue-400) 100%);
+  color: #fff;
+  cursor: pointer;
+  transition: all var(--transition-default);
+}
+
+.btnAccept:hover {
+  box-shadow: var(--glow-blue);
+  transform: translateY(-1px);
+}
+
+.btnManage {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border-medium);
+  background: var(--glass-bg-medium);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-default);
+}
+
+.btnManage:hover {
+  border-color: var(--glass-border-strong);
+  color: var(--color-text-primary);
+}
+
+.btnDecline {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color var(--transition-default);
+}
+
+.btnDecline:hover {
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+  .banner {
+    padding: 1rem;
+  }
+
+  .bannerInner {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .bannerActions {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -121,8 +121,9 @@ const DotWallet = ({ address, rewardIncomeTotal }) => {
         };
 
         return {
-          id: medal?.tokenId?.toString() || `unknown-${index}`, 
+          id: medal?.tokenId?.toString() || `unknown-${index}`,
           name: name,
+          source: medal?.source || "Original",
           cost: `${medalCost} BNB`,
           rewardIncome: rewardIncomeTotal ? `${rewardIncomeTotal} BNB` : "N/A",
           creators:

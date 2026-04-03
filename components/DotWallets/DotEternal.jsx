@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from "react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import styles from "./DotCarousel.module.css";
 import { Button, VideoPlayer, DotDetailsModal } from "../componentsindex.js";
 import mohCA_ABI from "../../Context/mohCA_ABI.json";

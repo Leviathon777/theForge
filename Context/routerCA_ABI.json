@@ -1,0 +1,17 @@
+{
+  "address": "0x0C631798bbe2D9F98D24A52E4f14DF5B703dFbc5",
+  "abi": [
+    {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"thiefWallet","type":"address"},{"internalType":"address","name":"rightfulOwner","type":"address"},{"internalType":"string","name":"reason","type":"string"}],"name":"flagStolen","outputs":[],"stateMutability":"nonpayable","type":"function"},
+    {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"removeStolenFlag","outputs":[],"stateMutability":"nonpayable","type":"function"},
+    {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"newOwner","type":"address"}],"name":"updateRightfulOwner","outputs":[],"stateMutability":"nonpayable","type":"function"},
+    {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"isTokenStolen","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+    {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getRightfulOwner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+    {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getStolenRecord","outputs":[{"components":[{"internalType":"bool","name":"isStolen","type":"bool"},{"internalType":"address","name":"thiefWallet","type":"address"},{"internalType":"address","name":"rightfulOwner","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"reason","type":"string"}],"internalType":"struct MOH_DistributionRouter.StolenRecord","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},
+    {"inputs":[],"name":"getAllStolenTokenIds","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},
+    {"inputs":[],"name":"getStolenCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+    {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}
+  ],
+  "networks": {
+    "97": {}
+  }
+}

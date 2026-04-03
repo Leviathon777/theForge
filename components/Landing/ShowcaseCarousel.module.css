@@ -1,0 +1,101 @@
+.section {
+  padding: 4rem 0;
+  overflow: hidden;
+}
+
+.sectionHeader {
+  max-width: 1100px;
+  margin: 0 auto 2rem;
+  padding: 0 2rem;
+}
+
+.title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-text-primary) 50%, var(--color-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  justify-content: center;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  flex-shrink: 0;
+  width: 220px;
+  cursor: pointer;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--glass-border-subtle);
+  background: var(--glass-bg-subtle);
+  box-shadow: var(--shadow-md);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  scroll-snap-align: center;
+}
+
+.card:hover {
+  border-color: var(--glass-border-accent);
+  box-shadow: var(--shadow-xl), 0 0 30px rgba(37, 95, 244, 0.12);
+  transform: translateY(-8px) scale(1.03);
+}
+
+.cardImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.cardInfo {
+  padding: 1rem;
+  text-align: center;
+}
+
+.cardTier {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-primary);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.cardPrice {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .track {
+    justify-content: flex-start;
+    padding: 1.5rem 1rem;
+    gap: 1rem;
+  }
+
+  .card {
+    width: 180px;
+  }
+}

@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import Image from "next/image";
+import Image from "next/legacy/image";
 import styles from './DotCarousel.module.css';
 import { Button, VideoPlayer, DotDetailsModal } from "../componentsindex.js";
 import mohCA_ABI from "../../Context/mohCA_ABI.json";
@@ -30,13 +30,14 @@ const Carousel = ({ medals = [] }) => {
   const handleMedalDetails = useCallback((medal) => {
     const videoPath = videoPaths[medal.metadata.name] || "";
     const formattedMedal = {
-      id: medal.tokenId.toString(), 
+      id: medal.tokenId.toString(),
       medalVideo: videoPath,
       title: medal.metadata?.name || medal.title,
       description: medal.metadata?.description || "NO DATA AVAILABLE",
       price: medal.metadata?.attributes?.find(attr => attr.trait_type === "Value")?.value || "N/A",
       collection: "MEDALS of HONOR",
-      contractAddress: mohCA_ABI.address,
+      contractAddress: medal.contractAddress || mohCA_ABI.address,
+      source: medal.source || "Original",
       isPlaceholder: medal.isPlaceholder
     };
     setSelectedMedal(formattedMedal);

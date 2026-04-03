@@ -4,7 +4,9 @@ import DotWallet from "../components/DotWallets/DotWallet";
 import { SocialButtons, ForgeComponent, FlipBook } from "../components/componentsindex";
 import MyDotData from "../Context/MyDotDataContext";
 import Style from "../styles/theForge.module.css";
-import { useSigner, useAddress } from '@thirdweb-dev/react';
+import { useAccount, useConfig } from "wagmi";
+import { getWalletClient } from "@wagmi/core";
+import { walletClientToSigner } from "../lib/walletClientToSigner";
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 import { usePayload } from "../Context/PayloadContext";
@@ -45,8 +47,18 @@ const TheForge = ({openModal}) => {
   const [bnbPrice, setBnbPrice] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
-  const signer = useSigner();
-  const address = useAddress();
+  const { address, isConnected } = useAccount();
+  const wagmiConfig = useConfig();
+  const [signer, setSigner] = useState(null);
+  useEffect(() => {
+    if (isConnected) {
+      getWalletClient(wagmiConfig).then((wc) => {
+        setSigner(walletClientToSigner(wc));
+      }).catch(() => setSigner(null));
+    } else {
+      setSigner(null);
+    }
+  }, [isConnected, wagmiConfig]);
   const router = useRouter();
   const [isMobile, setIsMobile] = useState(false);
   const [isPwaModalOpen, setIsPwaModalOpen] = useState(false);
