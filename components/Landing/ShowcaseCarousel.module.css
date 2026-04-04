@@ -1,18 +1,19 @@
+/* === MOBILE FIRST (base: 0-479px) === */
 .section {
-  padding: 4rem 0;
+  padding: 1.5rem 0 2.5rem;
   overflow: hidden;
 }
 
 .sectionHeader {
-  max-width: 1100px;
-  margin: 0 auto 2rem;
-  padding: 0 2rem;
+  max-width: 100%;
+  margin: 0 auto 1.5rem;
+  padding: 0 1rem;
 }
 
 .title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   text-align: center;
@@ -25,37 +26,48 @@
 
 .track {
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 2rem;
+  align-items: stretch;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  justify-content: center;
+  -webkit-overflow-scrolling: touch;
 }
 
-.track::-webkit-scrollbar {
-  display: none;
-}
+.track::-webkit-scrollbar { display: none; }
 
 .card {
-  flex-shrink: 0;
-  width: 220px;
+  flex: 0 0 clamp(150px, 28vw, 200px);
   cursor: pointer;
   border-radius: var(--radius-xl);
   overflow: hidden;
   border: 1px solid var(--glass-border-subtle);
   background: var(--glass-bg-subtle);
   box-shadow: var(--shadow-md);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   scroll-snap-align: center;
+  transform-style: preserve-3d;
+  will-change: transform;
+  position: relative;
 }
+
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::after { opacity: 1; }
 
 .card:hover {
   border-color: var(--glass-border-accent);
   box-shadow: var(--shadow-xl), 0 0 30px rgba(37, 95, 244, 0.12);
-  transform: translateY(-8px) scale(1.03);
 }
 
 .cardImage {
@@ -66,36 +78,90 @@
 }
 
 .cardInfo {
-  padding: 1rem;
+  padding: 0.75rem;
   text-align: center;
 }
 
 .cardTier {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: clamp(0.7rem, 1.2vw, 0.85rem);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--color-text-primary);
   display: block;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.15rem;
 }
 
 .cardPrice {
   font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
+  font-size: clamp(0.65rem, 1vw, 0.75rem);
   color: var(--color-accent);
   display: block;
 }
 
-@media (max-width: 768px) {
+/* === TABLET (768px+) === */
+@media (min-width: 768px) {
+  .section {
+    padding: 3.5rem 0;
+  }
+
   .track {
-    justify-content: flex-start;
-    padding: 1.5rem 1rem;
-    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding: 2rem;
+    overflow-x: visible;
   }
 
   .card {
-    width: 180px;
+    flex: 0 0 clamp(160px, 14vw, 200px);
+  }
+
+  .cardInfo {
+    padding: 1rem;
+  }
+}
+
+/* === DESKTOP (1024px+) === */
+@media (min-width: 1024px) {
+  .section {
+    padding: 4rem 0;
+  }
+
+  .track {
+    gap: 1.5rem;
+  }
+
+  .sectionHeader {
+    max-width: 1100px;
+    padding: 0 2rem;
+  }
+}
+
+/* === LARGE DESKTOP (1440px+) === */
+@media (min-width: 1440px) {
+  .sectionHeader {
+    max-width: 1300px;
+  }
+
+  .track {
+    gap: 2rem;
+  }
+}
+
+/* === ULTRAWIDE (2560px+) === */
+@media (min-width: 2560px) {
+  .sectionHeader {
+    max-width: 1600px;
+  }
+
+  .track {
+    gap: 2.5rem;
+    padding: 2.5rem 3rem;
+  }
+
+  .cardInfo {
+    padding: 1.25rem;
   }
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, memo, forwardRef, useContext } from "react";
 import { motion } from "framer-motion";
 import DotWallet from "../components/DotWallets/DotWallet";
-import { SocialButtons, ForgeComponent, FlipBook } from "../components/componentsindex";
+import { SocialButtons, ForgeComponent } from "../components/componentsindex";
 import MyDotData from "../Context/MyDotDataContext";
 import Style from "../styles/theForge.module.css";
 import { useAccount, useConfig } from "wagmi";
@@ -199,12 +199,6 @@ const TheForge = ({openModal}) => {
             <h1 className={Style.component_title_text}>MEDALS OF HONOR WALLET</h1>
             <DotWallet address={address} />
           </div>
-          <div className={Style.glowingDivider}></div>
-          <div className={Style.fourth_component}>
-            <h1 className={Style.component_title_text}>MEDALS OF HONOR BENEFITS</h1>
-            <FlipBook />
-          </div>
-
           <div className={Style.footerGlowingDivider}></div>
           <div className={Style.fifth_component}>
             <div className={Style.socialRow}>

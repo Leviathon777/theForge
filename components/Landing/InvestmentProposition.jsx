@@ -1,6 +1,21 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChartLine, faCoins, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import { useCountUp } from "../../hooks/useCountUp";
 import styles from "./InvestmentProposition.module.css";
+
+const CountStat = ({ value, label }) => {
+  const { ref, displayValue } = useCountUp(value);
+  return (
+    <div className={styles.stat} ref={ref}>
+      <span className={styles.statValue}>
+        {typeof value === "number" ? displayValue.toLocaleString() : value}
+      </span>
+      <span className={styles.statLabel}>{label}</span>
+    </div>
+  );
+};
 
 const InvestmentProposition = ({ totalSupply, totalForged, bnbPrice }) => {
   return (
@@ -24,7 +39,7 @@ const InvestmentProposition = ({ totalSupply, totalForged, bnbPrice }) => {
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
           >
-            <span className={styles.cardIcon}>&#9878;</span>
+            <span className={styles.cardIcon}><FontAwesomeIcon icon={faChartLine} /></span>
             <h3 className={styles.cardTitle}>Revenue Sharing</h3>
             <p className={styles.cardText}>
               Each medal tier carries a weighted share of platform revenue distribution.
@@ -40,7 +55,7 @@ const InvestmentProposition = ({ totalSupply, totalForged, bnbPrice }) => {
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.1 }}
           >
-            <span className={styles.cardIcon}>&#10070;</span>
+            <span className={styles.cardIcon}><FontAwesomeIcon icon={faCoins} /></span>
             <h3 className={styles.cardTitle}>XdRiP Token Bonuses</h3>
             <p className={styles.cardText}>
               Hold XdRiP tokens alongside your medals to unlock bonus multipliers on
@@ -56,7 +71,7 @@ const InvestmentProposition = ({ totalSupply, totalForged, bnbPrice }) => {
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.2 }}
           >
-            <span className={styles.cardIcon}>&#9733;</span>
+            <span className={styles.cardIcon}><FontAwesomeIcon icon={faLayerGroup} /></span>
             <h3 className={styles.cardTitle}>Tiered Ownership</h3>
             <p className={styles.cardText}>
               Six tiers from Common to Eternal — each representing a deeper commitment
@@ -73,26 +88,10 @@ const InvestmentProposition = ({ totalSupply, totalForged, bnbPrice }) => {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <div className={styles.stat}>
-            <span className={styles.statValue}>
-              {totalSupply ? totalSupply.toLocaleString() : "20,020"}
-            </span>
-            <span className={styles.statLabel}>Total Supply</span>
-          </div>
-          <div className={styles.stat}>
-            <span className={styles.statValue}>{totalForged || 0}</span>
-            <span className={styles.statLabel}>Medals Forged</span>
-          </div>
-          <div className={styles.stat}>
-            <span className={styles.statValue}>6</span>
-            <span className={styles.statLabel}>Investment Tiers</span>
-          </div>
-          <div className={styles.stat}>
-            <span className={styles.statValue}>
-              ${bnbPrice ? bnbPrice.toFixed(0) : "---"}
-            </span>
-            <span className={styles.statLabel}>BNB / USD</span>
-          </div>
+          <CountStat value={totalSupply || 20020} label="Total Supply" />
+          <CountStat value={totalForged || 0} label="Medals Forged" />
+          <CountStat value={6} label="Investment Tiers" />
+          <CountStat value={bnbPrice ? Math.floor(bnbPrice) : 0} label="BNB / USD" />
         </motion.div>
       </div>
     </section>

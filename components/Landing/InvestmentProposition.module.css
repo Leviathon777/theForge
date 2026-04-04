@@ -1,23 +1,24 @@
+/* === MOBILE FIRST (base: 0-479px) === */
 .section {
-  padding: 5rem 2rem;
+  padding: 3rem 1rem;
   position: relative;
 }
 
 .inner {
-  max-width: 1100px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
 .sectionHeader {
   position: relative;
-  padding: 1.25rem 2rem;
-  margin-bottom: 3rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
   border-radius: var(--radius-md);
   background: linear-gradient(145deg, rgba(5, 5, 8, 0.95) 0%, rgba(10, 10, 15, 0.9) 50%, rgba(15, 15, 25, 0.85) 100%);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   border: 1px solid var(--glass-border-medium);
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(15, 38, 98, 0.08), 0 0 1px rgba(37, 95, 244, 0.2) inset;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 5px 15px rgba(15, 38, 98, 0.08), 0 0 1px rgba(37, 95, 244, 0.2) inset;
 }
 
 .sectionHeader::before {
@@ -34,7 +35,7 @@
 .sectionTitle {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin: 0;
@@ -46,9 +47,9 @@
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .card {
@@ -58,7 +59,7 @@
   border: 1px solid var(--glass-border-subtle);
   border-top: 1px solid rgba(37, 95, 244, 0.15);
   border-radius: var(--radius-md);
-  padding: 2rem 1.5rem;
+  padding: 1.5rem 1.25rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   transition: all var(--transition-default);
 }
@@ -70,36 +71,46 @@
 }
 
 .cardIcon {
-  font-size: 2rem;
+  font-size: 1.1rem;
   margin-bottom: 1rem;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: var(--color-accent);
+  background: linear-gradient(135deg, rgba(37, 95, 244, 0.1) 0%, rgba(15, 38, 98, 0.15) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(37, 95, 244, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .cardTitle {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
   color: var(--color-text-primary);
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .cardText {
   font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
+  font-size: clamp(0.8rem, 1.2vw, 0.9rem);
   color: var(--color-text-tertiary);
   line-height: 1.6;
   margin: 0;
 }
 
 .statsBar {
-  display: flex;
-  justify-content: center;
-  gap: 3rem;
-  padding: 1.5rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  padding: 1.25rem;
   border-radius: var(--radius-md);
   background: var(--glass-bg-subtle);
   border: 1px solid var(--glass-border-subtle);
-  flex-wrap: wrap;
 }
 
 .stat {
@@ -109,14 +120,14 @@
 .statValue {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: 1.75rem;
+  font-size: clamp(1.25rem, 3vw, 2rem);
   color: var(--color-accent);
   display: block;
 }
 
 .statLabel {
   font-family: 'Inter', sans-serif;
-  font-size: 0.7rem;
+  font-size: clamp(0.6rem, 1vw, 0.75rem);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -125,21 +136,78 @@
   margin-top: 0.25rem;
 }
 
-@media (max-width: 768px) {
+/* === TABLET (768px+) === */
+@media (min-width: 768px) {
   .section {
-    padding: 3rem 1rem;
+    padding: 4rem 2rem;
+  }
+
+  .inner {
+    max-width: 900px;
   }
 
   .cards {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .card {
+    padding: 2rem 1.5rem;
   }
 
   .statsBar {
-    gap: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    padding: 1.5rem 2rem;
+    flex-wrap: wrap;
   }
 
-  .statValue {
-    font-size: 1.4rem;
+  .sectionHeader {
+    padding: 1.25rem 2rem;
+    margin-bottom: 3rem;
+  }
+}
+
+/* === DESKTOP (1024px+) === */
+@media (min-width: 1024px) {
+  .inner {
+    max-width: 1100px;
+  }
+
+  .section {
+    padding: 5rem 2rem;
+  }
+}
+
+/* === LARGE DESKTOP (1440px+) === */
+@media (min-width: 1440px) {
+  .inner {
+    max-width: 1300px;
+  }
+
+  .statsBar {
+    gap: 4rem;
+  }
+}
+
+/* === ULTRAWIDE (2560px+) === */
+@media (min-width: 2560px) {
+  .inner {
+    max-width: 1600px;
+  }
+
+  .section {
+    padding: 6rem 3rem;
+  }
+
+  .card {
+    padding: 2.5rem 2rem;
+  }
+
+  .statsBar {
+    gap: 5rem;
+    padding: 2rem 3rem;
   }
 }

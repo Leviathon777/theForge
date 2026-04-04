@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import styles from "./EmailFormPopup.module.css";
-import Modal from "react-modal";
+import LegalDrawer from "./LegalDrawer";
 import { sendContactUsEmail } from "../../supabase/forgeServices.js";
-import { Button } from "../componentsindex";
 
 const EmailFormPopup = ({ isVisible, onClose, isClosing, address }) => {
   const [name, setName] = useState("");
@@ -14,7 +12,6 @@ const EmailFormPopup = ({ isVisible, onClose, isClosing, address }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting form with:", { name, email, message });
     setIsSubmitting(true);
     setSuccessMessage("");
     setIsSuccess(false);
@@ -25,6 +22,7 @@ const EmailFormPopup = ({ isVisible, onClose, isClosing, address }) => {
       setIsSuccess(true);
       setEmail("");
       setMessage("");
+      setName("");
     } catch (error) {
       console.error("Error sending email:", error);
       setSuccessMessage("Failed to send your message. Please try again.");
@@ -44,79 +42,93 @@ const EmailFormPopup = ({ isVisible, onClose, isClosing, address }) => {
     }
   }, [isSuccess, onClose]);
 
+  const inputStyle = {
+    width: "100%",
+    padding: "0.6rem 0.75rem",
+    background: "rgba(255, 255, 255, 0.03)",
+    border: "1px solid rgba(255, 255, 255, 0.12)",
+    borderRadius: "6px",
+    color: "var(--color-text-primary)",
+    fontFamily: "'Inter', sans-serif",
+    fontSize: "0.85rem",
+    outline: "none",
+    marginBottom: "1rem",
+  };
+
+  const labelStyle = {
+    fontFamily: "'Montserrat', sans-serif",
+    fontSize: "0.75rem",
+    fontWeight: 600,
+    color: "var(--color-text-secondary)",
+    textTransform: "uppercase",
+    letterSpacing: "0.06em",
+    marginBottom: "0.35rem",
+    display: "block",
+  };
+
   return (
-    <Modal
-      isOpen={isVisible}
-      onRequestClose={onClose}
-      contentLabel="Contact Us"
-      className={styles.modal}
-      overlayClassName={`${styles.modalOverlay} ${isClosing ? styles.slideDown : ""}`}
-    >
-      <div className={styles.modalWrapper}>
-        <div className={styles.close_buttonContainer}>
-          <Button
-            btnName="X"
-            onClick={onClose}
-            fontSize="10px"
-            paddingTop=".5rem"
-            paddingRight="1rem"
-            paddingBottom=".5rem"
-            paddingLeft="1rem"
-            background=""
-            className={styles.closeButton}
-            isActive={false}
+    <LegalDrawer isOpen={isVisible} onClose={onClose} title="Contact Us">
+      <h2>Contact XdRiP Digital Management</h2>
+
+      {successMessage && (
+        <p style={{ color: "var(--color-success)", marginBottom: "1rem", fontSize: "0.85rem" }}>
+          {successMessage}
+        </p>
+      )}
+
+      {!isSuccess && (
+        <form onSubmit={handleSubmit}>
+          <label style={labelStyle} htmlFor="name">Your Name</label>
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            style={inputStyle}
           />
-        </div>
-        <h2 className={styles.title}>Contact XDRIP Digital Management</h2>
-        {successMessage && <p className={styles.success}>{"Your message has been sent successfully!"}</p>}
-        {!isSuccess && (
-          <form onSubmit={handleSubmit} className={styles.form}>
-            <label htmlFor="name" className={styles.label}>
-              Your Name:
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className={styles.input}
-            />
-            <label htmlFor="email" className={styles.label}>
-              Your Email:
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className={styles.input}
-            />
-            <label htmlFor="message" className={styles.label}>
-              Your Message:
-            </label>
-            <textarea
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              required
-              className={styles.textarea}
-            />
-            <Button
-              btnName="Submit"
-              onClick={handleSubmit}
-              fontSize=".8rem"
-              paddingTop=".5rem"
-              paddingRight=".75rem"
-              paddingBottom=".5rem"
-              paddingLeft=".75rem"
-              background=""
-            />
-          </form>
-        )}
-      </div>
-    </Modal>
+
+          <label style={labelStyle} htmlFor="email">Your Email</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={inputStyle}
+          />
+
+          <label style={labelStyle} htmlFor="message">Your Message</label>
+          <textarea
+            id="message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            required
+            rows={5}
+            style={{ ...inputStyle, resize: "vertical", minHeight: "120px" }}
+          />
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              padding: "0.6rem 1.5rem",
+              borderRadius: "6px",
+              border: "1px solid rgba(37, 95, 244, 0.4)",
+              background: "linear-gradient(135deg, var(--forge-blue-800) 0%, var(--forge-blue-700) 100%)",
+              color: "#fff",
+              cursor: isSubmitting ? "wait" : "pointer",
+              opacity: isSubmitting ? 0.6 : 1,
+            }}
+          >
+            {isSubmitting ? "Sending..." : "Send Message"}
+          </button>
+        </form>
+      )}
+    </LegalDrawer>
   );
 };
 

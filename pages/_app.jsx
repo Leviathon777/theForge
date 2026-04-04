@@ -5,7 +5,8 @@ import Head from "next/head";
 import Cookies from "js-cookie";
 import { MOHProvider } from "../Context/MOHProviderContext";
 import "../styles/globals.css";
-import { CookieManager, MobileModal, Button, TermsOfService, UserAgreement, PrivacyPolicy, EmailFormPopup, EUCompliance, UKCompliance } from "../components/componentsindex";
+import { MobileModal, Button, TermsOfService, UserAgreement, PrivacyPolicy, EmailFormPopup, EUCompliance, UKCompliance } from "../components/componentsindex";
+import CookieBanner from "../components/CookieConsent/CookieBanner";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Style from "../styles/app.module.css";
@@ -484,15 +485,13 @@ const ChatWidget = () => {
         <div
           style={{
             position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
+            inset: 0,
             backgroundColor: "#000",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             zIndex: 1000,
+            overflow: "hidden",
           }}
         >
           <video
@@ -506,8 +505,7 @@ const ChatWidget = () => {
               height: "100%",
               objectFit: "cover",
               position: "absolute",
-              top: 0,
-              left: 0,
+              inset: 0,
             }}
           />
         </div>
@@ -544,15 +542,7 @@ const ChatWidget = () => {
             />
             <AuthHandler />
             <MOHProvider>
-              {isCookieModalVisible && (
-                <CookieManager
-                  preferences={cookiePreferences}
-                  updatePreferences={updatePreferences}
-                  handleAcceptCookies={handleAcceptCookies}
-                  handleDeclineCookies={handleDeclineCookies}
-                  openModal={openModal}
-                />
-              )}
+              <CookieBanner />
 
               <Component
                 {...pageProps}

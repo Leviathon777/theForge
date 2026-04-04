@@ -1,3 +1,4 @@
+/* === MOBILE FIRST (base: 0-479px) === */
 .hero {
   position: relative;
   min-height: 100vh;
@@ -5,28 +6,24 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-}
-
-.heroBg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+  background: url('/img/background.png') center/cover scroll;
 }
 
 .heroOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(3, 5, 8, 0.7) 0%, rgba(3, 5, 8, 0.85) 60%, var(--forge-bg-deepest) 100%);
+  background: linear-gradient(180deg, rgba(3, 5, 8, 0.65) 0%, rgba(3, 5, 8, 0.8) 50%, var(--forge-bg-deepest) 100%);
   z-index: 1;
 }
 
-/* Ambient glow orbs */
 .heroOrb1 {
   position: absolute;
-  width: 600px;
-  height: 600px;
+  width: 50vw;
+  height: 50vw;
+  max-width: 600px;
+  max-height: 600px;
   top: 10%;
-  left: 15%;
+  left: 5%;
   background: radial-gradient(circle, rgba(37, 95, 244, 0.06) 0%, transparent 70%);
   pointer-events: none;
   z-index: 1;
@@ -35,10 +32,12 @@
 
 .heroOrb2 {
   position: absolute;
-  width: 500px;
-  height: 500px;
+  width: 40vw;
+  height: 40vw;
+  max-width: 500px;
+  max-height: 500px;
   bottom: 15%;
-  right: 10%;
+  right: 5%;
   background: radial-gradient(circle, rgba(15, 38, 98, 0.08) 0%, transparent 70%);
   pointer-events: none;
   z-index: 1;
@@ -48,47 +47,59 @@
 .heroContent {
   position: relative;
   z-index: 2;
-  max-width: 800px;
+  max-width: 90%;
   text-align: center;
-  padding: 2rem;
+  padding: 1.5rem 1rem;
 }
 
 .heroTitle {
   font-family: 'Montserrat', sans-serif;
   font-weight: 800;
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  line-height: 1.05;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  line-height: 1;
   letter-spacing: -0.02em;
-  margin-bottom: 1.5rem;
+   padding-bottom: 1rem;
+  margin-bottom: 0.5rem; 
   background: linear-gradient(135deg, var(--forge-blue-200) 0%, #ffffff 40%, var(--forge-blue-200) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+.heroTagline {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+}
+
 .heroSubtitle {
   font-family: 'Inter', sans-serif;
-  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
   font-weight: 400;
-  color: var(--color-text-secondary);
+  color: var(--color-text-tertiary);
   line-height: 1.7;
-  margin-bottom: 2.5rem;
-  max-width: 600px;
+  margin-bottom: 2rem;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
 
 .heroCtas {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .heroExploreBtn {
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 1.5vw, 0.85rem);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -101,6 +112,8 @@
   color: var(--color-text-primary);
   cursor: pointer;
   transition: all var(--transition-default);
+  width: 100%;
+  text-align: center;
 }
 
 .heroExploreBtn:hover {
@@ -112,7 +125,7 @@
 
 .scrollIndicator {
   position: absolute;
-  bottom: 2rem;
+  bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
@@ -125,15 +138,15 @@
 
 .scrollIndicator span {
   font-family: 'Inter', sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--color-text-muted);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .scrollArrow {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-right: 2px solid var(--color-text-muted);
   border-bottom: 2px solid var(--color-text-muted);
   transform: rotate(45deg);
@@ -144,17 +157,63 @@
   50% { transform: translateX(-50%) translateY(8px); }
 }
 
-@media (max-width: 768px) {
+/* === TABLET (768px+) === */
+@media (min-width: 768px) {
+  .hero {
+    background-attachment: fixed;
+  }
+
   .heroContent {
-    padding: 1.5rem;
+    max-width: 700px;
+    padding: 2rem;
   }
 
   .heroCtas {
-    flex-direction: column;
+    flex-direction: row;
+    gap: 1rem;
   }
 
   .heroExploreBtn {
-    width: 100%;
-    text-align: center;
+    width: auto;
+  }
+
+  .scrollArrow {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* === DESKTOP (1024px+) === */
+@media (min-width: 1024px) {
+  .heroContent {
+    max-width: 800px;
+  }
+}
+
+/* === LARGE DESKTOP (1440px+) === */
+@media (min-width: 1440px) {
+  .heroContent {
+    max-width: 900px;
+  }
+
+  .heroSubtitle {
+    max-width: 650px;
+  }
+}
+
+/* === ULTRAWIDE (2560px+) === */
+@media (min-width: 2560px) {
+  .heroContent {
+    max-width: 1100px;
+    padding: 3rem;
+  }
+
+  .heroSubtitle {
+    max-width: 800px;
+  }
+
+  .scrollArrow {
+    width: 24px;
+    height: 24px;
   }
 }

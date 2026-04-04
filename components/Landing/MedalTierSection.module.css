@@ -1,25 +1,63 @@
-.section {
-  padding: 4rem 2rem;
-  position: relative;
+/* Parallax background groups — dark gradient meshes, not images */
+.parallaxForge {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(37, 95, 244, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(15, 38, 98, 0.06) 0%, transparent 50%),
+    var(--forge-bg-deepest);
 }
+.parallaxBattle {
+  background:
+    radial-gradient(ellipse at 70% 60%, rgba(37, 95, 244, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(15, 38, 98, 0.04) 0%, transparent 40%),
+    var(--forge-bg-deep);
+}
+.parallaxLegend {
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(241, 196, 15, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(37, 95, 244, 0.04) 0%, transparent 50%),
+    var(--forge-bg-deepest);
+}
+.parallaxEternal {
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(37, 95, 244, 0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 80%, rgba(15, 38, 98, 0.08) 0%, transparent 50%),
+    #020408;
+}
+
+/* === MOBILE FIRST (base: 0-479px) === */
+.section {
+  position: relative;
+  padding: 3rem 1rem;
+}
+
+.sectionOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Subtle top/bottom fade between sections */
+.overlayForge { background: linear-gradient(180deg, var(--forge-bg-deepest) 0%, transparent 15%, transparent 85%, var(--forge-bg-deepest) 100%); }
+.overlayBattle { background: linear-gradient(180deg, var(--forge-bg-deepest) 0%, transparent 15%, transparent 85%, var(--forge-bg-deep) 100%); }
+.overlayLegend { background: linear-gradient(180deg, var(--forge-bg-deep) 0%, transparent 15%, transparent 85%, var(--forge-bg-deepest) 100%); }
+.overlayEternal { background: linear-gradient(180deg, var(--forge-bg-deepest) 0%, transparent 15%, transparent 85%, var(--forge-bg-deepest) 100%); }
 
 .inner {
-  max-width: 1100px;
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 3rem;
+  gap: 2rem;
 }
 
-.reversed {
-  flex-direction: row-reverse;
-}
+.reversed { flex-direction: column; }
 
-/* Media side */
 .media {
-  flex: 1;
-  position: relative;
-  min-height: 400px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,19 +66,28 @@
 .mediaFrame {
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: 280px;
   border-radius: var(--radius-xl);
   overflow: hidden;
   border: 1px solid var(--glass-border-medium);
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(37, 95, 244, 0.06);
   background: var(--glass-bg-subtle);
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
-.medalImage {
-  display: block;
-  width: 100%;
-  height: auto;
+.mediaFrame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
+
+.mediaFrame:hover::after { opacity: 1; }
 
 .medalVideo {
   position: absolute;
@@ -51,17 +98,16 @@
   border-radius: var(--radius-xl);
 }
 
-/* Info side */
 .info {
-  flex: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .tierHeader {
   position: relative;
-  padding: 1rem 1.5rem;
+  padding: 0.85rem 1.25rem;
   border-radius: var(--radius-md);
   background: linear-gradient(145deg, rgba(5, 5, 8, 0.95) 0%, rgba(10, 10, 15, 0.9) 50%, rgba(15, 15, 25, 0.85) 100%);
   backdrop-filter: blur(40px) saturate(180%);
@@ -84,7 +130,7 @@
 .tierTitle {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: clamp(1.3rem, 2.5vw, 1.6rem);
+  font-size: clamp(1.1rem, 2.5vw, 1.7rem);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin: 0;
@@ -96,7 +142,7 @@
 
 .description {
   font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 1.3vw, 0.95rem);
   color: var(--color-text-secondary);
   line-height: 1.7;
   margin: 0;
@@ -105,32 +151,32 @@
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 
 .statCard {
   background: var(--glass-bg-subtle);
   border: 1px solid var(--glass-border-subtle);
   border-radius: var(--radius-md);
-  padding: 1rem;
+  padding: 0.75rem;
   text-align: center;
 }
 
 .statLabel {
   font-family: 'Inter', sans-serif;
-  font-size: 0.65rem;
+  font-size: clamp(0.55rem, 0.8vw, 0.7rem);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--color-text-muted);
   display: block;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 }
 
 .statValue {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: 1.3rem;
+  font-size: clamp(1rem, 2vw, 1.4rem);
   color: var(--color-accent);
   display: block;
 }
@@ -138,38 +184,46 @@
 .priceRow {
   display: flex;
   align-items: baseline;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  justify-content: center;
 }
 
 .priceBnb {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
   color: var(--color-text-primary);
 }
 
 .priceUsd {
   font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
+  font-size: clamp(0.75rem, 1.2vw, 0.95rem);
   color: var(--color-text-muted);
+}
+
+.ctaRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: stretch;
 }
 
 .forgeCta {
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.85rem;
+  font-size: clamp(0.75rem, 1.2vw, 0.85rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 0.9rem 2.5rem;
+  padding: 0.85rem 2rem;
   border-radius: var(--radius-md);
-  border: 1px solid var(--glass-border-accent);
+  border: 1px solid rgba(37, 95, 244, 0.4);
   background: linear-gradient(135deg, var(--forge-blue-600) 0%, var(--forge-blue-400) 100%);
   color: #fff;
   cursor: pointer;
   transition: all var(--transition-default);
-  align-self: flex-start;
   position: relative;
   overflow: hidden;
+  text-align: center;
 }
 
 .forgeCta::after {
@@ -183,41 +237,131 @@
   transition: left 0.4s ease;
 }
 
-.forgeCta:hover::after {
-  left: 100%;
-}
+.forgeCta:hover::after { left: 100%; }
 
 .forgeCta:hover {
   box-shadow: 0 0 25px rgba(37, 95, 244, 0.35);
   transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
+.detailsLink {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(0.7rem, 1vw, 0.8rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border-medium);
+  background: var(--glass-bg-subtle);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  text-align: center;
+}
+
+.detailsLink:hover {
+  border-color: var(--glass-border-accent);
+  color: var(--color-accent);
+  box-shadow: 0 0 15px rgba(37, 95, 244, 0.15);
+}
+
+/* === TABLET (768px+) === */
+@media (min-width: 768px) {
   .section {
-    padding: 3rem 1rem;
+    padding: 4rem 2rem;
   }
 
-  .inner,
+  .inner {
+    max-width: 900px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2.5rem;
+  }
+
   .reversed {
-    flex-direction: column;
-    gap: 2rem;
+    flex-direction: row-reverse;
   }
 
   .media {
-    min-height: auto;
+    flex: 1;
   }
 
   .mediaFrame {
-    max-width: 300px;
-    margin: 0 auto;
+    max-width: 350px;
   }
 
-  .forgeCta {
-    align-self: stretch;
-    text-align: center;
+  .info {
+    flex: 1;
+    gap: 1.25rem;
   }
 
   .priceRow {
-    justify-content: center;
+    justify-content: flex-start;
+  }
+
+  .ctaRow {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .forgeCta {
+    text-align: center;
+  }
+
+  .statCard {
+    padding: 1rem;
+  }
+}
+
+/* === DESKTOP (1024px+) === */
+@media (min-width: 1024px) {
+  .inner {
+    max-width: 1100px;
+    gap: 3rem;
+  }
+
+  .section {
+    padding: 5rem 2rem;
+  }
+
+  .mediaFrame {
+    max-width: 400px;
+  }
+
+  .tierHeader {
+    padding: 1rem 1.5rem;
+  }
+}
+
+/* === LARGE DESKTOP (1440px+) === */
+@media (min-width: 1440px) {
+  .inner {
+    max-width: 1300px;
+  }
+
+  .mediaFrame {
+    max-width: 450px;
+  }
+}
+
+/* === ULTRAWIDE (2560px+) === */
+@media (min-width: 2560px) {
+  .inner {
+    max-width: 1600px;
+    gap: 4rem;
+  }
+
+  .section {
+    padding: 6rem 3rem;
+  }
+
+  .mediaFrame {
+    max-width: 550px;
+  }
+
+  .statCard {
+    padding: 1.25rem;
   }
 }

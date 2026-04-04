@@ -1,118 +1,51 @@
-import React, { useState } from "react";
-import Modal from "react-modal";
-import Style from "./Agreements.module.css";
-import { Button } from "../componentsindex";
+import React from "react";
+import LegalDrawer from "./LegalDrawer";
 
-const UKCompliance = ({ isOpen, onRequestClose, isClosing }) => {
-  const [agreed, setAgreed] = useState(false);
-  const [marketingConsent, setMarketingConsent] = useState(false);
+const UKCompliance = ({ isOpen, onRequestClose, isClosing }) => (
+  <LegalDrawer isOpen={isOpen} onClose={onRequestClose} title="UK Compliance">
+    <h2>Important Disclosures for UK Investors</h2>
+    <p>As a UK investor, we are required to ensure you are aware of the following:</p>
 
-  return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={onRequestClose}
-      contentLabel="UK Compliance Agreement"
-      className={Style.modal}
-      overlayClassName={`${Style.modalOverlay} ${isClosing ? Style.slideDown : ""}`}
-    >
-      <div className={Style.modalWrapper}>
-        <h2 className={Style.modalTitle}>Important Disclosures for UK Investors</h2>
-        <p className={Style.modalIntro}>
-          As a UK investor, we are required to ensure you are aware of the following:
-        </p>
+    <div>
+      <h3>Risk Warning</h3>
+      <p>Investments are high-risk and may result in the loss of all or part of your capital. The value of investments can go down as well as up, and you may not get back the amount you invested. Investments on this platform may also be illiquid.</p>
+    </div>
 
-        <div className={Style.modalSection}>
-          <h3 className={Style.sectionTitle}>Risk Warning</h3>
-          <p className={Style.sectionContent}>
-            Investments are high-risk and may result in the loss of all or part of your capital. The value of investments can go down as well as up, and you may not get back the amount you invested. Investments on this platform may also be illiquid, meaning you may not be able to sell your investment promptly or at all. Please ensure you fully understand these risks and seek independent advice if necessary.
-          </p>
-        </div>
+    <div>
+      <h3>Compliance with FCA Regulations</h3>
+      <p>This communication is a financial promotion. Please note that investments on this platform are not authorized or guaranteed by the Financial Conduct Authority (FCA). By proceeding, you confirm that you understand this platform operates under FCA regulations where applicable but is not covered by the UK Financial Services Compensation Scheme.</p>
+    </div>
 
-        <div className={Style.modalSection}>
-          <h3 className={Style.sectionTitle}>Compliance with FCA Regulations</h3>
-          <p className={Style.sectionContent}>
-            This communication is a financial promotion. Please note that investments on this platform are not authorized or guaranteed by the Financial Conduct Authority (FCA). By proceeding, you confirm that you understand this platform operates under FCA regulations where applicable but is not covered by the UK Financial Services Compensation Scheme.
-          </p>
-        </div>
+    <div>
+      <h3>Data Usage</h3>
+      <p>Your personal data will be securely processed for identity verification, investment tracking, and regulatory compliance. We retain your data only for as long as necessary to meet legal obligations. Your data will not be shared with third parties unless required for KYC or transactional purposes, in compliance with GDPR.</p>
+    </div>
 
-        <div className={Style.modalSection}>
-          <h3 className={Style.sectionTitle}>Data Usage</h3>
-          <p className={Style.sectionContent}>
-            Your personal data will be securely processed for identity verification, investment tracking, and regulatory compliance. We retain your data only for as long as necessary to meet legal obligations. Your data will not be shared with third parties unless required for KYC or transactional purposes, in compliance with GDPR.
-          </p>
-        </div>
+    <div>
+      <h3>Marketing Information</h3>
+      <p>By proceeding, you acknowledge that we may send you updates, offers, and marketing communications. You may opt out at any time.</p>
+    </div>
 
-        <div className={Style.modalSection}>
-          <h3 className={Style.sectionTitle}>Marketing Information</h3>
-          <p className={Style.sectionContent}>
-            By proceeding, you acknowledge that we may send you updates, offers, and marketing communications. You may opt out of these communications at any time by following the instructions provided in the communication or contacting us directly.
-          </p>
-        </div>
+    <div>
+      <h3>Declaration</h3>
+      <p>By proceeding, you confirm that:</p>
+      <ul>
+        <li>You have read and understood the Risk Warning.</li>
+        <li>You are aware of the risks associated with this investment.</li>
+        <li>You acknowledge that your capital is at risk and returns are not guaranteed.</li>
+        <li>You understand that this platform is not covered by the UK Financial Services Compensation Scheme.</li>
+      </ul>
+    </div>
 
-        <div className={Style.modalSection}>
-          <h3 className={Style.sectionTitle}>Declaration</h3>
-          <p className={Style.sectionContent}>
-            By proceeding, you confirm that:
-          </p>
-          <ul className={Style.sectionList}>
-            <li className={Style.listItem}>You have read and understood the Risk Warning.</li>
-            <li className={Style.listItem}>You are aware of the risks associated with this investment.</li>
-            <li className={Style.listItem}>You acknowledge that your capital is at risk and returns are not guaranteed.</li>
-            <li className={Style.listItem}>You understand that this platform is not covered by the UK Financial Services Compensation Scheme.</li>
-          </ul>
-        </div>
-
-        <div className={Style.modalFooter}>
-          <h3 className={Style.footerTitle}>Additional Resources</h3>
-          <ul className={Style.footerLinks}>
-            <li>
-              <a
-                href="https://www.fca.org.uk/publication/research/behaviourally-informed-risk-warnings.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={Style.footerLink}
-              >
-                FCA Risk Warnings
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://www.fca.org.uk/data-protection"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={Style.footerLink}
-              >
-                FCA Data Protection Guidelines
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://www.fca.org.uk/consumers/high-return-investments"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={Style.footerLink}
-              >
-                High-Risk Investments Guidance
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div className={Style.closeButtonBox}>
-        <Button
-            btnName="Close"
-            onClick={onRequestClose}
-            fontSize="1rem"
-            paddingTop=".5rem"
-            paddingRight="1rem"
-            paddingBottom=".5rem"
-            paddingLeft="1rem"
-            background=""
-            title="Close Modal"
-          />
-          </div>
-      </div>
-    </Modal>
-  );
-};
+    <div>
+      <h3>Additional Resources</h3>
+      <ul>
+        <li><a href="https://www.fca.org.uk/publication/research/behaviourally-informed-risk-warnings.pdf" target="_blank" rel="noopener noreferrer">FCA Risk Warnings</a></li>
+        <li><a href="https://www.fca.org.uk/data-protection" target="_blank" rel="noopener noreferrer">FCA Data Protection Guidelines</a></li>
+        <li><a href="https://www.fca.org.uk/consumers/high-return-investments" target="_blank" rel="noopener noreferrer">High-Risk Investments Guidance</a></li>
+      </ul>
+    </div>
+  </LegalDrawer>
+);
 
 export default UKCompliance;

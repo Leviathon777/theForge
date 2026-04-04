@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/legacy/image";
 import Link from "next/link";
 import styles from "./Footer.module.css";
 
@@ -9,26 +8,19 @@ const Footer = ({ openModal }) => {
       <div className={styles.footerContent}>
         <div className={styles.footerMain}>
           <div className={styles.footerBrand}>
-            <Image
+            <img
               src="/img/mohwallet-logo.png"
               alt="Medals of Honor"
-              width={140}
-              height={50}
-              objectFit="contain"
+              style={{ width: "100px", height: "auto", display: "block" }}
             />
-            <p>
-              Digital ownership tokens by XdRiP Digital Management LLC.
-              Revenue sharing, tiered access, and strategic investment.
-            </p>
+            <p>Forge Your Investment Legacy</p>
           </div>
 
           <div className={styles.footerLinksSection}>
             <div className={styles.footerLinkGroup}>
               <h4>Platform</h4>
               <Link href="/" className={styles.footerLink}>Home</Link>
-              <Link href="/TheForge" className={styles.footerLink}>The Forge</Link>
-              <Link href="/InvestorWallet" className={styles.footerLink}>Investor Wallet</Link>
-              <Link href="/InvestorProfile" className={styles.footerLink}>Investor Profile</Link>
+              <Link href="/account" className={styles.footerLink}>My Account</Link>
             </div>
 
             <div className={styles.footerLinkGroup}>
@@ -42,6 +34,14 @@ const Footer = ({ openModal }) => {
                 XdRiP Digital Management
               </a>
               <a
+                href="https://www.xcoldpro.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.footerLink}
+              >
+                XColdPro Cold Storage
+              </a>
+              <a
                 href="https://www.talesofxdripia.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -49,6 +49,7 @@ const Footer = ({ openModal }) => {
               >
                 Tales of Xdripia
               </a>
+
             </div>
 
             <div className={styles.footerLinkGroup}>
