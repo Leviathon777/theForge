@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/router";
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 import { AppKitProvider } from "../lib/AppKitProvider";
 import Head from "next/head";
@@ -238,6 +239,15 @@ For support or assistance, contact our team at support@xdrip.io
   );
 };
 const MyApp = ({ Component, pageProps }) => {
+  const router = useRouter();
+
+  // Always scroll to top on route change
+  useEffect(() => {
+    const handleRouteChange = () => window.scrollTo(0, 0);
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => router.events.off("routeChangeComplete", handleRouteChange);
+  }, [router]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [isCookieModalVisible, setIsCookieModalVisible] = useState(false);
   const [splashVideo, setSplashVideo] = useState("/videos/splash.mp4");
